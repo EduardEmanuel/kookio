@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95 38">
+  <text x="64" y="14" text-anchor="middle" font-family="Fredoka" font-size="18" font-weight="bold" fill="#F17026">Let’s</text>
+  <circle cx="16" cy="22" r="15" fill="#F17026"/>
+  <rect x="28" y="8" width="15" height="5" rx="2" transform="rotate(-45 32 10)" fill="#F17026"/>
+  <text x="16" y="30" text-anchor="middle" font-family="Fredoka" font-size="24" font-weight="bold" fill="#FFFFFF">K</text>
+  <text x="64" y="30" text-anchor="middle" font-family="Fredoka" font-size="18" font-weight="bold" fill="#F17026">ookio it!</text>
+</svg>

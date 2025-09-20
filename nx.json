@@ -14,6 +14,13 @@
   },
   "nxCloudId": "68c6cc691a4a45199f8bf4ee",
   "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "serve": {
+      "dependsOn": ["^build"]
+    },
     "@angular/build:application": {
       "cache": true,
       "dependsOn": ["^build"],
@@ -31,6 +38,15 @@
     "@nx/vite:test": {
       "cache": true,
       "inputs": ["default", "^production"]
+    },
+    "@analogjs/vitest-angular:test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    },
+    "@nx/js:swc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "plugins": [
@@ -45,6 +61,20 @@
       "options": {
         "targetName": "lint"
       }
+    },
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "vite:build",
+        "testTargetName": "vite:test",
+        "serveTargetName": "vite:serve",
+        "devTargetName": "dev",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "vite:serve-static",
+        "typecheckTargetName": "typecheck",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
     }
   ],
   "generators": {
@@ -53,6 +83,14 @@
       "linter": "eslint",
       "style": "css",
       "unitTestRunner": "vitest"
+    }
+  },
+  "projects": {
+    "web": {
+      "tags": ["type:app", "scope:web"]
+    },
+    "web-e2e": {
+      "tags": ["type:e2e", "scope:web"]
     }
   }
 }

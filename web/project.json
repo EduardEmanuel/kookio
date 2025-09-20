@@ -2,10 +2,26 @@
   "name": "web",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "prefix": "app",
+  "prefix": "kookio",
   "sourceRoot": "web/src",
   "tags": [],
   "targets": {
+    "kookio-icons-filled": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite-node web/src/app/scripts/generate-icon-file.ts --namespace=kookio",
+        "cwd": ".",
+        "parallel": false
+      }
+    },
+    "material-icons-filled": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite-node web/src/app/scripts/import-material-icons.ts --style=filled && vite-node web/src/app/scripts/generate-icon-file.ts --namespace=material",
+        "cwd": ".",
+        "parallel": false
+      }
+    },
     "build": {
       "executor": "@analogjs/platform:vite",
       "options": {

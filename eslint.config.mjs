@@ -17,6 +17,7 @@ export default [
       '@nx/enforce-module-boundaries': [
         'error',
         {
+          allowRelativePaths: true,
           enforceBuildableLibDependency: true,
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
           depConstraints: [

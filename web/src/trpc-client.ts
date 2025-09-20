@@ -3,13 +3,16 @@ import { createTrpcClient } from '@analogjs/trpc';
 import { inject } from '@angular/core';
 import { SuperJSON } from 'superjson';
 
-export const { provideTrpcClient, TrpcClient } = createTrpcClient<AppRouter>({
+const trpcClient = createTrpcClient<AppRouter>({
   url: '/api/trpc',
   options: {
     transformer: SuperJSON,
-  },
-});
+  }
+})
+
+export const { provideTrpcClient } = trpcClient;
+export const TrpcClientApp = trpcClient.TrpcClient;
 
 export function injectTrpcClient() {
-  return inject(TrpcClient);
+  return inject(TrpcClientApp);
 }

@@ -12,7 +12,7 @@ export default [
         'error',
         {
           type: 'attribute',
-          prefix: 'app',
+          prefix: 'kookio',
           style: 'camelCase',
         },
       ],
@@ -20,9 +20,15 @@ export default [
         'error',
         {
           type: 'element',
-          prefix: 'app',
+          prefix: 'kookio',
           style: 'kebab-case',
         },
+      ],
+      '@nx/enforce-module-boundaries': [
+        'error',
+        {
+          allowRelativePaths: true,
+        }
       ],
     },
   },
