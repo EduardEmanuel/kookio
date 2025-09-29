@@ -4,7 +4,6 @@ import { Ingredient, IngredientSchema } from '@kookio/schema';
 
 import { publicProcedure, router } from '../trpc';
 
-let ingredientId = 0;
 const ingredients: Ingredient[] = [];
 
 export const ingredientRouter = router({
@@ -28,7 +27,10 @@ export const ingredientRouter = router({
         unit: input.unit,
         optional: input.optional,
       };
-      ingredients.push(newIngredient);
+      ingredients
+        .map(ingredient => JSON.stringify(ingredient))
+        .includes(JSON.stringify(newIngredient)) 
+        || ingredients.push(newIngredient);
       return newIngredient;
     }),
 });

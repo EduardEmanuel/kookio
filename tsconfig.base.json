@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@kookio/mock": ["libs/shared/mock/src/index.ts"],
       "@kookio/schema": ["libs/shared/schema/src/index.ts"],
+      "@kookio/utils": ["libs/shared/utils/src/index.ts"],
       "@web/*": ["web/src/*"]
     }
   },

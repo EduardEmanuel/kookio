@@ -30,7 +30,7 @@ export const addSvgIcons = (
           resource.namespace,
           icon.name,
           sanitizer.bypassSecurityTrustResourceUrl(
-            `icons/${resource.namespace}/${style}/${icon.name}.svg`
+            `/icons/${resource.namespace}/${style}/${icon.name}.svg`
           )
         );
       }
@@ -40,6 +40,12 @@ export const addSvgIcons = (
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAppInitializer(() => {
+      const iconRegistry = inject(MatIconRegistry);
+      const sanitizer = inject(DomSanitizer);
+
+      return addSvgIcons(ALL_ICONS, iconRegistry, sanitizer);
+    }),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideFileRouter(),
@@ -49,11 +55,5 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([requestContextInterceptor])
     ),
     provideTrpcClient(),
-    provideAppInitializer(() => {
-      const iconRegistry = inject(MatIconRegistry);
-      const sanitizer = inject(DomSanitizer);
-
-      return addSvgIcons(ALL_ICONS, iconRegistry, sanitizer);
-    }),
   ],
 };

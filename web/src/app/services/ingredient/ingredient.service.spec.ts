@@ -1,25 +1,39 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { Observable, of, take, throwError } from 'rxjs';
 
+import { mockIngredients } from '@kookio/mock';
 import { Ingredient } from '@kookio/schema';
+import { createTestScheduler, logger } from '@kookio/utils';
 
 import { TrpcClientApp } from '@web/trpc-client';
 
 import { IngredientService } from './ingredient.service';
 
+export const ingredientTrpcMock = {
+  ingredient: {
+    list: {
+      query: vi.fn().mockImplementation((): Observable<Ingredient[]> => of(mockIngredients)),
+    },
+    create: {
+      mutate: vi.fn().mockImplementation(
+        (newIngredient: Ingredient): Observable<Ingredient> => of(newIngredient)
+      ),
+    }
+  },
+};
+
 describe('IngredientService', () => {
   let service: IngredientService;
 
-  const mockIngredients: Ingredient[] = [
-    { name: 'Tomato', quantity: 2, unit: 'pcs' },
-    { name: 'Flour', quantity: 1, unit: 'kg' },
-  ];
-  const trpcMock = {
-      ingredient: {
-        list: {
-          query: vi.fn().mockResolvedValue(mockIngredients),
-        },
-      },
-    };
+  const newIngredient: Ingredient = { 
+    name: 'Sour Cream', 
+    quantity: 100, 
+    unit: 'g', 
+    optional: true, 
+    userId: 'test-user-id-11' 
+  };
+  const testUserId = 'test-user-id-1';
+  const testUserIdObj = { userId: testUserId };
 
   afterEach(() => {
     vi.clearAllMocks();
@@ -30,47 +44,79 @@ describe('IngredientService', () => {
     TestBed.configureTestingModule({
       providers: [
         IngredientService,
-        { provide: TrpcClientApp, useValue: trpcMock },
+        { provide: TrpcClientApp, useValue: ingredientTrpcMock },
       ],
     });
+    service = TestBed.inject(IngredientService);
   });
 
   it('should be created', () => {
-    service = TestBed.inject(IngredientService);
     expect(service).toBeTruthy();
   });
 
-  it('should fetch and set ingredients list from tRPC', fakeAsync(async () => {
-    service = TestBed.inject(IngredientService);
+  it('should create and add ingredient via tRPC (marble)', () => {
+    const scheduler = createTestScheduler();
 
-    // expect to be empty initially
-    expect(service.ingredients()).toEqual([]);
+    scheduler.run(({ cold, expectObservable }) => {
+      // simulate a cold observable that emits `newIngredient` after 2 frames and completes
+      const response$ = cold('--a|', { a: newIngredient });
 
-    // wait for the effect to run and promises to resolve
-    tick(); // advance the virtual timer
-    await Promise.resolve(); // let pending promises resolve
+      // inject the mocked tRPC mutation
+      ingredientTrpcMock.ingredient.create.mutate.mockReturnValue(response$);
 
-    // check the mock was called
-    expect(trpcMock.ingredient.list.query).toHaveBeenCalled();
+      // initial state
+      expect(service.ingredients()).toEqual([]);
 
-    // check the ingredients signal was updated
-    expect(service.ingredients()).toEqual(mockIngredients);
-  }));
+      const result$ = service.createIngredient(newIngredient);
 
-    it('should handle errors and reset ingredients to empty array', fakeAsync(async () => {
-    // force the mock to reject
-    const error = new Error('Simulated API failure');
-    trpcMock.ingredient.list.query.mockRejectedValue(error);
-    console.log(`Ignore below the expected error: ${error.message}\n\n`);
+      expectObservable(result$).toBe('--a|', { a: newIngredient });
 
-    // recreate the service to trigger the constructor logic again
-    service = TestBed.inject(IngredientService);
+      scheduler.flush(); // update the signal
+      expect(service.ingredients()).toEqual([newIngredient]);
+    });
+  });
 
-    tick();
-    await Promise.resolve();
+  it('should fetch and set ingredients list from tRPC (marble)', () => {
+    const scheduler = createTestScheduler();
 
-    console.log(`\n\nError handled as expected: ${error.message}`);
-    expect(trpcMock.ingredient.list.query).toHaveBeenCalled();
-    expect(service.ingredients()).toEqual([]);
-  }));
+    scheduler.run(({ cold, expectObservable }) => {
+      const response$ = cold('--x|', { x: mockIngredients });
+
+      ingredientTrpcMock.ingredient.list.query.mockReturnValue(response$);
+
+      expect(service.ingredients()).toEqual([]);
+
+      const result$ = service.fetchIngredientsForUser(testUserId);
+
+      expectObservable(result$).toBe('--x|', { x: mockIngredients });
+
+      scheduler.flush();
+      expect(service.ingredients()).toEqual(mockIngredients);
+    });
+  });
+
+  it('should handle errors and reset ingredients to empty array (marble)', () => {
+    const scheduler = createTestScheduler();
+    const errorSpy = vi.spyOn(logger, 'error');
+
+    scheduler.run(({ cold, expectObservable }) => {
+      const err = new Error('Simulated API failure');
+
+      ingredientTrpcMock.ingredient.list.query.mockReturnValue(cold('--#', {}, err));
+      ingredientTrpcMock.ingredient.create.mutate.mockReturnValue(cold('--#', {}, err));
+
+      const fetch$ = service.fetchIngredientsForUser(testUserId);
+      const create$ = service.createIngredient(newIngredient);
+
+      expectObservable(fetch$).toBe('--(y|)', { y: [] });
+      expectObservable(create$).toBe('--(b|)', { b: {} as Ingredient });
+
+      scheduler.flush();
+
+      expect(errorSpy).toHaveBeenCalledTimes(2);
+      expect(errorSpy).toHaveBeenCalledWith(err, '❌ Error fetching ingredients from tRPC:');
+      expect(errorSpy).toHaveBeenCalledWith(err, '❌ Error creating ingredient via tRPC:');
+      expect(service.ingredients()).toEqual([]); // should be reset to empty on error
+    });
+  });
 });

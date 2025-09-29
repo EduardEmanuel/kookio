@@ -2,6 +2,8 @@ import { mkdir, readdir, copyFile } from 'fs/promises';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
+import { logger } from '@kookio/utils';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const args = process.argv.slice(2);
@@ -17,15 +19,13 @@ const stylesToImport: string[] = allFlag
     : [];
 
 if (stylesToImport.length === 0 || !stylesToImport.every(s => VALID_STYLES.includes(s))) {
-  console.error(
-    `❌ Must use param --style=<style> or --all\nExemple:\n  --style=filled\n  --all\nAccepted styles: ${VALID_STYLES.join(', ')}`
-  );
+  logger.error(`❌ Must use param --style=<style> or --all\nExemple:\n  --style=filled\n  --all\nAccepted styles: ${VALID_STYLES.join(', ')}`);
   process.exit(1);
 }
 
 async function importIconsForStyle(style: string) {
-  const SOURCE_DIR = path.resolve(__dirname, `../../../../node_modules/@material-design-icons/svg/${style}`);
-  const DEST_DIR = path.resolve(__dirname, `../../../../web/public/icons/material/${style}`);
+  const SOURCE_DIR = path.resolve(__dirname, `../../../node_modules/@material-design-icons/svg/${style}`);
+  const DEST_DIR = path.resolve(__dirname, `../../../web/public/icons/material/${style}`);
 
   try {
     await mkdir(DEST_DIR, { recursive: true });
@@ -42,9 +42,9 @@ async function importIconsForStyle(style: string) {
       copied++;
     }
 
-    console.log(`✅ Copied ${copied} icons in folder 'icons/material/${style}'`);
+    logger.info(`✅ Copied ${copied} icons in folder 'icons/material/${style}'`);
   } catch (err) {
-    console.error(`❌ Error at import on style '${style}':`, err);
+    logger.error(err, `❌ Error at import on style '${style}':`);
   }
 }
 

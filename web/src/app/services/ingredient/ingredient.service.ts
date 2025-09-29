@@ -1,9 +1,11 @@
 import { Injectable, signal } from '@angular/core';
-import { effect } from '@angular/core';
+import { catchError, Observable, of, tap } from 'rxjs';
+
+import { Ingredient } from '@kookio/schema';
+import { logger } from '@kookio/utils';
 
 import { injectTrpcClient } from '@web/trpc-client';
 
-import { Ingredient } from '@kookio/schema';
 
 @Injectable({
   providedIn: 'root',
@@ -13,22 +15,28 @@ export class IngredientService {
 
   public readonly ingredients = signal<Ingredient[]>([]);
 
-  constructor() {
-    effect(() => {
-      const randomId = Math.floor(Math.random() * 10) + 1;
-      const userId = `test-user-id-${randomId}`;
-
-      this.fetchIngredientsForUser(userId);
-    });
+  public createIngredient(ingredient: Ingredient): Observable<Ingredient> {
+    return this.trpc.ingredient.create
+      .mutate(ingredient)
+      .pipe(
+        tap(ingredient => this.ingredients.update(ingredients => [...ingredients, ingredient])),
+        catchError((error: Error) => {
+          logger.error(error, '❌ Error creating ingredient via tRPC:');
+          return of({} as Ingredient); // return an empty ingredient on error
+        }),
+      );
   }
 
-  public fetchIngredientsForUser(userId: string) {
-    return (this.trpc.ingredient as any).list
+  public fetchIngredientsForUser(userId: string): Observable<Ingredient[]> {
+    return this.trpc.ingredient.list
     .query({ userId })
-    .then((list: Array<Ingredient>) => this.ingredients.set(list))
-    .catch((error: Error) => {
-        console.error('Error fetching ingredients from tRPC:', error);
+    .pipe(
+      tap(list => this.ingredients.set(list)),
+      catchError((error: Error) => {
+        logger.error(error, '❌ Error fetching ingredients from tRPC:');
         this.ingredients.set([]);
-    });
+        return of([]); // return an empty array on error
+      }),
+    );
   }
 }
