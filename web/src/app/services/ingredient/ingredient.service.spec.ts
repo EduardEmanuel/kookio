@@ -3,15 +3,16 @@ import { Observable, of, take, throwError } from 'rxjs';
 
 import { mockIngredients } from '@kookio/mock';
 import { Ingredient } from '@kookio/schema';
-import { createTestScheduler, logger } from '@kookio/utils';
+import { logger } from '@kookio/utils';
 
+import { createTestScheduler } from '@web/test-setup';
 import { TrpcClientApp } from '@web/trpc-client';
 
 import { IngredientService } from './ingredient.service';
 
 export const ingredientTrpcMock = {
   ingredient: {
-    list: {
+    byId: {
       query: vi.fn().mockImplementation((): Observable<Ingredient[]> => of(mockIngredients)),
     },
     create: {
@@ -82,7 +83,7 @@ describe('IngredientService', () => {
     scheduler.run(({ cold, expectObservable }) => {
       const response$ = cold('--x|', { x: mockIngredients });
 
-      ingredientTrpcMock.ingredient.list.query.mockReturnValue(response$);
+      ingredientTrpcMock.ingredient.byId.query.mockReturnValue(response$);
 
       expect(service.ingredients()).toEqual([]);
 
@@ -102,7 +103,7 @@ describe('IngredientService', () => {
     scheduler.run(({ cold, expectObservable }) => {
       const err = new Error('Simulated API failure');
 
-      ingredientTrpcMock.ingredient.list.query.mockReturnValue(cold('--#', {}, err));
+      ingredientTrpcMock.ingredient.byId.query.mockReturnValue(cold('--#', {}, err));
       ingredientTrpcMock.ingredient.create.mutate.mockReturnValue(cold('--#', {}, err));
 
       const fetch$ = service.fetchIngredientsForUser(testUserId);

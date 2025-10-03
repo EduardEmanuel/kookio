@@ -7,15 +7,9 @@ import { publicProcedure, router } from '../trpc';
 const ingredients: Ingredient[] = [];
 
 export const ingredientRouter = router({
-  list: publicProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-      })
-    )
-    .query(({ input }) => {
-      return ingredients.filter(i => i.userId === input.userId);
-    }),
+  byId: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(({ input }) => ingredients.filter(i => i.userId === input.userId)),
   create: publicProcedure
     .input(IngredientSchema)
     .mutation(({ input }) => {
@@ -32,5 +26,26 @@ export const ingredientRouter = router({
         .includes(JSON.stringify(newIngredient)) 
         || ingredients.push(newIngredient);
       return newIngredient;
+    }),
+  delete: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(({ input }) => {
+      const index = ingredients.findIndex(i => i.userId === input.userId);
+      if (index > -1) {
+        return ingredients.splice(index, 1);
+      }
+      return [];
+    }),
+  list: publicProcedure
+    .query(() => ingredients),
+  update: publicProcedure
+    .input(IngredientSchema)
+    .mutation(({ input }) => {
+      const index = ingredients.findIndex(i => i.userId === input.userId);
+      if (index > -1) {
+        ingredients[index] = input;
+        return ingredients[index];
+      }
+      return null;
     }),
 });

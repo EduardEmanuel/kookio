@@ -28,7 +28,7 @@ export class IngredientService {
   }
 
   public fetchIngredientsForUser(userId: string): Observable<Ingredient[]> {
-    return this.trpc.ingredient.list
+    return this.trpc.ingredient.byId
     .query({ userId })
     .pipe(
       tap(list => this.ingredients.set(list)),
