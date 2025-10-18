@@ -93,11 +93,11 @@
   "projects": {
     "web": {
       "tags": ["type:app", "scope:web"],
-      "dependsOn": ["mock", "schema"]
+      "dependsOn": ["mock", "prisma"]
     },
     "web-e2e": {
       "tags": ["type:e2e", "scope:web"],
-      "dependsOn": ["mock", "schema"]
+      "dependsOn": ["mock", "prisma"]
     }
   }
 }

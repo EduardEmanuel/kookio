@@ -1,11 +1,10 @@
 /// <reference types="vitest" />
 
 import analog from '@analogjs/platform';
-import { defineConfig } from 'vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-
 // @ts-expect-error @tailwindcss/vite currently uses mts. TypeScript is complaining this, but it works as expected.
 import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {

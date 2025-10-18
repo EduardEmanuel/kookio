@@ -9,9 +9,6 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": true,
-    "paths": {
-      "@kookio/schema": ["libs/shared/schema/src/index.ts"],
-    }
   },
   "files": [],
   "include": [],

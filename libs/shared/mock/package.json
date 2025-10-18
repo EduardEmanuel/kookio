@@ -5,5 +5,7 @@
   "type": "commonjs",
   "main": "./index.cjs",
   "types": "./index.d.ts",
-  "dependencies": {}
+  "dependencies": {
+    "@kookio/prisma": "0.0.1"
+  }
 }

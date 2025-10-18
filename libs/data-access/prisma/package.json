@@ -1,0 +1,19 @@
+{
+  "name": "@kookio/prisma",
+  "version": "0.0.1",
+  "private": true,
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "@swc/helpers": "~0.5.11",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.16.3",
+    "dotenv-safe": "^9.1.0",
+    "prisma": "^6.17.1",
+    "prisma-zod-generator": "^1.27.7 ",
+    "tsx": "^4.20.6"
+  }
+}

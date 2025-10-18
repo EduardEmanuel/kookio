@@ -1,0 +1,61 @@
+{
+  "name": "prisma",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/data-access/prisma/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "generate-local": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "tsx scripts/prisma-with-env.ts .env.local  generate --schema=schemas/schema.prisma",
+        "cwd": "libs/data-access/prisma"
+      }
+    },
+    "generate-cloud": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "tsx scripts/prisma-with-env.ts .env.cloud  generate --schema=schemas/schema.prisma",
+        "cwd": "libs/data-access/prisma"
+      }
+    },
+    "migrate-dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["generate-local"],
+      "options": {
+        "command": "tsx scripts/prisma-with-env.ts .env.local  migrate dev --name init --schema=schemas/schema.prisma",
+        "cwd": "libs/data-access/prisma",
+        "parallel": false
+      }
+    },
+    "migrate-deploy": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["generate-cloud"],
+      "options": {
+        "command": "tsx scripts/prisma-with-env.ts .env.cloud  migrate deploy --schema=schemas/schema.prisma",
+        "cwd": "libs/data-access/prisma",
+        "parallel": false
+      }
+    },
+    "studio": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["generate-local"],
+      "options": {
+        "command": "tsx scripts/prisma-with-env.ts .env.local  studio --schema=schemas/schema.prisma",
+        "cwd": "libs/data-access/prisma"
+      }
+    },
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/data-access/prisma",
+        "main": "libs/data-access/prisma/src/index.ts",
+        "tsConfig": "libs/data-access/prisma/tsconfig.lib.json",
+        "assets": ["libs/data-access/prisma/*.md"]
+      }
+    }
+  }
+}

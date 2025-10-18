@@ -1,51 +1,74 @@
-import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 
-import { Ingredient, IngredientSchema } from '@kookio/schema';
+import { 
+  IngredientCreateInputObjectSchema,
+  IngredientDeleteOneSchema,
+  IngredientFindUniqueResultSchema,
+  IngredientFindUniqueSchema,
+  IngredientResultSchema,
+  IngredientUpdateOneSchema
+} from '@kookio/prisma';
+import { logger } from '@kookio/utils';
 
 import { publicProcedure, router } from '../trpc';
 
-const ingredients: Ingredient[] = [];
-
 export const ingredientRouter = router({
-  byId: publicProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(({ input }) => ingredients.filter(i => i.userId === input.userId)),
+  findUnique: publicProcedure
+    .input(IngredientFindUniqueSchema)
+    .output(IngredientFindUniqueResultSchema)
+    .query(async ({ input, ctx }) => {
+      try {
+        return await ctx.prisma.ingredient.findUnique(input)
+      } catch (error) {
+        logger.error(error, '❌ Error fetching ingredient by ID via tRPC:');
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Could not fetch ingredient ${input}` });
+      }
+    }),
+
   create: publicProcedure
-    .input(IngredientSchema)
-    .mutation(({ input }) => {
-      const newIngredient = {
-        // id: ingredientId++,
-        name: input.name,
-        userId: input.userId,
-        quantity: input.quantity,
-        unit: input.unit,
-        optional: input.optional,
-      };
-      ingredients
-        .map(ingredient => JSON.stringify(ingredient))
-        .includes(JSON.stringify(newIngredient)) 
-        || ingredients.push(newIngredient);
-      return newIngredient;
+    .input(IngredientCreateInputObjectSchema)
+    .output(IngredientResultSchema)
+    .mutation(async ({ input, ctx }) => {
+      try {
+        return await ctx.prisma.ingredient.create({ data: input })
+      } catch (error) {
+        logger.error(error, '❌ Error creating ingredient via tRPC:');
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to create ingredient ${input}` });
+      }
     }),
+
   delete: publicProcedure
-    .input(z.object({ userId: z.string() }))
-    .mutation(({ input }) => {
-      const index = ingredients.findIndex(i => i.userId === input.userId);
-      if (index > -1) {
-        return ingredients.splice(index, 1);
+    .input(IngredientDeleteOneSchema)
+    .output(IngredientResultSchema)
+    .mutation(async ({ input, ctx }) => {
+      try {
+        return await ctx.prisma.ingredient.delete(input)
+      } catch (error) {
+        logger.error(error, '❌ Error deleting ingredient via tRPC:');
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to delete ingredient ${input}` });
       }
-      return [];
     }),
+
   list: publicProcedure
-    .query(() => ingredients),
-  update: publicProcedure
-    .input(IngredientSchema)
-    .mutation(({ input }) => {
-      const index = ingredients.findIndex(i => i.userId === input.userId);
-      if (index > -1) {
-        ingredients[index] = input;
-        return ingredients[index];
+    .output(IngredientResultSchema.array())
+    .query(async ({ ctx }) => {
+      try {
+        return await ctx.prisma.ingredient.findMany();
+      } catch (error) {
+        logger.error(error, '❌ Error listing ingredients via tRPC:');
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Could not list ingredients' });
       }
-      return null;
+    }),
+
+  update: publicProcedure
+    .input(IngredientUpdateOneSchema)
+    .output(IngredientResultSchema)
+    .mutation(async ({ input, ctx }) => {
+      try {
+        return await ctx.prisma.ingredient.update(input);
+      } catch (error) {
+        logger.error(error, '❌ Error updating ingredient via tRPC:');
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to update ingredient ${input}` });
+      }
     }),
 });
