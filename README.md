@@ -162,9 +162,9 @@ All scripts are defined in `package.json` and delegate to the corresponding Nx t
 - Integrate Firebase Authentication for passwordless and social login flows.
 - Add Redis caching layers for session storage and recipe search acceleration.
 
-## 🎓 Academic Context
+## 📄 Thesis Context
 
-This codebase supports a Computer Science thesis at the University of Bucharest. The written component is maintained under `thesis/`, authored in LaTeX (`thesis/ro/*.tex`) with compiled PDFs saved to `thesis/dist/`. The research focus documents the PAN architecture decisions, developer experience, and user validation of Let's Kookio it!.
+This repository is accompanied by an academic thesis documenting the technical and architectural decisions behind Kookio. The thesis itself is maintained in a separate repository (`kookio-thesis`) and is not part of the source code.
 
 ## 📄 License
 
