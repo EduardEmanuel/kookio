@@ -1,76 +1,171 @@
-# Kookio
+# Let's Kookio it
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Let's Kookio it! is an open-source, full-stack web application that helps home cooks curate ingredient inventories and discover recipes through interactive, real-time exploration. The stack follows the PAN architecture—Prisma for PostgreSQL access, Analog for Angular 20 SSR, and Nx for scalable orchestration—delivering a modern developer experience with type safety and automation baked in.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+## ✨ Highlights
 
-Run `npx nx graph` to visually explore what got created. Now, let's get you up to speed!
+- Full-stack PAN architecture (Prisma + Analog + Nx) with end-to-end type sharing through tRPC and Zod.
+- Interactive pantry and recipe discovery flows built on Angular 20 with Analog SSR and streaming.
+- Modular Nx workspace that encourages contributions via focused libraries and tooling.
 
-## Finish your CI setup
+**Key technologies:** TypeScript · Angular 20 · Analog · Prisma · tRPC · Nx · Vitest · Playwright
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/RSsgt6hjT2)
+## 🛠 Architecture
 
+- **Analog SSR + Angular 20** renders the UI, handles routing, and executes server-side logic in the same project for fast iteration.
+- **tRPC** exposes strongly-typed endpoints that reuse the Prisma schema, so both client and server share a single contract.
+- **Prisma** manages migrations, database access, and derived Zod types via code generation.
+- **Nx** keeps projects, libraries, scripts, and executors cohesive, while Analog/Vite handle local dev and builds.
+- **Vitest** and **Playwright** provide lightweight yet complete test automation across unit, integration, and end-to-end suites.
 
-## Run tasks
+## 📦 Packages
 
-To run tasks with Nx use:
-
-```sh
-npx nx <target> <project-name>
+```text
+.
+├── web/                         # Analog SSR Angular 20 app with tRPC client and feature modules
+├── web-e2e/                     # Playwright spec suite targeting the web application
+├── libs/
+│   ├── data-access/prisma/      # Prisma schema, migrations, Zod generation, env-aware scripts
+│   └── shared/
+│       ├── mock/                # Mock fixtures (e.g., mockIngredients) for demos and seeding
+│       └── utils/               # Reusable TypeScript helpers shared across apps
+├── dist/                        # Build artifacts produced by Nx targets
+├── thesis/                      # LaTeX sources for the associated academic thesis
+├── nx.json                      # Workspace-wide Nx configuration and target defaults
+└── vitest.workspace.ts          # Root Vitest configuration federating project test setups
 ```
 
-For example:
+## 📦 Prerequisites
 
-```sh
-npx nx build myproject
+To run the project and compile the academic thesis, make sure the following tools are installed:
+
+| Tool | Purpose | How to Install |
+|------|---------|----------------|
+| **Node.js** `>= 20.11.1` + **npm** | Runtime & package manager | [nodejs.org](https://nodejs.org) |
+| **PostgreSQL** `>= 14` | Local database | [postgresql.org/download](https://www.postgresql.org/download/) |
+| **XeLaTeX** (via TeX Live, MacTeX, or MikTeX) | Compile thesis in LaTeX | See below |
+| *(optional)* **Docker** | Containerized DB setup | [docker.com](https://www.docker.com/products/docker-desktop) |
+
+### 📌 PostgreSQL Note
+
+You may install PostgreSQL via:
+
+- **Homebrew (macOS):** `brew install postgresql@14`
+- **APT (Ubuntu/Debian):** `sudo apt install postgresql`
+- **Windows Installer:** via [EnterpriseDB](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
+
+Once installed, create the development database:
+
+```sql
+CREATE DATABASE kookio_dev;
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+Update `.env.local` if needed with your PostgreSQL credentials.
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### 📌 XeLaTeX Note
 
-## Add new projects
+To compile the thesis using LaTeX + Unicode fonts:
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+- **macOS:** `brew install --cask mactex`
+- **Ubuntu/Debian:** `sudo apt install texlive-xetex texlive-fonts-recommended texlive-latex-extra`
+- **Windows:** install [MikTeX](https://miktex.org/download) and enable `xetex` + `biblatex` in the package manager.
 
-To install a new plugin you can use the `nx add` command. Here's an example of adding the React plugin:
-```sh
-npx nx add @nx/react
+## 🧭 Quickstart
+
+> Prerequisites: Node.js `>= 20.11.1` (LTS recommended) and npm `>= 10`. The workspace also works with pnpm (`pnpm dlx nx ...`) or yarn (`yarn nx ...`) if you prefer.
+
+### Unix/macOS/Linux
+
+```bash
+npm install
+cp libs/data-access/prisma/.env.example libs/data-access/prisma/.env.local
+npm run prisma:migrate-dev        # applies dev migrations and regenerates Prisma clients
+npm run start:web                 # equivalent to nx serve web
 ```
 
-Use the plugin's generator to create new projects. For example, to create a new React app or library:
+### Windows (PowerShell)
 
-```sh
-# Generate an app
-npx nx g @nx/react:app demo
-
-# Generate a library
-npx nx g @nx/react:lib some-lib
+```powershell
+npm install
+Copy-Item libs\data-access\prisma\.env.example libs\data-access\prisma\.env.local
+npm run prisma:migrate-dev
+npm run start:web
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+### Build and bundle
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+npm run build:web                 # runs nx build web (configured in web/project.json)
+```
 
+> If peer-dependency conflicts arise, use `npm run safe-install` to install with `--legacy-peer-deps`.
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## 🔐 Environment & Database
 
-## Install Nx Console
+- Environment templates live in `libs/data-access/prisma/.env.example`. Copy to `.env.local` for local development or `.env.cloud` for hosted environments.
+- `scripts/prisma-with-env.ts` ensures Prisma CLI commands load variables from the chosen file via `dotenv-safe`.
+- Run `npx nx run prisma:generate-local` (or `npm run prisma:migrate-dev`, which depends on generation) whenever the schema changes.
+- To apply migrations against your local database: `npm run prisma:migrate-dev`. For production-ready deploys, use `npm run prisma:migrate-deploy`.
+- Seed data using the bundled fixtures:
+  1. Start Prisma Studio: `npm run prisma:studio`.
+  2. Open the `Ingredient` model and insert the entries exported as `mockIngredients` from `libs/shared/mock/src/lib/ingredient.ts`.
+  3. Save. The application now boots with meaningful sample content. (A dedicated CLI seed target is planned—see *Future directions*.)
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+## 🎯 Nx Targets
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Key targets are defined per project in their `project.json` files:
 
-## Useful links
+| Command | Purpose | Configuration |
+| --- | --- | --- |
+| `nx serve web` | Dev server with Analog SSR, HMR, and icon symlink dependency (`postbuild-ssr-symlink`). | `web/project.json` |
+| `nx build web` | Production build via `@analogjs/platform:vite`, outputs to `dist/web`. | `web/project.json` |
+| `nx test web` | Runs Angular-aware Vitest suite (`@analogjs/vitest-angular`). | `web/project.json` |
+| `nx lint web` | Lints via ESLint executor. | `web/project.json` |
+| `nx kookio-icons-filled web` / `nx material-icons-filled web` | Generates SVG icon bundles with vite-node scripts. | `web/project.json` |
+| `nx run prisma:migrate-dev` / `nx run prisma:migrate-deploy` | Wrap Prisma CLI with environment-aware script. | `libs/data-access/prisma/project.json` |
+| `nx run prisma:studio` | Opens Prisma Studio after generating the client. | `libs/data-access/prisma/project.json` |
+| `nx e2e web-e2e` | Executes Playwright E2E specs. | `web-e2e/project.json` |
 
-Learn more:
+Workspace-wide defaults, caching, and plugin wiring (Angular, Playwright, Vite) live in `nx.json`.
 
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## ✅ Testing
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **Unit & component tests (Vitest):** `npm run test:web` composes Angular test harnesses via `@analogjs/vitest-angular`. Shared options live in `vitest.workspace.ts`.
+- **End-to-end tests (Playwright):** `npm run e2e:web` launches the Playwright runner configured in `web-e2e/playwright.config.ts`. It targets the SSR dev server, so ensure `nx serve web` is running or let Nx manage the lifecycle.
+- Coverage reporting is available through Vitest's V8 instrumentation (`@vitest/coverage-v8`) if you pass `--coverage` to the test target.
+
+## 📜 Scripts
+
+| Script | Description |
+| --- | --- |
+| `npm run start:web` | Alias for `nx serve web`. |
+| `npm run build:web` | Alias for `nx build web`. |
+| `npm run test:web` | Runs the Vitest suite for the web app. |
+| `npm run lint:web` | ESLint for the web project. |
+| `npm run e2e:web` | Playwright tests against the `web` app (`web-e2e` project). |
+| `npm run kookio-icons-filled:web` | Generates application-specific icon module. |
+| `npm run material-icons-filled:web` | Imports Material icon set and builds a tree-shaken bundle. |
+| `npm run postbuild-ssr-symlink:web` | Post-build helper that links SSR artifacts with library outputs. |
+| `npm run prisma:migrate-dev` | Runs Prisma migrations locally (depends on `generate-local`). |
+| `npm run prisma:migrate-deploy` | Applies migrations in a CI/production environment (uses `.env.cloud`). |
+| `npm run prisma:studio` | Opens Prisma Studio with the local environment loaded. |
+| `npm run affected` | Lists projects affected by your current changes. |
+| `npm run format` | Runs `nx format:write` to apply workspace formatting rules. |
+| `npm run safe-install` | Installs dependencies with `--legacy-peer-deps` for compatibility. |
+
+All scripts are defined in `package.json` and delegate to the corresponding Nx target for consistency across package managers (`npx nx`, `pnpm nx`, or `yarn nx`).
+
+## 🚀 Future Directions
+
+- Migrate the relational backend to CockroachDB for effortless horizontal scaling.
+- Introduce AI-powered microservices that propose recipes and pantry optimisations.
+- Integrate Firebase Authentication for passwordless and social login flows.
+- Add Redis caching layers for session storage and recipe search acceleration.
+
+## 🎓 Academic Context
+
+This codebase supports a Computer Science thesis at the University of Bucharest. The written component is maintained under `thesis/`, authored in LaTeX (`thesis/ro/*.tex`) with compiled PDFs saved to `thesis/dist/`. The research focus documents the PAN architecture decisions, developer experience, and user validation of Let's Kookio it!.
+
+## 📄 License
+
+Licensed under the [Apache License 2.0](LICENSE).
