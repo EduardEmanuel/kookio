@@ -1,4 +1,4 @@
-# Let's Kookio it
+# <img src="./web/public/icons/kookio/filled/logo.svg" alt="Kookio Logo" width="320"/>
 
 Let's Kookio it! is an open-source, full-stack web application that helps home cooks curate ingredient inventories and discover recipes through interactive, real-time exploration. The stack follows the PAN architecture—Prisma for PostgreSQL access, Analog for Angular 20 SSR, and Nx for scalable orchestration—delivering a modern developer experience with type safety and automation baked in.
 
@@ -34,7 +34,7 @@ Let's Kookio it! is an open-source, full-stack web application that helps home c
 └── vitest.workspace.ts          # Root Vitest configuration federating project test setups
 ```
 
-## 📦 Prerequisites
+## 📤 Prerequisites
 
 In order to run the project make sure the following tools are installed:
 
