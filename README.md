@@ -30,20 +30,18 @@ Let's Kookio it! is an open-source, full-stack web application that helps home c
 │       ├── mock/                # Mock fixtures (e.g., mockIngredients) for demos and seeding
 │       └── utils/               # Reusable TypeScript helpers shared across apps
 ├── dist/                        # Build artifacts produced by Nx targets
-├── thesis/                      # LaTeX sources for the associated academic thesis
 ├── nx.json                      # Workspace-wide Nx configuration and target defaults
 └── vitest.workspace.ts          # Root Vitest configuration federating project test setups
 ```
 
 ## 📦 Prerequisites
 
-To run the project and compile the academic thesis, make sure the following tools are installed:
+In order to run the project make sure the following tools are installed:
 
 | Tool | Purpose | How to Install |
 |------|---------|----------------|
 | **Node.js** `>= 20.11.1` + **npm** | Runtime & package manager | [nodejs.org](https://nodejs.org) |
 | **PostgreSQL** `>= 14` | Local database | [postgresql.org/download](https://www.postgresql.org/download/) |
-| **XeLaTeX** (via TeX Live, MacTeX, or MikTeX) | Compile thesis in LaTeX | See below |
 | *(optional)* **Docker** | Containerized DB setup | [docker.com](https://www.docker.com/products/docker-desktop) |
 
 ### 📌 PostgreSQL Note
@@ -61,14 +59,6 @@ CREATE DATABASE kookio_dev;
 ```
 
 Update `.env.local` if needed with your PostgreSQL credentials.
-
-### 📌 XeLaTeX Note
-
-To compile the thesis using LaTeX + Unicode fonts:
-
-- **macOS:** `brew install --cask mactex`
-- **Ubuntu/Debian:** `sudo apt install texlive-xetex texlive-fonts-recommended texlive-latex-extra`
-- **Windows:** install [MikTeX](https://miktex.org/download) and enable `xetex` + `biblatex` in the package manager.
 
 ## 🧭 Quickstart
 
@@ -164,7 +154,15 @@ All scripts are defined in `package.json` and delegate to the corresponding Nx t
 
 ## 📄 Thesis Context
 
-This repository is accompanied by an academic thesis documenting the technical and architectural decisions behind Kookio. The thesis itself is maintained in a separate repository (`kookio-thesis`) and is not part of the source code.
+This project is accompanied by a Computer Science bachelor thesis that documents its design and implementation.
+
+➡️ The thesis source files are maintained separately in [`kookio-thesis`](https://github.com/EduardEmanuel/kookio-thesis), which contains:
+
+- Source code written in LaTeX
+- Build automation scripts for Unix, PowerShell, and CMD
+- PDF artifacts for milestone backups
+
+> Note: All LaTeX-specific instructions, prerequisites, and bibliography management are now documented exclusively in the [kookio-thesis repository](https://github.com/EduardEmanuel/kookio-thesis/blob/main/README.md).
 
 ## 📄 License
 
