@@ -1,6 +1,6 @@
 # <img src="./web/public/icons/kookio/filled/logo.svg" alt="Kookio Logo" width="320"/>
 
-Let's Kookio it! is an open-source, full-stack web application that helps home cooks curate ingredient inventories and discover recipes through interactive, real-time exploration. The stack follows the PAN architecture—Prisma for PostgreSQL access, Analog for Angular 20 SSR, and Nx for scalable orchestration—delivering a modern developer experience with type safety and automation baked in.
+Let's Kookio it! is an open-source, full-stack web application that helps home cooks curate ingredient inventories and discover recipes through interactive, real-time exploration. The stack follows the PAN architecture—Prisma for CockroachDB access, Analog for Angular 20 SSR, and Nx for scalable orchestration—delivering a modern developer experience with type safety and automation baked in.
 
 ## ✨ Highlights
 
@@ -41,24 +41,53 @@ In order to run the project make sure the following tools are installed:
 | Tool | Purpose | How to Install |
 |------|---------|----------------|
 | **Node.js** `>= 20.11.1` + **npm** | Runtime & package manager | [nodejs.org](https://nodejs.org) |
-| **PostgreSQL** `>= 14` | Local database | [postgresql.org/download](https://www.postgresql.org/download/) |
+| **CockroachDB** (Cloud or local single-node) | Database | [cockroachlabs.com/docs](https://www.cockroachlabs.com/docs/) |
 | *(optional)* **Docker** | Containerized DB setup | [docker.com](https://www.docker.com/products/docker-desktop) |
 
-### 📌 PostgreSQL Note
+### 📌 CockroachDB Note
 
-You may install PostgreSQL via:
+You can use **CockroachDB Cloud** (recommended) or run a **local single-node** for development.
 
-- **Homebrew (macOS):** `brew install postgresql@14`
-- **APT (Ubuntu/Debian):** `sudo apt install postgresql`
-- **Windows Installer:** via [EnterpriseDB](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
+**Cloud (Serverless, recommended for dev/staging):**
 
-Once installed, create the development database:
+- Create a free cluster in CockroachDB Cloud.
+- Obtain the connection string (PostgreSQL wire protocol), which looks like:
 
-```sql
-CREATE DATABASE kookio_dev;
+  ```bash
+  postgresql://USER:PASS@HOST:26257/kookio?sslmode=require&options=--cluster%3DCLUSTER_NAME
+  ```
+
+- Ensure your Prisma datasource uses `provider = "cockroachdb"`.
+
+**Local (single-node, insecure) via Docker:**
+
+```bash
+docker run -d --name crdb -p 26257:26257 -p 8080:8080 \
+  cockroachdb/cockroach:v24.2 start-single-node --insecure
+docker exec -it crdb ./cockroach sql --insecure -e "CREATE DATABASE kookio;"
 ```
 
-Update `.env.local` if needed with your PostgreSQL credentials.
+**Local via Homebrew (macOS):**
+
+```bash
+brew install cockroachdb/tap/cockroach
+cockroach start-single-node --insecure --listen-addr=localhost:26257 --http-addr=localhost:8080
+cockroach sql --insecure -e "CREATE DATABASE kookio;"
+```
+
+**`.env.local` example (insecure dev):**
+
+  ```bash
+  DATABASE_URL="postgresql://root@localhost:26257/kookio?sslmode=disable"
+  ```
+
+**`.env.cloud` example:**
+
+  ```bash
+  DATABASE_URL="postgresql://USER:PASS@HOST:26257/kookio?sslmode=require&options=--cluster%3DCLUSTER_NAME"
+  ```
+
+> CockroachDB speaks the PostgreSQL wire protocol, so the URL scheme is `postgresql://…`, but the Prisma provider **must** be `cockroachdb`.
 
 ## 🧭 Quickstart
 
@@ -99,7 +128,7 @@ npm run build:web                 # runs nx build web (configured in web/project
 - Seed data using the bundled fixtures:
   1. Start Prisma Studio: `npm run prisma:studio`.
   2. Open the `Ingredient` model and insert the entries exported as `mockIngredients` from `libs/shared/mock/src/lib/ingredient.ts`.
-  3. Save. The application now boots with meaningful sample content. (A dedicated CLI seed target is planned—see *Future directions*.)
+  3. Save. The application now boots with meaningful sample content. (Or simply run the seed script: `npm run prisma:seed`.)
 
 ## 🎯 Nx Targets
 
@@ -114,6 +143,7 @@ Key targets are defined per project in their `project.json` files:
 | `nx kookio-icons-filled web` / `nx material-icons-filled web` | Generates SVG icon bundles with vite-node scripts. | `web/project.json` |
 | `nx run prisma:migrate-dev` / `nx run prisma:migrate-deploy` | Wrap Prisma CLI with environment-aware script. | `libs/data-access/prisma/project.json` |
 | `nx run prisma:studio` | Opens Prisma Studio after generating the client. | `libs/data-access/prisma/project.json` |
+| `nx run prisma:seed` | Seeds the database with sample data. | `libs/data-access/prisma/project.json` |
 | `nx e2e web-e2e` | Executes Playwright E2E specs. | `web-e2e/project.json` |
 
 Workspace-wide defaults, caching, and plugin wiring (Angular, Playwright, Vite) live in `nx.json`.
@@ -126,28 +156,43 @@ Workspace-wide defaults, caching, and plugin wiring (Angular, Playwright, Vite) 
 
 ## 📜 Scripts
 
+### Web
+
 | Script | Description |
-| --- | --- |
-| `npm run start:web` | Alias for `nx serve web`. |
-| `npm run build:web` | Alias for `nx build web`. |
-| `npm run test:web` | Runs the Vitest suite for the web app. |
-| `npm run lint:web` | ESLint for the web project. |
-| `npm run e2e:web` | Playwright tests against the `web` app (`web-e2e` project). |
-| `npm run kookio-icons-filled:web` | Generates application-specific icon module. |
-| `npm run material-icons-filled:web` | Imports Material icon set and builds a tree-shaken bundle. |
-| `npm run postbuild-ssr-symlink:web` | Post-build helper that links SSR artifacts with library outputs. |
-| `npm run prisma:migrate-dev` | Runs Prisma migrations locally (depends on `generate-local`). |
-| `npm run prisma:migrate-deploy` | Applies migrations in a CI/production environment (uses `.env.cloud`). |
-| `npm run prisma:studio` | Opens Prisma Studio with the local environment loaded. |
-| `npm run affected` | Lists projects affected by your current changes. |
-| `npm run format` | Runs `nx format:write` to apply workspace formatting rules. |
+|--------|-------------|
+| `npm run start:web` | Serves the `web` application locally using SSR. |
+| `npm run build:web` | Builds the `web` application (both client and SSR output). |
+| `npm run test:web` | Runs unit tests (`Vitest`) for the `web` app. |
+| `npm run lint:web` | Runs `ESLint` to lint the `web` app codebase. |
+| `npm run e2e:web` | Executes end-to-end tests (`Playwright`) for the `web` app. |
+| `npm run kookio-icons-filled:web` | Generates a custom icon module for `web`. |
+| `npm run material-icons-filled:web` | Imports and optimizes the Material Icons set. |
+
+### Prisma
+
+| Script | Description |
+|--------|-------------|
+| `npm run prisma:migrate-dev` | Creates and applies local migrations using `.env.local`. |
+| `npm run prisma:migrate-deploy` | Applies production migrations using `.env.cloud`. |
+| `npm run prisma:push-local` | Pushes the Prisma schema to the local DB without migrations. |
+| `npm run prisma:push-cloud` | Pushes the schema directly to the cloud database. |
+| `npm run prisma:resel-local` | Resets the local DB and reruns the seed script. |
+| `npm run prisma:seed` | Executes the initial seed script. |
+| `npm run prisma:studio` | Launches Prisma Studio to explore and edit data. |
+
+### General
+
+| Script | Description |
+|--------|-------------|
+| `npm run affected` | Lists projects affected by the current Git changes. |
+| `npm run format` | Applies formatting rules using `nx format:write`. |
 | `npm run safe-install` | Installs dependencies with `--legacy-peer-deps` for compatibility. |
 
 All scripts are defined in `package.json` and delegate to the corresponding Nx target for consistency across package managers (`npx nx`, `pnpm nx`, or `yarn nx`).
 
 ## 🚀 Future Directions
 
-- Migrate the relational backend to CockroachDB for effortless horizontal scaling.
+- Harden CockroachDB usage (backup/restore, multi-region patterns, changefeeds).
 - Introduce AI-powered microservices that propose recipes and pantry optimisations.
 - Integrate Firebase Authentication for passwordless and social login flows.
 - Add Redis caching layers for session storage and recipe search acceleration.
