@@ -12,7 +12,6 @@
     ],
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
-  "nxCloudId": "68c6cc691a4a45199f8bf4ee",
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
