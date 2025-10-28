@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import path from 'path';
+import path from 'node:path';
 import dotenvSafe from 'dotenv-safe';
 
 const envFile = process.argv[2] || '.env.local';

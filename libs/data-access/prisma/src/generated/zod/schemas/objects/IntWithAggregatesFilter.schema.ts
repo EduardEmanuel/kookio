@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import type { Prisma } from '../../../prisma-client';
+import type { Prisma } from '../../../../../generated/prisma-client';
 import { NestedIntWithAggregatesFilterObjectSchema as NestedIntWithAggregatesFilterObjectSchema } from './NestedIntWithAggregatesFilter.schema';
 import { NestedIntFilterObjectSchema as NestedIntFilterObjectSchema } from './NestedIntFilter.schema';
 import { NestedFloatFilterObjectSchema as NestedFloatFilterObjectSchema } from './NestedFloatFilter.schema'

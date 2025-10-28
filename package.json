@@ -9,6 +9,7 @@
   "scripts": {
     "start:web": "nx serve web",
     "build:web": "nx build web",
+    "test:prisma": "nx test prisma",
     "test:web": "nx test web",
     "lint:web": "nx lint web",
     "e2e:web": "nx e2e web-e2e",

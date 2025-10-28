@@ -1,4 +1,4 @@
-import type { Prisma } from '../../prisma-client';
+import type { Prisma } from '../../../../generated/prisma-client';
 import * as z from 'zod';
 import { IngredientSelectObjectSchema as IngredientSelectObjectSchema } from './objects/IngredientSelect.schema';
 import { IngredientCreateInputObjectSchema as IngredientCreateInputObjectSchema } from './objects/IngredientCreateInput.schema';

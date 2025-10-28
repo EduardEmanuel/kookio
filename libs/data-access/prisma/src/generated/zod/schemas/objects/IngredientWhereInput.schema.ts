@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import type { Prisma } from '../../../prisma-client';
+import type { Prisma } from '../../../../../generated/prisma-client';
 import { UuidFilterObjectSchema as UuidFilterObjectSchema } from './UuidFilter.schema';
 import { StringFilterObjectSchema as StringFilterObjectSchema } from './StringFilter.schema';
 import { IntFilterObjectSchema as IntFilterObjectSchema } from './IntFilter.schema';

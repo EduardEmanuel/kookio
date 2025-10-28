@@ -1,8 +1,8 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { Observable, of, take, throwError } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
+import { Observable, of } from 'rxjs';
 
 import { mockIngredients } from '@kookio/mock';
-import { IngredientInputType } from '@kookio/prisma';
+import { CreateIngredientDTO, FindUniqueIngredientResultDTO, IngredientDTO } from '@kookio/prisma';
 import { logger } from '@kookio/utils';
 
 import { createTestScheduler } from '@web/test-setup';
@@ -10,14 +10,37 @@ import { TrpcClientApp } from '@web/trpc-client';
 
 import { IngredientService } from './ingredient.service';
 
+const now = new Date('2024-01-01T00:00:00Z');
+const existingIngredient: IngredientDTO = {
+  ...mockIngredients[0],
+  createdAt: now,
+};
+const createdIngredient: IngredientDTO = {
+  id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'Sour Cream',
+  quantity: 100,
+  unit: 'g',
+  optional: true,
+  userId: 'test-user-id-11',
+  createdAt: now,
+};
+const createPayload: CreateIngredientDTO = {
+  name: createdIngredient.name,
+  quantity: createdIngredient.quantity,
+  unit: createdIngredient.unit,
+  optional: createdIngredient.optional,
+  userId: createdIngredient.userId,
+  createdAt: createdIngredient.createdAt,
+};
+
 export const ingredientTrpcMock = {
   ingredient: {
     findUnique: {
-      query: vi.fn().mockImplementation((): Observable<IngredientInputType> => of(mockIngredients[0])),
+      query: vi.fn().mockImplementation((): Observable<FindUniqueIngredientResultDTO> => of(existingIngredient)),
     },
     create: {
       mutate: vi.fn().mockImplementation(
-        (newIngredient: IngredientInputType): Observable<IngredientInputType> => of(newIngredient)
+        (): Observable<IngredientDTO> => of(createdIngredient)
       ),
     }
   },
@@ -26,16 +49,7 @@ export const ingredientTrpcMock = {
 describe('IngredientService', () => {
   let service: IngredientService;
 
-  const newIngredient: IngredientInputType = {
-    id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 
-    name: 'Sour Cream', 
-    quantity: 100, 
-    unit: 'g', 
-    optional: true, 
-    userId: 'test-user-id-11',
-    createdAt: new Date(), 
-  };
-  const id = newIngredient.id;
+  const id = existingIngredient.id;
 
   afterEach(() => {
     vi.clearAllMocks();
@@ -61,7 +75,7 @@ describe('IngredientService', () => {
 
     scheduler.run(({ cold, expectObservable }) => {
       // simulate a cold observable that emits `newIngredient` after 2 frames and completes
-      const response$ = cold('--a|', { a: newIngredient });
+      const response$ = cold('--a|', { a: createdIngredient });
 
       // inject the mocked tRPC mutation
       ingredientTrpcMock.ingredient.create.mutate.mockReturnValue(response$);
@@ -69,12 +83,12 @@ describe('IngredientService', () => {
       // initial state
       expect(service.ingredients()).toEqual([]);
 
-      const result$ = service.createIngredient(newIngredient);
+      const result$ = service.createIngredient(createPayload);
 
-      expectObservable(result$).toBe('--a|', { a: newIngredient });
+      expectObservable(result$).toBe('--a|', { a: createdIngredient });
 
       scheduler.flush(); // update the signal
-      expect(service.ingredients()).toEqual([newIngredient]);
+      expect(service.ingredients()).toEqual([createdIngredient]);
     });
   });
 
@@ -82,7 +96,7 @@ describe('IngredientService', () => {
     const scheduler = createTestScheduler();
 
     scheduler.run(({ cold, expectObservable }) => {
-      const response$ = cold('--x|', { x: mockIngredients[0] });
+      const response$ = cold('--x|', { x: existingIngredient });
 
       ingredientTrpcMock.ingredient.findUnique.query.mockReturnValue(response$);
 
@@ -90,10 +104,10 @@ describe('IngredientService', () => {
 
       const result$ = service.fetchIngredient({ id });
 
-      expectObservable(result$).toBe('--x|', { x: mockIngredients[0] });
+      expectObservable(result$).toBe('--x|', { x: existingIngredient });
 
       scheduler.flush();
-      expect(service.ingredients()).toEqual([mockIngredients[0]]);
+      expect(service.ingredients()).toEqual([existingIngredient]);
     });
   });
 
@@ -108,10 +122,10 @@ describe('IngredientService', () => {
       ingredientTrpcMock.ingredient.create.mutate.mockReturnValue(cold('--#', {}, err));
 
       const fetch$ = service.fetchIngredient({ id });
-      const create$ = service.createIngredient(newIngredient);
+      const create$ = service.createIngredient(createPayload);
 
       expectObservable(fetch$).toBe('--(y|)', { y: null });
-      expectObservable(create$).toBe('--(b|)', { b: {} as IngredientInputType });
+      expectObservable(create$).toBe('--(b|)', { b: {} as IngredientDTO });
 
       scheduler.flush();
 

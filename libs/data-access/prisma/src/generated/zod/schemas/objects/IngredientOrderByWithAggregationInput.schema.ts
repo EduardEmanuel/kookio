@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import type { Prisma } from '../../../prisma-client';
+import type { Prisma } from '../../../../../generated/prisma-client';
 import { SortOrderSchema } from '../enums/SortOrder.schema';
 import { IngredientCountOrderByAggregateInputObjectSchema as IngredientCountOrderByAggregateInputObjectSchema } from './IngredientCountOrderByAggregateInput.schema';
 import { IngredientAvgOrderByAggregateInputObjectSchema as IngredientAvgOrderByAggregateInputObjectSchema } from './IngredientAvgOrderByAggregateInput.schema';

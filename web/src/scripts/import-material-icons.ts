@@ -1,6 +1,6 @@
-import { mkdir, readdir, copyFile } from 'fs/promises';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
+import { mkdir, readdir, copyFile } from 'node:fs/promises';
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { logger } from '@kookio/utils';
 

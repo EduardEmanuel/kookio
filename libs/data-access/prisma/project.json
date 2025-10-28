@@ -5,6 +5,16 @@
   "projectType": "library",
   "tags": [],
   "targets": {
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/data-access/prisma",
+        "main": "libs/data-access/prisma/src/index.ts",
+        "tsConfig": "libs/data-access/prisma/tsconfig.lib.json",
+        "assets": ["libs/data-access/prisma/*.md"]
+      }
+    },
     "generate-cloud": {
       "executor": "nx:run-commands",
       "cache": false,
@@ -84,14 +94,10 @@
         "cwd": "libs/data-access/prisma"
       }
     },
-    "build": {
-      "executor": "@nx/js:swc",
-      "outputs": ["{options.outputPath}"],
+    "test": {
+      "executor": "@nx/vite:test",
       "options": {
-        "outputPath": "dist/libs/data-access/prisma",
-        "main": "libs/data-access/prisma/src/index.ts",
-        "tsConfig": "libs/data-access/prisma/tsconfig.lib.json",
-        "assets": ["libs/data-access/prisma/*.md"]
+        "config": "libs/data-access/prisma/vite.config.ts" 
       }
     }
   }

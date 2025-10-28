@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import dotenvSafe from 'dotenv-safe';
 
 import { PrismaClient, Prisma } from '@kookio/prisma';

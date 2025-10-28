@@ -1,20 +1,17 @@
 import { Injectable, signal } from '@angular/core';
 import { catchError, Observable, of, tap } from 'rxjs';
 
-import type { IngredientResultType, Prisma } from '@kookio/prisma';
+import type {
+  CreateIngredientDTO,
+  FindUniqueIngredientDTO,
+  FindUniqueIngredientResultDTO,
+  IngredientDTO,
+} from '@kookio/prisma';
 import { logger } from '@kookio/utils';
 
-import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
-import type { AppRouter } from '@web/server/trpc/routers';
 import { injectTrpcClient } from '@web/trpc-client';
 
-type RouterInputs = inferRouterInputs<AppRouter>;
-type RouterOutputs = inferRouterOutputs<AppRouter>;
-
-type CreateIngredientInput = RouterInputs['ingredient']['create'];
-type CreateIngredientOutput = RouterOutputs['ingredient']['create'];
-type FindIngredientOutput = RouterOutputs['ingredient']['findUnique'];
-type FindIngredientWhere = Prisma.IngredientWhereUniqueInput;
+type FindIngredientWhere = FindUniqueIngredientDTO['where'];
 
 @Injectable({
   providedIn: 'root',
@@ -22,21 +19,21 @@ type FindIngredientWhere = Prisma.IngredientWhereUniqueInput;
 export class IngredientService {
   private readonly trpc = injectTrpcClient();
 
-  public readonly ingredients = signal<IngredientResultType[]>([]);
+  public readonly ingredients = signal<IngredientDTO[]>([]);
 
-  public createIngredient(ingredient: CreateIngredientInput): Observable<CreateIngredientOutput> {
+  public createIngredient(ingredient: CreateIngredientDTO): Observable<IngredientDTO> {
     return this.trpc.ingredient.create
       .mutate(ingredient)
       .pipe(
         tap(ingredient => this.ingredients.update(ingredients => [...ingredients, ingredient])),
         catchError((error: Error) => {
           logger.error(error, '❌ Error creating ingredient via tRPC:');
-          return of({} as IngredientResultType); // return an empty ingredient on error
+          return of({} as IngredientDTO); // return an empty ingredient on error
         }),
       );
   }
 
-  public fetchIngredient(where: FindIngredientWhere): Observable<FindIngredientOutput> {
+  public fetchIngredient(where: FindIngredientWhere): Observable<FindUniqueIngredientResultDTO> {
     return this.trpc.ingredient.findUnique
     .query({ where })
     .pipe(
@@ -44,7 +41,7 @@ export class IngredientService {
       catchError((error: Error) => {
         logger.error(error, '❌ Error fetching ingredients from tRPC:');
         this.ingredients.set([]);
-        return of(null as FindIngredientOutput);
+        return of(null as FindUniqueIngredientResultDTO);
       }),
     );
   }

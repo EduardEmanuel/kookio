@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import type { Prisma } from '../../../prisma-client';
+import type { Prisma } from '../../../../../generated/prisma-client';
 import { IngredientSelectObjectSchema as IngredientSelectObjectSchema } from './IngredientSelect.schema'
 
 const makeSchema = () => z.object({

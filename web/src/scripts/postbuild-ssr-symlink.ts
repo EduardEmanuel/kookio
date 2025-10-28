@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { loadConfig, createMatchPath, ConfigLoaderSuccessResult } from 'tsconfig-paths';
 
 // import { logger } from '../../../../libs/shared/utils/src/index';

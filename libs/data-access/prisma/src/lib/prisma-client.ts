@@ -4,6 +4,7 @@ import { dirname, join, parse, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import dotenvSafe from 'dotenv-safe';
+import type { Prisma as PrismaNamespace, PrismaClient as PrismaClientType } from '../../generated/prisma-client';
 
 const require = createRequire(import.meta.url);
 
@@ -58,21 +59,23 @@ function ensurePrismaEnvLoaded() {
 
 ensurePrismaEnvLoaded();
 
-function loadGeneratedClient() {
+type GeneratedPrismaModule = typeof import('../../generated/prisma-client');
+
+function loadGeneratedClient(): GeneratedPrismaModule {
   const moduleDir = dirname(fileURLToPath(import.meta.url));
-  const localCandidate = join(moduleDir, '../generated/prisma-client/index.js');
+  const localCandidate = join(moduleDir, '../../generated/prisma-client/index.js');
   if (existsSync(localCandidate)) {
-    return require(localCandidate) as typeof import('../generated/prisma-client');
+    return require(localCandidate) as GeneratedPrismaModule;
   }
 
-  const suffix = join('libs', 'data-access', 'prisma', 'src', 'generated', 'prisma-client', 'index.js');
+  const suffix = join('libs', 'data-access', 'prisma', 'generated', 'prisma-client', 'index.js');
   let current = moduleDir;
   const { root } = parse(current);
 
   while (true) {
     const candidate = join(current, suffix);
     if (existsSync(candidate)) {
-      return require(candidate) as typeof import('../generated/prisma-client');
+      return require(candidate) as GeneratedPrismaModule;
     }
     if (current === root) break;
     current = dirname(current);
@@ -84,17 +87,21 @@ function loadGeneratedClient() {
   );
 }
 
-const { PrismaClient } = loadGeneratedClient();
+const { PrismaClient: PrismaClientCtor, Prisma: PrismaNamespaceValue } = loadGeneratedClient();
 
 declare global {
   // eslint-disable-next-line no-var
-  var __kookioPrisma: PrismaClient | undefined;
+  var __kookioPrisma: PrismaClientType | undefined;
 }
 
-const prismaClient = globalThis.__kookioPrisma ?? new PrismaClient();
+const prismaClient = globalThis.__kookioPrisma ?? new PrismaClientCtor();
 
 if (process.env['NODE_ENV'] !== 'production') {
   globalThis.__kookioPrisma = prismaClient;
 }
 
 export const prisma = prismaClient;
+export const PrismaClient = PrismaClientCtor;
+export const Prisma = PrismaNamespaceValue;
+export type PrismaClient = PrismaClientType;
+export type Prisma = PrismaNamespace;
