@@ -31,6 +31,7 @@ export * from './IngredientUncheckedUpdateInput.schema';
 export * from './IngredientUncheckedUpdateManyInput.schema';
 export * from './IngredientUpdateInput.schema';
 export * from './IngredientUpdateManyMutationInput.schema';
+export * from './IngredientUserIdNameCompoundUniqueInput.schema';
 export * from './IngredientWhereInput.schema';
 export * from './IngredientWhereUniqueInput.schema';
 export * from './IntFieldUpdateOperationsInput.schema';

@@ -18,7 +18,7 @@ export const ingredientRouter = router({
     .output(IngredientFindUniqueResultSchema)
     .query(async ({ input, ctx }) => {
       try {
-        return await ctx.prisma.ingredient.findUnique(input)
+        return await ctx.ingredientRepository.findUnique(input)
       } catch (error) {
         logger.error(error, '❌ Error fetching ingredient by ID via tRPC:');
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Could not fetch ingredient ${input}` });
@@ -30,7 +30,7 @@ export const ingredientRouter = router({
     .output(IngredientResultSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await ctx.prisma.ingredient.create({ data: input })
+        return await ctx.ingredientRepository.create(input)
       } catch (error) {
         logger.error(error, '❌ Error creating ingredient via tRPC:');
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to create ingredient ${input}` });
@@ -42,7 +42,7 @@ export const ingredientRouter = router({
     .output(IngredientResultSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await ctx.prisma.ingredient.delete(input)
+        return await ctx.ingredientRepository.delete(input)
       } catch (error) {
         logger.error(error, '❌ Error deleting ingredient via tRPC:');
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to delete ingredient ${input}` });
@@ -53,7 +53,7 @@ export const ingredientRouter = router({
     .output(IngredientResultSchema.array())
     .query(async ({ ctx }) => {
       try {
-        return await ctx.prisma.ingredient.findMany();
+        return await ctx.ingredientRepository.list();
       } catch (error) {
         logger.error(error, '❌ Error listing ingredients via tRPC:');
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Could not list ingredients' });
@@ -65,7 +65,7 @@ export const ingredientRouter = router({
     .output(IngredientResultSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await ctx.prisma.ingredient.update(input);
+        return await ctx.ingredientRepository.update(input);
       } catch (error) {
         logger.error(error, '❌ Error updating ingredient via tRPC:');
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to update ingredient ${input}` });

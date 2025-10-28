@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "generatorVersion": "0.0.1",
-  "generatedAt": "2025-10-25T15:22:56.379Z",
+  "generatedAt": "2025-10-27T20:29:33.931Z",
   "outputPath": "/Users/edi/Desktop/kookio/libs/data-access/prisma/src/generated/zod",
   "files": [
     "schemas/enums/TransactionIsolationLevel.schema.ts",
@@ -25,6 +25,7 @@
     "schemas/objects/IntFilter.schema.ts",
     "schemas/objects/BoolFilter.schema.ts",
     "schemas/objects/DateTimeFilter.schema.ts",
+    "schemas/objects/IngredientUserIdNameCompoundUniqueInput.schema.ts",
     "schemas/objects/IngredientCountOrderByAggregateInput.schema.ts",
     "schemas/objects/IngredientAvgOrderByAggregateInput.schema.ts",
     "schemas/objects/IngredientMaxOrderByAggregateInput.schema.ts",

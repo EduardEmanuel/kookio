@@ -2052,6 +2052,7 @@ export namespace Prisma {
 
   export type IngredientWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    userId_name?: IngredientUserIdNameCompoundUniqueInput
     AND?: IngredientWhereInput | IngredientWhereInput[]
     OR?: IngredientWhereInput[]
     NOT?: IngredientWhereInput | IngredientWhereInput[]
@@ -2061,7 +2062,7 @@ export namespace Prisma {
     optional?: BoolFilter<"Ingredient"> | boolean
     userId?: StringFilter<"Ingredient"> | string
     createdAt?: DateTimeFilter<"Ingredient"> | Date | string
-  }, "id">
+  }, "id" | "userId_name">
 
   export type IngredientOrderByWithAggregationInput = {
     id?: SortOrder
@@ -2213,6 +2214,11 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type IngredientUserIdNameCompoundUniqueInput = {
+    userId: string
+    name: string
   }
 
   export type IngredientCountOrderByAggregateInput = {

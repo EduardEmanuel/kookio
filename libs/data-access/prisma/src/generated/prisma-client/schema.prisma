@@ -31,6 +31,8 @@ model Ingredient {
   optional  Boolean
   userId    String
   createdAt DateTime @default(now())
+
+  @@unique([userId, name])
 }
 
 // export interface Ingredient {
