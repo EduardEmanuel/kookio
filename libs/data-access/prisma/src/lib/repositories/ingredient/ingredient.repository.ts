@@ -38,7 +38,7 @@ async function withTxRetry<T>(
 
 export type CreateIngredientDTO = z.output<typeof IngredientCreateInputObjectSchema>;
 export type IngredientDTO = z.output<typeof IngredientResultSchema>;
-export const IdObjectSchema = z.object({ id: z.uuid() });
+export const IdObjectSchema = z.object({ id: z.string().uuid() });
 export type IdDTO = z.output<typeof IdObjectSchema>;
 export type FindUniqueIngredientDTO = z.output<typeof IngredientFindUniqueSchema>;
 export type FindUniqueIngredientResultDTO = z.output<typeof IngredientFindUniqueResultSchema>;
