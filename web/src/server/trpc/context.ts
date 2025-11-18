@@ -1,7 +1,9 @@
 import { inferAsyncReturnType } from '@trpc/server';
-import { PrismaIngredientRepository, prisma } from '@kookio/prisma';
+import { PrismaIngredientRepository } from '@kookio/prisma-client';
 
-const ingredientRepository = new PrismaIngredientRepository(prisma);
+const ingredient = new PrismaIngredientRepository();
 
-export const createContext = () => ({ ingredientRepository });
+export const createContext = () => ({
+    repository: { ingredient }
+ });
 export type Context = inferAsyncReturnType<typeof createContext>;

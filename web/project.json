@@ -25,7 +25,7 @@
     "postbuild-ssr-symlink": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "vite-node --config web/src/scripts/vite.config.ts web/src/scripts/postbuild-ssr-symlink.ts '@kookio/mock,@kookio/prisma,@kookio/utils'",
+        "command": "vite-node --config web/src/scripts/vite.config.ts web/src/scripts/postbuild-ssr-symlink.ts '@kookio/mock,@kookio/prisma-client,@kookio/prisma-validator,@kookio/utils'",
         "cwd": ".",
         "parallel": false
       }
@@ -37,7 +37,7 @@
         "main": "web/src/main.ts",
         "outputPath": "dist/web/client",
         "tsConfig": "web/tsconfig.app.json",
-        "implicitDependencies": ["mock", "schema"]
+        "implicitDependencies": ["mock", "prisma-client", "prisma-validator", "utils"]
       },
       "defaultConfiguration": "production",
       "configurations": {

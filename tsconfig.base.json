@@ -16,7 +16,10 @@
     "baseUrl": ".",
     "paths": {
       "@kookio/mock": ["libs/shared/mock/src/index.ts"],
-      "@kookio/prisma": ["libs/data-access/prisma/src/index.ts"],
+      "@kookio/prisma-client": ["libs/data-access/prisma-client/src/index.ts"],
+      "@kookio/prisma-validator": [
+        "libs/data-access/prisma-validator/src/index.ts"
+      ],
       "@kookio/utils": ["libs/shared/utils/src/index.ts"],
       "@web/*": ["web/src/*"]
     }

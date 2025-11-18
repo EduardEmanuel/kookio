@@ -3,7 +3,7 @@
 <h1>Welcome {{ message }}</h1>
 </div>
 <ol>
-  @for (ingredient of ingredientService.ingredients(); track ingredient.userId) {
+  @for (ingredient of ingredients(); track ingredient.userId) {
     <li>{{$index}}: {{ ingredient.name }}</li>
   }
 </ol>

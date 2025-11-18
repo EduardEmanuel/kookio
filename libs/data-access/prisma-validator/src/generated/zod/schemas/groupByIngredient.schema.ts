@@ -1,0 +1,15 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { IngredientWhereInputObjectSchema as IngredientWhereInputObjectSchema } from './objects/IngredientWhereInput.schema';
+import { IngredientOrderByWithAggregationInputObjectSchema as IngredientOrderByWithAggregationInputObjectSchema } from './objects/IngredientOrderByWithAggregationInput.schema';
+import { IngredientScalarWhereWithAggregatesInputObjectSchema as IngredientScalarWhereWithAggregatesInputObjectSchema } from './objects/IngredientScalarWhereWithAggregatesInput.schema';
+import { IngredientScalarFieldEnumSchema } from './enums/IngredientScalarFieldEnum.schema';
+import { IngredientCountAggregateInputObjectSchema as IngredientCountAggregateInputObjectSchema } from './objects/IngredientCountAggregateInput.schema';
+import { IngredientMinAggregateInputObjectSchema as IngredientMinAggregateInputObjectSchema } from './objects/IngredientMinAggregateInput.schema';
+import { IngredientMaxAggregateInputObjectSchema as IngredientMaxAggregateInputObjectSchema } from './objects/IngredientMaxAggregateInput.schema';
+import { IngredientAvgAggregateInputObjectSchema as IngredientAvgAggregateInputObjectSchema } from './objects/IngredientAvgAggregateInput.schema';
+import { IngredientSumAggregateInputObjectSchema as IngredientSumAggregateInputObjectSchema } from './objects/IngredientSumAggregateInput.schema';
+
+export const IngredientGroupBySchema: z.ZodType<Prisma.IngredientGroupByArgs> = z.object({ where: IngredientWhereInputObjectSchema.optional(), orderBy: z.union([IngredientOrderByWithAggregationInputObjectSchema, IngredientOrderByWithAggregationInputObjectSchema.array()]).optional(), having: IngredientScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(IngredientScalarFieldEnumSchema), _count: z.union([ z.literal(true), IngredientCountAggregateInputObjectSchema ]).optional(), _min: IngredientMinAggregateInputObjectSchema.optional(), _max: IngredientMaxAggregateInputObjectSchema.optional(), _avg: IngredientAvgAggregateInputObjectSchema.optional(), _sum: IngredientSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.IngredientGroupByArgs>;
+
+export const IngredientGroupByZodSchema = z.object({ where: IngredientWhereInputObjectSchema.optional(), orderBy: z.union([IngredientOrderByWithAggregationInputObjectSchema, IngredientOrderByWithAggregationInputObjectSchema.array()]).optional(), having: IngredientScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(IngredientScalarFieldEnumSchema), _count: z.union([ z.literal(true), IngredientCountAggregateInputObjectSchema ]).optional(), _min: IngredientMinAggregateInputObjectSchema.optional(), _max: IngredientMaxAggregateInputObjectSchema.optional(), _avg: IngredientAvgAggregateInputObjectSchema.optional(), _sum: IngredientSumAggregateInputObjectSchema.optional() }).strict();

@@ -38,6 +38,11 @@ yarn-error.log
 testem.log
 /typings
 
+# Keep environment variables out of version control
+.env
+.env.cloud
+.env.local
+
 # System Files
 .DS_Store
 Thumbs.db

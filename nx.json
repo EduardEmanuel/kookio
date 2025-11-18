@@ -14,11 +14,11 @@
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "prisma-client:generate"],
       "inputs": ["production", "^production"]
     },
     "serve": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "prisma-client:generate"]
     },
     "@angular/build:application": {
       "cache": true,
@@ -48,6 +48,11 @@
       "inputs": ["production", "^production"]
     },
     "@nx/esbuild:esbuild": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "@nx/js:tsc": {
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
@@ -92,11 +97,11 @@
   "projects": {
     "web": {
       "tags": ["type:app", "scope:web"],
-      "dependsOn": ["mock", "prisma"]
+      "dependsOn": ["mock", "prisma-client"]
     },
     "web-e2e": {
       "tags": ["type:e2e", "scope:web"],
-      "dependsOn": ["mock", "prisma"]
+      "dependsOn": ["mock", "prisma-client"]
     }
   }
 }
