@@ -9,8 +9,8 @@
     "kookio-icons-filled": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "vite-node web/scripts/generate-icon-file.ts --namespace=kookio",
-        "cwd": ".",
+        "command": "vite-node --config vite.config.ts generate-icon-file.ts --namespace=kookio",
+        "cwd": "web/scripts/",
         "parallel": false
       }
     },
@@ -18,10 +18,10 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          { "command": "vite-node web/scripts/import-material-icons.ts --style=filled" },
-          { "command": "vite-node web/src/app/scripts/generate-icon-file.ts --namespace=material" }
+          { "command": "vite-node --config vite.config.ts import-material-icons.ts --style=filled" },
+          { "command": "vite-node --config vite.config.ts generate-icon-file.ts --namespace=material" }
         ],
-        "cwd": ".",
+        "cwd": "web/scripts/",
         "parallel": false
       }
     },
