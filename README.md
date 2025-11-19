@@ -136,7 +136,7 @@ Key targets are defined per project in their `project.json` files:
 
 | Command | Purpose | Configuration |
 | --- | --- | --- |
-| `nx serve web` | Dev server with Analog SSR, HMR, and icon symlink dependency (`postbuild-ssr-symlink`). | `web/project.json` |
+| `nx serve web` | Dev server with Analog SSR and HMR. | `web/project.json` |
 | `nx build web` | Production build via `@analogjs/platform:vite`, outputs to `dist/web`. | `web/project.json` |
 | `nx test web` | Runs Angular-aware Vitest suite (`@analogjs/vitest-angular`). | `web/project.json` |
 | `nx lint web` | Lints via ESLint executor. | `web/project.json` |

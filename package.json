@@ -15,7 +15,6 @@
     "e2e:web": "nx e2e web-e2e",
     "kookio-icons-filled:web": "nx kookio-icons-filled web",
     "material-icons-filled:web": "nx material-icons-filled web",
-    "postbuild-ssr-symlink:web": "nx postbuild-ssr-symlink web",
     "generate:prisma-client": "nx generate prisma-client",
     "migrate-deploy:prisma-client": "nx migrate-deploy prisma-client",
     "migrate-dev:prisma-client": "nx migrate-dev prisma-client",

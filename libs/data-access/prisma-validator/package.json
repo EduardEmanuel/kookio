@@ -4,6 +4,9 @@
   "private": true,
   "type": "commonjs",
   "main": "./index.cjs",
-  "types": "./index.d.ts",
-  "dependencies": {}
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "zod": "~3.25.76",
+    "@prisma/client": "~6.16.3"
+  }
 }

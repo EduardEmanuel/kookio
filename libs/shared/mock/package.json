@@ -4,6 +4,6 @@
   "private": true,
   "type": "commonjs",
   "main": "./index.cjs",
-  "types": "./index.d.ts",
+  "types": "./src/index.d.ts",
   "dependencies": {}
 }

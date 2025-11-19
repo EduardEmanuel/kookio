@@ -9,7 +9,7 @@
     "kookio-icons-filled": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "vite-node web/src/scripts/generate-icon-file.ts --namespace=kookio",
+        "command": "vite-node web/scripts/generate-icon-file.ts --namespace=kookio",
         "cwd": ".",
         "parallel": false
       }
@@ -17,15 +17,10 @@
     "material-icons-filled": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "vite-node web/src/scripts/import-material-icons.ts --style=filled && vite-node web/src/app/scripts/generate-icon-file.ts --namespace=material",
-        "cwd": ".",
-        "parallel": false
-      }
-    },
-    "postbuild-ssr-symlink": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "vite-node --config web/src/scripts/vite.config.ts web/src/scripts/postbuild-ssr-symlink.ts '@kookio/mock,@kookio/prisma-client,@kookio/prisma-validator,@kookio/utils'",
+        "commands": [
+          { "command": "vite-node web/scripts/import-material-icons.ts --style=filled" },
+          { "command": "vite-node web/src/app/scripts/generate-icon-file.ts --namespace=material" }
+        ],
         "cwd": ".",
         "parallel": false
       }
@@ -66,13 +61,7 @@
         "production": {
           "buildTarget": "web:build:production"
         }
-      },
-      "dependsOn": [
-        {
-          "target": "postbuild-ssr-symlink",
-          "projects": "self"
-        }
-      ]
+      }
     },
     "extract-i18n": {
       "executor": "@angular/build:extract-i18n",

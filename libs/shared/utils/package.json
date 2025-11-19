@@ -4,6 +4,8 @@
   "private": true,
   "type": "commonjs",
   "main": "./index.cjs",
-  "types": "./index.d.ts",
-  "dependencies": {}
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "pino": "~9.12.0"
+  }
 }
