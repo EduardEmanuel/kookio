@@ -10,12 +10,12 @@ import {
   withFetch,
   withInterceptors,
 } from '@angular/common/http';
+import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer, provideClientHydration } from '@angular/platform-browser';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 
 import { provideTrpcClient } from '../trpc-client';
 import { IconNamespace } from './icons/types';
-import { MatIconRegistry } from '@angular/material/icon';
 import { ALL_ICONS } from './icons/all-icons';
 
 export const addSvgIcons = (

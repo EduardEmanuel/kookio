@@ -1,5 +1,5 @@
-import { Injectable, signal } from '@angular/core';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { catchError, Observable, of } from 'rxjs';
 
 import type {
   CreateOneIngredientDTO,

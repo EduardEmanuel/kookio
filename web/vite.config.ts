@@ -25,8 +25,24 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
 
       analog({
+        ssr:true,
         prerender: {
-          routes: [],
+          routes: ['/404.html'],
+        },
+        nitro: {
+          preset: 'node-server',
+          serveStatic: true,
+          esbuild: {
+            options: {
+              platform: 'node',
+              target: 'node20',
+              format: 'esm',
+            },
+          },
+          externals: {
+            inline: [/^@kookio\//],
+          },
+          modules: ['./nitro-modules/tsconfig-alias'],
         },
       }),
 

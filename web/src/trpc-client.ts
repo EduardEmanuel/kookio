@@ -1,10 +1,13 @@
-import { AppRouter } from './server/trpc/routers';
 import { createTrpcClient } from '@analogjs/trpc';
 import { inject } from '@angular/core';
 import { SuperJSON } from 'superjson';
 
+import { AppRouter } from './server/trpc/routers';
+
+const url = '/api/trpc';
+
 const trpcClient = createTrpcClient<AppRouter>({
-  url: '/api/trpc',
+  url,
   options: {
     transformer: SuperJSON,
   }
