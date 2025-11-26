@@ -16,7 +16,8 @@ const ingredientwhereinputSchema = z.object({
   unit: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   optional: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
   userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-  createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional()
+  createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional()
 }).strict();
 export const IngredientWhereInputObjectSchema: z.ZodType<Prisma.IngredientWhereInput> = ingredientwhereinputSchema as unknown as z.ZodType<Prisma.IngredientWhereInput>;
 export const IngredientWhereInputObjectZodSchema = ingredientwhereinputSchema;

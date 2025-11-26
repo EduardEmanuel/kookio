@@ -17,7 +17,7 @@ import type {
   CreateOneIngredientDTO
 } from '@kookio/prisma-validator';
 
-import prisma, { withTxRetry } from '../../prisma-client';
+import { prisma, withTxRetry } from '../../prisma-client';
 
 export interface IngredientRepository {
   create(data: CreateOneIngredientDTO): Promise<CreateIngredientResultDTO>;

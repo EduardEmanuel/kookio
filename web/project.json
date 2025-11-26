@@ -46,6 +46,15 @@
       },
       "outputs": ["{workspaceRoot}/dist/apps/web"]
     },
+    "reset": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          { "command": "nx reset" },
+          { "command": "rimraf node_modules/.vite dist" }
+        ]
+      }
+    },
     "serve": {
       "executor": "@analogjs/platform:vite-dev-server",
       "defaultConfiguration": "development",

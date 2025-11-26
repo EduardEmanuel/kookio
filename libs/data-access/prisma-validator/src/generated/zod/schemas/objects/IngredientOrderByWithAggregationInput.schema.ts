@@ -15,6 +15,7 @@ const makeSchema = () => z.object({
   optional: SortOrderSchema.optional(),
   userId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
+  updatedAt: SortOrderSchema.optional(),
   _count: z.lazy(() => IngredientCountOrderByAggregateInputObjectSchema).optional(),
   _avg: z.lazy(() => IngredientAvgOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => IngredientMaxOrderByAggregateInputObjectSchema).optional(),

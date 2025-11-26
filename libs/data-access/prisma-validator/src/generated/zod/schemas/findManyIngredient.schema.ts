@@ -15,7 +15,8 @@ export const IngredientFindManySelectSchema: z.ZodType<Prisma.IngredientSelect> 
     unit: z.boolean().optional(),
     optional: z.boolean().optional(),
     userId: z.boolean().optional(),
-    createdAt: z.boolean().optional()
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.IngredientSelect>;
 
 export const IngredientFindManySelectZodSchema = z.object({
@@ -25,7 +26,8 @@ export const IngredientFindManySelectZodSchema = z.object({
     unit: z.boolean().optional(),
     optional: z.boolean().optional(),
     userId: z.boolean().optional(),
-    createdAt: z.boolean().optional()
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional()
   }).strict();
 
 export const IngredientFindManySchema: z.ZodType<Prisma.IngredientFindManyArgs> = z.object({ select: IngredientFindManySelectSchema.optional(),  orderBy: z.union([IngredientOrderByWithRelationInputObjectSchema, IngredientOrderByWithRelationInputObjectSchema.array()]).optional(), where: IngredientWhereInputObjectSchema.optional(), cursor: IngredientWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([IngredientScalarFieldEnumSchema, IngredientScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.IngredientFindManyArgs>;

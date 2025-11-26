@@ -4,9 +4,6 @@
   "sourceRoot": "libs/data-access/prisma-client/src",
   "projectType": "library",
   "tags": ["type:data-access", "scope:prisma"],
-  "depConstraints": [
-    { "sourceTag": "scope:prisma", "onlyDependOnLibsWithTags": ["scope:prisma", "scope:utils", "scope:mock"] }
-  ],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -157,14 +154,15 @@
       "executor": "nx:run-commands",
       "cache": false,
       "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" }
+        { "target": "migrate-reset", "projects": "self", "params": "forward" }
       ],
       "options": {
         "cwd": ".",
         "env": {
           "DOTENV_CONFIG_PATH": ".env.local",
           "DOTENV_CONFIG_EXAMPLE": ".env.example",
-          "NODE_OPTIONS": "-r dotenv-safe/config"
+          "NODE_OPTIONS": "-r dotenv-safe/config",
+          "SEED_USER_ID": "seed-user"
         },
         "commands": [
           {
@@ -175,7 +173,8 @@
       "configurations": {
         "cloud": {
           "env": {
-            "DOTENV_CONFIG_PATH": ".env.cloud"
+            "DOTENV_CONFIG_PATH": ".env.cloud",
+            "SEED_USER_ID": "cloud-seed-user"
           }
         }
       }

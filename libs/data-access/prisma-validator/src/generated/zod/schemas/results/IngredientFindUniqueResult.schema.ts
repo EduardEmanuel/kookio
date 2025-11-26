@@ -6,5 +6,6 @@ export const IngredientFindUniqueResultSchema = z.nullable(z.object({
   unit: z.string(),
   optional: z.boolean(),
   userId: z.string(),
-  createdAt: z.date()
+  createdAt: z.date(),
+  updatedAt: z.date()
 }));

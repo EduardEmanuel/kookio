@@ -9,7 +9,8 @@ const makeSchema = () => z.object({
   unit: z.literal(true).optional(),
   optional: z.literal(true).optional(),
   userId: z.literal(true).optional(),
-  createdAt: z.literal(true).optional()
+  createdAt: z.literal(true).optional(),
+  updatedAt: z.literal(true).optional()
 }).strict();
 export const IngredientMaxAggregateInputObjectSchema: z.ZodType<Prisma.IngredientMaxAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.IngredientMaxAggregateInputType>;
 export const IngredientMaxAggregateInputObjectZodSchema = makeSchema();

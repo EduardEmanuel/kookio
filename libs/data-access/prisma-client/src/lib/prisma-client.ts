@@ -9,7 +9,7 @@ if (!g.prisma) {
   g.prisma = new PrismaClient();
 }
 
-export default g.prisma;
+export const prisma = g.prisma;
 
 /**
  * Conservative retry for CockroachDB SERIALIZABLE conflicts.

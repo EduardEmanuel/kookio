@@ -5,9 +5,5 @@ import { SuperJSON } from 'superjson';
 const t = initTRPC.context<Context>().create({
   transformer: SuperJSON,
 });
-/**
- * Unprotected procedure
- **/
-export const publicProcedure = t.procedure;
-export const router = t.router;
-export const middleware = t.middleware;
+
+export const { createCallerFactory, middleware, procedure, router } = t

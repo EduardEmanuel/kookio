@@ -8,7 +8,8 @@ export const IngredientModelSchema = z.object({
     unit: z.string(),
     optional: z.boolean(),
     userId: z.string(),
-    createdAt: z.date()
+    createdAt: z.date(),
+    updatedAt: z.date()
 }).strict();
 
 export type IngredientPureType = z.infer<typeof IngredientModelSchema>;

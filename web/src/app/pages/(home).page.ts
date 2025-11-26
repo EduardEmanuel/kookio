@@ -5,11 +5,11 @@ import { iif, map, switchMap } from 'rxjs';
 
 import { mockIngredients } from '@kookio/mock';
 
-import { IngredientService } from '@web/app/services/ingredient/ingredient.service';
+import { IngredientService } from '../services/ingredient/ingredient.service';
 import { FindUniqueIngredientDTO } from '@kookio/prisma-validator';
 
 @Component({
-  selector: 'web-home',
+  selector: 'kookio-web-home',
   imports: [MatIconModule],
   providers: [IngredientService],
   templateUrl: `./(home).page.html`,

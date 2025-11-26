@@ -23,14 +23,17 @@ datasource db {
 }
 
 model Ingredient {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        String    @id @default(uuid()) @db.Uuid
   name      String
   quantity  Int
   unit      String
-  optional  Boolean
+  optional  Boolean   @default(false)
   userId    String
-  createdAt DateTime @default(now())
-  @@unique([userId, name]) 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@unique([userId, name], map: "userId_name_unique")
+  @@index([userId], map: "ingredient_user_idx")
 }
 
 // export interface Ingredient {

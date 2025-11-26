@@ -12,7 +12,8 @@ const makeSchema = () => z.object({
   unit: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   optional: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
   userId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const IngredientUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.IngredientUncheckedUpdateInput> = makeSchema() as unknown as z.ZodType<Prisma.IngredientUncheckedUpdateInput>;
 export const IngredientUncheckedUpdateInputObjectZodSchema = makeSchema();

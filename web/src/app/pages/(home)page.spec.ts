@@ -1,8 +1,8 @@
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { MockProvider } from 'ng-mocks';
 
-import { TrpcClientApp } from '@web/trpc-client';
-import { IngredientService } from '@web/app/services/ingredient/ingredient.service';
+import { TrpcClientApp } from '../../trpc-client';
+import { IngredientService } from '../services/ingredient/ingredient.service';
 import { ingredientTrpcMock } from '../services/ingredient/ingredient.service.spec';
 import HomeComponent from './(home).page';
 

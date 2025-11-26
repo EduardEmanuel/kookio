@@ -7,7 +7,7 @@ const makeSchema = () => z.object({
   name: z.string(),
   quantity: z.number().int(),
   unit: z.string(),
-  optional: z.boolean(),
+  optional: z.boolean().optional(),
   userId: z.string(),
   createdAt: z.coerce.date().optional()
 }).strict();

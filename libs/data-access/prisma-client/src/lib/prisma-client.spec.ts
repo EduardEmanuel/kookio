@@ -1,5 +1,5 @@
 import { GlobalPrismaClient } from './prisma-client';
-import prisma from './prisma-client';
+import { prisma } from './prisma-client';
 
 describe('GlobalPrismaClient', () => {
   const g = globalThis as unknown as GlobalPrismaClient;

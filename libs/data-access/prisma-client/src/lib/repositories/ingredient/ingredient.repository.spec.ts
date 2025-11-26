@@ -2,8 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 import { 
-  CreateOneIngredientDTO,
   CreateIngredientResultDTO,
+  CreateOneIngredientDTO,
   DeleteIngredientResultDTO,
   DeleteOneIngredientDTO,
   FindManyIngredientDTO,
@@ -30,14 +30,17 @@ const prismaMock = vi.hoisted(() => ({
 
 vi.mock('../../prisma-client', async (importActual) => {
   const actual = await importActual<typeof import('../../prisma-client')>();
+  const prisma = prismaMock;
+
   return {
     ...actual,
-    default: prismaMock,
+    prisma,
     withTxRetry: async (prisma: PrismaClient, fn: (tx: typeof prismaMock) => Promise<unknown>) => fn(prismaMock),
   };
 });
 
 import { PrismaIngredientRepository } from './ingredient.repository';
+import { a } from 'vite-node/index.d-DGmxD2U7';
 
 describe('PrismaIngredientRepository (unit, mocked Prisma)', () => {
   let repo: PrismaIngredientRepository;
@@ -48,11 +51,13 @@ describe('PrismaIngredientRepository (unit, mocked Prisma)', () => {
   });
 
   it('create: forwards input and returns created record', async () => {
-    const input: CreateOneIngredientDTO = { data: { userId: 'u1', name: 'Apple', quantity: 2, unit: 'pcs', optional: true }};
+    const data = { userId: 'u1', name: 'Apple', quantity: 2, unit: 'pcs', optional: true };
+    const input: CreateOneIngredientDTO = { data };
     const created: CreateIngredientResultDTO = {
       id: '11111111-1111-4111-8111-111111111111',
-      ...input.data,
+      ...data,
       createdAt: now,
+      updatedAt: now,
     };
 
     prismaMock.ingredient.create.mockResolvedValue(created);
@@ -73,6 +78,7 @@ describe('PrismaIngredientRepository (unit, mocked Prisma)', () => {
       unit: 'pcs',
       optional: false,
       createdAt: now,
+      updatedAt: now,
     };
 
     prismaMock.ingredient.findUnique.mockResolvedValue(found);
@@ -103,19 +109,18 @@ describe('PrismaIngredientRepository (unit, mocked Prisma)', () => {
       unit: 'pcs',
       optional: false,
       createdAt: now,
+      updatedAt: now,
     }];
     const input = {} as FindManyIngredientDTO;
-    const rows: FindManyIngredientResultDTO = {
-      data,
-      pagination: {
+    const pagination = {
         page: 1,
         pageSize: data.length,
         total: data.length,
         totalPages: 1,
         hasPrev: false,
         hasNext: false,
-      },
-    };
+      }
+    const rows: FindManyIngredientResultDTO = { data, pagination };
 
     prismaMock.ingredient.findMany.mockResolvedValue(data);
 
@@ -138,6 +143,7 @@ describe('PrismaIngredientRepository (unit, mocked Prisma)', () => {
       unit: 'pcs',
       optional: true,
       createdAt: now,
+      updatedAt: now,
     };
 
     prismaMock.ingredient.update.mockResolvedValue(updated);
@@ -158,6 +164,7 @@ describe('PrismaIngredientRepository (unit, mocked Prisma)', () => {
       unit: 'pcs',
       optional: false,
       createdAt: now,
+      updatedAt: now,
     };
     prismaMock.ingredient.delete.mockResolvedValue(deleted);
 

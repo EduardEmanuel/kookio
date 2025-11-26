@@ -9,7 +9,8 @@ const makeSchema = () => z.object({
   unit: z.boolean().optional(),
   optional: z.boolean().optional(),
   userId: z.boolean().optional(),
-  createdAt: z.boolean().optional()
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional()
 }).strict();
 export const IngredientSelectObjectSchema: z.ZodType<Prisma.IngredientSelect> = makeSchema() as unknown as z.ZodType<Prisma.IngredientSelect>;
 export const IngredientSelectObjectZodSchema = makeSchema();

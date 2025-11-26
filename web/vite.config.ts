@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
       analog({
         ssr:true,
         prerender: {
-          routes: ['/404.html'],
+          routes: [ '/about' ],
         },
         nitro: {
           preset: 'node-server',
@@ -43,6 +43,10 @@ export default defineConfig(({ mode }) => {
             inline: [/^@kookio\//],
           },
           modules: ['./nitro-modules/tsconfig-alias'],
+          routeRules: { 
+            '/assets/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+            '/**': { headers: { 'cache-control': 'no-cache' } },
+          }
         },
       }),
 

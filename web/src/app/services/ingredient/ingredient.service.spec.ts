@@ -19,6 +19,7 @@ const createdIngredient = {
   optional: true,
   userId: 'test-user-id-11',
   createdAt: now,
+  updatedAt: now,
 };
 const createRequest = { data: createdIngredient };
 const existingIngredient = {

@@ -6,7 +6,8 @@ export const IngredientAggregateResultSchema = z.object({  _count: z.object({
     unit: z.number(),
     optional: z.number(),
     userId: z.number(),
-    createdAt: z.number()
+    createdAt: z.number(),
+    updatedAt: z.number()
   }).optional(),
   _sum: z.object({
     quantity: z.number().nullable()
@@ -20,7 +21,8 @@ export const IngredientAggregateResultSchema = z.object({  _count: z.object({
     quantity: z.number().int().nullable(),
     unit: z.string().nullable(),
     userId: z.string().nullable(),
-    createdAt: z.date().nullable()
+    createdAt: z.date().nullable(),
+    updatedAt: z.date().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
@@ -28,5 +30,6 @@ export const IngredientAggregateResultSchema = z.object({  _count: z.object({
     quantity: z.number().int().nullable(),
     unit: z.string().nullable(),
     userId: z.string().nullable(),
-    createdAt: z.date().nullable()
+    createdAt: z.date().nullable(),
+    updatedAt: z.date().nullable()
   }).nullable().optional()});

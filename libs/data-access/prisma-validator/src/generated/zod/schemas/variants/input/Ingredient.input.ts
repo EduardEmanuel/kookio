@@ -8,7 +8,8 @@ export const IngredientInputSchema = z.object({
     unit: z.string(),
     optional: z.boolean(),
     userId: z.string(),
-    createdAt: z.date()
+    createdAt: z.date(),
+    updatedAt: z.date()
 }).strict();
 
 export type IngredientInputType = z.infer<typeof IngredientInputSchema>;

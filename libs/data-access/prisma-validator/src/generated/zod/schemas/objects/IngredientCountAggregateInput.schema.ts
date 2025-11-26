@@ -10,6 +10,7 @@ const makeSchema = () => z.object({
   optional: z.literal(true).optional(),
   userId: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
+  updatedAt: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const IngredientCountAggregateInputObjectSchema: z.ZodType<Prisma.IngredientCountAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.IngredientCountAggregateInputType>;

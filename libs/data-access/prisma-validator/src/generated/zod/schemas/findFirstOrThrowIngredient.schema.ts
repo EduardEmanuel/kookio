@@ -15,7 +15,8 @@ export const IngredientFindFirstOrThrowSelectSchema: z.ZodType<Prisma.Ingredient
     unit: z.boolean().optional(),
     optional: z.boolean().optional(),
     userId: z.boolean().optional(),
-    createdAt: z.boolean().optional()
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.IngredientSelect>;
 
 export const IngredientFindFirstOrThrowSelectZodSchema = z.object({
@@ -25,7 +26,8 @@ export const IngredientFindFirstOrThrowSelectZodSchema = z.object({
     unit: z.boolean().optional(),
     optional: z.boolean().optional(),
     userId: z.boolean().optional(),
-    createdAt: z.boolean().optional()
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional()
   }).strict();
 
 export const IngredientFindFirstOrThrowSchema: z.ZodType<Prisma.IngredientFindFirstOrThrowArgs> = z.object({ select: IngredientFindFirstOrThrowSelectSchema.optional(),  orderBy: z.union([IngredientOrderByWithRelationInputObjectSchema, IngredientOrderByWithRelationInputObjectSchema.array()]).optional(), where: IngredientWhereInputObjectSchema.optional(), cursor: IngredientWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([IngredientScalarFieldEnumSchema, IngredientScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.IngredientFindFirstOrThrowArgs>;

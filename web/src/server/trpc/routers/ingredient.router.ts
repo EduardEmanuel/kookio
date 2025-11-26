@@ -20,12 +20,12 @@ import {
 } from '@kookio/prisma-validator';
 import { logger } from '@kookio/utils';
 
-import { publicProcedure, router } from '../trpc';
+import { procedure, router } from '../trpc';
 
 const DEFAULT_NAME = 'undefined ingredient';
 
 export const ingredient = router({
-  create: publicProcedure
+  create: procedure
     .input(IngredientCreateOneSchema)
     .output(IngredientResultSchema)
     .mutation(async ({ input, ctx }) => {
@@ -39,7 +39,7 @@ export const ingredient = router({
       }
     }),
    
-  createMany: publicProcedure
+  createMany: procedure
     .input(IngredientCreateManySchema)
     .output(IngredientCreateManyResultSchema)
     .mutation(async ({ input, ctx }) => {
@@ -54,7 +54,7 @@ export const ingredient = router({
       }
     }),  
 
-  delete: publicProcedure
+  delete: procedure
     .input(IngredientDeleteOneSchema)
     .output(IngredientDeleteResultSchema)
     .mutation(async ({ input, ctx }) => {
@@ -69,7 +69,7 @@ export const ingredient = router({
       }
     }),
 
-  deleteMany: publicProcedure
+  deleteMany: procedure
     .input(IngredientDeleteManySchema)
     .output(IngredientDeleteManyResultSchema)
     .mutation(async ({ input, ctx }) => {
@@ -84,7 +84,7 @@ export const ingredient = router({
       }
     }),  
 
-  findUnique: publicProcedure
+  findUnique: procedure
     .input(IngredientFindUniqueSchema)
     .output(IngredientFindUniqueResultSchema)
     .query(async ({ input, ctx }) => {
@@ -99,7 +99,7 @@ export const ingredient = router({
       }
     }),  
 
-  findMany: publicProcedure
+  findMany: procedure
     .input(IngredientFindManySchema)
     .output(IngredientFindManyResultSchema)
     .query(async ({ input, ctx }) => {
@@ -114,7 +114,7 @@ export const ingredient = router({
       }
     }),
 
-  update: publicProcedure
+  update: procedure
     .input(IngredientUpdateOneSchema)
     .output(IngredientUpdateResultSchema)
     .mutation(async ({ input, ctx }) => {
@@ -129,7 +129,7 @@ export const ingredient = router({
       }
     }),
 
-  updateMany: publicProcedure
+  updateMany: procedure
     .input(IngredientUpdateManySchema)
     .output(IngredientUpdateManyResultSchema)
     .mutation(async ({ input, ctx }) => {
