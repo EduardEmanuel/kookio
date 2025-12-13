@@ -19,186 +19,82 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": ".",
-        "env": {
-          "DOTENV_CONFIG_PATH": ".env.local",
-          "DOTENV_CONFIG_SAMPLE": ".env.example",
-          "NODE_OPTIONS": "-r dotenv-safe/config"
-        },
-        "envFile": ".env.local",
         "commands": [
-          { "command": "npx prisma generate --schema=libs/data-access/prisma-client/schema.prisma" }
+          {
+            "command": "npx prisma generate --schema=libs/data-access/prisma-client/schema.prisma"
+          }
         ]
-      },
-      "configurations": {
-        "cloud": {
-          "env": {
-            "DOTENV_CONFIG_PATH": ".env.cloud"
-          },
-          "envFile": ".env.cloud",
-          "commands": [
-            { "command": "npx prisma generate --schema=libs/data-access/prisma-client/schema.prisma" }
-          ]
-        }
       }
     },
     "migrate-dev": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" }
-      ],
+      "dependsOn": [{ "target": "generate", "projects": "self", "params": "forward" }],
       "options": {
         "cwd": ".",
-        "envFile": ".env.local",
-        "env": {
-          "DOTENV_CONFIG_PATH": ".env.local",
-          "DOTENV_CONFIG_SAMPLE": ".env.example",
-          "NODE_OPTIONS": "-r dotenv-safe/config"
-        },
         "commands": [
-          { "command": "npx prisma migrate dev --schema=libs/data-access/prisma-client/schema.prisma" }
-        ]
-      },
-      "configurations": {
-        "cloud": {
-          "envFile": ".env.cloud",
-          "env": {
-            "DOTENV_CONFIG_PATH": ".env.cloud"
+          {
+            "command": "npx prisma migrate dev --schema=libs/data-access/prisma-client/schema.prisma"
           }
-        }
+        ]
       }
     },
-
     "migrate-deploy": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" }
-      ],
+      "dependsOn": [{ "target": "generate", "projects": "self", "params": "forward" }],
       "options": {
         "cwd": ".",
-        "envFile": ".env.local",
-        "env": {
-          "DOTENV_CONFIG_PATH": ".env.local",
-          "DOTENV_CONFIG_SAMPLE": ".env.example",
-          "NODE_OPTIONS": "-r dotenv-safe/config"
-        },
         "commands": [
-          { "command": "npx prisma migrate deploy --schema=libs/data-access/prisma-client/schema.prisma" }
-        ]
-      },
-      "configurations": {
-        "cloud": {
-          "envFile": ".env.cloud",
-          "env": {
-            "DOTENV_CONFIG_PATH": ".env.cloud"
+          {
+            "command": "npx prisma migrate deploy --schema=libs/data-access/prisma-client/schema.prisma"
           }
-        }
+        ]
       }
     },
-    "migrate-reset": {
+    "bench-latency": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" }
-      ],
+      "dependsOn": [{ "target": "generate", "projects": "self", "params": "forward" }],
       "options": {
         "cwd": ".",
-        "envFile": ".env.local",
-        "env": {
-          "DOTENV_CONFIG_PATH": ".env.local",
-          "DOTENV_CONFIG_SAMPLE": ".env.example",
-          "NODE_OPTIONS": "-r dotenv-safe/config"
-        },
         "commands": [
-          { "command": "npx prisma migrate reset --force --skip-seed --schema=libs/data-access/prisma-client/schema.prisma" }
-        ]
-      },
-      "configurations": {
-        "cloud": {
-          "envFile": ".env.cloud",
-          "env": {
-            "DOTENV_CONFIG_PATH": ".env.cloud"
+          { 
+            "command": "tsx --tsconfig tsconfig.base.json libs/data-access/prisma-client/src/scripts/bench-latency.ts" 
           }
-        }
-      }
-    },
-    "push": {
-      "executor": "nx:run-commands",
-      "cache": false,
-      "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" }
-      ],
-      "options": {
-        "cwd": ".",
-        "envFile": ".env.local",
-        "env": {
-          "DOTENV_CONFIG_PATH": ".env.local",
-          "DOTENV_CONFIG_SAMPLE": ".env.example",
-          "NODE_OPTIONS": "-r dotenv-safe/config"
-        },
-        "commands": [
-          { "command": "npx prisma db push --schema=libs/data-access/prisma-client/schema.prisma" }
         ]
-      },
-      "configurations": {
-        "cloud": {
-          "envFile": ".env.cloud",
-          "env": {
-            "DOTENV_CONFIG_PATH": ".env.cloud"
-          }
-        }
       }
     },
     "seed": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [
-        { "target": "migrate-reset", "projects": "self", "params": "forward" }
-      ],
+      "dependsOn": [{ "target": "generate", "projects": "self", "params": "forward" }],
       "options": {
         "cwd": ".",
-        "env": {
-          "DOTENV_CONFIG_PATH": ".env.local",
-          "DOTENV_CONFIG_EXAMPLE": ".env.example",
-          "NODE_OPTIONS": "-r dotenv-safe/config",
-          "SEED_USER_ID": "seed-user"
-        },
         "commands": [
-          {
-            "command": "tsx libs/data-access/prisma-client/scripts/seed.ts"
+          { 
+            "command": "tsx --tsconfig tsconfig.base.json libs/data-access/prisma-client/src/scripts/seed.ts" 
           }
         ]
-      },
-      "configurations": {
-        "cloud": {
-          "env": {
-            "DOTENV_CONFIG_PATH": ".env.cloud",
-            "SEED_USER_ID": "cloud-seed-user"
-          }
-        }
       }
     },
     "studio": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" }
-      ],
+      "dependsOn": [{ "target": "generate", "projects": "self", "params": "forward" }],
       "options": {
         "cwd": ".",
         "commands": [
           {
             "command": "npx prisma studio --schema=libs/data-access/prisma-client/schema.prisma"
           }
-        ],
-        "envFile": ".env.local"
+        ]
       }
     },
     "test": {
       "executor": "@nx/vite:test",
       "options": {
-        "config": "libs/data-access/prisma-client/vite.config.ts" 
+        "config": "libs/data-access/prisma-client/vite.config.ts"
       }
     }
   }

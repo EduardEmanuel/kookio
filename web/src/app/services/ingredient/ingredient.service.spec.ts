@@ -5,8 +5,8 @@ import { mockIngredients } from '@kookio/mock';
 import { CreateIngredientResultDTO, CreateManyIngredientResultDTO, FindManyIngredientResultDTO, FindUniqueIngredientResultDTO } from '@kookio/prisma-validator';
 import { logger } from '@kookio/utils';
 
-import { createTestScheduler } from '@web/test-setup';
-import { TrpcClientApp } from '@web/trpc-client';
+import { createTestScheduler } from '../../../test-setup';
+import { TrpcClientApp } from '../../../trpc-client';
 
 import { IngredientService } from './ingredient.service';
 
@@ -63,8 +63,6 @@ export const ingredientTrpcMock = {
 
 describe('IngredientService', () => {
   let service: IngredientService;
-
-  const id = existingIngredient.id;
 
   afterEach(() => {
     vi.clearAllMocks();

@@ -21,7 +21,7 @@ import type {
 } from '@kookio/prisma-validator';
 import { logger } from '@kookio/utils';
 
-import { injectTrpcClient } from '@web/trpc-client';
+import { injectTrpcClient } from '../../../trpc-client';
 
 @Injectable({
   providedIn: 'root',
@@ -47,7 +47,6 @@ export class IngredientService {
       .mutate(ingredients)
       .pipe(
         catchError((error: Error) => {
-          ingredients.data
           const names = dataArray.map((i, index) => `${index}. ${i.name}`).join('; ');
 
           logger.error(error, `❌ Error creating many ingredients via tRPC: ${names}`);

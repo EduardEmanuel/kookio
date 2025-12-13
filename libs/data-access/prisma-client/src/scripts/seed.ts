@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { mockIngredients } from '@kookio/mock';
 import { logger } from '@kookio/utils';
 
-import { prisma, withTxRetry } from '../src/lib/prisma-client';
+import { prisma, withTxRetry } from '../lib/prisma-client';
 
 const SEED_USER_ID = process.env['SEED_USER_ID'] ?? 'seed-user';
 

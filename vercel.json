@@ -1,0 +1,7 @@
+{
+  "regions": ["fra1"],
+  "crons": [],
+  "ignoreCommand": "echo 'Nx handles file-level caching; skip Vercel ignore'",
+  "devCommand": "npm run start:web",
+  "buildCommand": "npm run build:web"
+}

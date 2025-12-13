@@ -1,39 +1,398 @@
-name: CI
+name: CI & Migrate
 
 on:
-  # push:
-  #   branches: [ main ]
-  # pull_request:
-  workflow_dispatch: {} 
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
 
 permissions:
-  actions: read
   contents: read
 
 jobs:
-  main:
+  ci:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: ci-${{ github.ref }}
+      cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v4
-        with:
-          filter: tree:0
-          fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
 
-      - run: npm ci --legacy-peer-deps
-      - run: npx playwright install --with-deps
+      - name: Install
+        run: npm ci --legacy-peer-deps
 
-      - run: npx nx reset
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
-      - name: Prisma generate (must-run-first)
-        run: npx nx run prisma-client:generate
+      - name: Install Playwright deps
+        run: npx playwright install --with-deps
 
-      - name: Lint + Unit/Integration (without DB)
-        run: CI=1 npx nx run-many -t lint test --parallel=3 --exclude=web-e2e
+      - name: Format check
+        run: npx nx format:check
 
-      - name: Build
-        run: npx nx run-many -t build --parallel=3 --exclude=web-e2e
+      - name: Lint / Test / Build / E2E
+        run: npx nx run-many -t lint test build e2e --output-style=stream
+
+      - name: Web prerender (best effort)
+        run: npx nx run web:prerender || echo "No prerender target"
+
+  migrate-test:
+    needs: ci
+    if: ${{ (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false) || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: test
+    concurrency:
+      group: db-migrate-test-${{ github.ref }}
+      cancel-in-progress: false
+    env:
+      # Use TEST DB with the MIGRATE user
+      DATABASE_URL: ${{ secrets.KOOKIO_TEST_MIGRATE_CONNECTION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci --legacy-peer-deps
+
+      - name: Prisma migrate deploy (TEST) — retry
+        run: |
+          set -e
+          attempts=3
+          delay=10
+          ok=0
+          for i in $(seq 1 $attempts); do
+            echo "Attempt $i/$attempts: prisma migrate deploy (TEST)"
+            if npx nx migrate-deploy prisma-client; then
+              ok=1
+              break
+            fi
+            echo "Failed attempt $i. Retrying in ${delay}s..."
+            sleep $delay
+            delay=$((delay*2))  # exponential backoff: 10s, 20s
+          done
+          if [ "$ok" -ne 1 ]; then
+            echo "❌ prisma migrate deploy (TEST) failed after $attempts attempts"
+            exit 1
+          fi
+
+  # Smoke check the latest Preview before running E2E
+  smoke-preview:
+    needs: [ci, migrate-test]
+    if: ${{ (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false) || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: test
+    concurrency:
+      group: smoke-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Resolve Preview Base URL
+        id: resolve
+        env:
+          PREVIEW_BASE_URL: ${{ vars.PREVIEW_BASE_URL }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          set -e
+          if [ -n "$PREVIEW_BASE_URL" ]; then
+            echo "BASE_URL=$PREVIEW_BASE_URL" >> $GITHUB_ENV
+            echo "source=vars" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_PROJECT_ID" ]; then
+            echo "Trying Vercel API to detect latest preview..."
+            sudo apt-get update && sudo apt-get install -y jq > /dev/null
+            curl -fsSL -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v6/deployments?app=$VERCEL_PROJECT_ID&limit=1" \
+              | jq -r '.deployments[0].url' | awk '{print "https://"$1}' > url.txt || true
+            if [ -s url.txt ]; then
+              echo "BASE_URL=$(cat url.txt)" >> $GITHUB_ENV
+              echo "source=vercel" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+          echo "No preview URL resolved."; exit 1
+
+      - name: Smoke GET /api/health and /api/version (with retries)
+        env:
+          BASE_URL: ${{ env.BASE_URL }}
+        run: |
+          set -e
+          urls=("$BASE_URL/api/health" "$BASE_URL/api/version")
+          echo "Checking ${urls[@]}"
+          for u in "${urls[@]}"; do
+            echo "Probing $u ..."
+            ok=0
+            for i in $(seq 1 20); do
+              code=$(curl -fsS -o resp.json -w "%{http_code}" "$u" || true)
+              if [ "$code" = "200" ]; then
+                cat resp.json || true
+                ok=1
+                break
+              fi
+              sleep 10
+            done
+            if [ $ok -ne 1 ]; then
+              echo "❌ $u did not become healthy in time"
+              exit 1
+            fi
+          done
+          echo "✅ Smoke checks passed."
+
+  # Optional: run E2E against the TEST database and a Preview base URL
+  e2e-against-test:
+    needs: [ci, migrate-test, smoke-preview]
+    if: ${{ (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false) || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: test
+    concurrency:
+      group: e2e-test-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      DATABASE_URL: ${{ secrets.KOOKIO_TEST_APP_CONNECTION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci --legacy-peer-deps
+
+      - name: Install Playwright deps
+        run: npx playwright install --with-deps
+
+      - name: Resolve Preview Base URL (reuse logic)
+        id: resolve
+        env:
+          PREVIEW_BASE_URL: ${{ vars.PREVIEW_BASE_URL }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          set -e
+          if [ -n "$PREVIEW_BASE_URL" ]; then
+            echo "BASE_URL=$PREVIEW_BASE_URL" >> $GITHUB_ENV
+            echo "source=vars" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_PROJECT_ID" ]; then
+            echo "Trying Vercel API to detect latest preview..."
+            sudo apt-get update && sudo apt-get install -y jq > /dev/null
+            curl -fsSL -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v6/deployments?app=$VERCEL_PROJECT_ID&limit=1" \
+              | jq -r '.deployments[0].url' | awk '{print "https://"$1}' > url.txt || true
+            if [ -s url.txt ]; then
+              echo "BASE_URL=$(cat url.txt)" >> $GITHUB_ENV
+              echo "source=vercel" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+          echo "No preview URL resolved. BASE_URL will be empty."
+
+      - name: E2E against Preview URL (TEST DB)
+        if: env.BASE_URL != ''
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ env.BASE_URL }}
+        run: npx nx run-many -t e2e --output-style=stream
+
+      - name: E2E against local server (fallback)
+        if: env.BASE_URL == ''
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+        run: |
+          # Start dev/preview server locally targeting TEST DB
+          # Adjust the serve command if your project uses a different target
+          npx nx serve web &
+          npx npx wait-on http://localhost:3000
+          npx nx run-many -t e2e --output-style=stream
+
+  migrate:
+    if: github.ref == 'refs/heads/main'
+    needs: [ci, migrate-test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: prod
+      url: https://kookio.app
+    concurrency:
+      group: db-migrate-prod
+      cancel-in-progress: false
+    env:
+      # Use PROD DB with the MIGRATE user
+      DATABASE_URL: ${{ secrets.KOOKIO_PROD_MIGRATE_CONNECTION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci --legacy-peer-deps
+
+      - name: Prisma migrate deploy (PROD) — retry
+        run: |
+          set -e
+          attempts=3
+          delay=10
+          ok=0
+          for i in $(seq 1 $attempts); do
+            echo "Attempt $i/$attempts: prisma migrate deploy (PROD)"
+            if npx nx migrate-deploy prisma-client; then
+              ok=1
+              break
+            fi
+            echo "Failed attempt $i. Retrying in ${delay}s..."
+            sleep $delay
+            delay=$((delay*2))  # exponential backoff: 10s, 20s
+          done
+          if [ "$ok" -ne 1 ]; then
+            echo "❌ prisma migrate deploy (PROD) failed after $attempts attempts"
+            exit 1
+          fi
+
+      - name: Optional seed (PROD)
+        if: ${{ env.DATABASE_URL != '' && secrets.RUN_SEED == 'true' }}
+        env:
+          RUN_SEED: ${{ secrets.RUN_SEED }}
+        run: npx nx seed prisma-client
+
+  smoke-prod:
+    if: github.ref == 'refs/heads/main'
+    needs: migrate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: prod
+    concurrency:
+      group: smoke-prod
+      cancel-in-progress: false
+    steps:
+      - name: Determine PROD base URL
+        env:
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL }}
+        run: |
+          set -e
+          BASE_URL="${PRODUCTION_BASE_URL:-https://kookio.app}"
+          echo "Using BASE_URL=$BASE_URL"
+          echo "BASE_URL=$BASE_URL" >> $GITHUB_ENV
+
+      - name: Smoke GET /api/health and /api/version (with retries)
+        env:
+          BASE_URL: ${{ env.BASE_URL }}
+        run: |
+          set -e
+          urls=("$BASE_URL/api/health" "$BASE_URL/api/version")
+          echo "Checking ${urls[@]}"
+          for u in "${urls[@]}"; do
+            echo "Probing $u ..."
+            ok=0
+            for i in $(seq 1 20); do
+              code=$(curl -fsS -o resp.json -w "%{http_code}" "$u" || true)
+              if [ "$code" = "200" ]; then
+                cat resp.json || true
+                ok=1
+                break
+              fi
+              sleep 10
+            done
+            if [ $ok -ne 1 ]; then
+              echo "❌ $u did not become healthy in time"
+              exit 1
+            fi
+          done
+          echo "✅ PROD smoke checks passed."
+
+  notify-prod-email:
+    needs: smoke-prod
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Send email on PROD failure
+        if: ${{ needs.smoke-prod.result != 'success' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ vars.SMTP_SERVER }}
+          server_port: ${{ vars.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "❌ PROD deploy unhealthy: ${{ github.repository }} @ ${{ github.ref_name }} (run #${{ github.run_number }})"
+          to: ${{ secrets.ALERT_EMAIL_TO }}
+          from: ${{ secrets.ALERT_EMAIL_FROM }}
+          secure: true
+          html_body: |
+            <h3>PROD post-deploy smoke checks failed</h3>
+            <p><b>Repo:</b> ${{ github.repository }}</p>
+            <p><b>Branch:</b> ${{ github.ref_name }}</p>
+            <p><b>Commit:</b> ${{ github.sha }}</p>
+            <p><b>Workflow:</b> ${{ github.workflow }} — run #${{ github.run_number }}</p>
+            <p><b>Logs:</b> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">open in GitHub Actions</a></p>
+            <hr/>
+            <p>The <code>smoke-prod</code> job did not pass. Check the application logs on Vercel and the DB status on Cockroach Cloud.</p>
+
+  notify-email:
+    needs: [ci, migrate-test, smoke-preview, e2e-against-test, migrate, smoke-prod]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Send email on ANY failure
+        if: ${{ needs.ci.result != 'success' || needs['migrate-test'].result != 'success' || needs['smoke-preview'].result != 'success' || needs['e2e-against-test'].result != 'success' || needs.migrate.result != 'success' || needs['smoke-prod'].result != 'success' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ vars.SMTP_SERVER }}
+          server_port: ${{ vars.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "❌ CI/CD issue in ${{ github.repository }} @ ${{ github.ref_name }} (run #${{ github.run_number }})"
+          to: ${{ secrets.ALERT_EMAIL_TO }}
+          from: ${{ secrets.ALERT_EMAIL_FROM }}
+          secure: true
+          html_body: |
+            <h3>CI/CD failure detected</h3>
+            <p><b>Repo:</b> ${{ github.repository }}</p>
+            <p><b>Branch:</b> ${{ github.ref_name }}</p>
+            <p><b>Commit:</b> ${{ github.sha }}</p>
+            <p><b>Workflow:</b> ${{ github.workflow }} — run #${{ github.run_number }}</p>
+            <p><b>Logs:</b> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">open in GitHub Actions</a></p>
+            <hr/>
+            <p>Job results:</p>
+            <ul>
+              <li>ci: ${{ needs.ci.result }}</li>
+              <li>migrate-test: ${{ needs['migrate-test'].result }}</li>
+              <li>smoke-preview: ${{ needs['smoke-preview'].result }}</li>
+              <li>e2e-against-test: ${{ needs['e2e-against-test'].result }}</li>
+              <li>migrate: ${{ needs.migrate.result }}</li>
+              <li>smoke-prod: ${{ needs['smoke-prod'].result }}</li>
+            </ul>
