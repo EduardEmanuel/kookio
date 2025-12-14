@@ -8,6 +8,7 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "dependsOn": ["prisma-client:generate"],
       "options": {
         "outputPath": "dist/libs/data-access/prisma-validator",
         "main": "libs/data-access/prisma-validator/src/index.ts",

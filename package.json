@@ -23,7 +23,6 @@
     "material-icons-filled:web": "nx material-icons-filled web",
     "affected": "nx show projects --affected",
     "format": "nx format:write",
-    "safe-install": "npm ci --legacy-peer-deps",
     "vercel:env:tmp": "vercel env pull ./tmp/kookio.env"
   },
   "private": true,
@@ -42,7 +41,7 @@
     "@angular/platform-server": "~20.2.4",
     "@angular/router": "~20.2.4",
     "@nx/angular": "~21.5.2",
-    "@prisma/client": "~6.16.3",
+    "@prisma/client": "~6.17.1",
     "@trpc/client": "~10.45.2",
     "@trpc/server": "~10.45.2",
     "front-matter": "~4.0.2",
