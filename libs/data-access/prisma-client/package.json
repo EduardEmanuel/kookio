@@ -10,6 +10,6 @@
     "@kookio/prisma-validator": "0.0.1",
     "@kookio/mock": "0.0.1",
     "@kookio/utils": "0.0.1",
-    "@prisma/client": "~6.16.3"
+    "@prisma/client": "~6.17.1"
   }
 }
