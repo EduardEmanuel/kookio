@@ -7,8 +7,8 @@
     "npm": ">=10.0.0 <12"
   },
   "scripts": {
-    "start:web": "nx serve web",
-    "build:web": "nx build web",
+    "start:web": "npm run vercel:env:tmp && dotenv -e ./tmp/kookio.env -- nx serve web && rimraf ./tmp/kookio.env",
+    "build:web": "npm run vercel:env:tmp && dotenv -e ./tmp/kookio.env -- nx build web && rimraf ./tmp/kookio.env",
     "test:web": "nx test web",
     "lint:web": "nx lint web",
     "e2e:web": "npm run vercel:env:tmp && dotenv -e ./tmp/kookio.env -- nx e2e web-e2e && rimraf ./tmp/kookio.env",

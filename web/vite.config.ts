@@ -6,6 +6,8 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
+const nitroPreset = process.env.NITRO_PRESET ?? 'node-server';
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
@@ -30,7 +32,8 @@ export default defineConfig(({ mode }) => {
           routes: [ '/about' ],
         },
         nitro: {
-          preset: 'node-server',
+          preset: nitroPreset,
+          output: nitroPreset === 'vercel' ? { dir: '.vercel/output' } : undefined,
           serveStatic: true,
           esbuild: {
             options: {
