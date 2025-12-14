@@ -1,6 +1,7 @@
 import { pino } from 'pino';
 
-const isProd = false; //process.env.NODE_ENV === 'production';  // Adjust this as needed
+const isProd =
+  process.env['VERCEL'] === '1' || process.env['NODE_ENV'] === 'production';
 
 export const logger = pino({
   transport: isProd
@@ -13,5 +14,5 @@ export const logger = pino({
           ignore: 'pid,hostname',
         },
       },
-  level: 'debug',
+  level: process.env['LOG_LEVEL'] ?? 'debug',
 });
