@@ -29,9 +29,13 @@ export default class HomeComponent {
     .pipe(
       switchMap(() => {
         const randomIndex = Math.floor(Math.random() * mockIngredients.length);
+        const randomIngredient = mockIngredients[randomIndex];
+        const userId = randomIngredient.userId;
+        const name = randomIngredient.name;
+        const userId_name = { userId, name };
 
         return this.ingredientService.findUnique({ 
-          where: { id: mockIngredients[randomIndex].id } 
+          where: { userId_name } 
         } as FindUniqueIngredientDTO)
       }),
       map(ingredient => ingredient ? [ ingredient ] : []),

@@ -40,7 +40,6 @@ vi.mock('../../prisma-client', async (importActual) => {
 });
 
 import { PrismaIngredientRepository } from './ingredient.repository';
-import { a } from 'vite-node/index.d-DGmxD2U7';
 
 describe('PrismaIngredientRepository (unit, mocked Prisma)', () => {
   let repo: PrismaIngredientRepository;
