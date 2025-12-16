@@ -21,7 +21,6 @@ Let's Kookio it! is an open-source, full-stack web application that helps home c
 ## 📦 Packages
 
 ```text
-.
 ├── web/                         # Analog SSR Angular 20 app with tRPC client and feature modules
 ├── web-e2e/                     # Playwright spec suite targeting the web application
 ├── libs/
