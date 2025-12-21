@@ -57,6 +57,7 @@ jobs:
       cancel-in-progress: false
     env:
       DATABASE_URL: ${{ secrets.KOOKIO_MIGRATE_CONNECTION }}
+      SEED_USER_ID: ${{ secrets.SEED_USER_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -90,7 +91,7 @@ jobs:
           fi
 
       - name: Optional seed (DEV)
-        if: ${{ env.DATABASE_URL != '' && secrets.SEED_USER_ID != '' }}
+        if: ${{ env.DATABASE_URL != '' && env.SEED_USER_ID != '' }}
         env:
           SEED_USER_ID: ${{ secrets.SEED_USER_ID }}
         run: npx nx seed prisma-client
@@ -109,6 +110,7 @@ jobs:
       cancel-in-progress: false
     env:
       DATABASE_URL: ${{ secrets.KOOKIO_MIGRATE_CONNECTION }}
+      SEED_USER_ID: ${{ secrets.SEED_USER_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -142,7 +144,7 @@ jobs:
           fi
 
       - name: Optional seed (TEST)
-        if: ${{ env.DATABASE_URL != '' && secrets.SEED_USER_ID != '' }}
+        if: ${{ env.DATABASE_URL != '' && env.SEED_USER_ID != '' }}
         env:
           SEED_USER_ID: ${{ secrets.SEED_USER_ID }}
         run: npx nx seed prisma-client
@@ -348,6 +350,7 @@ jobs:
       cancel-in-progress: false
     env:
       DATABASE_URL: ${{ secrets.KOOKIO_MIGRATE_CONNECTION }}
+      SEED_USER_ID: ${{ secrets.SEED_USER_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -381,7 +384,7 @@ jobs:
           fi
 
       - name: Optional seed (PROD)
-        if: ${{ env.DATABASE_URL != '' && secrets.SEED_USER_ID != '' }}
+        if: ${{ env.DATABASE_URL != '' && env.SEED_USER_ID != '' }}
         env:
           SEED_USER_ID: ${{ secrets.SEED_USER_ID }}
         run: npx nx seed prisma-client
