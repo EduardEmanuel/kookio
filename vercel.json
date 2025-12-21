@@ -1,7 +1,6 @@
 {
   "regions": ["fra1"],
   "crons": [],
-  "ignoreCommand": "echo 'Nx handles file-level caching; skip Vercel ignore'",
   "devCommand": "nx serve web",
   "buildCommand": "nx build web"
 }
