@@ -8,9 +8,10 @@ import {
 
 import { callerE2E } from '../../../test-setup';
 
+const hasDb = !!process.env['DATABASE_URL'];
 const SUITE_USER = `it-user-${Date.now()}`;
 
-describe('tRPC Ingredient caller (integration)', () => {
+describe.skipIf(!hasDb)('tRPC Ingredient caller (integration)', () => {
   afterAll(async () => {
     await prisma.ingredient.deleteMany({ where: { userId: SUITE_USER } });
     await prisma.$disconnect();

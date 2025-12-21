@@ -2,7 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { Observable, of } from 'rxjs';
 
 import { mockIngredients } from '@kookio/mock';
-import { CreateIngredientResultDTO, CreateManyIngredientResultDTO, FindManyIngredientResultDTO, FindUniqueIngredientResultDTO } from '@kookio/prisma-validator';
+import {
+  CreateIngredientResultDTO,
+  CreateManyIngredientResultDTO,
+  FindManyIngredientResultDTO,
+  FindUniqueIngredientResultDTO, 
+} from '@kookio/prisma-validator';
 import { logger } from '@kookio/utils';
 
 import { createTestScheduler } from '../../../test-setup';
