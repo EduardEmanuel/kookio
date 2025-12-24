@@ -5,7 +5,7 @@ import { logger } from '@kookio/server-logger';
 
 import { prisma, withTxRetry } from '../lib/prisma-client';
 
-const SEED_USER_ID = process.env['SEED_USER_ID']; // no default in cloud
+const SEED_USER_ID = process.env['SEED_USER_ID'];
 
 function chunk<T>(arr: T[], size = 50): T[][] {
   const out: T[][] = [];
@@ -13,29 +13,30 @@ function chunk<T>(arr: T[], size = 50): T[][] {
   return out;
 }
 
-async function alreadySeeded(userId: string): Promise<boolean> {
-  const hit = await prisma.ingredient.findFirst({
-    where: { userId },
-    select: { id: true },
-  });
-  return Boolean(hit);
-}
-
 async function upsertChunk(items: typeof mockIngredients, userId: string) {
-  await withTxRetry(prisma, (tx) =>
-    Promise.all(
-      items.map((raw: Prisma.IngredientCreateInput) => {
-        const { id, name, optional, quantity, unit } = raw;
+  await withTxRetry(prisma, async (tx) => {
+    for (const raw of items as Prisma.IngredientCreateInput[]) {
+      const { name, optional, quantity, unit } = raw;
 
-        const base = { id, name, optional, quantity, unit, userId };
-        const create: Prisma.IngredientCreateInput = base;
-        const update: Prisma.IngredientUpdateInput = base;
-        const where: Prisma.IngredientWhereUniqueInput = { userId_name: { name, userId } };
-
-        return tx.ingredient.upsert({ create, update, where });
-      })
-    )
-  );
+      await tx.ingredient.upsert({
+        where: {
+          userId_name: { userId, name },
+        },
+        create: {
+          userId,
+          name,
+          quantity,
+          unit,
+          optional,
+        },
+        update: {
+          quantity,
+          unit,
+          optional,
+        },
+      });
+    }
+  });
 }
 
 async function seedIngredients(userId: string): Promise<number> {
@@ -52,12 +53,6 @@ async function seedIngredients(userId: string): Promise<number> {
 async function main() {
   if (!SEED_USER_ID) {
     logger.info('🌱 SEED_USER_ID not set; skipping seed.');
-    return;
-  }
-
-  const seeded = await alreadySeeded(SEED_USER_ID);
-  if (seeded) {
-    logger.info(`🌱 Seed already present for user=${SEED_USER_ID}; skipping.`);
     return;
   }
 

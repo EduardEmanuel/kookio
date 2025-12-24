@@ -22,125 +22,168 @@ import {
 
 import { procedure, router } from '../trpc';
 
-const DEFAULT_NAME = 'undefined ingredient';
+const labelFromWhere = (where: any): string => {
+  if (!where) return 'ingredient(unknown)';
+  if (where.userId_name?.userId && where.userId_name?.name) {
+    return `ingredient(user=${where.userId_name.userId}, name=${where.userId_name.name})`;
+  }
+  if (where.id) return `ingredient(id=${where.id})`;
+  if (where.name) return `ingredient(name=${where.name})`;
+
+  return 'ingredient(unknown)';
+}
+
+const labelFromCreateData = (data: any): string => {
+  if (!data) return 'ingredient(unknown)';
+  if (data.userId && data.name) return `ingredient(user=${data.userId}, name=${data.name})`;
+  if (data.name) return `ingredient(name=${data.name})`;
+  return 'ingredient(unknown)';
+}
+
+const labelFromCreateManyData = (data: any): string => {
+  const arr = Array.isArray(data) ? data : data ? [data] : [];
+
+  if (arr.length === 0) return 'ingredients(0)';
+
+  const names = arr.map((i, idx) => `${idx}. ${i?.name ?? '(missing name)'}`).join('; ');
+
+  return `ingredients(${arr.length}): ${names}`;
+}
 
 export const ingredient = router({
   create: procedure
-    .input(IngredientCreateOneSchema)
-    .output(IngredientResultSchema)
-    .mutation(async ({ input, ctx }) => {
-      try {
-        return await ctx.repository.ingredient.create(input)
-      } catch (error) {
-        const { name } = input.data;
-        
-        logger.error(error, `❌ Error creating ingredient via tRPC: ${name}`);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to create ingredient: ${name}`, cause: error });
-      }
-    }),
-   
-  createMany: procedure
-    .input(IngredientCreateManySchema)
-    .output(IngredientCreateManyResultSchema)
-    .mutation(async ({ input, ctx }) => {
-      try {
-        return await ctx.repository.ingredient.createMany(input);
-      } catch (error) {
-        const dataArray = Array.isArray(input.data) ? input.data : [input.data];
-        const names = dataArray.map((i, index) => `${index}. ${i.name}`).join('; ');
+  .input(IngredientCreateOneSchema)
+  .output(IngredientResultSchema)
+  .mutation(async ({ input, ctx }) => {
+    try {
+      return await ctx.repository.ingredient.create(input);
+    } catch (error) {
+      const label = labelFromCreateData(input?.data);
+      logger.error(error, `❌ Error creating ingredient via tRPC: ${label}`);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to create ingredient: ${label}`,
+        cause: error,
+      });
+    }
+  }),
 
-        logger.error(error, `❌ Error creating many ingredients via tRPC: ${names}`);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to create many ingredients: ${names}`, cause: error });
-      }
-    }),  
+createMany: procedure
+  .input(IngredientCreateManySchema)
+  .output(IngredientCreateManyResultSchema)
+  .mutation(async ({ input, ctx }) => {
+    try {
+      return await ctx.repository.ingredient.createMany(input);
+    } catch (error) {
+      const label = labelFromCreateManyData(input?.data);
+      logger.error(error, `❌ Error creating many ingredients via tRPC: ${label}`);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to create many ingredients: ${label}`,
+        cause: error,
+      });
+    }
+  }),
 
-  delete: procedure
-    .input(IngredientDeleteOneSchema)
-    .output(IngredientDeleteResultSchema)
-    .mutation(async ({ input, ctx }) => {
-      try {
-        return await ctx.repository.ingredient.delete(input)
-      } catch (error) {
-        const { name } = input.where;
-        const safeName = name ?? DEFAULT_NAME;
-        
-        logger.error(error, `❌ Error deleting ingredient via tRPC: ${safeName}`);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to delete ingredient: ${safeName}`, cause: error });
-      }
-    }),
+delete: procedure
+  .input(IngredientDeleteOneSchema)
+  .output(IngredientDeleteResultSchema)
+  .mutation(async ({ input, ctx }) => {
+    try {
+      return await ctx.repository.ingredient.delete(input);
+    } catch (error) {
+      const label = labelFromWhere(input?.where);
+      logger.error(error, `❌ Error deleting ingredient via tRPC: ${label}`);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to delete ingredient: ${label}`,
+        cause: error,
+      });
+    }
+  }),
 
-  deleteMany: procedure
-    .input(IngredientDeleteManySchema)
-    .output(IngredientDeleteManyResultSchema)
-    .mutation(async ({ input, ctx }) => {
-      try {
-        return await ctx.repository.ingredient.deleteMany(input);
-      } catch (error) {
-        const { name } = input.where ?? { name: DEFAULT_NAME };
-        const safeName = name ?? DEFAULT_NAME;
+deleteMany: procedure
+  .input(IngredientDeleteManySchema)
+  .output(IngredientDeleteManyResultSchema)
+  .mutation(async ({ input, ctx }) => {
+    try {
+      return await ctx.repository.ingredient.deleteMany(input);
+    } catch (error) {
+      const label = labelFromWhere(input?.where);
+      logger.error(error, `❌ Error deleting many ingredients via tRPC: ${label}`);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to delete many ingredients: ${label}`,
+        cause: error,
+      });
+    }
+  }),
 
-        logger.error(error, `❌ Error deleting many ingredients via tRPC: ${safeName}`);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to delete many ingredients: ${safeName}`, cause: error });
-      }
-    }),  
+findUnique: procedure
+  .input(IngredientFindUniqueSchema)
+  .output(IngredientFindUniqueResultSchema)
+  .query(async ({ input, ctx }) => {
+    try {
+      return await ctx.repository.ingredient.findUnique(input);
+    } catch (error) {
+      const label = labelFromWhere(input?.where);
+      logger.error(error, `❌ Error fetching ingredient via tRPC: ${label}`);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Could not fetch ingredient: ${label}`,
+        cause: error,
+      });
+    }
+  }),
 
-  findUnique: procedure
-    .input(IngredientFindUniqueSchema)
-    .output(IngredientFindUniqueResultSchema)
-    .query(async ({ input, ctx }) => {
-      try {
-        return await ctx.repository.ingredient.findUnique(input)
-      } catch (error) {
-        const { name } = input.where;
-        const safeName = name ?? DEFAULT_NAME;
+findMany: procedure
+  .input(IngredientFindManySchema)
+  .output(IngredientFindManyResultSchema)
+  .query(async ({ input, ctx }) => {
+    try {
+      return await ctx.repository.ingredient.findMany(input);
+    } catch (error) {
+      const label = labelFromWhere(input?.where);
+      logger.error(error, `❌ Error listing ingredients via tRPC: ${label}`);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Could not list ingredients: ${label}`,
+        cause: error,
+      });
+    }
+  }),
 
-        logger.error(error, `❌ Error fetching ingredient by ID via tRPC: ${safeName}`);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Could not fetch ingredient: ${safeName}`, cause: error });
-      }
-    }),  
+update: procedure
+  .input(IngredientUpdateOneSchema)
+  .output(IngredientUpdateResultSchema)
+  .mutation(async ({ input, ctx }) => {
+    try {
+      return await ctx.repository.ingredient.update(input);
+    } catch (error) {
+      const label = labelFromWhere(input?.where);
+      logger.error(error, `❌ Error updating ingredient via tRPC: ${label}`);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to update ingredient: ${label}`,
+        cause: error,
+      });
+    }
+  }),
 
-  findMany: procedure
-    .input(IngredientFindManySchema)
-    .output(IngredientFindManyResultSchema)
-    .query(async ({ input, ctx }) => {
-      try {
-        return await ctx.repository.ingredient.findMany(input);
-      } catch (error) {
-        const { name } = input.where ?? { name: DEFAULT_NAME };
-        const safeName = name ?? DEFAULT_NAME;
-
-        logger.error(error, `❌ Error listing ingredients via tRPC: ${safeName}`);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Could not list ingredients: ${safeName}`, cause: error });
-      }
-    }),
-
-  update: procedure
-    .input(IngredientUpdateOneSchema)
-    .output(IngredientUpdateResultSchema)
-    .mutation(async ({ input, ctx }) => {
-      try {
-        return await ctx.repository.ingredient.update(input);
-      } catch (error) {
-        const { name } = input.where ?? { name: DEFAULT_NAME };
-        const safeName = name ?? DEFAULT_NAME;
-
-        logger.error(error, `❌ Error updating ingredient via tRPC: ${safeName}`);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to update ingredient: ${safeName}`, cause: error });
-      }
-    }),
-
-  updateMany: procedure
-    .input(IngredientUpdateManySchema)
-    .output(IngredientUpdateManyResultSchema)
-    .mutation(async ({ input, ctx }) => {
-      try {
-        return await ctx.repository.ingredient.updateMany(input);
-      } catch (error) {
-        const { name } = input.where ?? { name: DEFAULT_NAME };
-        const safeName = name ?? DEFAULT_NAME;
-
-        logger.error(error, `❌ Error updating many ingredients via tRPC: ${safeName}`);
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: `Failed to update many ingredients: ${safeName}`, cause: error });
-      }
-    })
+updateMany: procedure
+  .input(IngredientUpdateManySchema)
+  .output(IngredientUpdateManyResultSchema)
+  .mutation(async ({ input, ctx }) => {
+    try {
+      return await ctx.repository.ingredient.updateMany(input);
+    } catch (error) {
+      const label = labelFromWhere(input?.where);
+      logger.error(error, `❌ Error updating many ingredients via tRPC: ${label}`);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to update many ingredients: ${label}`,
+        cause: error,
+      });
+    }
+  }),
 });

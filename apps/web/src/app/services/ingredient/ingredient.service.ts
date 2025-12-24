@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
 
@@ -28,6 +29,16 @@ import { injectTrpcClient } from '../../../trpc-client';
 export class IngredientService {
   private readonly trpc = injectTrpcClient();
 
+  private labelFromWhere(where: any): string {
+  if (!where) return 'ingredient(unknown)';
+  if (where.userId_name?.userId && where.userId_name?.name) {
+    return `ingredient(user=${where.userId_name.userId}, name=${where.userId_name.name})`;
+  }
+  if (where.id) return `ingredient(id=${where.id})`;
+  if (where.name) return `ingredient(name=${where.name})`;
+  return 'ingredient(unknown)';
+}
+
   public create(ingredient: CreateOneIngredientDTO): Observable<CreateIngredientResultDTO> {
     return this.trpc.ingredient.create
       .mutate(ingredient)
@@ -55,24 +66,24 @@ export class IngredientService {
   }
 
   public delete(ingredient: DeleteOneIngredientDTO): Observable<DeleteIngredientResultDTO> {
-    return this.trpc.ingredient.delete
-      .mutate(ingredient)
-      .pipe(
-        catchError((error: Error) => {
-          console.error(error, `❌ Error deleting ingredient via tRPC: ${ingredient.where.name}`);
-          return of({} as DeleteIngredientResultDTO);
-        }),
-      );
-  }
+  const label = this.labelFromWhere(ingredient.where);
+
+  return this.trpc.ingredient.delete.mutate(ingredient).pipe(
+    catchError((error: Error) => {
+      console.error(error, `❌ Error deleting ingredient via tRPC: ${label}`);
+      return of({} as DeleteIngredientResultDTO);
+    }),
+  );
+}
 
   public deleteMany(ingredients: DeleteManyIngredientDTO): Observable<DeleteManyIngredientResultDTO> {
     return this.trpc.ingredient.deleteMany
       .mutate(ingredients)
       .pipe(
         catchError((error: Error) => {
-          const name = ingredients.where?.name ?? 'undefined name';
+          const label = this.labelFromWhere(ingredients.where);
 
-          console.error(error, `❌ Error deleting many ingredients via tRPC: ${name}`);
+          console.error(error, `❌ Error deleting many ingredients via tRPC: ${label}`);
           return of({} as DeleteManyIngredientResultDTO);
         }),
       );
@@ -83,44 +94,46 @@ export class IngredientService {
       .query(ingredients)
       .pipe(
         catchError((error: Error) => {
-          const name = ingredients.where?.name ?? 'undefined name';
+          const label = this.labelFromWhere(ingredients.where);
 
-          console.error(error, `❌ Error finding many ingredients from tRPC: ${name}`);
+          console.error(error, `❌ Error finding many ingredients from tRPC: ${label}`);
           return of({} as FindManyIngredientResultDTO);
         }),
       );
   }
 
   public findUnique(ingredient: FindUniqueIngredientDTO): Observable<FindUniqueIngredientResultDTO> {
-    return this.trpc.ingredient.findUnique
+  const label = this.labelFromWhere(ingredient.where);
+
+  return this.trpc.ingredient.findUnique
     .query(ingredient)
     .pipe(
       catchError((error: Error) => {
-        console.error(error, `❌ Error finding ingredient from tRPC: ${ingredient.where.name}`);
+        console.error(error, `❌ Error finding ingredient from tRPC: ${label}`);
         return of({} as FindUniqueIngredientResultDTO);
       }),
     );
-  }
+}
 
   public update(ingredient: UpdateOneIngredientDTO): Observable<UpdateIngredientResultDTO> {
-    return this.trpc.ingredient.update
-      .mutate(ingredient)
-      .pipe(
-        catchError((error: Error) => {
-          console.error(error, `❌ Error updating ingredient via tRPC: ${ingredient.where.name}`);
-          return of({} as UpdateIngredientResultDTO);
-        }),
-      );
-  }
+  const label = this.labelFromWhere(ingredient.where);
+
+  return this.trpc.ingredient.update.mutate(ingredient).pipe(
+    catchError((error: Error) => {
+      console.error(error, `❌ Error updating ingredient via tRPC: ${label}`);
+      return of({} as UpdateIngredientResultDTO);
+    }),
+  );
+}
 
   public updateMany(ingredients: UpdateManyIngredientDTO): Observable<UpdateManyIngredientResultDTO> {
     return this.trpc.ingredient.updateMany
       .mutate(ingredients)
       .pipe(
         catchError((error: Error) => {
-          const name = ingredients.where?.name ?? 'undefined name';
+          const label = this.labelFromWhere(ingredients.where);
 
-          console.error(error, `❌ Error updating many ingredients via tRPC: ${name}`);
+          console.error(error, `❌ Error updating many ingredients via tRPC: ${label}`);
           return of({} as UpdateManyIngredientResultDTO);
         }),
       );

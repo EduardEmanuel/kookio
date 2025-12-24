@@ -22,7 +22,7 @@ export default class HomeComponent {
 
   protected ingredients = toSignal(
     iif(
-      () => mockIngredients.every(i => i.id),
+      () => mockIngredients.every(i => i.userId && i.name),
       this.ingredientService.findMany({}),
       this.ingredientService.createMany({ data: mockIngredients })
     )

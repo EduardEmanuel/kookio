@@ -1,3 +1,4 @@
+
 import { TestBed } from '@angular/core/testing';
 import { Observable, of } from 'rxjs';
 
@@ -30,8 +31,8 @@ const existingIngredient = {
   ...mockIngredients[0],
   createdAt: now,
 };
-const { id, name } = existingIngredient;
-const findUniqueRequest = { where: { id, name } };
+const { name, userId } = existingIngredient;
+const findUniqueRequest = { where: { userId_name: { userId, name } } };
 
 export const ingredientTrpcMock = {
   ingredient: {
@@ -140,8 +141,17 @@ describe('IngredientService', () => {
       scheduler.flush();
 
       expect(errorSpy).toHaveBeenCalledTimes(2);
-      expect(errorSpy).toHaveBeenCalledWith(err, `❌ Error finding ingredient from tRPC: ${existingIngredient.name}`);
-      expect(errorSpy).toHaveBeenCalledWith(err, `❌ Error creating ingredient via tRPC: ${createdIngredient.name}`);
+
+expect(errorSpy).toHaveBeenCalledWith(
+  err,
+  `❌ Error finding ingredient from tRPC: ingredient(user=${userId}, name=${name})`,
+);
+
+expect(errorSpy).toHaveBeenCalledWith(
+  err,
+  `❌ Error creating ingredient via tRPC: ${createdIngredient.name}`,
+);
     });
   });
 });
+
