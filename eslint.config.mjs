@@ -6,7 +6,13 @@ export default [
   ...nx.configs['flat/javascript'],
   {
     ignores: [
-      '**/dist',
+      '**/dist/**',
+      '**/.vercel/**',
+      '**/.nitro/**',
+      '**/.analog/**',
+      '**/.output/**',
+      '**/tmp/**',
+      '**/coverage/**',
       '**/vite.config.*.timestamp*',
       '**/vitest.config.*.timestamp*',
     ],
@@ -40,7 +46,6 @@ export default [
       '**/*.cjs',
       '**/*.mjs',
     ],
-    // Override or add rules here
     rules: {},
   },
 ];

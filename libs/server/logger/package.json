@@ -1,0 +1,11 @@
+{
+  "name": "@kookio/server-logger",
+  "version": "0.0.1",
+  "private": true,
+  "type": "commonjs",
+  "main": "./index.cjs",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "pino": "~9.12.0"
+  }
+}

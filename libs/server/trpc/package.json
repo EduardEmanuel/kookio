@@ -1,0 +1,29 @@
+{
+  "name": "@kookio/server-trpc",
+  "version": "0.0.1",
+  "private": true,
+  "type": "commonjs",
+  "main": "./index.cjs",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./index.cjs"
+    },
+    "./configs": {
+      "types": "./src/configs.d.ts",
+      "default": "./configs.cjs"
+    },
+    "./types": {
+      "types": "./src/types.d.ts",
+      "default": "./types.cjs"
+    }
+  },
+  "dependencies": {
+    "superjson": "~2.2.2",
+    "@trpc/server": "~10.45.2",
+    "@kookio/prisma-client": "0.0.1",
+    "@kookio/server-logger": "0.0.1",
+    "@kookio/prisma-validator": "0.0.1"
+  }
+}

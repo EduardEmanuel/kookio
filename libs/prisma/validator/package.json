@@ -1,0 +1,11 @@
+{
+  "name": "@kookio/prisma-validator",
+  "version": "0.0.1",
+  "private": true,
+  "type": "commonjs",
+  "main": "./index.cjs",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "zod": "~3.25.76"
+  }
+}

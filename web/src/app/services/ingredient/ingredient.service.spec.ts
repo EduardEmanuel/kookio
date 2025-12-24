@@ -1,14 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { Observable, of } from 'rxjs';
 
-import { mockIngredients } from '@kookio/mock';
+import { mockIngredients } from '@kookio/shared-mock';
 import {
   CreateIngredientResultDTO,
   CreateManyIngredientResultDTO,
   FindManyIngredientResultDTO,
   FindUniqueIngredientResultDTO, 
 } from '@kookio/prisma-validator';
-import { logger } from '@kookio/utils';
 
 import { createTestScheduler } from '../../../test-setup';
 import { TrpcClientApp } from '../../../trpc-client';
@@ -124,7 +123,7 @@ describe('IngredientService', () => {
 
   it('should handle errors (marble)', () => {
     const scheduler = createTestScheduler();
-    const errorSpy = vi.spyOn(logger, 'error');
+    const errorSpy = vi.spyOn(console, 'error');
 
     scheduler.run(({ cold, expectObservable }) => {
       const err = new Error('Simulated API failure');

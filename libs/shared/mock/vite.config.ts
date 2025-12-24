@@ -11,7 +11,7 @@ export default defineConfig(() => ({
   //  plugins: [ nxViteTsPaths() ],
   // },
   test: {
-    name: 'mock',
+    name: 'shared-mock',
     watch: false,
     globals: true,
     environment: 'node',

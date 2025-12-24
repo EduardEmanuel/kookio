@@ -9,10 +9,7 @@
   "scripts": {
     "start:web": "npm run vercel:env:tmp && dotenv -e ./tmp/kookio.env -- nx serve web && rimraf ./tmp/kookio.env",
     "build:web": "npm run vercel:env:tmp && dotenv -e ./tmp/kookio.env -- nx build web && rimraf ./tmp/kookio.env",
-    "test:web": "nx test web",
-    "lint:web": "nx lint web",
     "e2e:web": "npm run vercel:env:tmp && dotenv -e ./tmp/kookio.env -- nx e2e web-e2e && rimraf ./tmp/kookio.env",
-    "test:prisma-client": "nx test prisma-client",
     "migrate-dev:prisma-client": "npm run vercel:env:tmp && dotenv -e ./tmp/kookio.env -- nx migrate-dev prisma-client && rimraf ./tmp/kookio.env",
     "migrate-deploy:prisma-client": "npm run vercel:env:tmp && dotenv -e ./tmp/kookio.env -- nx migrate-deploy prisma-client && rimraf ./tmp/kookio.env",
     "bench-latency:prisma-client": "npm run vercel:env:tmp && dotenv -e ./tmp/kookio.env -- nx bench-latency prisma-client && rimraf ./tmp/kookio.env",
@@ -21,6 +18,8 @@
     "reset:web": "nx reset web",
     "kookio-icons-filled:web": "nx kookio-icons-filled web",
     "material-icons-filled:web": "nx material-icons-filled web",
+    "lint:all:fix": "nx run-many -t lint --fix",
+    "test:all": "nx run-many -t test",
     "affected": "nx show projects --affected",
     "format": "nx format:write",
     "vercel:env:tmp": "vercel env pull ./tmp/kookio.env"

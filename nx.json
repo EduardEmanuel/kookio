@@ -97,11 +97,11 @@
   "projects": {
     "web": {
       "tags": ["type:app", "scope:web"],
-      "dependsOn": ["mock", "prisma-client"]
+      "dependsOn": ["shared-mock", "prisma-client"]
     },
     "web-e2e": {
       "tags": ["type:e2e", "scope:web"],
-      "dependsOn": ["mock", "prisma-client"]
+      "dependsOn": ["shared-mock", "prisma-client"]
     }
   }
 }

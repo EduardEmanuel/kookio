@@ -24,9 +24,9 @@ Let's Kookio it! is an open-source, full-stack web application that helps home c
 ├── web/                         # Analog SSR Angular 20 app with tRPC client and feature modules
 ├── web-e2e/                     # Playwright spec suite targeting the web application
 ├── libs/
-│   ├── data-access/
-│   │   ├── prisma-client        # Prisma schema, migrations, env-aware scripts
-│   │   └── prisma-validator     # Zod schemas from Prisma, DTOs from Zod, Zod overrides
+│   ├── prisma/
+│   │   ├── client        # Prisma schema, migrations, env-aware scripts
+│   │   └── validator     # Zod schemas from Prisma, DTOs from Zod, Zod overrides
 │   └── shared/
 │       ├── mock/                # Mock fixtures (e.g., mockIngredients) for demos and seeding
 │       └── utils/               # Reusable TypeScript helpers shared across apps
@@ -90,7 +90,7 @@ cockroach sql --insecure -e "CREATE DATABASE kookio;"
 
 ```bash
 npm install
-npm run migrate-dev:prisma-client # applies dev migrations and regenerates Prisma clients
+npm run migrate-dev:client # applies dev migrations and regenerates Prisma clients
 npm run start:web                 # equivalent to nx serve web
 ```
 
@@ -103,12 +103,12 @@ npm run build:web                 # runs nx build web (configured in web/project
 ## 🔐 Environment & Database
 
 - Environment variables are managed centrally through Vercel. For local development, the Vercel CLI is used to pull the active environment configuration and inject it temporarily into the runtime, ensuring parity between local and deployed environments without committing secrets to the repository.
-- Run `npx nx run prisma-client:generate` (or `npm run migrate-dev:prisma-client`, which depends on generation) whenever the schema changes.
-- To apply migrations against your local database: `npm run migrate-dev:prisma-client`. For production-ready deploys, use `npm run migrate-deploy:prisma-client`.
+- Run `npx nx run client:generate` (or `npm run migrate-dev:client`, which depends on generation) whenever the schema changes.
+- To apply migrations against your local database: `npm run migrate-dev:client`. For production-ready deploys, use `npm run migrate-deploy:client`.
 - Seed the database with sample data:
 
 ```bash
-npm run seed:prisma-client
+npm run seed:client
 ```
 
 ## ✅ Testing
@@ -136,12 +136,12 @@ npm run seed:prisma-client
 
 | Script | Description |
 |--------|-------------|
-| `npm run bench-latency:prisma-client` | Checks the latency of `Cockroach Labs`. |
-| `npm run migrate-dev:prisma-client` | Creates and applies local migrations using `Vercel CLI`. |
-| `npm run migrate-deploy:prisma-client` | Applies production migrations using `Vercel CLI`. |
-| `npm run seed:prisma-client` | Executes the initial seed script. |
-| `npm run studio:prisma-client` | Launches Prisma Studio to explore and edit data. |
-| `npm run test:prisma-client` | Runs unit tests (`Vitest`) for the `prisma-client` library. |
+| `npm run bench-latency:client` | Checks the latency of `Cockroach Labs`. |
+| `npm run migrate-dev:client` | Creates and applies local migrations using `Vercel CLI`. |
+| `npm run migrate-deploy:client` | Applies production migrations using `Vercel CLI`. |
+| `npm run seed:client` | Executes the initial seed script. |
+| `npm run studio:client` | Launches Prisma Studio to explore and edit data. |
+| `npm run test:client` | Runs unit tests (`Vitest`) for the `client` library. |
 
 ### General
 

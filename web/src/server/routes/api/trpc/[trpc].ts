@@ -1,9 +1,7 @@
 import { createTrpcNitroHandler } from '@analogjs/trpc/server';
 
-import { appRouter } from '../../../trpc/routers';
-import { createContext } from '../../../trpc/context';
+import { appRouter, createContext } from '@kookio/server-trpc';
 
-// export API handler
 export default createTrpcNitroHandler({
   router: appRouter,
   createContext,

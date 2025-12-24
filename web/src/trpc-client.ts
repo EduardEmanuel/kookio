@@ -1,17 +1,15 @@
 import { createTrpcClient } from '@analogjs/trpc';
 import { inject } from '@angular/core';
-import { SuperJSON } from 'superjson';
 
-import { AppRouter } from './server/trpc/routers';
-
-const url = '/api/trpc';
+import { AppRouter } from '@kookio/server-trpc-types';
+import { TRPC_PATH, TRPC_TRANSFORMER } from '@kookio/server-trpc-configs';
 
 const trpcClient = createTrpcClient<AppRouter>({
-  url,
+  url: TRPC_PATH,
   options: {
-    transformer: SuperJSON,
-  }
-})
+    transformer: TRPC_TRANSFORMER,
+  },
+});
 
 export const { provideTrpcClient } = trpcClient;
 export const TrpcClientApp = trpcClient.TrpcClient;

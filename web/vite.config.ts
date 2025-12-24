@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
           routes: [ '/about' ],
         },
         nitro: {
-          preset: 'vercel',
+          preset: nitroPreset,
           esbuild: {
             options: {
               platform: 'node',

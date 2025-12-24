@@ -22,7 +22,7 @@ function normalizeAlias(
     if (!arr?.length) continue;
     const bare = key.replace(/\/\*$/, '');
     // only first mapping is enough for our libs
-    const first = arr[0]!.replace(/\/\*$/, '');
+    const first = arr[0].replace(/\/\*$/, '');
     out[bare] = resolve(baseUrl, mapper(first));
   }
   return out;

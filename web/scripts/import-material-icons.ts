@@ -2,7 +2,7 @@ import { mkdir, readdir, copyFile } from 'node:fs/promises';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { logger } from '@kookio/utils';
+import { logger } from '@kookio/server-logger';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

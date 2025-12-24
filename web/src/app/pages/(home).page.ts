@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { iif, map, switchMap } from 'rxjs';
 
-import { mockIngredients } from '@kookio/mock';
+import { mockIngredients } from '@kookio/shared-mock';
 
 import { IngredientService } from '../services/ingredient/ingredient.service';
 import { FindUniqueIngredientDTO } from '@kookio/prisma-validator';

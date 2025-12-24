@@ -1,0 +1,22 @@
+{
+  "name": "prisma-validator",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/prisma/validator/src",
+  "projectType": "library",
+  "tags": ["type:prisma", "scope:validator"],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": ["prisma-client:generate"],
+      "options": {
+        "outputPath": "dist/libs/prisma/validator",
+        "main": "libs/prisma/validator/src/index.ts",
+        "tsConfig": "libs/prisma/validator/tsconfig.lib.json",
+        "assets": ["libs/prisma/validator/*.md"],
+        "format": ["cjs"],
+        "generatePackageJson": true
+      }
+    }
+  }
+}

@@ -19,7 +19,6 @@ import type {
   UpdateManyIngredientResultDTO,
   UpdateOneIngredientDTO,
 } from '@kookio/prisma-validator';
-import { logger } from '@kookio/utils';
 
 import { injectTrpcClient } from '../../../trpc-client';
 
@@ -34,7 +33,7 @@ export class IngredientService {
       .mutate(ingredient)
       .pipe(
         catchError((error: Error) => {
-          logger.error(error, `❌ Error creating ingredient via tRPC: ${ingredient.data.name}`);
+          console.error(error, `❌ Error creating ingredient via tRPC: ${ingredient.data.name}`);
           return of({} as CreateIngredientResultDTO);
         }),
       );
@@ -49,7 +48,7 @@ export class IngredientService {
         catchError((error: Error) => {
           const names = dataArray.map((i, index) => `${index}. ${i.name}`).join('; ');
 
-          logger.error(error, `❌ Error creating many ingredients via tRPC: ${names}`);
+          console.error(error, `❌ Error creating many ingredients via tRPC: ${names}`);
           return of({} as CreateManyIngredientResultDTO);
         }),
       );
@@ -60,7 +59,7 @@ export class IngredientService {
       .mutate(ingredient)
       .pipe(
         catchError((error: Error) => {
-          logger.error(error, `❌ Error deleting ingredient via tRPC: ${ingredient.where.name}`);
+          console.error(error, `❌ Error deleting ingredient via tRPC: ${ingredient.where.name}`);
           return of({} as DeleteIngredientResultDTO);
         }),
       );
@@ -73,7 +72,7 @@ export class IngredientService {
         catchError((error: Error) => {
           const name = ingredients.where?.name ?? 'undefined name';
 
-          logger.error(error, `❌ Error deleting many ingredients via tRPC: ${name}`);
+          console.error(error, `❌ Error deleting many ingredients via tRPC: ${name}`);
           return of({} as DeleteManyIngredientResultDTO);
         }),
       );
@@ -86,7 +85,7 @@ export class IngredientService {
         catchError((error: Error) => {
           const name = ingredients.where?.name ?? 'undefined name';
 
-          logger.error(error, `❌ Error finding many ingredients from tRPC: ${name}`);
+          console.error(error, `❌ Error finding many ingredients from tRPC: ${name}`);
           return of({} as FindManyIngredientResultDTO);
         }),
       );
@@ -97,7 +96,7 @@ export class IngredientService {
     .query(ingredient)
     .pipe(
       catchError((error: Error) => {
-        logger.error(error, `❌ Error finding ingredient from tRPC: ${ingredient.where.name}`);
+        console.error(error, `❌ Error finding ingredient from tRPC: ${ingredient.where.name}`);
         return of({} as FindUniqueIngredientResultDTO);
       }),
     );
@@ -108,7 +107,7 @@ export class IngredientService {
       .mutate(ingredient)
       .pipe(
         catchError((error: Error) => {
-          logger.error(error, `❌ Error updating ingredient via tRPC: ${ingredient.where.name}`);
+          console.error(error, `❌ Error updating ingredient via tRPC: ${ingredient.where.name}`);
           return of({} as UpdateIngredientResultDTO);
         }),
       );
@@ -121,7 +120,7 @@ export class IngredientService {
         catchError((error: Error) => {
           const name = ingredients.where?.name ?? 'undefined name';
 
-          logger.error(error, `❌ Error updating many ingredients via tRPC: ${name}`);
+          console.error(error, `❌ Error updating many ingredients via tRPC: ${name}`);
           return of({} as UpdateManyIngredientResultDTO);
         }),
       );

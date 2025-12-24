@@ -1,0 +1,25 @@
+{
+  "name": "server-trpc",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/server/trpc/src",
+  "projectType": "library",
+  "tags": ["type:server", "scope:trpc"],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/server/trpc",
+        "main": "libs/server/trpc/src/index.ts",
+        "additionalEntryPoints": [
+          "libs/server/trpc/src/configs.ts",
+          "libs/server/trpc/src/types.ts"
+        ],
+        "tsConfig": "libs/server/trpc/tsconfig.lib.json",
+        "assets": ["libs/server/trpc/*.md"],
+        "format": ["cjs"],
+        "generatePackageJson": true
+      }
+    }
+  }
+}

@@ -32,7 +32,7 @@
         "main": "web/src/main.ts",
         "outputPath": "dist/web/client",
         "tsConfig": "web/tsconfig.app.json",
-        "implicitDependencies": ["mock", "prisma-client", "prisma-validator", "utils"]
+        "implicitDependencies": ["prisma-client", "prisma-validator", "server-trpc", "shared-mock"]
       },
       "defaultConfiguration": "production",
       "configurations": {

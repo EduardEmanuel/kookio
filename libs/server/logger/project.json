@@ -1,0 +1,21 @@
+{
+  "name": "server-logger",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/server/logger/src",
+  "projectType": "library",
+  "tags": ["type:server", "scope:logger"],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/server/logger",
+        "main": "libs/server/logger/src/index.ts",
+        "tsConfig": "libs/server/logger/tsconfig.lib.json",
+        "assets": ["libs/server/logger/*.md"],
+        "format": ["cjs"],
+        "generatePackageJson": true
+      }
+    }
+  }
+}

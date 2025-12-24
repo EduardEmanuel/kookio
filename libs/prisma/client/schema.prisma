@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider = "prisma-zod-generator"
+  output   = "../validator/src/generated/zod"
+  useMultipleFiles = true  // generate a separate file for each model
+  useTimestamps = true     // use `z.date()` for DateTime fields instead of `z.string()`
+  useBigInt = true         // use `z.bigint()` for BigInt fields instead of `z.number()`
+  useDecimal = true        // use `z.instanceof(Decimal)` for Decimal fields instead of `z.number()`
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model Ingredient {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  quantity  Int
+  unit      String
+  optional  Boolean   @default(false)
+  userId    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@unique([userId, name], map: "userId_name_unique")
+  @@index([userId], map: "ingredient_user_idx")
+}
+
+// export interface Ingredient {
+//     id: string;
+//     name: string;
+//     quantity: number;
+//     unit: string; // e.g., "kg", "g", "ml", "pcs"
+//     optional?: boolean; // Indicates if the ingredient is optional in a recipe
+//     description?: string; // Optional field for additional information about the ingredient
+//     imageUrl?: string; // Optional field for an image URL of the ingredient
+//     nutritionalInfo?: { // Optional field for nutritional information
+//         calories?: number; // Optional field for calories per unit
+//         protein?: number; // Optional field for protein content per unit
+//         fat?: number; // Optional field for fat content per unit
+//         carbohydrates?: number; // Optional field for carbohydrates content per unit
+//         fiber?: number; // Optional field for fiber content per unit
+//         sugar?: number; // Optional field for sugar content per unit
+//     };
+//     tags?: string[]; // Optional field for tags or labels (e.g., "gluten-free", "low-carb")
+//     allergens?: string[]; // Optional field for allergens (e.g., "nuts", "dairy")
+//     origin?: string; // Optional field for the origin of the ingredient (e.g., "local", "imported")
+//     storageInstructions?: string; // Optional field for storage instructions
+//     preparationInstructions?: string; // Optional field for preparation instructions
+//     purchaseLocation?: string; // Optional field for where to buy the ingredient
+//     price?: number; // Optional field for the price of the ingredient
+//     priceCurrency?: string; // Optional field for the currency of the price (e.g., "USD", "EUR")
+//     unitPrice?: number; // Optional field for the price per unit
+//     unitPriceCurrency?: string; // Optional field for the currency of the unit price (e.g., "USD", "EUR")
+//     unitPricePer?: string; // Optional field for the unit price basis (e.g., "kg", "g", "ml")
+//     unitPriceDescription?: string; // Optional field for a description of the unit price (e.g., "per kg", "per liter")
+//     unitPriceImageUrl?: string; // Optional field for an image URL of the unit price (e.g., a price tag image)
+//     unitPriceNutritionalInfo?: { // Optional field for nutritional information per unit price
+//         calories?: number; // Optional field for calories per unit price
+//         protein?: number; // Optional field for protein content per unit price
+//         fat?: number; // Optional field for fat content per unit price
+//         carbohydrates?: number; // Optional field for carbohydrates content per unit price
+//     }
+//     category?: string; // e.g., "vegetable", "fruit", "dairy"
+//     isOrganic?: boolean; // Optional field to indicate if the ingredient is organic
+//     expirationDate?: Date; // Optional field for expiration date
+// }
