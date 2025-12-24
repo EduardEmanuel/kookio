@@ -1,4 +1,4 @@
-# <img src="./web/public/icons/kookio/filled/logo.svg" alt="Kookio Logo" width="320"/>
+# <img src="./apps/web/public/icons/kookio/filled/logo.svg" alt="Kookio Logo" width="320"/>
 
 Let's Kookio it! is an open-source, full-stack web application that helps home cooks curate ingredient inventories, laying the groundwork for future recipe discovery through interactive, real-time exploration. The stack follows the PAN architecture—Prisma for CockroachDB access, Analog for Angular 20 SSR, and Nx for scalable orchestration—delivering a modern developer experience with type safety and automation baked in.
 
@@ -21,18 +21,22 @@ Let's Kookio it! is an open-source, full-stack web application that helps home c
 ## 📦 Packages
 
 ```text
-├── web/                         # Analog SSR Angular 20 app with tRPC client and feature modules
-├── web-e2e/                     # Playwright spec suite targeting the web application
+├── apps/
+│   ├── web               # Analog SSR Angular 20 app with tRPC client and feature modules
+│   └── web-e2e           # Playwright spec suite targeting the web application                              
 ├── libs/
 │   ├── prisma/
 │   │   ├── client        # Prisma schema, migrations, env-aware scripts
 │   │   └── validator     # Zod schemas from Prisma, DTOs from Zod, Zod overrides
+│   ├── server/
+│   │   ├── logger        # Shared Pino-based logger used by scripts and backend packages
+│   │   └── trpc          # Reusable tRPC server package
+│   │                     # Expose router, context and config for both Nitro and clients
 │   └── shared/
-│       ├── mock/                # Mock fixtures (e.g., mockIngredients) for demos and seeding
-│       └── utils/               # Reusable TypeScript helpers shared across apps
-├── dist/                        # Build artifacts produced by Nx targets
-├── nx.json                      # Workspace-wide Nx configuration and target defaults
-└── vitest.workspace.ts          # Root Vitest configuration federating project test setups
+│       └── mock          # Mock fixtures (e.g., mockIngredients) for demos and seeding
+├── dist                  # Build artifacts produced by Nx targets
+├── nx.json               # Workspace-wide Nx configuration and target defaults
+└── vitest.workspace.ts   # Root Vitest configuration federating project test setups
 ```
 
 ## 📤 Prerequisites
@@ -90,31 +94,31 @@ cockroach sql --insecure -e "CREATE DATABASE kookio;"
 
 ```bash
 npm install
-npm run migrate-dev:client # applies dev migrations and regenerates Prisma clients
-npm run start:web                 # equivalent to nx serve web
+npm run migrate-dev:prisma-client
+npm run start:web
 ```
 
 ### Build and bundle
 
 ```bash
-npm run build:web                 # runs nx build web (configured in web/project.json)
+npm run build:web
 ```
 
 ## 🔐 Environment & Database
 
 - Environment variables are managed centrally through Vercel. For local development, the Vercel CLI is used to pull the active environment configuration and inject it temporarily into the runtime, ensuring parity between local and deployed environments without committing secrets to the repository.
-- Run `npx nx run client:generate` (or `npm run migrate-dev:client`, which depends on generation) whenever the schema changes.
-- To apply migrations against your local database: `npm run migrate-dev:client`. For production-ready deploys, use `npm run migrate-deploy:client`.
+- Run `npx nx run prisma-client:generate` (or `npm run migrate-dev:prisma-client`, which depends on generation) whenever the schema changes.
+- To apply migrations against your local database: `npm run migrate-dev:prisma-client`. For production-ready deploys, use `npm run migrate-deploy:prisma-client`.
 - Seed the database with sample data:
 
 ```bash
-npm run seed:client
+npm run seed:prisma-client
 ```
 
 ## ✅ Testing
 
-- **Unit & component tests (Vitest):** `npm run test:web` composes Angular test harnesses via `@analogjs/vitest-angular`. Shared options live in `vitest.workspace.ts`.
-- **End-to-end tests (Playwright):** `npm run e2e:web` launches the Playwright runner configured in `web-e2e/playwright.config.ts`. It targets the SSR dev server, so ensure `nx serve web` is running or let Nx manage the lifecycle.
+- **Unit & component tests (Vitest):** `npm run test:all` or `npx nx test web` composes Angular test harnesses via `@analogjs/vitest-angular`. Shared options live in `vitest.workspace.ts`.
+- **End-to-end tests (Playwright):** `npm run e2e:web` launches the Playwright runner configured in `apps/web-e2e/playwright.config.ts`. It targets the SSR dev server, so ensure `nx serve web` is running or let Nx manage the lifecycle.
 - Coverage reporting is available through Vitest's V8 instrumentation (`@vitest/coverage-v8`) if you pass `--coverage` to the test target.
 
 ## 📜 Scripts
@@ -125,8 +129,6 @@ npm run seed:client
 |--------|-------------|
 | `npm run start:web` | Serves the `web` application locally using SSR. |
 | `npm run build:web` | Builds the `web` application (both client and SSR output). |
-| `npm run test:web` | Runs unit tests (`Vitest`) for the `web` app. |
-| `npm run lint:web` | Runs `ESLint` to lint the `web` app codebase. |
 | `npm run e2e:web` | Executes end-to-end tests (`Playwright`) for the `web` app. |
 | `npm run reset:web` | Resets the `web` application in NX context. |
 | `npm run kookio-icons-filled:web` | Generates a custom icon module for `web`. |
@@ -136,17 +138,18 @@ npm run seed:client
 
 | Script | Description |
 |--------|-------------|
-| `npm run bench-latency:client` | Checks the latency of `Cockroach Labs`. |
-| `npm run migrate-dev:client` | Creates and applies local migrations using `Vercel CLI`. |
-| `npm run migrate-deploy:client` | Applies production migrations using `Vercel CLI`. |
-| `npm run seed:client` | Executes the initial seed script. |
-| `npm run studio:client` | Launches Prisma Studio to explore and edit data. |
-| `npm run test:client` | Runs unit tests (`Vitest`) for the `client` library. |
+| `npm run bench-latency:prisma-client` | Checks the latency of `Cockroach Labs`. |
+| `npm run migrate-dev:prisma-client` | Creates and applies local migrations using `Vercel CLI`. |
+| `npm run migrate-deploy:prisma-client` | Applies production migrations using `Vercel CLI`. |
+| `npm run seed:prisma-client` | Executes the initial seed script. |
+| `npm run studio:prisma-client` | Launches Prisma Studio to explore and edit data. |
 
 ### General
 
 | Script | Description |
 |--------|-------------|
+| `npm run test:all` | Runs unit tests (`Vitest`) on all libs and apps. |
+| `npm run lint:all:fix` | Runs `ESLint` to lint and fix the codebase. |
 | `npm run affected` | Lists projects affected by the current Git changes. |
 | `npm run format` | Applies formatting rules using `nx format:write`. |
 | `npm run vercel:env:tmp` | Pulls Vercel environment variables into a temporary file. |

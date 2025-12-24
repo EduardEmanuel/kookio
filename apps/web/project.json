@@ -1,16 +1,16 @@
 {
   "name": "web",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "kookio",
-  "sourceRoot": "web/src",
+  "sourceRoot": "apps/web/src",
   "tags": [],
   "targets": {
     "kookio-icons-filled": {
       "executor": "nx:run-commands",
       "options": {
         "command": "vite-node --config vite.config.ts generate-icon-file.ts --namespace=kookio",
-        "cwd": "web/scripts/",
+        "cwd": "apps/web/scripts/",
         "parallel": false
       }
     },
@@ -21,17 +21,17 @@
           { "command": "vite-node --config vite.config.ts import-material-icons.ts --style=filled" },
           { "command": "vite-node --config vite.config.ts generate-icon-file.ts --namespace=material" }
         ],
-        "cwd": "web/scripts/",
+        "cwd": "apps/web/scripts/",
         "parallel": false
       }
     },
     "build": {
       "executor": "@analogjs/platform:vite",
       "options": {
-        "configFile": "web/vite.config.ts",
-        "main": "web/src/main.ts",
-        "outputPath": "dist/web/client",
-        "tsConfig": "web/tsconfig.app.json",
+        "configFile": "apps/web/vite.config.ts",
+        "main": "apps/web/src/main.ts",
+        "outputPath": "dist/apps/web/client",
+        "tsConfig": "apps/web/tsconfig.app.json",
         "implicitDependencies": ["prisma-client", "prisma-validator", "server-trpc", "shared-mock"]
       },
       "defaultConfiguration": "production",
@@ -93,7 +93,7 @@
       "options": {
         "buildTarget": "web:build",
         "port": 4200,
-        "staticFilePath": "dist/web/browser",
+        "staticFilePath": "dist/apps/web/browser",
         "spa": true
       }
     }

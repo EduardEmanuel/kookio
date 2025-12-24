@@ -24,8 +24,9 @@ if (stylesToImport.length === 0 || !stylesToImport.every(s => VALID_STYLES.inclu
 }
 
 async function importIconsForStyle(style: string) {
-  const SOURCE_DIR = path.resolve(__dirname, `../../node_modules/@material-design-icons/svg/${style}`);
-  const DEST_DIR = path.resolve(__dirname, `../../web/public/icons/material/${style}`);
+  const SOURCE_DIR = path.resolve(__dirname, `../../../node_modules/@material-design-icons/svg/${style}`);
+  const DEST_DIR = path.resolve(__dirname, `../public/icons/material/${style}`);
+
 
   try {
     await mkdir(DEST_DIR, { recursive: true });

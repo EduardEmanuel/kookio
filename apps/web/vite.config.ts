@@ -12,9 +12,9 @@ const nitroPreset = process.env['NITRO_PRESET'] ?? 'node-server';
 export default defineConfig(({ mode }) => {
   return {
     root: __dirname,
-    cacheDir: `../node_modules/.vite`,
+    cacheDir: `../../node_modules/.vite`,
     build: {
-      outDir: '../dist/./web/client',
+      outDir: '../../dist/./apps/web/client',
       reportCompressedSize: true,
       target: ['es2020'],
     },
