@@ -22,7 +22,19 @@
     "test:all": "nx run-many -t test",
     "affected": "nx show projects --affected",
     "format": "nx format:write",
-    "vercel:env:tmp": "vercel env pull ./tmp/kookio.env"
+    "vercel:env:tmp": "vercel env pull ./tmp/kookio.env",
+    "prepare": "husky",
+    "lint:fix": "eslint . --fix",
+    "format:write": "nx format:write",
+    "format:check": "nx format:check",
+    "test:affected": "nx affected -t test --parallel=3",
+    "build:affected": "nx affected -t build --parallel=3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs,json,md,html,css,scss,yml,yaml}": [
+      "npx nx format:write --files",
+      "npx eslint --fix"
+    ]
   },
   "private": true,
   "dependencies": {
@@ -96,9 +108,11 @@
     "eslint": "~9.35.0",
     "eslint-config-prettier": "~10.1.8",
     "eslint-plugin-playwright": "~2.2.2",
+    "husky": "^9.1.7",
     "jiti": "~2.5.1",
     "jsdom": "~27.0.0",
     "jsonc-eslint-parser": "~2.1.0",
+    "lint-staged": "^16.2.7",
     "ng-mocks": "~14.13.5",
     "nx": "~21.5.2",
     "pino-pretty": "^13.1.1",
