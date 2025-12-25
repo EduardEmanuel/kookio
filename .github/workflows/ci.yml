@@ -38,7 +38,7 @@ jobs:
 
       - name: Install
         run: npm ci --legacy-peer-deps
-        
+
       # Base/head for Nx (PR)
       - name: Set NX base/head (pull_request)
         if: github.event_name == 'pull_request'
@@ -468,7 +468,18 @@ jobs:
   # Notify on failure (single email job)
   # --------------------------
   notify-email:
-    needs: [ci, migrate-dev, migrate-test, resolve-url, smoke-dev, smoke-test, e2e-test, migrate-prod, smoke-prod]
+    needs:
+      [
+        ci,
+        migrate-dev,
+        migrate-test,
+        resolve-url,
+        smoke-dev,
+        smoke-test,
+        e2e-test,
+        migrate-prod,
+        smoke-prod,
+      ]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -481,7 +492,7 @@ jobs:
           server_port: ${{ vars.SMTP_PORT }}
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "❌ CI/CD issue in ${{ github.repository }} @ ${{ github.ref_name }} (run #${{ github.run_number }})"
+          subject: '❌ CI/CD issue in ${{ github.repository }} @ ${{ github.ref_name }} (run #${{ github.run_number }})'
           to: ${{ secrets.ALERT_EMAIL_TO }}
           from: ${{ secrets.ALERT_EMAIL_FROM }}
           secure: true
