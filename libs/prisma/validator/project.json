@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/prisma/validator/src",
   "projectType": "library",
-  "tags": ["type:prisma", "scope:validator"],
+  "tags": ["scope:prisma", "type:validator"],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -16,6 +16,13 @@
         "assets": ["libs/prisma/validator/*.md"],
         "format": ["cjs"],
         "generatePackageJson": true
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "libs/prisma/validator/vite.config.ts",
+        "passWithNoTests": true
       }
     }
   }

@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/prisma/client/src",
   "projectType": "library",
-  "tags": ["type:prisma", "scope:client"],
+  "tags": ["scope:prisma", "type:client"],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -29,7 +29,9 @@
     "migrate-dev": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [{ "target": "generate", "projects": "self", "params": "forward" }],
+      "dependsOn": [
+        { "target": "generate", "projects": "self", "params": "forward" }
+      ],
       "options": {
         "cwd": ".",
         "commands": [
@@ -42,7 +44,9 @@
     "migrate-deploy": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [{ "target": "generate", "projects": "self", "params": "forward" }],
+      "dependsOn": [
+        { "target": "generate", "projects": "self", "params": "forward" }
+      ],
       "options": {
         "cwd": ".",
         "commands": [
@@ -55,12 +59,14 @@
     "bench-latency": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [{ "target": "generate", "projects": "self", "params": "forward" }],
+      "dependsOn": [
+        { "target": "generate", "projects": "self", "params": "forward" }
+      ],
       "options": {
         "cwd": ".",
         "commands": [
-          { 
-            "command": "tsx --tsconfig tsconfig.base.json libs/prisma/client/src/scripts/bench-latency.ts" 
+          {
+            "command": "tsx --tsconfig tsconfig.base.json libs/prisma/client/src/scripts/bench-latency.ts"
           }
         ]
       }
@@ -68,12 +74,14 @@
     "seed": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [{ "target": "generate", "projects": "self", "params": "forward" }],
+      "dependsOn": [
+        { "target": "generate", "projects": "self", "params": "forward" }
+      ],
       "options": {
         "cwd": ".",
         "commands": [
-          { 
-            "command": "tsx --tsconfig tsconfig.base.json libs/prisma/client/src/scripts/seed.ts" 
+          {
+            "command": "tsx --tsconfig tsconfig.base.json libs/prisma/client/src/scripts/seed.ts"
           }
         ]
       }
@@ -81,7 +89,9 @@
     "studio": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [{ "target": "generate", "projects": "self", "params": "forward" }],
+      "dependsOn": [
+        { "target": "generate", "projects": "self", "params": "forward" }
+      ],
       "options": {
         "cwd": ".",
         "commands": [
@@ -94,7 +104,8 @@
     "test": {
       "executor": "@nx/vite:test",
       "options": {
-        "config": "libs/prisma/client/vite.config.ts"
+        "config": "libs/prisma/client/vite.config.ts",
+        "passWithNoTests": true
       }
     }
   }

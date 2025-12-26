@@ -4,6 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/web-e2e/src",
   "implicitDependencies": ["web"],
+  "tags": ["scope:web", "type:e2e"],
   "targets": {
     "e2e": {
       "executor": "@nx/playwright:playwright",

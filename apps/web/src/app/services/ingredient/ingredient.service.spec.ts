@@ -1,4 +1,3 @@
-
 import { TestBed } from '@angular/core/testing';
 import { Observable, of } from 'rxjs';
 
@@ -7,8 +6,9 @@ import {
   CreateIngredientResultDTO,
   CreateManyIngredientResultDTO,
   FindManyIngredientResultDTO,
-  FindUniqueIngredientResultDTO, 
+  FindUniqueIngredientResultDTO,
 } from '@kookio/prisma-validator';
+import { ingredientLabelers } from '@kookio/shared-utility';
 
 import { createTestScheduler } from '../../../test-setup';
 import { TrpcClientApp } from '../../../trpc-client';
@@ -37,31 +37,43 @@ const findUniqueRequest = { where: { userId_name: { userId, name } } };
 export const ingredientTrpcMock = {
   ingredient: {
     create: {
-      mutate: vi.fn().mockImplementation(
-        (): Observable<CreateIngredientResultDTO> => of(createdIngredient)
-      ),
+      mutate: vi
+        .fn()
+        .mockImplementation(
+          (): Observable<CreateIngredientResultDTO> => of(createdIngredient),
+        ),
     },
     createMany: {
-      mutate: vi.fn().mockImplementation((): Observable<CreateManyIngredientResultDTO> => of({
-        count: mockIngredients.length,
-      } as CreateManyIngredientResultDTO)),
+      mutate: vi.fn().mockImplementation(
+        (): Observable<CreateManyIngredientResultDTO> =>
+          of({
+            count: mockIngredients.length,
+          } as CreateManyIngredientResultDTO),
+      ),
     },
     findMany: {
-      query: vi.fn().mockImplementation((): Observable<FindManyIngredientResultDTO> => of({
-        data: mockIngredients,
-        pagination: {
-          hasNext: false,
-          hasPrev: false,
-          page: 1,
-          pageSize: mockIngredients.length,
-          total: mockIngredients.length,
-          totalPages: 1,
-        },
-      } as FindManyIngredientResultDTO)),
+      query: vi.fn().mockImplementation(
+        (): Observable<FindManyIngredientResultDTO> =>
+          of({
+            data: mockIngredients,
+            pagination: {
+              hasNext: false,
+              hasPrev: false,
+              page: 1,
+              pageSize: mockIngredients.length,
+              total: mockIngredients.length,
+              totalPages: 1,
+            },
+          } as FindManyIngredientResultDTO),
+      ),
     },
     findUnique: {
-      query: vi.fn().mockImplementation((): Observable<FindUniqueIngredientResultDTO> =>
-        of(existingIngredient as FindUniqueIngredientResultDTO)),
+      query: vi
+        .fn()
+        .mockImplementation(
+          (): Observable<FindUniqueIngredientResultDTO> =>
+            of(existingIngredient as FindUniqueIngredientResultDTO),
+        ),
     },
   },
 };
@@ -127,31 +139,40 @@ describe('IngredientService', () => {
     const errorSpy = vi.spyOn(console, 'error');
 
     scheduler.run(({ cold, expectObservable }) => {
+      const createLabel = ingredientLabelers.fromCreateData(createRequest.data);
       const err = new Error('Simulated API failure');
+      const findLabel = ingredientLabelers.fromWhere(findUniqueRequest.where);
 
-      ingredientTrpcMock.ingredient.findUnique.query.mockReturnValue(cold('--#', {}, err));
-      ingredientTrpcMock.ingredient.create.mutate.mockReturnValue(cold('--#', {}, err));
+      ingredientTrpcMock.ingredient.findUnique.query.mockReturnValue(
+        cold('--#', {}, err),
+      );
+      ingredientTrpcMock.ingredient.create.mutate.mockReturnValue(
+        cold('--#', {}, err),
+      );
 
       const fetch$ = service.findUnique(findUniqueRequest);
       const create$ = service.create(createRequest);
 
-      expectObservable(fetch$).toBe('--(y|)', { y: {} as FindUniqueIngredientResultDTO });
-      expectObservable(create$).toBe('--(b|)', { b: {} as CreateIngredientResultDTO });
+      expectObservable(fetch$).toBe('--(y|)', {
+        y: {} as FindUniqueIngredientResultDTO,
+      });
+      expectObservable(create$).toBe('--(b|)', {
+        b: {} as CreateIngredientResultDTO,
+      });
 
       scheduler.flush();
 
       expect(errorSpy).toHaveBeenCalledTimes(2);
 
-expect(errorSpy).toHaveBeenCalledWith(
-  err,
-  `❌ Error finding ingredient from tRPC: ingredient(user=${userId}, name=${name})`,
-);
+      expect(errorSpy).toHaveBeenCalledWith(
+        err,
+        `❌ Error finding ingredient from tRPC: ${findLabel}`,
+      );
 
-expect(errorSpy).toHaveBeenCalledWith(
-  err,
-  `❌ Error creating ingredient via tRPC: ${createdIngredient.name}`,
-);
+      expect(errorSpy).toHaveBeenCalledWith(
+        err,
+        `❌ Error creating ingredient via tRPC: ${createLabel}`,
+      );
     });
   });
 });
-

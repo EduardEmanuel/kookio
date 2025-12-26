@@ -8,8 +8,6 @@
   "dependencies": {
     "tslib": "^2.3.0",
     "@kookio/prisma-validator": "0.0.1",
-    "@kookio/shared-mock": "0.0.1",
-    "@kookio/server-logger": "0.0.1",
     "@prisma/client": "~6.17.1"
   }
 }

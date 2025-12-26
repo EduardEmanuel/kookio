@@ -1,0 +1,28 @@
+{
+  "name": "utility",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/utility/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:utility"],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/shared/utility",
+        "main": "libs/shared/utility/src/index.ts",
+        "tsConfig": "libs/shared/utility/tsconfig.lib.json",
+        "assets": ["libs/shared/utility/*.md"],
+        "format": ["cjs"],
+        "generatePackageJson": true
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "libs/prisma/validator/vite.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

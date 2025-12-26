@@ -24,6 +24,7 @@
     "@trpc/server": "~10.45.2",
     "@kookio/prisma-client": "0.0.1",
     "@kookio/server-logger": "0.0.1",
-    "@kookio/prisma-validator": "0.0.1"
+    "@kookio/prisma-validator": "0.0.1",
+    "@kookio/shared-utility": "0.0.1"
   }
 }

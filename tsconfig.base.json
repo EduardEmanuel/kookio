@@ -21,7 +21,8 @@
       "@kookio/server-trpc": ["libs/server/trpc/src/index.ts"],
       "@kookio/server-trpc-configs": ["libs/server/trpc/src/configs.ts"],
       "@kookio/server-trpc-types": ["libs/server/trpc/src/types.ts"],
-      "@kookio/shared-mock": ["libs/shared/mock/src/index.ts"]
+      "@kookio/shared-mock": ["libs/shared/mock/src/index.ts"],
+      "@kookio/shared-utility": ["libs/shared/utility/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

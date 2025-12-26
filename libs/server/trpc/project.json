@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/server/trpc/src",
   "projectType": "library",
-  "tags": ["type:server", "scope:trpc"],
+  "tags": ["scope:server", "type:trpc"],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -19,6 +19,13 @@
         "assets": ["libs/server/trpc/*.md"],
         "format": ["cjs"],
         "generatePackageJson": true
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "libs/server/trpc/vite.config.ts",
+        "passWithNoTests": true
       }
     }
   }
