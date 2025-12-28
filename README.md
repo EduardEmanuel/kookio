@@ -23,7 +23,7 @@ Let's Kookio it! is an open-source, full-stack web application that helps home c
 ```text
 ├── apps/
 │   ├── web               # Analog SSR Angular 20 app with tRPC client and feature modules
-│   └── web-e2e           # Playwright spec suite targeting the web application                              
+│   └── web-e2e           # Playwright spec suite targeting the web application
 ├── libs/
 │   ├── prisma/
 │   │   ├── client        # Prisma schema, migrations, env-aware scripts
@@ -43,12 +43,12 @@ Let's Kookio it! is an open-source, full-stack web application that helps home c
 
 In order to run the project, make sure the following tools are installed:
 
-| Tool | Purpose | How to Install |
-|------|---------|----------------|
-| **Node.js** `>= 20.11.1` + **npm** | Runtime & package manager | [nodejs.org](https://nodejs.org) |
-| **CockroachDB** (Cloud or local single-node) | Database | [cockroachlabs.com/docs](https://www.cockroachlabs.com/docs/) |
-| **Vercel CLI** | Environment management & deployment parity | [vercel.com/docs/cli](https://vercel.com/docs/cli) |
-| *(optional)* **Docker** | Containerized local DB setup | [docker.com](https://www.docker.com/products/docker-desktop) |
+| Tool                                         | Purpose                                    | How to Install                                                |
+| -------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------- |
+| **Node.js** `>= 20.11.1` + **npm**           | Runtime & package manager                  | [nodejs.org](https://nodejs.org)                              |
+| **CockroachDB** (Cloud or local single-node) | Database                                   | [cockroachlabs.com/docs](https://www.cockroachlabs.com/docs/) |
+| **Vercel CLI**                               | Environment management & deployment parity | [vercel.com/docs/cli](https://vercel.com/docs/cli)            |
+| _(optional)_ **Docker**                      | Containerized local DB setup               | [docker.com](https://www.docker.com/products/docker-desktop)  |
 
 > The Vercel CLI is used to synchronize environment variables locally with the cloud configuration, ensuring parity between local development and deployed environments.
 
@@ -125,34 +125,35 @@ npm run seed:prisma-client
 
 ### Web
 
-| Script | Description |
-|--------|-------------|
-| `npm run start:web` | Serves the `web` application locally using SSR. |
-| `npm run build:web` | Builds the `web` application (both client and SSR output). |
-| `npm run e2e:web` | Executes end-to-end tests (`Playwright`) for the `web` app. |
-| `npm run reset:web` | Resets the `web` application in NX context. |
-| `npm run kookio-icons-filled:web` | Generates a custom icon module for `web`. |
-| `npm run material-icons-filled:web` | Imports and optimizes the Material Icons set. |
+| Script                              | Description                                                 |
+| ----------------------------------- | ----------------------------------------------------------- |
+| `npm run start:web`                 | Serves the `web` application locally using SSR.             |
+| `npm run build:web`                 | Builds the `web` application (both client and SSR output).  |
+| `npm run e2e:web`                   | Executes end-to-end tests (`Playwright`) for the `web` app. |
+| `npm run reset:web`                 | Resets the `web` application in NX context.                 |
+| `npm run kookio-icons-filled:web`   | Generates a custom icon module for `web`.                   |
+| `npm run material-icons-filled:web` | Imports and optimizes the Material Icons set.               |
 
 ### Prisma
 
-| Script | Description |
-|--------|-------------|
-| `npm run bench-latency:prisma-client` | Checks the latency of `Cockroach Labs`. |
-| `npm run migrate-dev:prisma-client` | Creates and applies local migrations using `Vercel CLI`. |
-| `npm run migrate-deploy:prisma-client` | Applies production migrations using `Vercel CLI`. |
-| `npm run seed:prisma-client` | Executes the initial seed script. |
-| `npm run studio:prisma-client` | Launches Prisma Studio to explore and edit data. |
+| Script                                 | Description                                              |
+| -------------------------------------- | -------------------------------------------------------- |
+| `npm run migrate-dev:prisma-client`    | Creates and applies local migrations using `Vercel CLI`. |
+| `npm run migrate-deploy:prisma-client` | Applies production migrations using `Vercel CLI`.        |
+| `npm run seed:prisma-client`           | Executes the initial seed script.                        |
+| `npm run studio:prisma-client`         | Launches Prisma Studio to explore and edit data.         |
 
 ### General
 
-| Script | Description |
-|--------|-------------|
-| `npm run test:all` | Runs unit tests (`Vitest`) on all libs and apps. |
-| `npm run lint:all:fix` | Runs `ESLint` to lint and fix the codebase. |
-| `npm run affected` | Lists projects affected by the current Git changes. |
-| `npm run format` | Applies formatting rules using `nx format:write`. |
-| `npm run vercel:env:tmp` | Pulls Vercel environment variables into a temporary file. |
+| Script                   | Description                                                                 |
+| ------------------------ | --------------------------------------------------------------------------- |
+| `npm run bench:preview`  | Checks the latency of `Cockroach Labs` on `Vercel Stages`.                  |
+| `npm run with:env`       | Runs `NX` commands in `Vercel CLI` context passing on environment variables |
+| `npm run test:all`       | Runs unit tests (`Vitest`) on all libs and apps.                            |
+| `npm run lint:all:fix`   | Runs `ESLint` to lint and fix the codebase.                                 |
+| `npm run affected`       | Lists projects affected by the current Git changes.                         |
+| `npm run format`         | Applies formatting rules using `nx format:write`.                           |
+| `npm run vercel:env:tmp` | Pulls Vercel environment variables into a temporary file.                   |
 
 All scripts are defined in `package.json` and delegate to the corresponding Nx target for consistency across package managers (`npx nx`, `pnpm nx`, or `yarn nx`).
 

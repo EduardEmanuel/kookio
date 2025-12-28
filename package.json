@@ -7,13 +7,13 @@
     "npm": ">=10.0.0 <12"
   },
   "scripts": {
+    "bench:preview": "node ./scripts/with-vercel-env.mjs --env=preview -- node ./scripts/bench-preview.mjs",
     "with:env": "node ./scripts/with-vercel-env.mjs",
     "start:web": "npm run with:env -- --env=development -- nx serve web",
     "build:web": "npm run with:env -- --env=production -- nx build web",
     "e2e:web": "npm run with:env -- --env=preview -- nx e2e web-e2e",
     "migrate-dev:prisma-client": "npm run with:env -- --env=development -- nx migrate-dev prisma-client",
     "migrate-deploy:prisma-client": "npm run with:env -- --env=production -- nx migrate-deploy prisma-client",
-    "bench-latency:prisma-client": "npm run with:env -- --env=development nx bench-latency prisma-client",
     "seed:prisma-client": "npm run with:env -- --env=development nx seed prisma-client",
     "studio:prisma-client": "npm run with:env -- --env=development nx studio prisma-client",
     "kookio-icons-filled:web": "nx kookio-icons-filled web",

@@ -23,13 +23,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
   }
 
-  const benchIterations = Number(process.env['BENCH_ITERATIONS'] ?? 5);
-  const n = Math.max(1, Math.min(benchIterations, 10));
+  const benchIterations = Number(process.env['BENCH_ITERATIONS'] ?? 100);
 
   await prisma.$queryRaw`SELECT 1`;
 
   const timings: number[] = [];
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < benchIterations; i++) {
     const t0 = performance.now();
     await prisma.$queryRaw`SELECT 1`;
     timings.push(performance.now() - t0);
@@ -39,7 +38,7 @@ export default defineEventHandler(async (event) => {
   const avg = timings.length ? total / timings.length : 0;
 
   return {
-    n,
+    probes: benchIterations,
     avg_ms: Number(avg.toFixed(2)),
     p50_ms: Number(percentile(timings, 50).toFixed(2)),
     p95_ms: Number(percentile(timings, 95).toFixed(2)),

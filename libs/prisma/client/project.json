@@ -56,21 +56,6 @@
         ]
       }
     },
-    "bench-latency": {
-      "executor": "nx:run-commands",
-      "cache": false,
-      "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" }
-      ],
-      "options": {
-        "cwd": ".",
-        "commands": [
-          {
-            "command": "tsx --tsconfig tsconfig.base.json libs/prisma/client/src/scripts/bench-latency.ts"
-          }
-        ]
-      }
-    },
     "seed": {
       "executor": "nx:run-commands",
       "cache": false,
