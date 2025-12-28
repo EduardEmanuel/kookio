@@ -82,20 +82,23 @@ describe('bench-db.get route (internal)', () => {
     perfSpy = spyPerfConstantDelta(2);
 
     const res = await handler({ headers: { 'x-bench-key': 'secret' } } as any);
-    expect(res).toMatchObject({ n: 1, avg_ms: 2, p50_ms: 2, p95_ms: 2 });
+    expect(res).toMatchObject({ probes: 1, avg_ms: 2, p50_ms: 2, p95_ms: 2 });
     expect(prismaMock.$queryRaw).toHaveBeenCalledTimes(2);
   });
 
   it('cap BENCH_ITERATIONS la 10', async () => {
-    vi.stubEnv('BENCH_ITERATIONS', '50');
+    const iterations = 50;
+
+    vi.stubEnv('BENCH_ITERATIONS', String(iterations));
     prismaMock.$queryRaw.mockResolvedValueOnce(undefined); // warmup
-    for (let i = 0; i < 10; i++)
+    for (let i = 0; i < iterations; i++)
       prismaMock.$queryRaw.mockResolvedValueOnce(undefined);
     perfSpy = spyPerfConstantDelta(1.5);
 
     const res = await handler({ headers: { 'x-bench-key': 'secret' } } as any);
-    expect(res.n).toBe(10);
-    expect(prismaMock.$queryRaw).toHaveBeenCalledTimes(11);
+
+    expect(res.probes).toBe(iterations);
+    expect(prismaMock.$queryRaw).toHaveBeenCalledTimes(iterations + 1);
     expect(res.avg_ms).toBeCloseTo(1.5, 2);
     expect(res.p95_ms).toBeCloseTo(1.5, 2);
   });
