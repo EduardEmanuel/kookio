@@ -27,9 +27,9 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
 
       analog({
-        ssr:true,
+        ssr: true,
         prerender: {
-          routes: [ '/about' ],
+          routes: ['/about'],
         },
         nitro: {
           preset: nitroPreset,
@@ -43,12 +43,17 @@ export default defineConfig(({ mode }) => {
           externals: {
             inline: [/^@kookio\//],
           },
+          ignore: ['**/*.spec.ts'],
           modules: ['./nitro-modules/tsconfig-alias'],
-          routeRules: { 
-            '/assets/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+          routeRules: {
+            '/assets/**': {
+              headers: {
+                'cache-control': 'public, max-age=31536000, immutable',
+              },
+            },
             '/**': { headers: { 'cache-control': 'no-cache' } },
           },
-          serveStatic: true
+          serveStatic: true,
         },
       }),
 

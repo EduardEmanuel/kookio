@@ -2,8 +2,14 @@ import { spawn } from 'node:child_process';
 import { mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 
-import { logger } from '@kookio/logger';
-
+// Avoid Nx/TS path aliases in raw Node ESM scripts.
+// Keep a tiny local logger instead of importing @kookio/logger.
+const logger = {
+  error: (...args) => console.error(...args),
+  warn: (...args) => console.warn(...args),
+  info: (...args) => console.log(...args),
+  debug: (...args) => console.debug(...args),
+};
 const TMP_DIR = path.resolve(process.cwd(), 'tmp');
 const ENV_FILE = path.join(TMP_DIR, 'kookio.env');
 
@@ -61,7 +67,7 @@ async function main() {
     console.error(
       [
         'Usage:',
-        '  node tools/scripts/with-vercel-env.mjs --env=preview -- <command...>',
+        '  node ./scripts/with-vercel-env.mjs --env=preview -- <command...>',
         'Examples:',
         '  npm run with:env -- --env=development -- nx serve web',
         '  npm run with:env -- --env=preview -- nx e2e web-e2e',
@@ -78,7 +84,7 @@ async function main() {
     try {
       await rm(ENV_FILE, { force: true });
     } catch (error) {
-      logger.error(error, '❌ Failed to cleanup env file:');
+      logger.error('❌ Failed to cleanup env file:', error);
     }
   };
   const onSignal = async () => {
@@ -90,14 +96,28 @@ async function main() {
 
   try {
     const vercelArgs = ['env', 'pull', ENV_FILE, '--environment', vercelEnv];
+
     if (yes) vercelArgs.push('--yes');
     if (team) vercelArgs.push('--scope', team);
     if (token) vercelArgs.push('--token', token);
-
     await run('vercel', vercelArgs);
+    // Load env file here and pass it explicitly to child process.\
 
-    // Use dotenv CLI: `dotenv -e <file> -- <cmd...>`
-    await run('dotenv', ['-e', ENV_FILE, '--', ...cmd]);
+    const { readFile } = await import('node:fs/promises');
+    const dotenv = await import('dotenv');
+    const raw = await readFile(ENV_FILE, 'utf8');
+    const parsed = dotenv.parse(raw);
+
+    // (optional) quick sanity check:
+    if (!parsed.DATABASE_URL) {
+      logger.warn(
+        '⚠️  DATABASE_URL is missing in pulled env file. Check Vercel → Preview vars.',
+      );
+    }
+
+    const childEnv = { ...process.env, ...parsed };
+
+    await run(cmd[0], cmd.slice(1), { env: childEnv });
   } finally {
     await cleanup();
   }

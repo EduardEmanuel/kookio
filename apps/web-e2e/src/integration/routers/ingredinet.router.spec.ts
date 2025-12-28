@@ -8,22 +8,30 @@ import {
   CreateIngredientResultDTO,
   CreateManyIngredientResultDTO,
 } from '@kookio/prisma-validator';
+import { logger } from '@kookio/server-logger';
 import { TRPC_TRANSFORMER, TRPC_PATH } from '@kookio/server-trpc-configs';
 import type { AppRouter } from '@kookio/server-trpc-types';
+
+import { waitForDbReady } from '../../helpers/wait-for-db';
 
 test.describe('tRPC Ingredient (HTTP)', () => {
   const baseUrl = process.env['BASE_URL'] ?? 'http://localhost:4200';
   const RUN = randomUUID().slice(0, 8);
-  const SUITE_USER = `integration-test-user-${RUN}`; 
+  const SUITE_USER = `integration-test-user-${RUN}`;
   const url = new URL(TRPC_PATH, baseUrl).toString();
   const trpc = createTRPCProxyClient<AppRouter>({
     transformer: TRPC_TRANSFORMER,
-    links: [
-      httpBatchLink({ url }),
-    ],
+    links: [httpBatchLink({ url })],
   });
 
   type nameType = { name: string };
+
+  test.beforeAll(async () => {
+    await waitForDbReady();
+    await fetch(`${process.env['BASE_URL']}/api/health`).catch((error) => {
+      logger.error(error, `❌ Error fetching API health`);
+    });
+  });
 
   test.describe('call with one object', () => {
     let created: CreateIngredientResultDTO;
@@ -64,10 +72,22 @@ test.describe('tRPC Ingredient (HTTP)', () => {
 
   test.describe('many objects', () => {
     const data = [
-      { userId: SUITE_USER, name: `Apple-many-${RUN}`, quantity: 1, unit: 'pcs', optional: false },
-      { userId: SUITE_USER, name: `Banana-many-${RUN}`, quantity: 2, unit: 'pcs', optional: true },
+      {
+        userId: SUITE_USER,
+        name: `Apple-many-${RUN}`,
+        quantity: 1,
+        unit: 'pcs',
+        optional: false,
+      },
+      {
+        userId: SUITE_USER,
+        name: `Banana-many-${RUN}`,
+        quantity: 2,
+        unit: 'pcs',
+        optional: true,
+      },
     ];
-    const names = data.map(d => d.name);
+    const names = data.map((d) => d.name);
 
     let createdMany: CreateManyIngredientResultDTO;
 
@@ -89,8 +109,15 @@ test.describe('tRPC Ingredient (HTTP)', () => {
       });
       const foundData = foundMany.data
         .filter((r) => r.userId === SUITE_USER && names.includes(r.name))
-        .map((r) => ({ name: r.name, optional: r.optional, quantity: r.quantity, unit: r.unit, userId: r.userId }));
-      const sortByName = (a: nameType, b: nameType) => a.name.localeCompare(b.name);
+        .map((r) => ({
+          name: r.name,
+          optional: r.optional,
+          quantity: r.quantity,
+          unit: r.unit,
+          userId: r.userId,
+        }));
+      const sortByName = (a: nameType, b: nameType) =>
+        a.name.localeCompare(b.name);
 
       expect(foundMany.data.length).toBe(createdMany.count);
       expect(foundData.sort(sortByName)).toMatchObject(data.sort(sortByName));
@@ -109,7 +136,9 @@ test.describe('tRPC Ingredient (HTTP)', () => {
           name: { in: names },
         },
       });
-      const foundData = foundMany.data.filter((r) => r.userId === SUITE_USER && names.includes(r.name));
+      const foundData = foundMany.data.filter(
+        (r) => r.userId === SUITE_USER && names.includes(r.name),
+      );
 
       expect(deleteMany.count).toBe(createdMany.count);
       expect(foundData.length).toBe(0);
