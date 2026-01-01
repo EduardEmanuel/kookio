@@ -14,6 +14,6 @@ const trpcClient = createTrpcClient<AppRouter>({
 export const { provideTrpcClient } = trpcClient;
 export const TrpcClientApp = trpcClient.TrpcClient;
 
-export function injectTrpcClient() {
+export const injectTrpcClient = () => {
   return inject(TrpcClientApp);
-}
+};

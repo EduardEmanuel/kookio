@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import * as runtime from '@prisma/client/runtime/library.js'
+import * as runtime from '@prisma/client/runtime/library.js';
 
 export type GlobalPrismaClient = { prisma: PrismaClient };
 
@@ -17,14 +17,23 @@ export const prisma = g.prisma;
  * - Known codes we watch for: P2034 (tx already closed) / P2036 (tx retries)
  * Adjust if you see different patterns in logs.
  */
-export function isRetryableTxError(e: unknown) {
+export const isRetryableTxError = (e: unknown) => {
   const err = e as unknown & { code?: string; message?: string };
   const code = err?.code as string | undefined;
   const msg: string = (err?.message ?? '').toString();
-  return code === 'P2034' || code === 'P2036' || msg.includes('40001') || msg.includes('restart transaction');
-}
+  return (
+    code === 'P2034' ||
+    code === 'P2036' ||
+    msg.includes('40001') ||
+    msg.includes('restart transaction')
+  );
+};
 
-export async function withTxRetry<T>(prisma: PrismaClient, fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => Promise<T>, retries = 3): Promise<T> {
+export const withTxRetry = async <T>(
+  prisma: PrismaClient,
+  fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => Promise<T>,
+  retries = 3,
+): Promise<T> => {
   let last: unknown;
   for (let i = 0; i <= retries; i++) {
     try {
@@ -36,4 +45,4 @@ export async function withTxRetry<T>(prisma: PrismaClient, fn: (prisma: Omit<Pri
     }
   }
   throw last;
-}
+};

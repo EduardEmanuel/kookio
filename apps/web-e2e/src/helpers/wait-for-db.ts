@@ -1,7 +1,7 @@
 import { prisma } from '@kookio/prisma-client';
 import { logger } from '@kookio/server-logger';
 
-export async function waitForDbReady(tries = 6, baseDelayMs = 300) {
+export const waitForDbReady = async (tries = 6, baseDelayMs = 300) => {
   let lastErr: unknown;
 
   if (!process.env['DATABASE_URL']) {
@@ -20,4 +20,4 @@ export async function waitForDbReady(tries = 6, baseDelayMs = 300) {
     }
   }
   throw lastErr;
-}
+};

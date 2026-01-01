@@ -29,9 +29,9 @@ import { injectTrpcClient } from '../../../trpc-client';
 export class IngredientService {
   private readonly trpc = injectTrpcClient();
 
-  public create(
+  public create = (
     ingredient: CreateOneIngredientDTO,
-  ): Observable<CreateIngredientResultDTO> {
+  ): Observable<CreateIngredientResultDTO> => {
     return this.trpc.ingredient.create.mutate(ingredient).pipe(
       catchError((error: Error) => {
         const label = ingredientLabelers.fromCreateData(ingredient.data);
@@ -40,11 +40,11 @@ export class IngredientService {
         return of({} as CreateIngredientResultDTO);
       }),
     );
-  }
+  };
 
-  public createMany(
+  public createMany = (
     ingredients: CreateManyIngredientDTO,
-  ): Observable<CreateManyIngredientResultDTO> {
+  ): Observable<CreateManyIngredientResultDTO> => {
     return this.trpc.ingredient.createMany.mutate(ingredients).pipe(
       catchError((error: Error) => {
         const label = ingredientLabelers.fromCreateManyData(ingredients.data);
@@ -56,11 +56,11 @@ export class IngredientService {
         return of({} as CreateManyIngredientResultDTO);
       }),
     );
-  }
+  };
 
-  public delete(
+  public delete = (
     ingredient: DeleteOneIngredientDTO,
-  ): Observable<DeleteIngredientResultDTO> {
+  ): Observable<DeleteIngredientResultDTO> => {
     return this.trpc.ingredient.delete.mutate(ingredient).pipe(
       catchError((error: Error) => {
         const label = ingredientLabelers.fromWhere(ingredient.where);
@@ -69,11 +69,11 @@ export class IngredientService {
         return of({} as DeleteIngredientResultDTO);
       }),
     );
-  }
+  };
 
-  public deleteMany(
+  public deleteMany = (
     ingredients: DeleteManyIngredientDTO,
-  ): Observable<DeleteManyIngredientResultDTO> {
+  ): Observable<DeleteManyIngredientResultDTO> => {
     return this.trpc.ingredient.deleteMany.mutate(ingredients).pipe(
       catchError((error: Error) => {
         const label = ingredientLabelers.fromWhere(ingredients.where);
@@ -85,11 +85,11 @@ export class IngredientService {
         return of({} as DeleteManyIngredientResultDTO);
       }),
     );
-  }
+  };
 
-  public findMany(
+  public findMany = (
     ingredients: FindManyIngredientDTO,
-  ): Observable<FindManyIngredientResultDTO> {
+  ): Observable<FindManyIngredientResultDTO> => {
     return this.trpc.ingredient.findMany.query(ingredients).pipe(
       catchError((error: Error) => {
         const label = ingredientLabelers.fromWhere(ingredients.where);
@@ -101,11 +101,11 @@ export class IngredientService {
         return of({} as FindManyIngredientResultDTO);
       }),
     );
-  }
+  };
 
-  public findUnique(
+  public findUnique = (
     ingredient: FindUniqueIngredientDTO,
-  ): Observable<FindUniqueIngredientResultDTO> {
+  ): Observable<FindUniqueIngredientResultDTO> => {
     return this.trpc.ingredient.findUnique.query(ingredient).pipe(
       catchError((error: Error) => {
         const label = ingredientLabelers.fromWhere(ingredient.where);
@@ -114,11 +114,11 @@ export class IngredientService {
         return of({} as FindUniqueIngredientResultDTO);
       }),
     );
-  }
+  };
 
-  public update(
+  public update = (
     ingredient: UpdateOneIngredientDTO,
-  ): Observable<UpdateIngredientResultDTO> {
+  ): Observable<UpdateIngredientResultDTO> => {
     return this.trpc.ingredient.update.mutate(ingredient).pipe(
       catchError((error: Error) => {
         const label = ingredientLabelers.fromWhere(ingredient.where);
@@ -127,11 +127,11 @@ export class IngredientService {
         return of({} as UpdateIngredientResultDTO);
       }),
     );
-  }
+  };
 
-  public updateMany(
+  public updateMany = (
     ingredients: UpdateManyIngredientDTO,
-  ): Observable<UpdateManyIngredientResultDTO> {
+  ): Observable<UpdateManyIngredientResultDTO> => {
     return this.trpc.ingredient.updateMany.mutate(ingredients).pipe(
       catchError((error: Error) => {
         const label = ingredientLabelers.fromWhere(ingredients.where);
@@ -143,5 +143,5 @@ export class IngredientService {
         return of({} as UpdateManyIngredientResultDTO);
       }),
     );
-  }
+  };
 }

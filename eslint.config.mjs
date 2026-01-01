@@ -1,4 +1,5 @@
 import nx from '@nx/eslint-plugin';
+import preferArrow from 'eslint-plugin-prefer-arrow';
 
 export default [
   ...nx.configs['flat/base'],
@@ -27,88 +28,8 @@ export default [
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
           depConstraints: [
             {
-              sourceTag: 'scope:shared',
-              onlyDependOnLibsWithTags: ['scope:shared'],
-            },
-            {
-              sourceTag: 'scope:server',
-              onlyDependOnLibsWithTags: [
-                'scope:server',
-                'scope:shared',
-                'scope:prisma',
-              ],
-            },
-            {
-              sourceTag: 'scope:prisma',
-              onlyDependOnLibsWithTags: [
-                'scope:prisma',
-                'scope:server',
-                'scope:shared',
-              ],
-            },
-            {
-              sourceTag: 'scope:web',
-              onlyDependOnLibsWithTags: [
-                'scope:web',
-                'scope:shared',
-                'scope:server',
-                'scope:prisma',
-              ],
-            },
-            {
-              sourceTag: 'type:mock',
-              onlyDependOnLibsWithTags: ['type:mock', 'type:utility'],
-            },
-            {
-              sourceTag: 'type:utility',
-              onlyDependOnLibsWithTags: ['type:utility'],
-            },
-            {
-              sourceTag: 'type:validator',
-              onlyDependOnLibsWithTags: [
-                'type:validator',
-                'type:client',
-                'type:utility',
-              ],
-            },
-            {
-              sourceTag: 'type:trpc',
-              onlyDependOnLibsWithTags: [
-                'type:trpc',
-                'type:logger',
-                'type:validator',
-                'type:client',
-                'type:utility',
-              ],
-            },
-            {
-              sourceTag: 'type:logger',
-              onlyDependOnLibsWithTags: ['type:logger', 'type:utility'],
-            },
-            {
-              sourceTag: 'type:app',
-              onlyDependOnLibsWithTags: [
-                'type:app',
-                'type:trpc',
-                'type:mock',
-                'type:logger',
-                'type:validator',
-                'type:client',
-                'type:utility',
-              ],
-            },
-            {
-              sourceTag: 'type:e2e',
-              onlyDependOnLibsWithTags: [
-                'type:e2e',
-                'type:app',
-                'type:trpc',
-                'type:mock',
-                'type:logger',
-                'type:validator',
-                'type:client',
-                'type:utility',
-              ],
+              sourceTag: '*',
+              onlyDependOnLibsWithTags: ['*'],
             },
           ],
         },
@@ -116,16 +37,39 @@ export default [
     },
   },
   {
-    files: [
-      '**/*.ts',
-      '**/*.tsx',
-      '**/*.cts',
-      '**/*.mts',
-      '**/*.js',
-      '**/*.jsx',
-      '**/*.cjs',
-      '**/*.mjs',
-    ],
-    rules: {},
+    files: ['**/*.{ts,tsx,cts,js,jsx,mjs,cjs}'],
+    plugins: { 'prefer-arrow': preferArrow },
+    rules: {
+      'func-style': ['error', 'expression', { allowArrowFunctions: true }],
+      'prefer-arrow/prefer-arrow-functions': [
+        'error',
+        {
+          disallowPrototype: true,
+          singleReturnOnly: false,
+          classPropertiesAllowed: true,
+        },
+      ],
+      'prefer-arrow-callback': [
+        'error',
+        {
+          allowNamedFunctions: false,
+          allowUnboundThis: false,
+        },
+      ],
+      'no-var': 'error',
+      'prefer-const': ['error', { destructuring: 'all' }],
+    },
+  },
+  {
+    files: ['**/*.{ts,tsx,cts}'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+    },
   },
 ];

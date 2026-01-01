@@ -14,42 +14,50 @@ import type {
   DeleteManyIngredientResultDTO,
   UpdateManyIngredientDTO,
   UpdateManyIngredientResultDTO,
-  CreateOneIngredientDTO
+  CreateOneIngredientDTO,
 } from '@kookio/prisma-validator';
 
 import { prisma, withTxRetry } from '../../prisma-client';
 
 export interface IngredientRepository {
   create(data: CreateOneIngredientDTO): Promise<CreateIngredientResultDTO>;
-  createMany(data: CreateManyIngredientDTO): Promise<CreateManyIngredientResultDTO>;
+  createMany(
+    data: CreateManyIngredientDTO,
+  ): Promise<CreateManyIngredientResultDTO>;
   delete(clause: DeleteOneIngredientDTO): Promise<DeleteIngredientResultDTO>;
-  deleteMany(clause: DeleteManyIngredientDTO): Promise<DeleteManyIngredientResultDTO>;
-  findUnique(clause: FindUniqueIngredientDTO): Promise<FindUniqueIngredientResultDTO>;
+  deleteMany(
+    clause: DeleteManyIngredientDTO,
+  ): Promise<DeleteManyIngredientResultDTO>;
+  findUnique(
+    clause: FindUniqueIngredientDTO,
+  ): Promise<FindUniqueIngredientResultDTO>;
   findMany(clause: FindManyIngredientDTO): Promise<FindManyIngredientResultDTO>;
   update(clause: UpdateOneIngredientDTO): Promise<UpdateIngredientResultDTO>;
-  updateMany(clause: UpdateManyIngredientDTO): Promise<UpdateManyIngredientResultDTO>;
+  updateMany(
+    clause: UpdateManyIngredientDTO,
+  ): Promise<UpdateManyIngredientResultDTO>;
 }
 
 export class PrismaIngredientRepository implements IngredientRepository {
-  create(clause: CreateOneIngredientDTO) {
+  create = (clause: CreateOneIngredientDTO) => {
     return withTxRetry(prisma, (tx) => tx.ingredient.create(clause));
-  }
+  };
 
-  createMany(clause: CreateManyIngredientDTO) {
+  createMany = (clause: CreateManyIngredientDTO) => {
     return withTxRetry(prisma, (tx) => tx.ingredient.createMany(clause));
-  }
+  };
 
-  delete(clause: DeleteOneIngredientDTO) {
+  delete = (clause: DeleteOneIngredientDTO) => {
     return withTxRetry(prisma, (tx) => tx.ingredient.delete(clause));
-  }
+  };
 
-  deleteMany(clause: DeleteManyIngredientDTO) {
+  deleteMany = (clause: DeleteManyIngredientDTO) => {
     return withTxRetry(prisma, (tx) => tx.ingredient.deleteMany(clause));
-  }
+  };
 
-  async findMany(clause: FindManyIngredientDTO) {
+  findMany = async (clause: FindManyIngredientDTO) => {
     const items = await prisma.ingredient.findMany(clause);
-    
+
     return {
       data: items,
       pagination: {
@@ -61,17 +69,17 @@ export class PrismaIngredientRepository implements IngredientRepository {
         hasPrev: false,
       },
     };
-  }
+  };
 
-  findUnique(clause: FindUniqueIngredientDTO) {
+  findUnique = (clause: FindUniqueIngredientDTO) => {
     return prisma.ingredient.findUnique(clause);
-  }
+  };
 
-  update(clause: UpdateOneIngredientDTO) {
+  update = (clause: UpdateOneIngredientDTO) => {
     return withTxRetry(prisma, (tx) => tx.ingredient.update(clause));
-  }
+  };
 
-  updateMany(clause: UpdateManyIngredientDTO) {
+  updateMany = (clause: UpdateManyIngredientDTO) => {
     return withTxRetry(prisma, (tx) => tx.ingredient.updateMany(clause));
-  }
+  };
 }

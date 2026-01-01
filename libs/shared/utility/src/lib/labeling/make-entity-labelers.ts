@@ -57,9 +57,9 @@ const hasPath = (obj: AnyRecord, path: KeyPath): boolean => {
   return cur != null;
 };
 
-export function makeEntityLabelers(
+export const makeEntityLabelers = (
   opts: MakeEntityLabelersOptions,
-): EntityLabelers {
+): EntityLabelers => {
   const entity = opts.entityName;
   const unknown = opts.unknownLabel ?? `${entity}(unknown)`;
   const manyNameKey = opts.createManyNameKey ?? 'name';
@@ -126,4 +126,4 @@ export function makeEntityLabelers(
   };
 
   return { label, fromWhere, fromCreateData, fromCreateManyData };
-}
+};

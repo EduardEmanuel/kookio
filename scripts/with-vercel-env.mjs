@@ -13,7 +13,7 @@ const logger = {
 const TMP_DIR = path.resolve(process.cwd(), 'tmp');
 const ENV_FILE = path.join(TMP_DIR, 'kookio.env');
 
-function parseArgs(argv) {
+const parseArgs = (argv) => {
   const out = {
     vercelEnv: 'development', // default
     team: undefined,
@@ -47,9 +47,9 @@ function parseArgs(argv) {
   if (out.cmd.length === 0 && pass.length) out.cmd = pass;
 
   return out;
-}
+};
 
-function run(cmd, args, opts = {}) {
+const run = (cmd, args, opts = {}) => {
   return new Promise((resolve, reject) => {
     const child = spawn(cmd, args, { stdio: 'inherit', shell: false, ...opts });
     child.on('error', reject);
@@ -58,9 +58,9 @@ function run(cmd, args, opts = {}) {
       else reject(new Error(`${cmd} exited with code ${code}`));
     });
   });
-}
+};
 
-async function main() {
+const main = async () => {
   const { vercelEnv, team, token, yes, cmd } = parseArgs(process.argv.slice(2));
 
   if (!cmd.length) {
@@ -121,7 +121,7 @@ async function main() {
   } finally {
     await cleanup();
   }
-}
+};
 
 main().catch((e) => {
   console.error(e?.message ?? e);

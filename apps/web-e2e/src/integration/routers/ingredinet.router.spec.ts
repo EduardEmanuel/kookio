@@ -28,7 +28,7 @@ test.describe('tRPC Ingredient (HTTP)', () => {
 
   test.beforeAll(async () => {
     await waitForDbReady();
-    await fetch(`${process.env['BASE_URL']}/api/health`).catch((error) => {
+    await fetch(`${baseUrl}/api/health`).catch((error) => {
       logger.error(error, `❌ Error fetching API health`);
     });
   });
