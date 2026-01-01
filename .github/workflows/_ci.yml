@@ -24,7 +24,7 @@ jobs:
       nx_base: ${{ steps.nx.outputs.base }}
       nx_head: ${{ steps.nx.outputs.head }}
     steps:
-      - name: Checkout (full history)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0

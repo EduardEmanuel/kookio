@@ -27,6 +27,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/setup-npm
         with:
           node_version: ${{ vars.NODE_VERSION }}
@@ -42,6 +46,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: testing
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/setup-npm
         with:
           node_version: ${{ vars.NODE_VERSION }}
@@ -60,6 +68,10 @@ jobs:
       source: ${{ steps.r.outputs.source }}
       branch: ${{ steps.r.outputs.branch_used }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - id: r
         uses: ./.github/actions/resolve-vercel-url
         with:
@@ -74,6 +86,10 @@ jobs:
     needs: [migrate-dev, resolve-url]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/smoke-health
         with:
           base_url: ${{ needs.resolve-url.outputs.base_url }}
@@ -84,6 +100,10 @@ jobs:
     needs: [migrate-test, resolve-url]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/smoke-health
         with:
           base_url: ${{ needs.resolve-url.outputs.base_url }}
@@ -107,6 +127,10 @@ jobs:
       name: production
       url: ${{ vars.VERCEL_APP_URL }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/setup-npm
         with:
           node_version: ${{ vars.NODE_VERSION }}
@@ -120,6 +144,10 @@ jobs:
     needs: migrate-prod
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/smoke-health
         with:
           base_url: ${{ vars.VERCEL_APP_URL }}
