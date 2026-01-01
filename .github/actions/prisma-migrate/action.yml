@@ -1,0 +1,44 @@
+name: Prisma migrate
+description: Run 'prisma migrate deploy' via NX with retries, and optionally seed the database
+inputs:
+  nx_target:
+    required: true
+    type: string
+    default: 'migrate-deploy prisma-client'
+  database_url:
+    required: true
+    type: string
+  seed_user_id:
+    required: false
+    type: string
+  attempts:
+    required: false
+    type: string
+    default: '3'
+runs:
+  using: composite
+  steps:
+    - name: Migrate deploy (with retry)
+      shell: bash
+      env:
+        DATABASE_URL: ${{ inputs.database_url }}
+      run: |
+        set -e
+        attempts=${{ inputs.attempts }}
+        delay=10
+        ok=0
+        for i in $(seq 1 $attempts); do
+          echo "Attempt $i/$attempts: prisma migrate deploy"
+          if npx nx ${{ inputs.nx_target }}; then ok=1; break; fi
+          echo "Failed attempt $i. Retrying in ${delay}s..."
+          sleep $delay; delay=$((delay*2))
+        done
+        [ "$ok" -eq 1 ] || { echo "❌ migrate deploy failed"; exit 1; }
+
+    - name: Optional seed
+      if: ${{ inputs.database_url != '' && inputs.seed_user_id != '' }}
+      shell: bash
+      env:
+        DATABASE_URL: ${{ inputs.database_url }}
+        SEED_USER_ID: ${{ inputs.seed_user_id }}
+      run: npx nx seed prisma-client

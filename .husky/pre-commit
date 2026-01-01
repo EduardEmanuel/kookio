@@ -1,1 +1,6 @@
-npx lint-staged
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+set -e
+
+# Run linters only on staged files
+npm exec lint-staged

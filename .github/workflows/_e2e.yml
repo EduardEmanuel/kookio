@@ -1,0 +1,32 @@
+name: _e2e
+on:
+  workflow_call:
+    inputs:
+      base_url:
+        required: true
+        type: string
+      node_version:
+        required: false
+        type: string
+        default: '24'
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: ./.github/actions/playwright-e2e
+        with:
+          base_url: ${{ inputs.base_url }}
+          node_version: ${{ inputs.node_version }}
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: dist/.playwright/**/playwright-report
+          retention-days: 7

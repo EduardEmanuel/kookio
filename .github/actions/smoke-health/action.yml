@@ -1,0 +1,30 @@
+name: Smoke /api/health
+description: Smoke test a given base_url's /api/health endpoint
+inputs:
+  base_url:
+    required: true
+  attempts:
+    required: false
+    type: string
+    default: '20'
+  sleep_sec:
+    required: false
+    type: string
+    default: '10'
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        set -e
+        BASE="${{ inputs.base_url }}"
+        [ -n "$BASE" ] || { echo "No BASE_URL, skipping."; exit 0; }
+        u="$BASE/api/health"
+        echo "Probing $u ..."
+        ok=0
+        for i in $(seq 1 ${{ inputs.attempts }}); do
+          code=$(curl -fsS -o resp.json -w "%{http_code}" "$u" || true)
+          if [ "$code" = "200" ]; then cat resp.json || true; ok=1; break; fi
+          sleep ${{ inputs.sleep_sec }}
+        done
+        [ $ok -eq 1 ] || { echo "❌ $u not healthy in time"; exit 1; }

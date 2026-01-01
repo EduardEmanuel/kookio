@@ -1,0 +1,22 @@
+name: Setup npm
+description: Checkout + setup-node + npm ci (cached)
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node_version }}
+        cache: npm
+
+    - name: Install
+      shell: bash
+      run: npm ci
+inputs:
+  node_version:
+    required: false
+    type: string
+    default: '24'
