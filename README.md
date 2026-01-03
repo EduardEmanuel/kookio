@@ -1,180 +1,124 @@
 # <img src="./apps/web/public/icons/kookio/filled/logo.svg" alt="Kookio Logo" width="320"/>
 
-Let's Kookio it! is an open-source, full-stack web application that helps home cooks curate ingredient inventories, laying the groundwork for future recipe discovery through interactive, real-time exploration. The stack follows the PAN architecture—Prisma for CockroachDB access, Analog for Angular 20 SSR, and Nx for scalable orchestration—delivering a modern developer experience with type safety and automation baked in.
+Let's Kookio it! is an open-source pantry companion built with the PAN stack—Prisma, Analog, and Nx. The repo hosts both the Analog SSR app and the supporting libraries that make end-to-end type safety possible.
 
 ## ✨ Highlights
 
-- Full-stack PAN architecture (Prisma + Analog + Nx) with end-to-end type sharing through tRPC and Zod.
-- Interactive pantry flows built on Angular 20 with Analog SSR and streaming.
-- Modular Nx workspace that encourages contributions via focused libraries and tooling.
+- Full-stack PAN architecture: Analog 20 + Vite + Nitro on the frontend, Prisma + tRPC + CockroachDB on the backend.
+- Shared types and DTOs via `@kookio/prisma-validator`, so APIs, seeds, tests, and UI stay in sync.
+- Modular Nx workspace with reusable scripts (Vercel env wiring, Prisma migrations, Playwright E2E).
+- CI/CD powered by reusable GitHub workflows and composite actions that mirror the local Nx targets.
 
 **Key technologies:** TypeScript · Angular 20 · Analog · Prisma · tRPC · Nx · Vitest · Playwright
 
-## 🛠 Architecture
-
-- **Analog SSR + Angular 20** renders the UI, handles routing, and executes server-side logic in the same project for fast iteration.
-- **tRPC** exposes strongly-typed endpoints derived from the Prisma data model.
-- **Prisma** manages migrations, database access, and derived Zod types via code generation.
-- **Nx** keeps projects, libraries, scripts, and executors cohesive, while Analog/Vite handle local dev and builds.
-- **Vitest** and **Playwright** provide the foundation for unit and end-to-end testing, with coverage expanding iteratively.
-
-## 📦 Packages
-
-```text
-├── apps/
-│   ├── web               # Analog SSR Angular 20 app with tRPC client and feature modules
-│   └── web-e2e           # Playwright spec suite targeting the web application
-├── libs/
-│   ├── prisma/
-│   │   ├── client        # Prisma schema, migrations, env-aware scripts
-│   │   └── validator     # Zod schemas from Prisma, DTOs from Zod, Zod overrides
-│   ├── server/
-│   │   ├── logger        # Shared Pino-based logger used by scripts and backend packages
-│   │   └── trpc          # Reusable tRPC server package
-│   │                     # Expose router, context and config for both Nitro and clients
-│   └── shared/
-│       └── mock          # Mock fixtures (e.g., mockIngredients) for demos and seeding
-├── dist                  # Build artifacts produced by Nx targets
-├── nx.json               # Workspace-wide Nx configuration and target defaults
-└── vitest.workspace.ts   # Root Vitest configuration federating project test setups
-```
-
-## 📤 Prerequisites
-
-In order to run the project, make sure the following tools are installed:
-
-| Tool                                         | Purpose                                    | How to Install                                                |
-| -------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------- |
-| **Node.js** `>= 20.11.1` + **npm**           | Runtime & package manager                  | [nodejs.org](https://nodejs.org)                              |
-| **CockroachDB** (Cloud or local single-node) | Database                                   | [cockroachlabs.com/docs](https://www.cockroachlabs.com/docs/) |
-| **Vercel CLI**                               | Environment management & deployment parity | [vercel.com/docs/cli](https://vercel.com/docs/cli)            |
-| _(optional)_ **Docker**                      | Containerized local DB setup               | [docker.com](https://www.docker.com/products/docker-desktop)  |
-
-> The Vercel CLI is used to synchronize environment variables locally with the cloud configuration, ensuring parity between local development and deployed environments.
-
-### 📌 CockroachDB Note
-
-You can use **CockroachDB Cloud** (recommended) or run a **local single-node** for development.
-
-**Cloud (Serverless, recommended for dev/staging):**
-
-- Create a free cluster in CockroachDB Cloud.
-- Obtain the connection string (PostgreSQL wire protocol), which looks like:
-
-  ```bash
-  postgresql://USER:PASS@HOST:26257/kookio?sslmode=require&options=--cluster%3DCLUSTER_NAME
-  ```
-
-- Ensure your Prisma datasource uses `provider = "cockroachdb"`.
-
-**Local (single-node, insecure) via Docker:**
+## 🧭 Quickstart
 
 ```bash
+npm ci                                  # install
+npm run migrate-dev:prisma-client       # create/apply local migrations
+npm run start:web                       # run Analog SSR with env parity via with-vercel-env
+```
+
+Prefer pnpm or yarn? Swap `npm run` with `pnpm`/`yarn`—everything delegates to Nx targets.
+
+Prerequisites: Node.js ≥ 20.11.1, npm ≥ 10, CockroachDB (Cloud or local), and the Vercel CLI (used to pull env vars before running Nx targets).
+
+## 📤 Prerequisites (fast path)
+
+| Tool                             | Why                                               | Where                                                         |
+| -------------------------------- | ------------------------------------------------- | ------------------------------------------------------------- |
+| **Node.js** ≥ 20.11.1 + **npm**  | Run Nx/Analog/Prisma tooling                      | [nodejs.org](https://nodejs.org)                              |
+| **CockroachDB** (Cloud or local) | Primary database                                  | [cockroachlabs.com/docs](https://www.cockroachlabs.com/docs/) |
+| **Vercel CLI**                   | Pull env vars (`with-vercel-env`) + deploy parity | [vercel.com/docs/cli](https://vercel.com/docs/cli)            |
+| _(optional)_ **Docker**          | Spin up Cockroach locally in seconds              | [docker.com](https://www.docker.com/products/docker-desktop)  |
+
+> `with-vercel-env.mjs` relies on the Vercel CLI to hydrate `tmp/kookio.env` before running Nx commands.
+
+### 📌 CockroachDB options
+
+- **Cloud (recommended)** → create a free Serverless cluster, copy the PostgreSQL-style connection string, keep `provider = "cockroachdb"` in `schema.prisma`.
+- **Local single-node** → use the Docker snippet below or Homebrew if you’re on macOS.
+
+```bash
+# Docker: one-liner for dev
 docker run -d --name crdb -p 26257:26257 -p 8080:8080 \
   cockroachdb/cockroach:v24.2 start-single-node --insecure
 docker exec -it crdb ./cockroach sql --insecure -e "CREATE DATABASE kookio;"
 ```
 
-**Local via Homebrew (macOS):**
+## 🗂 Workspace map
 
-```bash
-brew install cockroachdb/tap/cockroach
-cockroach start-single-node --insecure --listen-addr=localhost:26257 --http-addr=localhost:8080
-cockroach sql --insecure -e "CREATE DATABASE kookio;"
+```
+apps/
+  web/         -> Angular + Analog SSR app (see apps/web/README.md)
+  web-e2e/     -> Playwright specs + helpers (see apps/web-e2e/README.md)
+libs/
+  prisma/
+    client/    -> Prisma schema, migrations, repositories, seed (libs/prisma/client/README.md)
+    validator/ -> Zod schemas + DTO exports (libs/prisma/validator/README.md)
+  server/
+    logger/    -> Shared Pino wrapper for backend + scripts (libs/server/logger/README.md)
+    trpc/      -> tRPC router/context/config exports (libs/server/trpc/README.md)
+  shared/
+    mock/      -> Deterministic fixtures (libs/shared/mock/README.md)
+    utility/   -> Labeling helpers consumed by API + client (libs/shared/utility/README.md)
 ```
 
-> CockroachDB speaks the PostgreSQL wire protocol, so the URL scheme is `postgresql://…`, but the Prisma provider **must** be `cockroachdb`.
+Each project README is the source of truth for its targets, environment needs, and usage patterns.
 
-## 🧭 Quickstart
+## 📚 Documentation index
 
-> Prerequisites: Node.js `>= 20.11.1` (LTS recommended) and npm `>= 10`. The workspace also works with pnpm (`pnpm dlx nx ...`) or yarn (`yarn nx ...`) if you prefer.
-> The first time, you may need to run `vercel link` to connect this repo to the Vercel project.
+| Area                                                        | Where to read                        |
+| ----------------------------------------------------------- | ------------------------------------ |
+| Analog app architecture, routes, icons                      | `apps/web/README.md`                 |
+| Playwright/E2E strategy                                     | `apps/web-e2e/README.md`             |
+| Prisma schema, migrations, seeding, Cockroach SQL bootstrap | `libs/prisma/client/README.md`       |
+| Shared Zod/DTO contracts                                    | `libs/prisma/validator/README.md`    |
+| tRPC server/router + configs                                | `libs/server/trpc/README.md`         |
+| Logger + labeling utilities + shared mocks                  | Respective `libs/**/README.md` files |
 
-### Serve locally
+For the full list of Nx targets run `npx nx graph` or inspect each `project.json`.
 
-```bash
-npm install
-npm run migrate-dev:prisma-client
-npm run start:web
-```
+## 🔧 Tooling & workflows
 
-### Build and bundle
+- **Nx orchestration:** `package.json` scripts forward to Nx targets. Use `nx graph` or `nx show project <name>` to inspect configs.
+- **Environment parity:** `scripts/with-vercel-env.mjs` pulls Vercel env vars into `tmp/kookio.env` and runs Nx commands with those variables injected. All scripts prefixed with `npm run with:env -- --env=<stage>` rely on it.
+- **Prisma/DB:** CockroachDB connection lives in `LIBS/prisma/client/schema.prisma` (`provider = "cockroachdb"`, `DATABASE_URL`). Run `npm run migrate-dev:prisma-client` to generate + migrate locally, `npm run migrate-deploy:prisma-client` for production/test deploys, and `npm run seed:prisma-client` (requires `SEED_USER_ID`) for fixtures.
+- **Monitoring helpers:** `npm run bench:preview` exercises a few queries against the preview DB to measure latency (implemented in `scripts/bench-preview.mjs`). See `scripts/README.md` for script details.
 
-```bash
-npm run build:web
-```
+## ✅ Testing & quality
 
-## 🔐 Environment & Database
+- Unit/feature tests: `nx test <project>` wraps Vitest (`@analogjs/vitest-angular` for the Angular app).
+- Linting/formatting: `nx lint <project>` and `nx format:[write|check]`. Husky runs `lint-staged` on commit and `nx affected -t lint test [build]` on push.
+- Playwright: `nx e2e web-e2e` (or `npm run e2e:web`) spins up the Analog dev server if needed, ensures Cockroach is reachable, and exercises the public/trpc flows. CI reuses `.github/workflows/_e2e.yml` to run the exact same target against preview URLs.
 
-- Environment variables are managed centrally through Vercel. For local development, the Vercel CLI is used to pull the active environment configuration and inject it temporarily into the runtime, ensuring parity between local and deployed environments without committing secrets to the repository.
-- Run `npx nx run prisma-client:generate` (or `npm run migrate-dev:prisma-client`, which depends on generation) whenever the schema changes.
-- To apply migrations against your local database: `npm run migrate-dev:prisma-client`. For production-ready deploys, use `npm run migrate-deploy:prisma-client`.
-- Seed the database with sample data:
+## 🚀 CI/CD snapshot
 
-```bash
-npm run seed:prisma-client
-```
+`.github/workflows/pipeline.yml` orchestrates the stages:
 
-## ✅ Testing
+1. `_ci.yml` reusable workflow runs Nx affected targets.
+2. Prisma migrations (`prisma-migrate` composite Action) for dev/test/prod branches.
+3. Vercel URL resolution + `/api/health` smoke tests via composite actions.
+4. `_e2e.yml` Playwright suite against preview/test environments.
+5. Notifications via `dawidd6/action-send-mail` whenever a stage fails.
 
-- **Unit & component tests (Vitest):** `npm run test:all` or `npx nx test web` composes Angular test harnesses via `@analogjs/vitest-angular`. Shared options live in `vitest.workspace.ts`.
-- **End-to-end tests (Playwright):** `npm run e2e:web` launches the Playwright runner configured in `apps/web-e2e/playwright.config.ts`. It targets the SSR dev server, so ensure `nx serve web` is running or let Nx manage the lifecycle.
-- Coverage reporting is available through Vitest's V8 instrumentation (`@vitest/coverage-v8`) if you pass `--coverage` to the test target.
+All actions live under `.github/actions/*` so changes mimic local Nx targets (checkout + setup-node + `npm ci --legacy-peer-deps`).
 
-## 📜 Scripts
+## 🧩 Future directions
 
-### Web
+- Harden CockroachDB with backups, changefeeds, and multi-region patterns.
+- Enrich the Analog app with auth flows and AI-assisted recipe exploration.
+- Layer Redis caches for session storage and search acceleration.
 
-| Script                              | Description                                                 |
-| ----------------------------------- | ----------------------------------------------------------- |
-| `npm run start:web`                 | Serves the `web` application locally using SSR.             |
-| `npm run build:web`                 | Builds the `web` application (both client and SSR output).  |
-| `npm run e2e:web`                   | Executes end-to-end tests (`Playwright`) for the `web` app. |
-| `npm run reset:web`                 | Resets the `web` application in NX context.                 |
-| `npm run kookio-icons-filled:web`   | Generates a custom icon module for `web`.                   |
-| `npm run material-icons-filled:web` | Imports and optimizes the Material Icons set.               |
-
-### Prisma
-
-| Script                                 | Description                                              |
-| -------------------------------------- | -------------------------------------------------------- |
-| `npm run migrate-dev:prisma-client`    | Creates and applies local migrations using `Vercel CLI`. |
-| `npm run migrate-deploy:prisma-client` | Applies production migrations using `Vercel CLI`.        |
-| `npm run seed:prisma-client`           | Executes the initial seed script.                        |
-| `npm run studio:prisma-client`         | Launches Prisma Studio to explore and edit data.         |
-
-### General
-
-| Script                   | Description                                                                 |
-| ------------------------ | --------------------------------------------------------------------------- |
-| `npm run bench:preview`  | Checks the latency of `Cockroach Labs` on `Vercel Stages`.                  |
-| `npm run with:env`       | Runs `NX` commands in `Vercel CLI` context passing on environment variables |
-| `npm run test:all`       | Runs unit tests (`Vitest`) on all libs and apps.                            |
-| `npm run lint:all:fix`   | Runs `ESLint` to lint and fix the codebase.                                 |
-| `npm run affected`       | Lists projects affected by the current Git changes.                         |
-| `npm run format`         | Applies formatting rules using `nx format:write`.                           |
-| `npm run vercel:env:tmp` | Pulls Vercel environment variables into a temporary file.                   |
-
-All scripts are defined in `package.json` and delegate to the corresponding Nx target for consistency across package managers (`npx nx`, `pnpm nx`, or `yarn nx`).
-
-## 🚀 Future Directions
-
-- Harden CockroachDB usage (backup/restore, multi-region patterns, changefeeds).
-- Introduce AI-powered microservices that propose recipes and pantry optimisations.
-- Integrate Firebase Authentication for passwordless and social login flows.
-- Add Redis caching layers for session storage and recipe search acceleration.
-
-## 📄 Thesis Context
+## 📄 Thesis reference
 
 This project is accompanied by a Computer Science bachelor thesis that documents its design and implementation.
 
-➡️ The thesis source files are maintained separately in [`kookio-thesis`](https://github.com/EduardEmanuel/kookio-thesis), which contains:
+➡️ Sources live in [`kookio-thesis`](https://github.com/EduardEmanuel/kookio-thesis), which contains:
 
-- Source code written in LaTeX
+- LaTeX source files
 - Build automation scripts for Unix, PowerShell, and CMD
-- PDF artifacts for milestone backups
-
-> Note: All LaTeX-specific instructions, prerequisites, and bibliography management are now documented exclusively in the [kookio-thesis repository](https://github.com/EduardEmanuel/kookio-thesis/blob/main/README.md).
+- PDF artifacts for milestones/backups
 
 ## 📄 License
 
