@@ -66,4 +66,12 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     } */
   ],
+  reporter: [
+    ['list'],
+    ['json', { outputFile: '../../dist/test/metrics/playwright-report.json' }],
+    [
+      'html',
+      { open: 'never', outputFolder: '../../dist/test/playwright-html' },
+    ],
+  ],
 });

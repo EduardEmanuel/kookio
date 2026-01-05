@@ -5,7 +5,7 @@ Thin wrapper over [Pino](https://github.com/pinojs/pino) so every server-side pa
 ```ts
 import { logger } from '@kookio/server-logger';
 
-logger.info({ route: 'ingredient.create' }, 'Ingredient created');
+logger.info({ route: 'ingredient.create' }, 'ℹ️ Ingredient created');
 ```
 
 ## Behavior

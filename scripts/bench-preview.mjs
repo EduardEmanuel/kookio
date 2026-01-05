@@ -42,4 +42,4 @@ try {
   logger.error((await res.text()).slice(0, 400));
   process.exit(1);
 }
-logger.info(JSON.stringify(data, null, 2));
+logger.info('ℹ️ ', JSON.stringify(data, null, 2));

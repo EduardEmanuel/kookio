@@ -23,10 +23,12 @@ apps/web-e2e/
 
 ## Commands
 
-| Command           | Description                                                                                              |
-| ----------------- | -------------------------------------------------------------------------------------------------------- |
-| `nx e2e web-e2e`  | Runs Playwright using `playwright.config.ts`. `@nx/playwright` handles server startup if needed.         |
-| `npm run e2e:web` | Convenience wrapper that pulls Vercel env vars (`scripts/with-vercel-env.mjs`) and then runs the target. |
+| Command                  | Description                                                                                              |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `nx e2e web-e2e`         | Runs Playwright using `playwright.config.ts`. `@nx/playwright` handles server startup if needed.         |
+| `npm run e2e:web`        | Convenience wrapper that pulls Vercel env vars (`scripts/with-vercel-env.mjs`) and then runs the target. |
+| `nx e2e-report web-e2e`  | Runs Playwright E2E (via dependsOn), generates pass-rate metrics (`dist/metrics/e2e_pass_rate.json`).    |
+| `npm run e2e:web-report` | Convenience wrapper that pulls Vercel env vars (`scripts/with-vercel-env.mjs`) and then runs the target. |
 
 During CI the reusable workflow `_e2e.yml` re-uses this project: it installs browsers once, injects `PLAYWRIGHT_BASE_URL`, and uploads `dist/.playwright/**/playwright-report` artifacts if any assertions fail.
 
