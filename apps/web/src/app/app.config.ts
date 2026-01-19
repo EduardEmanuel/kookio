@@ -11,17 +11,22 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer, provideClientHydration } from '@angular/platform-browser';
+import {
+  DomSanitizer,
+  provideClientHydration,
+} from '@angular/platform-browser';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 
-import { provideTrpcClient } from '../trpc-client';
+import { APP_TRPC } from '@kookio/feature-shell';
+
+import { provideTrpcClient, TrpcClientApp } from '../trpc-client';
 import { IconNamespace } from './icons/types';
 import { ALL_ICONS } from './icons/all-icons';
 
 export const addSvgIcons = (
   resources: IconNamespace[],
   iconRegistry: MatIconRegistry,
-  sanitizer: DomSanitizer
+  sanitizer: DomSanitizer,
 ) => {
   for (const resource of resources) {
     for (const icon of resource.icons) {
@@ -30,8 +35,8 @@ export const addSvgIcons = (
           resource.namespace,
           icon.name,
           sanitizer.bypassSecurityTrustResourceUrl(
-            `/icons/${resource.namespace}/${style}/${icon.name}.svg`
-          )
+            `/icons/${resource.namespace}/${style}/${icon.name}.svg`,
+          ),
         );
       }
     }
@@ -52,8 +57,9 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideHttpClient(
       withFetch(),
-      withInterceptors([requestContextInterceptor])
+      withInterceptors([requestContextInterceptor]),
     ),
     provideTrpcClient(),
+    { provide: APP_TRPC, useExisting: TrpcClientApp },
   ],
 };

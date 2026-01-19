@@ -20,7 +20,7 @@ libs/server/trpc/
         └── ingredient.router.ts
 ```
 
-Each procedure uses schemas from `@kookio/prisma-validator`, logs failures through `@kookio/server-logger`, and derives user-friendly labels via `@kookio/shared-utility`.
+Each procedure uses schemas from `@kookio/prisma-client/prisma-zod-generator`, logs failures through `@kookio/server-logger`, and derives user-friendly labels via `@kookio/shared-utility`.
 
 ## Usage
 
@@ -38,8 +38,8 @@ export default createTRPCRouter({
 **Client**
 
 ```ts
-import { TRPC_PATH, TRPC_TRANSFORMER } from '@kookio/server-trpc-configs';
-import type { AppRouter } from '@kookio/server-trpc-types';
+import { TRPC_PATH, TRPC_TRANSFORMER } from '@kookio/server-trpc/configs';
+import type { AppRouter } from '@kookio/server-trpc/types';
 
 createTRPCProxyClient<AppRouter>({
   transformer: TRPC_TRANSFORMER,

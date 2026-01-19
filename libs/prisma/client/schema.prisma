@@ -10,7 +10,7 @@ generator client {
 
 generator zod {
   provider = "prisma-zod-generator"
-  output   = "../validator/src/generated/zod"
+  output   = "./src/prisma-zod-generator"
   useMultipleFiles = true  // generate a separate file for each model
   useTimestamps = true     // use `z.date()` for DateTime fields instead of `z.string()`
   useBigInt = true         // use `z.bigint()` for BigInt fields instead of `z.number()`

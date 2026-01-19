@@ -5,7 +5,7 @@ Let's Kookio it! is an open-source pantry companion built with the PAN stack—P
 ## ✨ Highlights
 
 - Full-stack PAN architecture: Analog 20 + Vite + Nitro on the frontend, Prisma + tRPC + CockroachDB on the backend.
-- Shared types and DTOs via `@kookio/prisma-validator`, so APIs, seeds, tests, and UI stay in sync.
+- Shared types and DTOs via `@kookio/prisma-client/dtos`, so APIs, seeds, tests, and UI stay in sync.
 - Modular Nx workspace with reusable scripts (Vercel env wiring, Prisma migrations, Playwright E2E).
 - CI/CD powered by reusable GitHub workflows and composite actions that mirror the local Nx targets.
 

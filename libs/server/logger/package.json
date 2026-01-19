@@ -2,10 +2,12 @@
   "name": "@kookio/server-logger",
   "version": "0.0.1",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "main": "./index.cjs",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "pino": "~9.12.0"
+    "pino": "~9.12.0",
+    "@kookio/core-logging": "0.0.1",
+    "@kookio/core-security": "0.0.1"
   }
 }

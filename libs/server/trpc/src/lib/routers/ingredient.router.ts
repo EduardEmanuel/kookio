@@ -18,7 +18,7 @@ import {
   IngredientUpdateManySchema,
   IngredientUpdateOneSchema,
   IngredientUpdateResultSchema,
-} from '@kookio/prisma-validator';
+} from '@kookio/prisma-client/prisma-zod-generator';
 import { ingredientLabelers } from '@kookio/shared-utility';
 
 import { procedure, router } from '../trpc';

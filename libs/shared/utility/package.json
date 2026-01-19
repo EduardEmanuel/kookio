@@ -2,8 +2,10 @@
   "name": "@kookio/shared-utility",
   "version": "0.0.1",
   "private": true,
-  "type": "commonjs",
-  "main": "./index.cjs",
-  "types": "./index.d.ts",
-  "dependencies": {}
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "tslib": "~2.8.1"
+  }
 }

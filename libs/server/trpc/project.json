@@ -6,7 +6,7 @@
   "tags": ["scope:server", "type:trpc"],
   "targets": {
     "build": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/server/trpc",
@@ -17,8 +17,9 @@
         ],
         "tsConfig": "libs/server/trpc/tsconfig.lib.json",
         "assets": ["libs/server/trpc/*.md"],
-        "format": ["cjs"],
-        "generatePackageJson": true
+        "format": ["esm"],
+        "generatePackageJson": false,
+        "updateBuildableProjectDepsInPackageJson": false
       }
     },
     "test": {

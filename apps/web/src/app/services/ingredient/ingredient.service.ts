@@ -18,7 +18,7 @@ import type {
   UpdateManyIngredientDTO,
   UpdateManyIngredientResultDTO,
   UpdateOneIngredientDTO,
-} from '@kookio/prisma-validator';
+} from '@kookio/prisma-client/dtos';
 import { ingredientLabelers } from '@kookio/shared-utility';
 
 import { injectTrpcClient } from '../../../trpc-client';

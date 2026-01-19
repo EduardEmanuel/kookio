@@ -1,8 +1,8 @@
 import { createTrpcClient } from '@analogjs/trpc';
 import { inject } from '@angular/core';
 
-import { AppRouter } from '@kookio/server-trpc-types';
-import { TRPC_PATH, TRPC_TRANSFORMER } from '@kookio/server-trpc-configs';
+import { AppRouter } from '@kookio/server-trpc/types';
+import { TRPC_PATH, TRPC_TRANSFORMER } from '@kookio/server-trpc/configs';
 
 const trpcClient = createTrpcClient<AppRouter>({
   url: TRPC_PATH,

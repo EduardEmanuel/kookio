@@ -5,7 +5,7 @@ Feature app built with [Analog](https://analogjs.org/) on top of Angular 20 + Vi
 ## Highlights
 
 - SSR-first: `nx serve web` runs the Analog dev server (Vite + Nitro). Production builds output both browser and server bundles (`dist/apps/web/{browser,server}`) for deployment.
-- PAN stack integration: consumes `@kookio/prisma-client`, `@kookio/prisma-validator`, `@kookio/server-trpc`, and `@kookio/shared-*` packages for type-safe APIs and shared mocks.
+- PAN stack integration: consumes `@kookio/prisma-client`, `@kookio/prisma-client/dtos`, `@kookio/server-trpc`, and `@kookio/shared-*` packages for type-safe APIs and shared mocks.
 - Icon tooling: scripts under `apps/web/scripts` generate both custom Kookio icon sets and Material icons via `vite-node`.
 - tRPC integration: `src/trpc-client.ts` wires Analog’s tRPC plugin to the router exposed by `libs/server/trpc`.
 

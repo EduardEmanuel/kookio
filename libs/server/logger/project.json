@@ -13,8 +13,13 @@
         "main": "libs/server/logger/src/index.ts",
         "tsConfig": "libs/server/logger/tsconfig.lib.json",
         "assets": ["libs/server/logger/*.md"],
-        "format": ["cjs"],
-        "generatePackageJson": true
+        "platform": "node",
+        "bundle": true,
+        "format": ["esm"],
+        "sourcemap": true,
+        "external": ["pino", "pino-pretty"],
+        "generatePackageJson": false,
+        "updateBuildableProjectDepsInPackageJson": false
       }
     },
     "test": {

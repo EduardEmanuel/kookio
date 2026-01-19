@@ -1,4 +1,4 @@
-import { initTRPC } from '@trpc/server';
+import { initTRPC, TRPCError } from '@trpc/server';
 
 import { TRPC_TRANSFORMER } from '../configs';
 import type { Context } from './context';
@@ -8,3 +8,5 @@ const t = initTRPC.context<Context>().create({
 });
 
 export const { middleware, procedure, router } = t;
+
+export { TRPCError };

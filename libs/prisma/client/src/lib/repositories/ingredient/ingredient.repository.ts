@@ -15,7 +15,7 @@ import type {
   UpdateManyIngredientDTO,
   UpdateManyIngredientResultDTO,
   CreateOneIngredientDTO,
-} from '@kookio/prisma-validator';
+} from '../../../dtos/ingredient';
 
 import { prisma, withTxRetry } from '../../prisma-client';
 

@@ -7,7 +7,7 @@ import {
   CreateManyIngredientResultDTO,
   FindManyIngredientResultDTO,
   FindUniqueIngredientResultDTO,
-} from '@kookio/prisma-validator';
+} from '@kookio/prisma-client/dtos';
 import { ingredientLabelers } from '@kookio/shared-utility';
 
 import { createTestScheduler } from '../../../test-setup';

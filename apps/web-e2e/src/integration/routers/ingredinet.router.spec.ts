@@ -7,10 +7,10 @@ import { prisma } from '@kookio/prisma-client';
 import {
   CreateIngredientResultDTO,
   CreateManyIngredientResultDTO,
-} from '@kookio/prisma-validator';
+} from '@kookio/prisma-client/dtos';
 import { logger } from '@kookio/server-logger';
-import { TRPC_TRANSFORMER, TRPC_PATH } from '@kookio/server-trpc-configs';
-import type { AppRouter } from '@kookio/server-trpc-types';
+import { TRPC_TRANSFORMER, TRPC_PATH } from '@kookio/server-trpc/configs';
+import type { AppRouter } from '@kookio/server-trpc/types';
 
 import { waitForDbReady } from '../../helpers/wait-for-db';
 
