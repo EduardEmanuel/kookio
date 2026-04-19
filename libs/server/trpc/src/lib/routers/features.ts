@@ -1,7 +1,7 @@
 import { readServerFeaturesFromEnv } from '@kookio/core-config';
 
-import { procedure, router } from '../trpc';
+import { publicProcedure, router } from '../trpc';
 
 export const featuresRouter = router({
-  read: procedure.query(() => readServerFeaturesFromEnv()),
+  read: publicProcedure.query(() => readServerFeaturesFromEnv()),
 });

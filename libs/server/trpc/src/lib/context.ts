@@ -1,49 +1,54 @@
-import type { AuthSession } from '@kookio/core-security';
-import { PrismaIngredientRepository } from '@kookio/prisma-client';
+// context.ts
+import { PrismaUserRepository } from '@kookio/prisma-client';
+import type { AuthSession } from '@kookio/prisma-client/dtos';
 
 export type Context = {
   token?: string;
   session: AuthSession | null;
   repository: {
-    ingredient: PrismaIngredientRepository;
+    user: PrismaUserRepository;
   };
+};
+
+// Adapter hook (set dintr-un adapter real mai târziu)
+export type SessionAdapter = (token?: string) => Promise<AuthSession | null>;
+let resolveSession: SessionAdapter = async () => null;
+export const setSessionResolver = (fn: SessionAdapter) => {
+  resolveSession = fn;
 };
 
 type HeaderValue = string | string[] | undefined;
 type HeaderMap =
   | { get?: (name: string) => string | null }
   | Record<string, HeaderValue>;
-
 type ContextOptions = {
   req?: { headers?: HeaderMap };
   node?: { req?: { headers?: Record<string, HeaderValue> } };
 };
 
+type HeadersWithGet = { get: (name: string) => string | null };
+
+const hasGet = (h: HeaderMap): h is HeadersWithGet =>
+  typeof (h as Record<string, unknown>)['get'] === 'function';
+
 const getHeaderValue = (headers: HeaderMap | undefined, name: string) => {
   if (!headers) return undefined;
-  if (typeof (headers as { get?: unknown }).get === 'function') {
-    const value = (headers as { get: (key: string) => string | null }).get(
-      name,
-    );
-    return value ?? undefined;
-  }
-
-  const value = (headers as Record<string, HeaderValue>)[name];
-  return Array.isArray(value) ? value[0] : value;
+  if (hasGet(headers)) return headers.get(name) ?? undefined;
+  const v = (headers as Record<string, HeaderValue>)[name];
+  return Array.isArray(v) ? v[0] : v;
 };
 
-export const createContext = (opts: ContextOptions): Context => {
-  const ingredient = new PrismaIngredientRepository();
-  const session: AuthSession | null = null; // TODO: implement session retrieval
-  const headers = opts.node?.req?.headers ?? opts.req?.headers;
+export const createContext = async (opts: ContextOptions): Promise<Context> => {
+  const headers = opts.node?.req?.headers ?? opts?.req?.headers;
   const tokenHeader = getHeaderValue(headers, 'authorization');
   const token = tokenHeader?.replace(/^Bearer\s+/i, '');
+  const session = await resolveSession(token);
 
   return {
     token,
     session,
     repository: {
-      ingredient,
+      user: new PrismaUserRepository(),
     },
   };
 };

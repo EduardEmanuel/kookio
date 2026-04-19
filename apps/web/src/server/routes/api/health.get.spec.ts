@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 const prismaMock = vi.hoisted(() => ({ $queryRaw: vi.fn() }));
 
 vi.mock('h3', () => ({ defineEventHandler: (fn: any) => fn }));

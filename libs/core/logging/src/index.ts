@@ -1,4 +1,4 @@
-import type { AuditEvent } from '@kookio/core-security';
+type AuditEvent = import('@kookio/prisma-client/dtos').AuditEvent;
 
 export type LogLevel =
   | 'fatal'

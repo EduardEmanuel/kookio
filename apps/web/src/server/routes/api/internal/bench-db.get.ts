@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { eventHandler, getHeader, getQuery, createError } from 'h3';
 
 import { prisma } from '@kookio/prisma-client';

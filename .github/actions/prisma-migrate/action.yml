@@ -8,13 +8,22 @@ inputs:
   database_url:
     required: true
     type: string
-  seed_user_id:
-    required: false
-    type: string
   attempts:
     required: false
     type: string
     default: '3'
+  seed_admin_email:
+    required: false
+    type: string
+    default: ''
+  seed_admin_password:
+    required: false
+    type: string
+    default: ''
+  firebase_service_account_json_b64:
+    required: false
+    type: string
+    default: ''
 runs:
   using: composite
   steps:
@@ -24,7 +33,7 @@ runs:
         DATABASE_URL: ${{ inputs.database_url }}
       run: |
         set -e
-        attempts=${{ inputs.attempts }}
+        attempts=${attempts:-3}
         delay=10
         ok=0
         for i in $(seq 1 $attempts); do
@@ -36,9 +45,11 @@ runs:
         [ "$ok" -eq 1 ] || { echo "❌ migrate deploy failed"; exit 1; }
 
     - name: Optional seed
-      if: ${{ inputs.database_url != '' && inputs.seed_user_id != '' }}
+      if: ${{ inputs.database_url != '' && inputs.seed_admin_email != '' && inputs.seed_admin_password != '' }}
       shell: bash
       env:
         DATABASE_URL: ${{ inputs.database_url }}
-        SEED_USER_ID: ${{ inputs.seed_user_id }}
+        SEED_ADMIN_EMAIL: ${{ inputs.seed_admin_email }}
+        SEED_ADMIN_PASSWORD: ${{ inputs.seed_admin_password }}
+        FIREBASE_SERVICE_ACCOUNT_JSON_B64: ${{ inputs.firebase_service_account_json_b64 }}
       run: npx nx seed prisma-client

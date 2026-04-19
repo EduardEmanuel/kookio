@@ -5,8 +5,10 @@ export const ingredientLabelers = makeEntityLabelers({
   whereIdentity: [
     {
       keys: ['userId_name.userId', 'userId_name.name'],
-      format: (where) =>
-        `ingredient(user=${where['userId_name'].userId}, name=${where['userId_name'].name})`,
+      format: (where) => {
+        const compound = where['userId_name'] as Record<string, unknown>;
+        return `ingredient(user=${compound['userId']}, name=${compound['name']})`;
+      },
     },
   ],
   createIdentity: [

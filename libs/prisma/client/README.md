@@ -85,7 +85,7 @@ _Optional:_ the `.prisma-zod-generator-manifest.json` can be used in CI to check
 | `nx generate prisma-client`       | Runs `npx prisma generate` (keeps Prisma Client and Zod schemas up to date).                |
 | `nx migrate-dev prisma-client`    | Runs `prisma migrate dev` from the workspace root.                                          |
 | `nx migrate-deploy prisma-client` | Runs `prisma migrate deploy` (CI/production).                                               |
-| `nx seed prisma-client`           | Executes `src/scripts/seed.ts` (requires `SEED_USER_ID`).                                   |
+| `nx seed prisma-client`           | Executes `src/scripts/seed.ts`                                                              |
 | `nx studio prisma-client`         | Opens Prisma Studio.                                                                        |
 | `nx build prisma-client`          | Compiles TS via `@nx/js:tsc`; **depends on** `generate` to ensure schemas exist beforehand. |
 | `nx test prisma-client`           | Vitest harness (lightweight).                                                               |

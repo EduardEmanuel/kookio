@@ -17,6 +17,9 @@ import {
 } from '@angular/platform-browser';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 
+import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
+
+import { AUTH_TRPC, FIREBASE_OPTIONS } from '@kookio/feature-auth';
 import { APP_TRPC } from '@kookio/feature-shell';
 
 import { provideTrpcClient, TrpcClientApp } from '../trpc-client';
@@ -60,6 +63,17 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([requestContextInterceptor]),
     ),
     provideTrpcClient(),
+    provideNgxSkeletonLoader(),
     { provide: APP_TRPC, useExisting: TrpcClientApp },
+    { provide: AUTH_TRPC, useExisting: TrpcClientApp },
+    {
+      provide: FIREBASE_OPTIONS,
+      useValue: {
+        apiKey: import.meta.env['NG_APP_FIREBASE_API_KEY'],
+        authDomain: import.meta.env['NG_APP_FIREBASE_AUTH_DOMAIN'],
+        projectId: import.meta.env['NG_APP_FIREBASE_PROJECT_ID'],
+        appId: import.meta.env['NG_APP_FIREBASE_APP_ID'],
+      },
+    },
   ],
 };

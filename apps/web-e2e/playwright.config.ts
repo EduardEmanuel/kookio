@@ -16,6 +16,7 @@ const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
  */
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: './src' }),
+  globalSetup: require.resolve('./global-setup'),
   globalTeardown: require.resolve('./global-teardown'),
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -26,8 +27,9 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'npx nx run web:serve',
-    url: 'http://localhost:4200',
+    url: baseURL,
     reuseExistingServer: true,
+    timeout: 180_000,
     cwd: workspaceRoot,
   },
   projects: [
@@ -44,6 +46,7 @@ export default defineConfig({
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      grepInvert: /@no-webkit/,
     },
 
     // Uncomment for mobile browsers support

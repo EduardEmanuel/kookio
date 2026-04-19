@@ -1,18 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-type AnyRecord = Record<string, any>;
+type UnknownRecord = Record<string, unknown>;
 
 export type LabelKind = 'where' | 'create' | 'createMany';
 
 export type EntityLabelInput =
-  | { kind: 'where'; where: AnyRecord | null | undefined }
-  | { kind: 'create'; data: AnyRecord | null | undefined }
+  | { kind: 'where'; where: UnknownRecord | null | undefined }
+  | { kind: 'create'; data: UnknownRecord | null | undefined }
   | { kind: 'createMany'; data: unknown };
 
 export type EntityLabelers = {
   label: (input: EntityLabelInput) => string;
-  fromWhere: (where: AnyRecord | null | undefined) => string;
-  fromCreateData: (data: AnyRecord | null | undefined) => string;
+  fromWhere: (where: UnknownRecord | null | undefined) => string;
+  fromCreateData: (data: UnknownRecord | null | undefined) => string;
   fromCreateManyData: (data: unknown) => string;
 };
 
@@ -28,7 +26,7 @@ type MakeEntityLabelersOptions = {
    */
   whereIdentity?: Array<{
     keys: KeyPath[];
-    format: (where: AnyRecord) => string;
+    format: (where: UnknownRecord) => string;
   }>;
 
   /**
@@ -36,7 +34,7 @@ type MakeEntityLabelersOptions = {
    */
   createIdentity?: Array<{
     keys: KeyPath[];
-    format: (data: AnyRecord) => string;
+    format: (data: UnknownRecord) => string;
   }>;
 
   /** (opțional) cum extragi name pentru createMany */
@@ -46,13 +44,13 @@ type MakeEntityLabelersOptions = {
   unknownLabel?: string; // default: `${entityName}(unknown)`
 };
 
-const hasPath = (obj: AnyRecord, path: KeyPath): boolean => {
+const hasPath = (obj: UnknownRecord, path: KeyPath): boolean => {
   if (!obj) return false;
   const parts = Array.isArray(path) ? path : path.split('.');
-  let cur: any = obj;
+  let cur: unknown = obj;
   for (const p of parts) {
-    if (cur == null || !(p in cur)) return false;
-    cur = cur[p];
+    if (cur == null || typeof cur !== 'object' || !(p in cur)) return false;
+    cur = (cur as Record<string, unknown>)[p];
   }
   return cur != null;
 };
@@ -64,14 +62,14 @@ export const makeEntityLabelers = (
   const unknown = opts.unknownLabel ?? `${entity}(unknown)`;
   const manyNameKey = opts.createManyNameKey ?? 'name';
 
-  const fromWhere = (where: AnyRecord | null | undefined): string => {
+  const fromWhere = (where: UnknownRecord | null | undefined): string => {
     if (!where) return unknown;
 
     // 1) custom rules first
     if (opts.whereIdentity?.length) {
       for (const rule of opts.whereIdentity) {
-        const ok = rule.keys.every((k) => hasPath(where as AnyRecord, k));
-        if (ok) return rule.format(where as AnyRecord);
+        const ok = rule.keys.every((k) => hasPath(where as UnknownRecord, k));
+        if (ok) return rule.format(where as UnknownRecord);
       }
     }
 
@@ -82,14 +80,14 @@ export const makeEntityLabelers = (
     return unknown;
   };
 
-  const fromCreateData = (data: AnyRecord | null | undefined): string => {
+  const fromCreateData = (data: UnknownRecord | null | undefined): string => {
     if (!data) return unknown;
 
     // 1) custom rules first
     if (opts.createIdentity?.length) {
       for (const rule of opts.createIdentity) {
-        const ok = rule.keys.every((k) => hasPath(data as AnyRecord, k));
-        if (ok) return rule.format(data as AnyRecord);
+        const ok = rule.keys.every((k) => hasPath(data as UnknownRecord, k));
+        if (ok) return rule.format(data as UnknownRecord);
       }
     }
 
@@ -104,8 +102,8 @@ export const makeEntityLabelers = (
 
     const names = arr
       .map(
-        (i: any, idx: number) =>
-          `${idx}. ${i?.[manyNameKey] ?? '(missing name)'}`,
+        (i: unknown, idx: number) =>
+          `${idx}. ${(i as Record<string, unknown>)?.[manyNameKey] ?? '(missing name)'}`,
       )
       .join('; ');
 

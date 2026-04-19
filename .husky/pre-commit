@@ -1,6 +1,8 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-set -e
+# Format all files before linting
+npx nx format:write
+
+# Re-stage any files changed by the formatter
+git add -u
 
 # Run linters only on staged files
 npm exec lint-staged

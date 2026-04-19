@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { getHeader, setHeader, createError, type H3Event } from 'h3';
 import { getRedis, redisKey, increaseWithTimeToLive } from './redis';
 

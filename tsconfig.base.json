@@ -15,17 +15,22 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@app/*": ["apps/web/src/app/*"],
       "@kookio/core-config": ["libs/core/config/src/index.ts"],
       "@kookio/core-logging": ["libs/core/logging/src/index.ts"],
       "@kookio/core-security": ["libs/core/security/src/index.ts"],
+      "@kookio/feature-auth": ["libs/feature/auth/src/index.ts"],
       "@kookio/feature-shell": ["libs/feature/shell/src/index.ts"],
       "@kookio/prisma-client": ["libs/prisma/client/src/index.ts"],
       "@kookio/prisma-client/*": ["libs/prisma/client/src/*"],
+      "@kookio/server-auth": ["libs/server/auth/src/index.ts"],
       "@kookio/server-logger": ["libs/server/logger/src/index.ts"],
       "@kookio/server-trpc": ["libs/server/trpc/src/index.ts"],
       "@kookio/server-trpc/*": ["libs/server/trpc/src/*"],
       "@kookio/shared-mock": ["libs/shared/mock/src/index.ts"],
-      "@kookio/shared-utility": ["libs/shared/utility/src/index.ts"]
+      "@kookio/shared-ui": ["libs/shared/ui/src/index.ts"],
+      "@kookio/shared-utility": ["libs/shared/utility/src/index.ts"],
+      "@server/*": ["apps/web/src/server/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

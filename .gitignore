@@ -53,3 +53,11 @@ vite.config.*.timestamp*
 vitest.config.*.timestamp*
 .vercel
 .env*.local
+
+# BEGIN: AI Setup (auto-generated — do not edit manually)
+.ai/guidelines.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.github/copilot-instructions.md
+# END: AI Setup

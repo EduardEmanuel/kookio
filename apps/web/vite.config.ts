@@ -4,6 +4,7 @@ import analog from '@analogjs/platform';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 // @ts-expect-error @tailwindcss/vite currently uses mts. TypeScript is complaining this, but it works as expected.
 import tailwindcss from '@tailwindcss/vite';
+
 import { defineConfig } from 'vite';
 
 const nitroPreset = process.env['NITRO_PRESET'] ?? 'node-server';
@@ -17,11 +18,24 @@ export default defineConfig(({ mode }) => {
       outDir: '../../dist/./apps/web/client',
       reportCompressedSize: true,
       target: ['es2020'],
+      sourcemap: mode !== 'production',
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // Allow @use 'variables', @use 'mixins' etc. in component SCSS files
+          // without long relative paths. Does NOT affect the global styles.css entry
+          // (which must stay .css due to the nxViteTsPaths ?direct Sass importer bug).
+          includePaths: ['src/styles'],
+        },
+      },
+    },
+    envPrefix: 'NG_APP_',
     server: {
       fs: {
         allow: ['.'],
       },
+      sourcemapIgnoreList: false,
     },
     plugins: [
       tailwindcss(),

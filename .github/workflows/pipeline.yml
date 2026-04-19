@@ -20,6 +20,19 @@ jobs:
     with:
       node_version: ${{ vars.NODE_VERSION }}
 
+  # 1b) Notify on CI failure
+  notify-ci-failed:
+    needs: ci
+    if: ${{ failure() && needs.ci.result == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/discord-notify
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          event_type: ci_failed
+
   # 2) Migrate DEV
   migrate-dev:
     if: ${{ github.ref == 'refs/heads/dev' }}
@@ -37,7 +50,15 @@ jobs:
       - uses: ./.github/actions/prisma-migrate
         with:
           database_url: ${{ secrets.KOOKIO_MIGRATE_CONNECTION }}
-          seed_user_id: ${{ secrets.SEED_USER_ID }}
+          seed_admin_email: ${{ secrets.SEED_ADMIN_EMAIL }}
+          seed_admin_password: ${{ secrets.SEED_ADMIN_PASSWORD }}
+          firebase_service_account_json_b64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_B64 }}
+      - name: Notify Discord on failure
+        if: ${{ failure() }}
+        uses: ./.github/actions/discord-notify
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          event_type: dev_migrate_failed
 
   # 3) Migrate TEST
   migrate-test:
@@ -56,7 +77,15 @@ jobs:
       - uses: ./.github/actions/prisma-migrate
         with:
           database_url: ${{ secrets.KOOKIO_MIGRATE_CONNECTION }}
-          seed_user_id: ${{ secrets.SEED_USER_ID }}
+          seed_admin_email: ${{ secrets.SEED_ADMIN_EMAIL }}
+          seed_admin_password: ${{ secrets.SEED_ADMIN_PASSWORD }}
+          firebase_service_account_json_b64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_B64 }}
+      - name: Notify Discord on failure
+        if: ${{ failure() }}
+        uses: ./.github/actions/discord-notify
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          event_type: test_migrate_failed
 
   # 4) Resolve URL (dev/test/PR)
   resolve-url:
@@ -93,6 +122,12 @@ jobs:
       - uses: ./.github/actions/smoke-health
         with:
           base_url: ${{ needs.resolve-url.outputs.base_url }}
+      - name: Notify Discord on failure
+        if: ${{ failure() }}
+        uses: ./.github/actions/discord-notify
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          event_type: dev_smoke_failed
 
   # 6) Smoke TEST
   smoke-test:
@@ -107,8 +142,14 @@ jobs:
       - uses: ./.github/actions/smoke-health
         with:
           base_url: ${{ needs.resolve-url.outputs.base_url }}
+      - name: Notify Discord on failure
+        if: ${{ failure() }}
+        uses: ./.github/actions/discord-notify
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          event_type: test_smoke_failed
 
-  # 7) E2E (reusable or direct composite)
+  # 7) E2E (reusable)
   e2e-test:
     if: ${{ github.ref == 'refs/heads/test' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false) }}
     needs: [smoke-test, resolve-url]
@@ -117,6 +158,19 @@ jobs:
     with:
       base_url: ${{ needs.resolve-url.outputs.base_url }}
       node_version: ${{ vars.NODE_VERSION }}
+
+  # 7b) Notify on E2E failure (reusable workflow cannot call the action directly)
+  notify-e2e-failed:
+    needs: e2e-test
+    if: ${{ failure() && needs.e2e-test.result == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/discord-notify
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          event_type: test_e2e_failed
 
   # 8) PROD migrate + smoke (main)
   migrate-prod:
@@ -137,7 +191,16 @@ jobs:
       - uses: ./.github/actions/prisma-migrate
         with:
           database_url: ${{ secrets.KOOKIO_MIGRATE_CONNECTION }}
-          seed_user_id: ${{ secrets.SEED_USER_ID }}
+          seed_admin_email: ${{ secrets.SEED_ADMIN_EMAIL }}
+          seed_admin_password: ${{ secrets.SEED_ADMIN_PASSWORD }}
+          firebase_service_account_json_b64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_B64 }}
+      - name: Notify Discord on failure (with mention)
+        if: ${{ failure() }}
+        uses: ./.github/actions/discord-notify
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          event_type: prod_migrate_failed
+          mention_user_id: ${{ secrets.DISCORD_MENTION_USER_ID }}
 
   smoke-prod:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -151,8 +214,21 @@ jobs:
       - uses: ./.github/actions/smoke-health
         with:
           base_url: ${{ vars.VERCEL_APP_URL }}
+      - name: Notify Discord on failure (with mention)
+        if: ${{ failure() }}
+        uses: ./.github/actions/discord-notify
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          event_type: prod_smoke_failed
+          mention_user_id: ${{ secrets.DISCORD_MENTION_USER_ID }}
+      - name: Notify Discord on success (prod deploy, no mention)
+        if: ${{ success() }}
+        uses: ./.github/actions/discord-notify
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          event_type: prod_deploy_success
 
-  # 9) Notify (la final)
+  # 9) Notify email (unchanged)
   notify-email:
     needs:
       [

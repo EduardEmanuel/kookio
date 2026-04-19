@@ -1,11 +1,11 @@
-// server-logger/src/index.ts
 import { pino, Logger } from 'pino';
+
 import type {
   AppLogger,
   AuditLogger,
   LogNamespace,
 } from '@kookio/core-logging';
-import type { AuditEvent } from '@kookio/core-security';
+import type { AuditEvent } from '@kookio/prisma-client/dtos';
 
 const isProd =
   process.env['VERCEL'] === '1' || process.env['NODE_ENV'] === 'production';

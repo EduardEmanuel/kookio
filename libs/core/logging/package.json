@@ -7,6 +7,6 @@
   "types": "./src/index.d.ts",
   "dependencies": {
     "tslib": "^2.3.0",
-    "@kookio/core-security": "0.0.1"
+    "@kookio/prisma-client": "0.0.1"
   }
 }

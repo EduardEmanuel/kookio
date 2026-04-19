@@ -1,15 +1,9 @@
+import { logger } from './utils.mjs';
+
 const url =
   process.env.BENCH_URL || 'https://dev.kookio.app/api/internal/bench-db';
 const bypass = process.env.BYPASS_TOKEN;
 const key = process.env.BENCH_KEY;
-// Avoid Nx/TS path aliases in raw Node ESM scripts.
-// Keep a tiny local logger instead of importing @kookio/logger.
-const logger = {
-  error: (...args) => console.error(...args),
-  warn: (...args) => console.warn(...args),
-  info: (...args) => console.log(...args),
-  debug: (...args) => console.debug(...args),
-};
 
 if (!bypass) {
   logger.error('missing BYPASS_TOKEN');

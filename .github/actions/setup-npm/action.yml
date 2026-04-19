@@ -1,5 +1,10 @@
 name: Setup npm
 description: Checkout + setup-node + npm ci (cached)
+inputs:
+  node_version:
+    required: false
+    type: string
+    default: '24'
 runs:
   using: composite
   steps:
@@ -11,8 +16,3 @@ runs:
     - name: Install
       shell: bash
       run: npm ci
-inputs:
-  node_version:
-    required: false
-    type: string
-    default: '24'

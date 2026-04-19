@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type RedisClientType } from 'redis';
 
 import { REDIS_PING_RESPONSE } from './constants';

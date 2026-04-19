@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { H3Event } from 'h3';
 
 const defaultIterations = 100;
 const prismaMock = vi.hoisted(() => ({ $queryRaw: vi.fn() }));
@@ -25,50 +25,65 @@ const spyPerfConstantDelta = vi.fn((deltaMs: number) => {
     .mockImplementation(() => (toggle++ % 2 === 0 ? 0 : deltaMs));
 });
 
+type MockHeaders = Record<string, string | number | string[] | undefined> & {
+  get?: (name: string) => string | null;
+  set?: (name: string, value: string) => void;
+};
+type MockH3Event = { headers: MockHeaders; query?: Record<string, string> };
+type MockCreateErrorInput = { statusCode: number; statusMessage?: string };
+
 vi.mock('h3', () => {
-  const getHeader = (event: any, name: string) => {
+  const getHeader = (event: MockH3Event, name: string) => {
     const headers = event?.headers ?? {};
     const target = String(name).toLowerCase();
 
-    if (headers && typeof headers.get === 'function') return headers.get(name);
+    if (typeof headers.get === 'function') return headers.get(name);
     for (const k of Object.keys(headers))
       if (k.toLowerCase() === target) return headers[k];
     return undefined;
   };
-  const setHeader = (event: any, name: string, value: string | number) => {
+  const setHeader = (
+    event: MockH3Event,
+    name: string,
+    value: string | number,
+  ) => {
     if (!event.headers) event.headers = {};
     if (typeof event.headers.set === 'function')
       event.headers.set(name, String(value));
     else event.headers[name] = value;
   };
-  const getQuery = (event: any) => event?.query ?? {};
-  const eventHandler = (fn: any) => fn;
-  const createError = ({ statusCode, statusMessage }: any) =>
+  const getQuery = (event: MockH3Event) => event?.query ?? {};
+  const eventHandler = (fn: (event: MockH3Event) => unknown) => fn;
+  const createError = ({ statusCode, statusMessage }: MockCreateErrorInput) =>
     Object.assign(new Error(statusMessage ?? 'Error'), { statusCode });
 
   return { getHeader, setHeader, getQuery, eventHandler, createError };
 });
 vi.mock('@kookio/prisma-client', () => ({ prisma: prismaMock }));
-vi.mock('../../../infra/redis', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../../infra/redis')>();
+vi.mock('@server/infra/redis', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@server/infra/redis')>();
   return {
     ...actual,
     // override getRedis and keep the rest (ipHash, redisKey, setJSON, etc.) real
     getRedis: redisInfraMock.getRedis,
   };
 });
-vi.mock('../../../infra/rate-limit', () => {
-  const setHeader = (event: any, name: string, value: string | number) => {
+vi.mock('@server/infra/rate-limit', () => {
+  const setHeader = (
+    event: MockH3Event,
+    name: string,
+    value: string | number,
+  ) => {
     if (!event.headers) event.headers = {};
     if (typeof event.headers.set === 'function')
       event.headers.set(name, String(value));
     else event.headers[name] = String(value);
   };
-  const createError = ({ statusCode, statusMessage }: any) =>
+  const createError = ({ statusCode, statusMessage }: MockCreateErrorInput) =>
     Object.assign(new Error(statusMessage ?? 'Error'), { statusCode });
   const counters = new Map<string, { count: number; resetAt: number }>();
   const h3ApplyRateLimit = async (
-    event: any,
+    event: MockH3Event,
     opts: {
       bucket: string;
       max: number;
@@ -132,6 +147,8 @@ vi.mock('../../../infra/rate-limit', () => {
 import { REDIS_PING_RESPONSE } from '../../../infra/constants';
 import handler from './bench-db.get';
 
+const asEvent = (mock: MockH3Event) => mock as unknown as H3Event;
+
 describe('bench-db.get route (internal)', () => {
   let perfSpy: ReturnType<typeof vi.spyOn> | undefined;
 
@@ -155,7 +172,9 @@ describe('bench-db.get route (internal)', () => {
     for (let i = 0; i < defaultIterations; i++)
       prismaMock.$queryRaw.mockResolvedValueOnce(undefined);
 
-    const res = await handler({ headers: { 'X-Bench-Key': 'secret' } } as any);
+    const res = await handler(
+      asEvent({ headers: { 'X-Bench-Key': 'secret' } }),
+    );
 
     expect(res.db).toMatchObject({
       probes: defaultIterations,
@@ -170,17 +189,17 @@ describe('bench-db.get route (internal)', () => {
   it('404 when ALLOW_BENCH !== true', async () => {
     vi.stubEnv('ALLOW_BENCH', 'false');
     await expect(
-      handler({ headers: { 'x-bench-key': 'secret' } } as any),
+      handler(asEvent({ headers: { 'x-bench-key': 'secret' } })),
     ).rejects.toMatchObject({ statusCode: 404 });
     expect(prismaMock.$queryRaw).not.toHaveBeenCalled();
   });
 
   it('401 without key or with wrong key', async () => {
-    await expect(handler({ headers: {} } as any)).rejects.toMatchObject({
+    await expect(handler(asEvent({ headers: {} }))).rejects.toMatchObject({
       statusCode: 401,
     });
     await expect(
-      handler({ headers: { 'x-bench-key': 'wrong' } } as any),
+      handler(asEvent({ headers: { 'x-bench-key': 'wrong' } })),
     ).rejects.toMatchObject({ statusCode: 401 });
     expect(prismaMock.$queryRaw).not.toHaveBeenCalled();
   });
@@ -195,7 +214,9 @@ describe('bench-db.get route (internal)', () => {
 
     perfSpy = spyPerfConstantDelta(1.5);
 
-    const res = await handler({ headers: { 'x-bench-key': 'secret' } } as any);
+    const res = await handler(
+      asEvent({ headers: { 'x-bench-key': 'secret' } }),
+    );
 
     expect(res.db.probes).toBe(iterations);
     expect(res.db.avg_ms).toBeCloseTo(1.5, 2);
@@ -206,7 +227,7 @@ describe('bench-db.get route (internal)', () => {
   it('propagates prisma errors after auth', async () => {
     prismaMock.$queryRaw.mockRejectedValueOnce(new Error('db down')); // warm-up fails
     await expect(
-      handler({ headers: { 'x-bench-key': 'secret' } } as any),
+      handler(asEvent({ headers: { 'x-bench-key': 'secret' } })),
     ).rejects.toBeInstanceOf(Error);
   });
 });
@@ -231,7 +252,9 @@ describe('bench-db.get – Redis summary', () => {
     // default from outer beforeEach: throws
     perfSpy = spyPerfConstantDelta(2);
 
-    const res = await handler({ headers: { 'x-bench-key': 'secret' } } as any);
+    const res = await handler(
+      asEvent({ headers: { 'x-bench-key': 'secret' } }),
+    );
 
     expect(res.redis.enabled).toBe(false);
     expect(res.redis).toMatchObject({
@@ -248,7 +271,9 @@ describe('bench-db.get – Redis summary', () => {
     redisInfraMock.getRedis.mockResolvedValue({ ping });
     perfSpy = spyPerfConstantDelta(1);
 
-    const res = await handler({ headers: { 'x-bench-key': 'secret' } } as any);
+    const res = await handler(
+      asEvent({ headers: { 'x-bench-key': 'secret' } }),
+    );
 
     expect(res.redis.enabled).toBe(true);
     expect(res.redis.probes).toBe(defaultIterations);
@@ -278,10 +303,10 @@ describe('bench-db.get – rate limit / headers (production)', () => {
   });
 
   it('sets X-RateLimit-* headers and allows under the threshold', async () => {
-    const event: any = {
+    const event: MockH3Event = {
       headers: { 'x-bench-key': 'secret', 'x-forwarded-for': '1.2.3.4' },
     };
-    const res = await handler(event);
+    const res = await handler(asEvent(event));
 
     expect(res.db).toBeDefined();
     expect(String(event.headers['X-RateLimit-Limit'])).toBe('10');
@@ -291,17 +316,21 @@ describe('bench-db.get – rate limit / headers (production)', () => {
 
   it('after 10 requests from the same IP → 429 and Retry-After present', async () => {
     const make = () =>
-      handler({
-        headers: { 'x-bench-key': 'secret', 'x-forwarded-for': '5.6.7.8' },
-      } as any);
+      handler(
+        asEvent({
+          headers: { 'x-bench-key': 'secret', 'x-forwarded-for': '5.6.7.8' },
+        }),
+      );
 
     for (let i = 0; i < 10; i++) await expect(make()).resolves.toBeDefined();
     await expect(make()).rejects.toMatchObject({ statusCode: 429 });
 
-    const ev: any = {
+    const ev: MockH3Event = {
       headers: { 'x-bench-key': 'secret', 'x-forwarded-for': '5.6.7.8' },
     };
-    await expect(handler(ev)).rejects.toMatchObject({ statusCode: 429 });
+    await expect(handler(asEvent(ev))).rejects.toMatchObject({
+      statusCode: 429,
+    });
     expect(String(ev.headers['X-RateLimit-Remaining'])).toBe('0');
     expect(Number(ev.headers['Retry-After'])).toBeGreaterThan(0);
   });
@@ -313,15 +342,19 @@ describe('bench-db.get – rate limit / headers (production)', () => {
 
     for (let i = 0; i < 10; i++) {
       await expect(
-        handler({
-          headers: { 'x-bench-key': 'secret', 'x-forwarded-for': hdr },
-        } as any),
+        handler(
+          asEvent({
+            headers: { 'x-bench-key': 'secret', 'x-forwarded-for': hdr },
+          }),
+        ),
       ).resolves.toBeDefined();
     }
     await expect(
-      handler({
-        headers: { 'x-bench-key': 'secret', 'x-forwarded-for': hdr },
-      } as any),
+      handler(
+        asEvent({
+          headers: { 'x-bench-key': 'secret', 'x-forwarded-for': hdr },
+        }),
+      ),
     ).rejects.toMatchObject({ statusCode: 429 });
   });
 });
@@ -345,7 +378,9 @@ describe('bench-db.get – iterations & percentile', () => {
 
   it('invalid BENCH_ITERATIONS → defaults to 100 probes', async () => {
     vi.stubEnv('BENCH_ITERATIONS', 'not-a-number');
-    const res = await handler({ headers: { 'x-bench-key': 'secret' } } as any);
+    const res = await handler(
+      asEvent({ headers: { 'x-bench-key': 'secret' } }),
+    );
     expect(res.db.probes).toBe(defaultIterations);
     expect(prismaMock.$queryRaw).toHaveBeenCalledTimes(1 + defaultIterations); // warm-up + defaultIterations
   });
@@ -354,7 +389,9 @@ describe('bench-db.get – iterations & percentile', () => {
     vi.stubEnv('BENCH_ITERATIONS', '2');
     perfSpy = spyPerfDeltas([2, 8]); // now(): [0,2, 0,8]
 
-    const res = await handler({ headers: { 'x-bench-key': 'secret' } } as any);
+    const res = await handler(
+      asEvent({ headers: { 'x-bench-key': 'secret' } }),
+    );
 
     expect(res.db.probes).toBe(2);
     expect(res.db.p50_ms).toBeCloseTo(5, 2);
@@ -365,14 +402,14 @@ describe('bench-db.get – iterations & percentile', () => {
 
   it('?ops from query overrides env/default', async () => {
     // Provide ops via query, ignore BENCH_ITERATIONS.
-    const event: any = {
+    const event: MockH3Event = {
       headers: { 'x-bench-key': 'secret' },
       query: { ops: '3' },
     };
 
     perfSpy = spyPerfConstantDelta(1);
 
-    const res = await handler(event);
+    const res = await handler(asEvent(event));
 
     expect(res.db.probes).toBe(3);
     expect(prismaMock.$queryRaw).toHaveBeenCalledTimes(1 + 3); // warm-up + 3

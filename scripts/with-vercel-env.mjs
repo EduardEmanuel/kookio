@@ -1,15 +1,8 @@
 import { spawn } from 'node:child_process';
 import { mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
+import { logger } from './utils.mjs';
 
-// Avoid Nx/TS path aliases in raw Node ESM scripts.
-// Keep a tiny local logger instead of importing @kookio/logger.
-const logger = {
-  error: (...args) => console.error(...args),
-  warn: (...args) => console.warn(...args),
-  info: (...args) => console.log(...args),
-  debug: (...args) => console.debug(...args),
-};
 const TMP_DIR = path.resolve(process.cwd(), 'tmp');
 const ENV_FILE = path.join(TMP_DIR, 'kookio.env');
 
@@ -64,7 +57,7 @@ const main = async () => {
   const { vercelEnv, team, token, yes, cmd } = parseArgs(process.argv.slice(2));
 
   if (!cmd.length) {
-    console.error(
+    logger.error(
       [
         'Usage:',
         '  node ./scripts/with-vercel-env.mjs --env=preview -- <command...>',
@@ -124,6 +117,6 @@ const main = async () => {
 };
 
 main().catch((e) => {
-  console.error(e?.message ?? e);
+  logger.error(e?.message ?? e);
   process.exit(1);
 });
