@@ -1,0 +1,155 @@
+name: Discord notify
+description: Send a contextual Discord notification via webhook for CI/CD events
+
+inputs:
+  webhook_url:
+    description: Discord webhook URL (without /github suffix)
+    required: true
+  event_type:
+    description: |
+      One of:
+        prod_migrate_failed | prod_smoke_failed | prod_deploy_success
+        test_migrate_failed | test_smoke_failed | test_e2e_failed
+        dev_migrate_failed  | dev_smoke_failed
+        ci_failed
+    required: true
+  mention_user_id:
+    description: |
+      Optional Discord user ID to mention (e.g. '123456789012345678').
+      Typically set only for critical prod failures to get a phone ping.
+      If empty, no mention is sent.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Build and send Discord payload
+      shell: bash
+      env:
+        WEBHOOK_URL: ${{ inputs.webhook_url }}
+        EVENT_TYPE: ${{ inputs.event_type }}
+        MENTION_USER_ID: ${{ inputs.mention_user_id }}
+        REPO: ${{ github.repository }}
+        REF_NAME: ${{ github.ref_name }}
+        SHA: ${{ github.sha }}
+        ACTOR: ${{ github.actor }}
+        RUN_ID: ${{ github.run_id }}
+        RUN_NUMBER: ${{ github.run_number }}
+        SERVER_URL: ${{ github.server_url }}
+        WORKFLOW: ${{ github.workflow }}
+        EVENT_HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+      run: |
+        set -euo pipefail
+
+        if [ -z "$WEBHOOK_URL" ]; then
+          echo "⚠️  No DISCORD_WEBHOOK provided; skipping Discord notification."
+          exit 0
+        fi
+
+        # ------------------------------------------------------------------
+        # Event metadata (title, color, emoji)
+        # Colors are Discord decimal values.
+        #   15158332 = red       (critical failure)
+        #   15844367 = orange    (warning / non-prod failure)
+        #   3066993  = green     (success)
+        #   3447003  = blue      (info)
+        # ------------------------------------------------------------------
+        case "$EVENT_TYPE" in
+          prod_migrate_failed)
+            EMOJI="🚨"; TITLE="Production migration FAILED"; COLOR=15158332 ;;
+          prod_smoke_failed)
+            EMOJI="🚨"; TITLE="Production smoke test FAILED"; COLOR=15158332 ;;
+          prod_deploy_success)
+            EMOJI="✅"; TITLE="Production deployed successfully"; COLOR=3066993 ;;
+          test_migrate_failed)
+            EMOJI="⚠️"; TITLE="Test migration failed"; COLOR=15844367 ;;
+          test_smoke_failed)
+            EMOJI="⚠️"; TITLE="Test smoke test failed"; COLOR=15844367 ;;
+          test_e2e_failed)
+            EMOJI="⚠️"; TITLE="Test E2E failed"; COLOR=15844367 ;;
+          dev_migrate_failed)
+            EMOJI="⚠️"; TITLE="Dev migration failed"; COLOR=15844367 ;;
+          dev_smoke_failed)
+            EMOJI="⚠️"; TITLE="Dev smoke test failed"; COLOR=15844367 ;;
+          ci_failed)
+            EMOJI="⚠️"; TITLE="CI failed"; COLOR=15844367 ;;
+          *)
+            echo "❌ Unknown event_type: $EVENT_TYPE"; exit 1 ;;
+        esac
+
+        # ------------------------------------------------------------------
+        # Commit message (first line only)
+        # ------------------------------------------------------------------
+        COMMIT_MSG_RAW="${EVENT_HEAD_COMMIT_MESSAGE:-}"
+        COMMIT_MSG_FIRST_LINE="$(printf '%s' "$COMMIT_MSG_RAW" | head -n 1)"
+        [ -z "$COMMIT_MSG_FIRST_LINE" ] && COMMIT_MSG_FIRST_LINE="(no commit message)"
+
+        SHORT_SHA="$(printf '%s' "$SHA" | cut -c1-7)"
+        RUN_URL="$SERVER_URL/$REPO/actions/runs/$RUN_ID"
+        COMMIT_URL="$SERVER_URL/$REPO/commit/$SHA"
+
+        # ------------------------------------------------------------------
+        # Build mention content — only if mention_user_id is set.
+        # Discord triggers a phone ping only if the user is mentioned in `content`
+        # AND `allowed_mentions.users` explicitly includes the user ID.
+        # ------------------------------------------------------------------
+        CONTENT=""
+        ALLOWED_USERS_JSON="[]"
+        if [ -n "$MENTION_USER_ID" ]; then
+          CONTENT="<@${MENTION_USER_ID}>"
+          ALLOWED_USERS_JSON="[\"${MENTION_USER_ID}\"]"
+        fi
+
+        # ------------------------------------------------------------------
+        # Build JSON payload safely with jq
+        # ------------------------------------------------------------------
+        PAYLOAD=$(jq -n \
+          --arg title "$EMOJI $TITLE" \
+          --arg repo "$REPO" \
+          --arg branch "$REF_NAME" \
+          --arg sha "$SHORT_SHA" \
+          --arg commit_url "$COMMIT_URL" \
+          --arg commit_msg "$COMMIT_MSG_FIRST_LINE" \
+          --arg actor "$ACTOR" \
+          --arg workflow "$WORKFLOW" \
+          --arg run_number "$RUN_NUMBER" \
+          --arg run_url "$RUN_URL" \
+          --arg content "$CONTENT" \
+          --argjson allowed_users "$ALLOWED_USERS_JSON" \
+          --argjson color "$COLOR" \
+          '{
+            content: $content,
+            allowed_mentions: { users: $allowed_users },
+            embeds: [
+              {
+                title: $title,
+                color: $color,
+                fields: [
+                  { name: "Repo",   value: $repo,   inline: true },
+                  { name: "Branch", value: $branch, inline: true },
+                  { name: "Author", value: $actor,  inline: true },
+                  { name: "Commit", value: ("[`" + $sha + "`](" + $commit_url + ") — " + $commit_msg), inline: false },
+                  { name: "Run",    value: ("[" + $workflow + " #" + $run_number + "](" + $run_url + ")"), inline: false }
+                ]
+              }
+            ]
+          }')
+
+        # ------------------------------------------------------------------
+        # POST to Discord; do not fail the pipeline if webhook is down
+        # ------------------------------------------------------------------
+        HTTP_CODE=$(curl -sS -o /tmp/discord_resp.txt -w "%{http_code}" \
+          -X POST "$WEBHOOK_URL" \
+          -H "Content-Type: application/json" \
+          -d "$PAYLOAD" || true)
+
+        if [[ "$HTTP_CODE" =~ ^2 ]]; then
+          echo "✅ Discord notification sent (HTTP $HTTP_CODE) for event: $EVENT_TYPE"
+          [ -n "$MENTION_USER_ID" ] && echo "   Mentioned user: $MENTION_USER_ID"
+        else
+          echo "⚠️  Discord notification failed (HTTP $HTTP_CODE) for event: $EVENT_TYPE"
+          echo "Response:"
+          cat /tmp/discord_resp.txt || true
+          # Do not exit non-zero — notification failure should not fail the pipeline
+        fi
