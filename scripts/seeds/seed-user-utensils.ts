@@ -20,18 +20,29 @@ export const seedUserUtensils = async (users: UserMock[]): Promise<void> => {
   logger.info('🌱 Seeding user utensils…');
 
   const slugs = [...new Set(Object.values(USER_UTENSIL_SLUGS).flat())];
-  const utensils = await prisma.utensil.findMany({
-    where: { slug: { in: slugs } },
-    select: { id: true, slug: true },
-  });
+  const [utensils, profiles] = await Promise.all([
+    prisma.utensil.findMany({
+      where: { slug: { in: slugs } },
+      select: { id: true, slug: true },
+    }),
+    prisma.userProfile.findMany({
+      where: { userId: { in: users.map((u) => u.id) } },
+      select: { id: true, userId: true },
+    }),
+  ]);
   const slugToId = Object.fromEntries(utensils.map((u) => [u.slug, u.id]));
+  const userIdToProfileId = Object.fromEntries(
+    profiles.map((p) => [p.userId, p.id]),
+  );
 
   const rows = users.flatMap((user) => {
     const assignedSlugs = USER_UTENSIL_SLUGS[user.id] ?? [];
+    const profileId = userIdToProfileId[user.id];
+    if (!profileId) return [];
     return assignedSlugs
       .map((slug) => slugToId[slug])
       .filter(Boolean)
-      .map((utensilId) => ({ userId: user.id, utensilId }));
+      .map((utensilId) => ({ userId: profileId, utensilId }));
   });
 
   if (rows.length > 0) {

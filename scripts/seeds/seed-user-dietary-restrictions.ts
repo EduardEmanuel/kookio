@@ -16,19 +16,30 @@ export const seedUserDietaryRestrictions = async (
   logger.info('🌱 Seeding user dietary restrictions…');
 
   const slugs = [...new Set(Object.values(USER_RESTRICTION_SLUGS).flat())];
-  const restrictions = await prisma.dietaryRestriction.findMany({
-    where: { slug: { in: slugs } },
-    select: { id: true, slug: true },
-  });
+  const [restrictions, profiles] = await Promise.all([
+    prisma.dietaryRestriction.findMany({
+      where: { slug: { in: slugs } },
+      select: { id: true, slug: true },
+    }),
+    prisma.userProfile.findMany({
+      where: { userId: { in: users.map((u) => u.id) } },
+      select: { id: true, userId: true },
+    }),
+  ]);
   const slugToId = Object.fromEntries(restrictions.map((r) => [r.slug, r.id]));
+  const userIdToProfileId = Object.fromEntries(
+    profiles.map((p) => [p.userId, p.id]),
+  );
 
   const rows = users.flatMap((user) => {
     const assignedSlugs = USER_RESTRICTION_SLUGS[user.id] ?? [];
+    const profileId = userIdToProfileId[user.id];
+    if (!profileId) return [];
     return assignedSlugs
       .map((slug) => slugToId[slug])
       .filter(Boolean)
       .map((dietaryRestrictionId) => ({
-        userId: user.id,
+        userId: profileId,
         dietaryRestrictionId,
       }));
   });
