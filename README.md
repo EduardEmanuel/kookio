@@ -46,6 +46,30 @@ docker run -d --name crdb -p 26257:26257 -p 8080:8080 \
 docker exec -it crdb ./cockroach sql --insecure -e "CREATE DATABASE kookio;"
 ```
 
+## 🌍 Environments
+
+Kookio runs across three isolated environments, each backed by a dedicated
+CockroachDB database and mapped to a Vercel environment and a GitHub branch:
+
+| Branch | Vercel Environment | CockroachDB   | Purpose                                          |
+| ------ | ------------------ | ------------- | ------------------------------------------------ |
+| `dev`  | Preview (dev)      | `kookio_dev`  | Developer sandbox — quick preview of WIP changes |
+| `test` | Preview (test)     | `kookio_test` | E2E validation before promotion to production    |
+| `main` | Production         | `kookio_prod` | Public production deployment                     |
+
+Each database has two roles:
+
+- `kookio_app` — runtime role used by the app (SELECT / INSERT / UPDATE / DELETE)
+- `kookio_migrate` — migration role used only by CI/CD (full DDL + DML)
+
+Connection URLs are stored as secrets in:
+
+- **Vercel** → Project Settings → Environment Variables (scoped per environment)
+- **GitHub** → Settings → Environments (`development` / `testing` / `production`)
+
+For the full database architecture, roles, and migration flow, see
+[`libs/prisma/client/README.md`](./libs/prisma/client/README.md).
+
 ## 🗂 Workspace map
 
 ```text
@@ -76,13 +100,15 @@ Each project README is the source of truth for its targets, environment needs, a
 
 ## 📚 Documentation index
 
-| Area                                                        | Where to read                        |
-| ----------------------------------------------------------- | ------------------------------------ |
-| Analog app architecture, routes, icons                      | `apps/web/README.md`                 |
-| Playwright/E2E strategy                                     | `apps/web-e2e/README.md`             |
-| Prisma schema, migrations, seeding, Cockroach SQL bootstrap | `libs/prisma/client/README.md`       |
-| tRPC server/router + configs                                | `libs/server/trpc/README.md`         |
-| Logger + labeling utilities + shared mocks                  | Respective `libs/**/README.md` files |
+| Area                                                        | Where to read                                                                                                                                       |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Analog app architecture, routes, icons                      | `apps/web/README.md`                                                                                                                                |
+| Playwright/E2E strategy                                     | `apps/web-e2e/README.md`                                                                                                                            |
+| Prisma schema, migrations, seeding, Cockroach SQL bootstrap | `libs/prisma/client/README.md`                                                                                                                      |
+| ER diagram (interactive, click-through relationships)       | [dbdocs.io/dinea.eduard/kookio-db](https://dbdocs.io/dinea.eduard/kookio-db?schema=public&view=relationships) — password protected (ask maintainer) |
+| ER diagram (offline PDF)                                    | [`Kookio_DB_Diagram.pdf`](./Kookio_DB_Diagram.pdf)                                                                                                  |
+| tRPC server/router + configs                                | `libs/server/trpc/README.md`                                                                                                                        |
+| Logger + labeling utilities + shared mocks                  | Respective `libs/**/README.md` files                                                                                                                |
 
 For the full list of Nx targets run `npx nx graph` or inspect each `project.json`.
 
