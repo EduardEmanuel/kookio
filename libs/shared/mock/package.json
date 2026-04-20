@@ -5,5 +5,7 @@
   "type": "module",
   "main": "./index.cjs",
   "types": "./src/index.d.ts",
-  "dependencies": {}
+  "dependencies": {
+    "@kookio/prisma-client": "*"
+  }
 }

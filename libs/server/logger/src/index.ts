@@ -5,7 +5,7 @@ import type {
   AuditLogger,
   LogNamespace,
 } from '@kookio/core-logging';
-import type { AuditEvent } from '@kookio/prisma-client/dtos';
+import type { AuditEvent } from '@kookio/prisma-client';
 
 const isProd =
   process.env['VERCEL'] === '1' || process.env['NODE_ENV'] === 'production';

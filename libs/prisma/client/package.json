@@ -9,14 +9,6 @@
     ".": {
       "types": "./src/index.d.ts",
       "default": "./src/index.cjs"
-    },
-    "./prisma-zod-generator": {
-      "types": "./src/prisma-zod-generator/index.d.ts",
-      "default": "./src/prisma-zod-generator/index.cjs"
-    },
-    "./dtos": {
-      "types": "./src/dtos/index.d.ts",
-      "default": "./src/dtos/index.cjs"
     }
   },
   "sideEffects": false,

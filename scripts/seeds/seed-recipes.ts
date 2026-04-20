@@ -1,16 +1,13 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-import type { IngredientCatalogLookupRow } from '@kookio/prisma-client/dtos/ingredient-catalog';
-import type { RecipeIngredientSeedRow } from '@kookio/prisma-client/dtos/recipe-ingredient';
-import type { RecipeSeedRow } from '@kookio/prisma-client/dtos/recipe';
-import type { RecipeTagSeedRow } from '@kookio/prisma-client/dtos/recipe-tag';
-import { PrismaIngredientCatalogRepository } from '@kookio/prisma-client/lib/repositories/ingredient-catalog/ingredient-catalog.repository';
-import { PrismaMealAreaRepository } from '@kookio/prisma-client/lib/repositories/meal-area/meal-area.repository';
-import { PrismaMealCategoryRepository } from '@kookio/prisma-client/lib/repositories/meal-category/meal-category.repository';
-import { PrismaRecipeIngredientRepository } from '@kookio/prisma-client/lib/repositories/recipe-ingredient/recipe-ingredient.repository';
-import { PrismaRecipeTagRepository } from '@kookio/prisma-client/lib/repositories/recipe-tag/recipe-tag.repository';
-import { PrismaRecipeRepository } from '@kookio/prisma-client/lib/repositories/recipe/recipe.repository';
+import {
+  prisma,
+  type IngredientCatalogLookupRow,
+  type RecipeIngredientSeedRow,
+  type RecipeSeedRow,
+  type RecipeTagSeedRow,
+} from '@kookio/prisma-client';
 
 import { logger } from './seed-helpers';
 
@@ -29,16 +26,7 @@ interface MergeCandidate {
   approve: boolean | null;
 }
 
-// ─── Repositories ─────────────────────────────────────────────────────────────
-
-const ingredientCatalogRepo = new PrismaIngredientCatalogRepository();
-const mealAreaRepo = new PrismaMealAreaRepository();
-const mealCategoryRepo = new PrismaMealCategoryRepository();
-const recipeIngredientRepo = new PrismaRecipeIngredientRepository();
-const recipeTagRepo = new PrismaRecipeTagRepository();
-const recipeRepo = new PrismaRecipeRepository();
-
-// ─── Resolution maps ──────────────────────────────────────────────────────────
+// ─── Extra ingredient name aliases ────────────────────────────────────────────
 
 /**
  * Extra ingredient name aliases not covered by merge-candidates.json.
@@ -83,18 +71,13 @@ const seedRecipes = async (
 ): Promise<void> => {
   logger.info('📦 Loading catalog lookups from DB...');
 
-  const [{ data: categories }, { data: areas }, { data: ingredients }] =
-    await Promise.all([
-      mealCategoryRepo.findMany({
-        select: { id: true, externalId: true },
-      } as never),
-      mealAreaRepo.findMany({
-        select: { id: true, externalId: true },
-      } as never),
-      ingredientCatalogRepo.findMany({
-        select: { id: true, normalizedName: true },
-      } as never),
-    ]);
+  const [categories, areas, ingredients] = await Promise.all([
+    prisma.mealCategory.findMany({ select: { id: true, externalId: true } }),
+    prisma.mealArea.findMany({ select: { id: true, externalId: true } }),
+    prisma.ingredientCatalog.findMany({
+      select: { id: true, normalizedName: true },
+    }),
+  ]);
 
   const categoryMap = new Map(
     (categories as Array<{ id: string; externalId: string | null }>).map(
@@ -159,7 +142,7 @@ const seedRecipes = async (
         );
       }
 
-      const upsertedRecipe = await recipeRepo.upsert({
+      const upsertedRecipe = await prisma.recipe.upsert({
         where: { externalId: recipe.externalId },
         create: {
           externalId: recipe.externalId,
@@ -201,15 +184,15 @@ const seedRecipes = async (
           continue;
         }
 
-        await recipeIngredientRepo.upsert({
+        await prisma.recipeIngredient.upsert({
           where: {
             recipeId_ingredientCatalogId: {
-              recipeId: upsertedRecipe.id,
+              recipeId: (upsertedRecipe as { id: string }).id,
               ingredientCatalogId,
             },
           },
           create: {
-            recipeId: upsertedRecipe.id,
+            recipeId: (upsertedRecipe as { id: string }).id,
             ingredientCatalogId,
             quantity: ing.quantity,
             unit: ing.unit,
@@ -226,9 +209,14 @@ const seedRecipes = async (
       }
 
       for (const { tag } of recipe.tags as RecipeTagSeedRow[]) {
-        await recipeTagRepo.upsert({
-          where: { recipeId_tag: { recipeId: upsertedRecipe.id, tag } },
-          create: { recipeId: upsertedRecipe.id, tag },
+        await prisma.recipeTag.upsert({
+          where: {
+            recipeId_tag: {
+              recipeId: (upsertedRecipe as { id: string }).id,
+              tag,
+            },
+          },
+          create: { recipeId: (upsertedRecipe as { id: string }).id, tag },
           update: {},
         } as never);
         upsertedTags++;
@@ -266,9 +254,9 @@ const seedRecipes = async (
 
 const logReport = async (): Promise<void> => {
   const [recipeCount, ingredientCount, tagCount] = await Promise.all([
-    recipeRepo.count({}),
-    recipeIngredientRepo.count({}),
-    recipeTagRepo.count({}),
+    prisma.recipe.count(),
+    prisma.recipeIngredient.count(),
+    prisma.recipeTag.count(),
   ]);
 
   logger.info(

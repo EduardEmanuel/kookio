@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/core/config/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:shared", "type:config"],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",

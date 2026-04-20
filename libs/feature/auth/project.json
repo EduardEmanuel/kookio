@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/feature/auth/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:frontend", "type:feature"],
   "targets": {
     "test": {
       "executor": "@nx/vite:test",

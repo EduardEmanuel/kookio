@@ -1,23 +1,16 @@
 import { TRPCError } from '@trpc/server';
 
 import {
-  UserCreateManyResultSchema,
+  paginate,
   UserCreateManySchema,
   UserCreateOneSchema,
-  UserCreateResultSchema,
-  UserDeleteManyResultSchema,
   UserDeleteManySchema,
   UserDeleteOneSchema,
-  UserDeleteResultSchema,
-  UserFindManyResultSchema,
   UserFindManySchema,
-  UserFindUniqueResultSchema,
   UserFindUniqueSchema,
-  UserUpdateManyResultSchema,
   UserUpdateManySchema,
   UserUpdateOneSchema,
-  UserUpdateResultSchema,
-} from '@kookio/prisma-client/prisma-zod-generator';
+} from '@kookio/prisma-client';
 import { logger } from '@kookio/server-logger';
 
 import { userLabelers } from '@kookio/shared-utility';
@@ -27,13 +20,11 @@ import { procedure, router } from '../trpc';
 export const user = router({
   create: procedure
     .input(UserCreateOneSchema)
-    .output(UserCreateResultSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await ctx.repository.user.create(input);
+        return await ctx.prisma.user.create(input);
       } catch (error) {
         const label = userLabelers.fromCreateData(input?.data);
-
         logger.error(error, `Error creating user via tRPC: ${label}`);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -45,13 +36,11 @@ export const user = router({
 
   createMany: procedure
     .input(UserCreateManySchema)
-    .output(UserCreateManyResultSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await ctx.repository.user.createMany(input);
+        return await ctx.prisma.user.createMany(input);
       } catch (error) {
         const label = userLabelers.fromCreateManyData(input?.data);
-
         logger.error(error, `Error creating many users via tRPC: ${label}`);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -63,13 +52,11 @@ export const user = router({
 
   delete: procedure
     .input(UserDeleteOneSchema)
-    .output(UserDeleteResultSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await ctx.repository.user.delete(input);
+        return await ctx.prisma.user.delete(input);
       } catch (error) {
         const label = userLabelers.fromWhere(input?.where);
-
         logger.error(error, `Error deleting user via tRPC: ${label}`);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -81,13 +68,11 @@ export const user = router({
 
   deleteMany: procedure
     .input(UserDeleteManySchema)
-    .output(UserDeleteManyResultSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await ctx.repository.user.deleteMany(input);
+        return await ctx.prisma.user.deleteMany(input);
       } catch (error) {
         const label = userLabelers.fromWhere(input?.where);
-
         logger.error(error, `Error deleting many users via tRPC: ${label}`);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -99,13 +84,11 @@ export const user = router({
 
   findUnique: procedure
     .input(UserFindUniqueSchema)
-    .output(UserFindUniqueResultSchema)
     .query(async ({ input, ctx }) => {
       try {
-        return await ctx.repository.user.findUnique(input);
+        return await ctx.prisma.user.findUnique(input);
       } catch (error) {
         const label = userLabelers.fromWhere(input?.where);
-
         logger.error(error, `Error fetching user via tRPC: ${label}`);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -117,13 +100,11 @@ export const user = router({
 
   findMany: procedure
     .input(UserFindManySchema)
-    .output(UserFindManyResultSchema)
     .query(async ({ input, ctx }) => {
       try {
-        return await ctx.repository.user.findMany(input);
+        return paginate(await ctx.prisma.user.findMany(input));
       } catch (error) {
         const label = userLabelers.fromWhere(input?.where);
-
         logger.error(error, `Error listing users via tRPC: ${label}`);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -135,13 +116,11 @@ export const user = router({
 
   update: procedure
     .input(UserUpdateOneSchema)
-    .output(UserUpdateResultSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await ctx.repository.user.update(input);
+        return await ctx.prisma.user.update(input);
       } catch (error) {
         const label = userLabelers.fromWhere(input?.where);
-
         logger.error(error, `Error updating user via tRPC: ${label}`);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -153,13 +132,11 @@ export const user = router({
 
   updateMany: procedure
     .input(UserUpdateManySchema)
-    .output(UserUpdateManyResultSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await ctx.repository.user.updateMany(input);
+        return await ctx.prisma.user.updateMany(input);
       } catch (error) {
         const label = userLabelers.fromWhere(input?.where);
-
         logger.error(error, `Error updating many users via tRPC: ${label}`);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',

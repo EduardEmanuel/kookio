@@ -270,7 +270,7 @@ const write = (filePath, content) => {
 const genOverride = ({ name }) => {
   return `import { z } from 'zod';
 
-import { ${name}FindManyResultSchema as Base } from '../schemas/index';
+import { ${name}FindManyResultSchema as Base } from '../../prisma-zod-generator/schemas/index';
 
 export const ${name}FindManyResultSchema = Base.extend({
   pagination: Base.shape.pagination.extend({
@@ -316,7 +316,7 @@ import {
   ${M}UpdateResultSchema,
   ${M}UpsertOneSchema,
   ${M}UpsertResultSchema,${extraImportLine}
-} from '../prisma-zod-generator/index';${extraFileImportBlock}
+} from '../../prisma-zod-generator/schemas/index';${extraFileImportBlock}
 
 export type Count${M}DTO = z.output<typeof ${M}CountSchema>;
 export type Count${M}ResultDTO = z.output<typeof ${M}CountResultSchema>;
@@ -369,7 +369,7 @@ const genRepository = ({ name, kebab, prismaKey }) => {
   UpdateMany${M}ResultDTO,
   UpsertOne${M}DTO,
   Upsert${M}ResultDTO,
-} from '../../../dtos/${k}';
+} from '../../types/${k}';
 
 import { prisma, withTxRetry } from '../../prisma-client';
 
@@ -501,7 +501,7 @@ import type {
   DeleteOne${M}DTO,
   UpsertOne${M}DTO,
   Upsert${M}ResultDTO,
-} from '../../../dtos/${k}';
+} from '../../types/${k}';
 
 ${usesNow ? 'const now = new Date();' : ''}
 const id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
@@ -672,11 +672,11 @@ for (const model of MODELS) {
   console.log(`\n▸ ${name}`);
 
   write(
-    join(BASE, 'prisma-zod-generator', 'overrides', `${kebab}.ts`),
+    join(BASE, 'lib', 'prisma-zod-overrides', `${kebab}.ts`),
     genOverride(model),
   );
 
-  write(join(BASE, 'dtos', `${kebab}.ts`), genDTO(model));
+  write(join(BASE, 'lib', 'types', `${kebab}.ts`), genDTO(model));
 
   const repoDir = join(BASE, 'lib', 'repositories', kebab);
   write(join(repoDir, `${kebab}.repository.ts`), genRepository(model));

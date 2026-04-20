@@ -18,6 +18,9 @@
       "dependsOn": ["^build", "prisma-client:generate"],
       "inputs": ["production", "^production"]
     },
+    "typecheck": {
+      "dependsOn": ["prisma-client:generate"]
+    },
     "serve": {
       "dependsOn": ["^build", "prisma-client:generate"]
     },

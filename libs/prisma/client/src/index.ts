@@ -1,20 +1,25 @@
 export * from './lib/prisma-client';
-export * from './lib/repositories/cooking-session/cooking-session.repository';
-export * from './lib/repositories/dietary-restriction/dietary-restriction.repository';
-export * from './lib/repositories/ingredient-catalog/ingredient-catalog.repository';
-export * from './lib/repositories/meal-area/meal-area.repository';
-export * from './lib/repositories/meal-category/meal-category.repository';
-export * from './lib/repositories/meal-plan/meal-plan.repository';
-export * from './lib/repositories/meal-plan-slot/meal-plan-slot.repository';
-export * from './lib/repositories/pantry-item/pantry-item.repository';
-export * from './lib/repositories/recipe/recipe.repository';
-export * from './lib/repositories/recipe-collection/recipe-collection.repository';
-export * from './lib/repositories/recipe-collection-entry/recipe-collection-entry.repository';
-export * from './lib/repositories/recipe-ingredient/recipe-ingredient.repository';
-export * from './lib/repositories/recipe-tag/recipe-tag.repository';
-export * from './lib/repositories/user/user.repository';
-export * from './lib/repositories/user-dietary-restriction/user-dietary-restriction.repository';
-export * from './lib/repositories/user-profile/user-profile.repository';
-export * from './lib/repositories/user-utensil/user-utensil.repository';
-export * from './lib/repositories/utensil/utensil.repository';
-export * from './lib/repositories/web-authn-credential/web-authn-credential.repository';
+export * from './prisma-zod-generator/schemas/index';
+// !! -- Named re-exports shadow the wildcard above — keep this order -- !!
+export {
+  CookingSessionFindManyResultSchema,
+  DietaryRestrictionFindManyResultSchema,
+  IngredientCatalogFindManyResultSchema,
+  MealAreaFindManyResultSchema,
+  MealCategoryFindManyResultSchema,
+  MealPlanFindManyResultSchema,
+  MealPlanSlotFindManyResultSchema,
+  PantryItemFindManyResultSchema,
+  RecipeFindManyResultSchema,
+  RecipeCollectionFindManyResultSchema,
+  RecipeCollectionEntryFindManyResultSchema,
+  RecipeIngredientFindManyResultSchema,
+  RecipeTagFindManyResultSchema,
+  UserFindManyResultSchema,
+  UserDietaryRestrictionFindManyResultSchema,
+  UserProfileFindManyResultSchema,
+  UserUtensilFindManyResultSchema,
+  UtensilFindManyResultSchema,
+  WebAuthnCredentialFindManyResultSchema,
+} from './lib/prisma-zod-overrides/index';
+export * from './lib/types/index';

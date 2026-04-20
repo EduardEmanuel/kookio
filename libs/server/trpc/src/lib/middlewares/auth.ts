@@ -1,4 +1,4 @@
-import type { Role } from '@kookio/prisma-client/dtos';
+import type { Role } from '@kookio/prisma-client';
 import { logger } from '@kookio/server-logger';
 
 import { middleware, TRPCError } from '../trpc';

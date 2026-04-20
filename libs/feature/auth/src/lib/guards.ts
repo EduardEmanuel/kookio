@@ -5,7 +5,7 @@ import type { Observable } from 'rxjs';
 
 import { AuthStore } from './auth';
 import { URLS } from '@kookio/feature-shell';
-import type { Role } from '@kookio/prisma-client/dtos';
+import type { Role } from '@kookio/prisma-client';
 
 /**
  * Blocks unauthenticated users.

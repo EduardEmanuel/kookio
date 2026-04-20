@@ -1,7 +1,9 @@
 import z from 'zod';
 
+import { RoleSchema, type Role } from '@kookio/prisma-client';
 import { createAudit, createLogger } from '@kookio/server-logger';
-import { role, type Role } from '@kookio/prisma-client/dtos';
+
+const role = RoleSchema.Values;
 
 import { procedure, router, TRPCError } from '../trpc';
 import { requireAuth } from '../middlewares/auth';
@@ -34,7 +36,7 @@ export const auth = router({
       const { email, firebaseUid } = input;
 
       try {
-        const existing = await ctx.repository.user.findUnique({
+        const existing = await ctx.prisma.user.findUnique({
           where: { email },
         });
 
@@ -48,7 +50,7 @@ export const auth = router({
           };
         }
 
-        const created = await ctx.repository.user.create({
+        const created = await ctx.prisma.user.create({
           data: {
             id: firebaseUid,
             email,

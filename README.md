@@ -5,7 +5,7 @@ Let's Kookio it! is an open-source pantry companion built with the PAN stack—P
 ## ✨ Highlights
 
 - Full-stack PAN architecture: Analog 20 + Vite + Nitro on the frontend, Prisma + tRPC + CockroachDB on the backend.
-- Shared types and DTOs via `@kookio/prisma-client/dtos`, so APIs, seeds, tests, and UI stay in sync.
+- Shared types via `@kookio/prisma-client`, so APIs, seeds, tests, and UI stay in sync.
 - Modular Nx workspace with reusable scripts (Vercel env wiring, Prisma migrations, Playwright E2E).
 - CI/CD powered by reusable GitHub workflows and composite actions that mirror the local Nx targets.
 
@@ -48,20 +48,28 @@ docker exec -it crdb ./cockroach sql --insecure -e "CREATE DATABASE kookio;"
 
 ## 🗂 Workspace map
 
-```
+```text
 apps/
-  web/         -> Angular + Analog SSR app (see apps/web/README.md)
-  web-e2e/     -> Playwright specs + helpers (see apps/web-e2e/README.md)
+  web/          -> Angular + Analog SSR app (see apps/web/README.md)
+  web-e2e/      -> Playwright specs + helpers (see apps/web-e2e/README.md)
 libs/
+  core/
+    config/     -> App-wide config constants
+    logging/    -> Audit event types + logging contracts
+    security/   -> Security utilities
+  feature/
+    auth/       -> Firebase auth guards, interceptors, AuthStore
+    shell/      -> App shell layout components
   prisma/
-    client/    -> Prisma schema, migrations, repositories, seed (libs/prisma/client/README.md)
-    validator/ -> Zod schemas + DTO exports (libs/prisma/validator/README.md)
+    client/     -> Prisma schema, migrations, generated Zod schemas, seed (libs/prisma/client/README.md)
   server/
-    logger/    -> Shared Pino wrapper for backend + scripts (libs/server/logger/README.md)
-    trpc/      -> tRPC router/context/config exports (libs/server/trpc/README.md)
+    auth/       -> Firebase Admin SDK token verification
+    logger/     -> Shared Pino wrapper for backend + scripts (libs/server/logger/README.md)
+    trpc/       -> tRPC router/context/config exports (libs/server/trpc/README.md)
   shared/
-    mock/      -> Deterministic fixtures (libs/shared/mock/README.md)
-    utility/   -> Labeling helpers consumed by API + client (libs/shared/utility/README.md)
+    mock/       -> Deterministic fixtures (libs/shared/mock/README.md)
+    ui/         -> Reusable UI components
+    utility/    -> Labeling helpers consumed by API + client (libs/shared/utility/README.md)
 ```
 
 Each project README is the source of truth for its targets, environment needs, and usage patterns.
@@ -73,7 +81,6 @@ Each project README is the source of truth for its targets, environment needs, a
 | Analog app architecture, routes, icons                      | `apps/web/README.md`                 |
 | Playwright/E2E strategy                                     | `apps/web-e2e/README.md`             |
 | Prisma schema, migrations, seeding, Cockroach SQL bootstrap | `libs/prisma/client/README.md`       |
-| Shared Zod/DTO contracts                                    | `libs/prisma/validator/README.md`    |
 | tRPC server/router + configs                                | `libs/server/trpc/README.md`         |
 | Logger + labeling utilities + shared mocks                  | Respective `libs/**/README.md` files |
 
@@ -83,7 +90,7 @@ For the full list of Nx targets run `npx nx graph` or inspect each `project.json
 
 - **Nx orchestration:** `package.json` scripts forward to Nx targets. Use `nx graph` or `nx show project <name>` to inspect configs.
 - **Environment parity:** `scripts/with-vercel-env.mjs` pulls Vercel env vars into `tmp/kookio.env` and runs Nx commands with those variables injected. All scripts prefixed with `npm run with:env -- --env=<stage>` rely on it.
-- **Prisma/DB:** CockroachDB connection lives in `LIBS/prisma/client/schema.prisma` (`provider = "cockroachdb"`, `DATABASE_URL`). Run `npm run migrate-dev:prisma-client` to generate + migrate locally, `npm run migrate-deploy:prisma-client` for production/test deploys, and `npm run seed:prisma-client` (requires `SEED_USER_ID`) for fixtures.
+- **Prisma/DB:** CockroachDB connection lives in `libs/prisma/client/schema.prisma` (`provider = "cockroachdb"`, `DATABASE_URL`). Run `npm run migrate-dev:prisma-client` to generate + migrate locally, `npm run migrate-deploy:prisma-client` for production/test deploys, and `npm run seed:prisma-client` (requires `SEED_USER_ID`) for fixtures.
 - **Monitoring helpers:** `npm run bench:preview` exercises a few queries against the preview DB to measure latency (implemented in `scripts/bench-preview.mjs`). See `scripts/README.md` for script details.
 
 ## ✅ Testing & quality
@@ -107,7 +114,6 @@ All actions live under `.github/actions/*` so changes mimic local Nx targets (ch
 ## 🧩 Future directions
 
 - Harden CockroachDB with backups, changefeeds, and multi-region patterns.
-- Enrich the Analog app with auth flows and AI-assisted recipe exploration.
 - Layer Redis caches for session storage and search acceleration.
 
 ## 📄 Thesis reference

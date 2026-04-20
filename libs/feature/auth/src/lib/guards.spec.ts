@@ -10,7 +10,7 @@ import type {
 
 import { authGuard, guestGuard, roleGuard } from './guards';
 import { AuthStore } from './auth';
-import type { AuthSession } from '@kookio/prisma-client/dtos';
+import type { AuthSession } from '@kookio/prisma-client';
 
 const fakeRoute = {} as ActivatedRouteSnapshot;
 const fakeState = (url: string) => ({ url }) as RouterStateSnapshot;

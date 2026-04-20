@@ -5,7 +5,7 @@ import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
-import type { AuthSession } from '@kookio/prisma-client/dtos';
+import type { AuthSession } from '@kookio/prisma-client';
 
 import { AuthStore } from '@kookio/feature-auth';
 import LoginPage from './login.page';

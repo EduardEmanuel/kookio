@@ -1,12 +1,12 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-import type { IngredientCatalogSeedRow } from '@kookio/prisma-client/dtos/ingredient-catalog';
-import type { MealAreaSeedRow } from '@kookio/prisma-client/dtos/meal-area';
-import type { MealCategorySeedRow } from '@kookio/prisma-client/dtos/meal-category';
-import { PrismaIngredientCatalogRepository } from '@kookio/prisma-client/lib/repositories/ingredient-catalog/ingredient-catalog.repository';
-import { PrismaMealAreaRepository } from '@kookio/prisma-client/lib/repositories/meal-area/meal-area.repository';
-import { PrismaMealCategoryRepository } from '@kookio/prisma-client/lib/repositories/meal-category/meal-category.repository';
+import {
+  prisma,
+  type IngredientCatalogSeedRow,
+  type MealAreaSeedRow,
+  type MealCategorySeedRow,
+} from '@kookio/prisma-client';
 
 import { logger } from './seed-helpers';
 
@@ -21,12 +21,6 @@ interface CatalogSnapshot {
   ingredients: IngredientCatalogSeedRow[];
 }
 
-// ─── Repositories ─────────────────────────────────────────────────────────────
-
-const mealCategoryRepo = new PrismaMealCategoryRepository();
-const mealAreaRepo = new PrismaMealAreaRepository();
-const ingredientCatalogRepo = new PrismaIngredientCatalogRepository();
-
 // ─── Seed functions ──────────────────────────────────────────────────────────
 
 const seedCategories = async (
@@ -37,7 +31,7 @@ const seedCategories = async (
   let upserted = 0;
 
   for (const cat of categories) {
-    await mealCategoryRepo.upsert({
+    await prisma.mealCategory.upsert({
       where: { externalId: cat.externalId },
       create: {
         externalId: cat.externalId,
@@ -63,7 +57,7 @@ const seedAreas = async (areas: MealAreaSeedRow[]): Promise<void> => {
   let upserted = 0;
 
   for (const area of areas) {
-    await mealAreaRepo.upsert({
+    await prisma.mealArea.upsert({
       where: { externalId: area.externalId },
       create: { externalId: area.externalId, name: area.name, flag: area.flag },
       update: { name: area.name },
@@ -84,7 +78,7 @@ const seedIngredients = async (
 
   for (const ing of ingredients) {
     try {
-      await ingredientCatalogRepo.upsert({
+      await prisma.ingredientCatalog.upsert({
         where: { normalizedName: ing.normalizedName },
         create: {
           externalId: ing.externalId,
@@ -122,12 +116,12 @@ const seedIngredients = async (
 
 const logReport = async (): Promise<void> => {
   const [categoryCount, areaCount, ingredientCount] = await Promise.all([
-    mealCategoryRepo.count({}),
-    mealAreaRepo.count({}),
-    ingredientCatalogRepo.count({}),
+    prisma.mealCategory.count(),
+    prisma.mealArea.count(),
+    prisma.ingredientCatalog.count(),
   ]);
 
-  const categoryDist = await ingredientCatalogRepo.groupBy({
+  const categoryDist = await prisma.ingredientCatalog.groupBy({
     by: ['category'],
     _count: { category: true },
     orderBy: { _count: { category: 'desc' } },

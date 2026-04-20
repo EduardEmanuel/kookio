@@ -39,7 +39,7 @@ import {
 } from 'firebase/auth';
 
 import { noopLogger } from '@kookio/core-logging';
-import type { AuthSession } from '@kookio/prisma-client/dtos';
+import type { AuthSession } from '@kookio/prisma-client';
 
 const log = noopLogger;
 

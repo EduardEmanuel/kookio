@@ -1,13 +1,10 @@
 // context.ts
-import { PrismaUserRepository } from '@kookio/prisma-client';
-import type { AuthSession } from '@kookio/prisma-client/dtos';
+import { prisma, type AuthSession } from '@kookio/prisma-client';
 
 export type Context = {
   token?: string;
   session: AuthSession | null;
-  repository: {
-    user: PrismaUserRepository;
-  };
+  prisma: typeof prisma;
 };
 
 // Adapter hook (set dintr-un adapter real mai târziu)
@@ -47,8 +44,6 @@ export const createContext = async (opts: ContextOptions): Promise<Context> => {
   return {
     token,
     session,
-    repository: {
-      user: new PrismaUserRepository(),
-    },
+    prisma,
   };
 };

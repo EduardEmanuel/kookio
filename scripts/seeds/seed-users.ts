@@ -1,10 +1,14 @@
-import { role, type Role, type UserSeeded } from '@kookio/prisma-client/dtos';
-import { PrismaUserRepository } from '@kookio/prisma-client';
+import {
+  prisma,
+  RoleSchema,
+  type Role,
+  type UserSeeded,
+} from '@kookio/prisma-client';
 import { getAdminAuth } from '@kookio/server-auth';
 
 import { logger } from './seed-helpers';
 
-const userRepo = new PrismaUserRepository();
+const role = RoleSchema.Values;
 
 type UserSeed = {
   email: string;
@@ -49,7 +53,7 @@ const seedUser = async (seed: UserSeed): Promise<UserSeeded> => {
   };
   await auth.setCustomUserClaims(firebaseUid, derivedClaims);
 
-  const result = (await userRepo.upsert({
+  const result = (await prisma.user.upsert({
     where: { email },
     create: { email, name, firebaseUid, roles, amr: ['password'] },
     update: { firebaseUid, roles },
