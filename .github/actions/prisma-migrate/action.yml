@@ -8,6 +8,9 @@ inputs:
   database_url:
     required: true
     type: string
+  direct_database_url:
+    required: true
+    type: string
   attempts:
     required: false
     type: string
@@ -31,6 +34,7 @@ runs:
       shell: bash
       env:
         DATABASE_URL: ${{ inputs.database_url }}
+        DIRECT_DATABASE_URL: ${{ inputs.direct_database_url }}
       run: |
         set -e
         attempts=${attempts:-3}
@@ -49,6 +53,7 @@ runs:
       shell: bash
       env:
         DATABASE_URL: ${{ inputs.database_url }}
+        DIRECT_DATABASE_URL: ${{ inputs.direct_database_url }}
         SEED_ADMIN_EMAIL: ${{ inputs.seed_admin_email }}
         SEED_ADMIN_PASSWORD: ${{ inputs.seed_admin_password }}
         FIREBASE_SERVICE_ACCOUNT_JSON_B64: ${{ inputs.firebase_service_account_json_b64 }}
