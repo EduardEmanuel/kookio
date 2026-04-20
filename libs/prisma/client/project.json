@@ -8,6 +8,7 @@
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
+      "dependsOn": [{ "target": "generate", "projects": "self" }],
       "options": {
         "outputPath": "dist/libs/prisma/client",
         "main": "libs/prisma/client/src/index.ts",

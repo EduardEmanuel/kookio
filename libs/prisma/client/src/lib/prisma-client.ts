@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import * as runtime from '@prisma/client/runtime/library.js';
 
 export const isRetryableTxError = (e: unknown) => {
@@ -30,20 +30,21 @@ const retryOnConflict = async <T>(
   throw last as never;
 };
 
-const createPrismaClient = () =>
-  new PrismaClient().$extends({
-    query: {
-      $allModels: {
-        create: ({ args, query }) => retryOnConflict(() => query(args)),
-        createMany: ({ args, query }) => retryOnConflict(() => query(args)),
-        update: ({ args, query }) => retryOnConflict(() => query(args)),
-        updateMany: ({ args, query }) => retryOnConflict(() => query(args)),
-        delete: ({ args, query }) => retryOnConflict(() => query(args)),
-        deleteMany: ({ args, query }) => retryOnConflict(() => query(args)),
-        upsert: ({ args, query }) => retryOnConflict(() => query(args)),
-      },
+const retryExtension = Prisma.defineExtension({
+  query: {
+    $allModels: {
+      create: ({ args, query }) => retryOnConflict(() => query(args)),
+      createMany: ({ args, query }) => retryOnConflict(() => query(args)),
+      update: ({ args, query }) => retryOnConflict(() => query(args)),
+      updateMany: ({ args, query }) => retryOnConflict(() => query(args)),
+      delete: ({ args, query }) => retryOnConflict(() => query(args)),
+      deleteMany: ({ args, query }) => retryOnConflict(() => query(args)),
+      upsert: ({ args, query }) => retryOnConflict(() => query(args)),
     },
-  });
+  },
+});
+
+const createPrismaClient = () => new PrismaClient().$extends(retryExtension);
 
 type ExtendedPrismaClient = ReturnType<typeof createPrismaClient>;
 
@@ -58,7 +59,9 @@ export const withTxRetry = async <T>(
   let last: unknown;
   for (let i = 0; i <= retries; i++) {
     try {
-      return await client.$transaction(async (tx) => fn(tx));
+      return await client.$transaction(
+        async (tx: Omit<PrismaClient, runtime.ITXClientDenyList>) => fn(tx),
+      );
     } catch (e) {
       last = e;
       if (!isRetryableTxError(e) || i === retries) throw e;
