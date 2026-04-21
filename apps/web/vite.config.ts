@@ -34,6 +34,10 @@ export default defineConfig(({ mode }) => {
         output: { manualChunks },
       },
     },
+    // Prevents Angular (~1.5 MB) and Material (~714 kB) from being inlined into the SSR output and re-parsed by Nitro's Rollup.
+    ssr: {
+      external: true,
+    },
     css: {
       preprocessorOptions: {
         scss: {
@@ -70,6 +74,15 @@ export default defineConfig(({ mode }) => {
           },
           externals: {
             inline: [/^@kookio\//],
+            // Stops Nitro's Rollup from following externalized SSR imports into node_modules during "Building Server...".
+            external: [
+              /@angular\//,
+              /@ngrx\//,
+              /^rxjs/,
+              /^firebase/,
+              /@firebase\//,
+              /^zone\.js/,
+            ],
           },
           ignore: ['**/*.spec.ts'],
           modules: ['./nitro-modules/tsconfig-alias'],
