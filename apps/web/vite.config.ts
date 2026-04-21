@@ -21,7 +21,7 @@ const manualChunks = (id: string): string | undefined =>
   CHUNK_RULES.find(({ pattern }) => pattern.test(id))?.chunk;
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, isSsrBuild }) => {
   return {
     root: __dirname,
     cacheDir: `../../node_modules/.vite`,
@@ -30,8 +30,10 @@ export default defineConfig(({ mode }) => {
       reportCompressedSize: true,
       target: ['es2020'],
       sourcemap: mode !== 'production',
+      // manualChunks must not apply to the SSR build: it forces Angular/Material into named
+      // chunks, which prevents ssr.external from working and causes Nitro's Rollup to OOM.
       rollupOptions: {
-        output: { manualChunks },
+        output: isSsrBuild ? {} : { manualChunks },
       },
     },
     // Prevents Angular (~1.5 MB) and Material (~714 kB) from being inlined into the SSR output and re-parsed by Nitro's Rollup.

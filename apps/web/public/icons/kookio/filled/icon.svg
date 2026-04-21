@@ -1,15 +1,9 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-
-  <!-- Cerc portocaliu (micșorat de la r=10 la r=9 pentru a crea loc) -->
   <circle cx="10" cy="14" r="9" fill="#F17026"/>
-
-  <!-- Coadă de tigaie cu gap de 1 unitate față de cerc -->
   <rect x="15" y="2" width="9" height="3" rx="1"
         transform="rotate(-45 20 3.5)"
         fill="#F17026"/>
-
-  <!-- Litera K (micșorată proporțional de la 16 la 14) -->
   <text x="10" y="19"
         text-anchor="middle"
         font-family="Fredoka, sans-serif"
