@@ -31,10 +31,6 @@ export default defineConfig(({ mode }) => {
       target: ['es2020'],
       sourcemap: mode !== 'production',
     },
-    // Prevents Angular (~1.5 MB) and Material (~714 kB) from being inlined into the SSR output and re-parsed by Nitro's Rollup.
-    ssr: {
-      external: true,
-    },
     css: {
       preprocessorOptions: {
         scss: {
