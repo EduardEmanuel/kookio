@@ -4,7 +4,7 @@ import { map } from 'rxjs';
 import type { Observable } from 'rxjs';
 
 import { AuthStore } from './auth';
-import { URLS } from '@kookio/feature-shell';
+import { URLS } from '@kookio/shared-utility';
 import type { Role } from '@kookio/prisma-client';
 
 /**

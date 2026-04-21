@@ -5,8 +5,14 @@ import { provideRouter } from '@angular/router';
 import type { User } from 'firebase/auth';
 
 import { AuthStore } from '@kookio/feature-auth';
+import { BreakpointService } from '@kookio/feature-shell';
 import { TrpcHeaders } from '../trpc-client';
 import { AppComponent } from './app.component';
+
+const mockBreakpointService = {
+  isMobile: signal(false),
+  isDesktop: signal(true),
+};
 
 const makeAuthStore = () => {
   const currentUser = signal<Partial<User> | null>(null);
@@ -36,6 +42,7 @@ describe('AppComponent effects', () => {
         provideZonelessChangeDetection(),
         provideRouter([]),
         { provide: AuthStore, useValue: store },
+        { provide: BreakpointService, useValue: mockBreakpointService },
       ],
     }).compileComponents();
   });

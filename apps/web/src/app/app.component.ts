@@ -4,17 +4,17 @@ import {
   effect,
   inject,
 } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 
 import { AuthStore } from '@kookio/feature-auth';
+import { ShellLayoutComponent } from '@kookio/feature-shell';
 
 import { TrpcHeaders } from '../trpc-client';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'kookio-root',
-  imports: [RouterOutlet],
-  template: ` <router-outlet></router-outlet> `,
+  imports: [ShellLayoutComponent],
+  template: `<kookio-shell-layout />`,
 })
 export class AppComponent {
   private readonly authStore = inject(AuthStore);

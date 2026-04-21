@@ -52,7 +52,7 @@ describe('BreakpointService', () => {
           },
         ),
       };
-      vi.stubGlobal('window', { matchMedia: vi.fn().mockReturnValue(mockMq) });
+      vi.stubGlobal('matchMedia', vi.fn().mockReturnValue(mockMq));
       onMediaChange = undefined;
     });
 

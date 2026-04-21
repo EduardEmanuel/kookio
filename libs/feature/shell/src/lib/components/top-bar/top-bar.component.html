@@ -1,0 +1,29 @@
+<header class="topbar">
+  <a routerLink="/" class="topbar__logo">
+    <span class="topbar__brand">Kookio</span>
+  </a>
+
+  <div class="topbar__spacer"></div>
+
+  <button mat-icon-button matTooltip="Caută rețete" aria-label="Caută">
+    <mat-icon>search</mat-icon>
+  </button>
+
+  @if (user()) {
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="Cont">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #userMenu>
+      <a mat-menu-item routerLink="/account">
+        <mat-icon>person</mat-icon>
+        <span>Cont</span>
+      </a>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Deconectare</span>
+      </button>
+    </mat-menu>
+  } @else {
+    <a mat-flat-button routerLink="/login">Login</a>
+  }
+</header>

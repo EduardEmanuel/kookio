@@ -15,6 +15,6 @@
     "firebase": "^12.8.0",
     "@kookio/core-logging": "0.0.1",
     "@kookio/prisma-client": "0.0.1",
-    "@kookio/feature-shell": "0.0.1"
+    "@kookio/shared-utility": "0.0.1"
   }
 }

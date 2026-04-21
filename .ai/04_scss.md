@@ -130,6 +130,34 @@ color: #6200ee;
 
 - Apply density and typography scales through the theme, not manual overrides
 
+## CSS Naming Convention: BEM
+
+Use strict BEM (Block Element Modifier) for all component class names:
+
+```scss
+// Block
+.topbar {
+}
+
+// Element — double underscore
+.topbar__logo {
+}
+.topbar__brand {
+}
+
+// Modifier — double dash
+.topbar--compact {
+}
+.bottom-tabs__item--active {
+}
+```
+
+- **Block** — the component root: `topbar`, `bottom-tabs`, `shell`
+- **Element** — a part of the block, separated by `__`: `topbar__logo`, `shell__main`
+- **Modifier** — a variant or state, separated by `--`: `shell--mobile`, `bottom-tabs__item--active`
+- Multi-word blocks and elements use single hyphen: `bottom-tabs`, `sidenav-menu__item`
+- Never use flat kebab-case (`topbar-logo`) — it loses the block/element/modifier distinction
+
 ## General Rules
 
 - Use `@use` and `@forward` — never `@import`

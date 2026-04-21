@@ -10,6 +10,11 @@
     "@angular/common": "~20.2.4",
     "@angular/core": "~20.2.4",
     "@angular/router": "~20.2.4",
-    "@kookio/core-security": "0.0.1"
+    "@angular/material": "~20.2.4",
+    "rxjs": "~7.8.2",
+    "@kookio/core-security": "0.0.1",
+    "@kookio/feature-auth": "0.0.1",
+    "@kookio/prisma-client": "0.0.1",
+    "@kookio/shared-utility": "0.0.1"
   }
 }

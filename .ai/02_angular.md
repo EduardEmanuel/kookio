@@ -19,8 +19,7 @@ Angular v20+
 - Use `input()` and `output()` functions instead of decorators
 - Use `computed()` for derived state
 - Keep components small and focused on a single responsibility
-- Prefer inline templates for small components
-- When using external templates/styles, use paths relative to the component TS file
+- Always use external templates (`templateUrl`) and styles (`styleUrl`) — never inline `template` or `styles` in `@Component`
 - Use `NgOptimizedImage` for all static images (does not work for inline base64)
 
 ## State Management

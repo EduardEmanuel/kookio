@@ -1,0 +1,43 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.shell__topbar {
+  flex-shrink: 0;
+}
+
+/* Mobile: top-bar + scrollable main + sticky bottom tabs */
+.shell--mobile {
+  .shell__main {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .shell__bottom-tabs {
+    flex-shrink: 0;
+  }
+}
+
+/* Desktop: top-bar + sidenav-container fills remaining height */
+.shell--desktop {
+  .shell__sidenav-container {
+    flex: 1;
+    overflow: hidden;
+
+    /* mat-sidenav-container needs explicit height to fill parent */
+    height: 100%;
+  }
+
+  .shell__sidenav {
+    width: var(--shell-sidenav-width);
+    border-right: 1px solid var(--color-outline-variant);
+  }
+
+  .shell__main {
+    overflow-y: auto;
+    height: 100%;
+  }
+}
