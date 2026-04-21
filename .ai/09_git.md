@@ -186,6 +186,7 @@ Co-Authored-By: ChatGPT <noreply@openai.com>
 
 ## General Rules
 
+- Never commit without explicit confirmation — always present the diff/summary of changes and wait for approval before running `git commit`
 - Never commit secrets, credentials, or `.env` files — use `.gitignore`
 - Never commit generated files (`dist/`, `.ai/guidelines.md`) — use `.gitignore`
 - Tag releases on `main` with semantic versioning: `v1.2.3`

@@ -25,6 +25,7 @@
   └── users.service.spec.ts
 - Name test files `*.spec.ts`
 - Group related tests with `describe()` blocks matching the unit under test
+- Use nested `describe()` to separate logical groups within a test file — never use comment separators (e.g. `// ─── section ───`) in place of nesting; comments detach from the tests they label and mislead after refactors
 
 ## Component Tests
 
