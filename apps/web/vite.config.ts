@@ -9,6 +9,17 @@ import { defineConfig } from 'vite';
 
 const nitroPreset = process.env['NITRO_PRESET'] ?? 'node-server';
 
+const CHUNK_RULES: Array<{ pattern: RegExp; chunk: string }> = [
+  { pattern: /node_modules\/@angular\/(material|cdk)/, chunk: 'material' },
+  { pattern: /node_modules\/@ngrx\//, chunk: 'ngrx' },
+  { pattern: /node_modules\/@angular\//, chunk: 'angular' },
+  { pattern: /node_modules\/(firebase|@firebase)\//, chunk: 'firebase' },
+  { pattern: /node_modules\//, chunk: 'vendor' },
+];
+
+const manualChunks = (id: string): string | undefined =>
+  CHUNK_RULES.find(({ pattern }) => pattern.test(id))?.chunk;
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
@@ -19,6 +30,9 @@ export default defineConfig(({ mode }) => {
       reportCompressedSize: true,
       target: ['es2020'],
       sourcemap: mode !== 'production',
+      rollupOptions: {
+        output: { manualChunks },
+      },
     },
     css: {
       preprocessorOptions: {
