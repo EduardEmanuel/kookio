@@ -21,7 +21,7 @@ const manualChunks = (id: string): string | undefined =>
   CHUNK_RULES.find(({ pattern }) => pattern.test(id))?.chunk;
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode, isSsrBuild }) => {
+export default defineConfig(({ mode }) => {
   return {
     root: __dirname,
     cacheDir: `../../node_modules/.vite`,
@@ -30,11 +30,6 @@ export default defineConfig(({ mode, isSsrBuild }) => {
       reportCompressedSize: true,
       target: ['es2020'],
       sourcemap: mode !== 'production',
-      // manualChunks must not apply to the SSR build: it forces Angular/Material into named
-      // chunks, which prevents ssr.external from working and causes Nitro's Rollup to OOM.
-      rollupOptions: {
-        output: isSsrBuild ? {} : { manualChunks },
-      },
     },
     // Prevents Angular (~1.5 MB) and Material (~714 kB) from being inlined into the SSR output and re-parsed by Nitro's Rollup.
     ssr: {
@@ -58,6 +53,18 @@ export default defineConfig(({ mode, isSsrBuild }) => {
       sourcemapIgnoreList: false,
     },
     plugins: [
+      // The defineConfig callback is evaluated once and doesn't receive isSsrBuild from AnalogJS.
+      // Plugin config hooks ARE called separately per build pass, so this is the correct place
+      // to gate manualChunks. Without this, manualChunks forces Angular into named SSR chunks,
+      // which prevents ssr.external from working and causes Nitro's Rollup to OOM.
+      {
+        name: 'client-chunks-only',
+        config: (_, { isSsrBuild }) =>
+          isSsrBuild
+            ? undefined
+            : { build: { rollupOptions: { output: { manualChunks } } } },
+      },
+
       tailwindcss(),
 
       analog({
