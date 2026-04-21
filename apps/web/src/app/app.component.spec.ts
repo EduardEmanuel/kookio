@@ -52,80 +52,79 @@ describe('AppComponent effects', () => {
     TestBed.resetTestingModule();
   });
 
-  // ─── currentUser effect ──────────────────────────────────────────────────
+  describe('currentUser effect', () => {
+    it('calls refreshToken when currentUser becomes non-null', () => {
+      TestBed.createComponent(AppComponent);
 
-  it('calls refreshToken when currentUser becomes non-null', () => {
-    TestBed.createComponent(AppComponent);
+      store.currentUser.set({ uid: 'abc', email: 'u@test.com' });
+      TestBed.tick();
 
-    store.currentUser.set({ uid: 'abc', email: 'u@test.com' });
-    TestBed.flushEffects();
+      expect(store.refreshToken).toHaveBeenCalledOnce();
+    });
 
-    expect(store.refreshToken).toHaveBeenCalledOnce();
-  });
+    it('clears tRPC headers when currentUser becomes null (logout)', () => {
+      TestBed.createComponent(AppComponent);
 
-  it('clears tRPC headers when currentUser becomes null (logout)', () => {
-    TestBed.createComponent(AppComponent);
+      store.currentUser.set({ uid: 'abc' });
+      TestBed.tick();
+      setHeadersSpy.mockClear();
 
-    // Start logged-in, then log out
-    store.currentUser.set({ uid: 'abc' });
-    TestBed.flushEffects();
-    setHeadersSpy.mockClear();
+      store.currentUser.set(null);
+      TestBed.tick();
 
-    store.currentUser.set(null);
-    TestBed.flushEffects();
+      expect(setHeadersSpy).toHaveBeenCalledWith({});
+    });
 
-    expect(setHeadersSpy).toHaveBeenCalledWith({});
-  });
+    it('does not call refreshToken when currentUser is null on init', () => {
+      TestBed.createComponent(AppComponent);
+      TestBed.tick();
 
-  it('does not call refreshToken when currentUser is null on init', () => {
-    TestBed.createComponent(AppComponent);
-    TestBed.flushEffects();
-
-    expect(store.refreshToken).not.toHaveBeenCalled();
-  });
-
-  // ─── idToken effect ───────────────────────────────────────────────────────
-
-  it('sets Bearer Authorization header when idToken becomes available', () => {
-    TestBed.createComponent(AppComponent);
-
-    store.idToken.set('my-token-123');
-    TestBed.flushEffects();
-
-    expect(setHeadersSpy).toHaveBeenCalledWith({
-      Authorization: 'Bearer my-token-123',
+      expect(store.refreshToken).not.toHaveBeenCalled();
     });
   });
 
-  it('calls fetchSession when idToken becomes available', () => {
-    TestBed.createComponent(AppComponent);
+  describe('idToken effect', () => {
+    it('sets Bearer Authorization header when idToken becomes available', () => {
+      TestBed.createComponent(AppComponent);
 
-    store.idToken.set('my-token-123');
-    TestBed.flushEffects();
+      store.idToken.set('my-token-123');
+      TestBed.tick();
 
-    expect(store.fetchSession).toHaveBeenCalledOnce();
-  });
+      expect(setHeadersSpy).toHaveBeenCalledWith({
+        Authorization: 'Bearer my-token-123',
+      });
+    });
 
-  it('does not set headers or fetch session when idToken is null on init', () => {
-    TestBed.createComponent(AppComponent);
-    TestBed.flushEffects();
+    it('calls fetchSession when idToken becomes available', () => {
+      TestBed.createComponent(AppComponent);
 
-    expect(setHeadersSpy).not.toHaveBeenCalledWith(
-      expect.objectContaining({ Authorization: expect.any(String) }),
-    );
-    expect(store.fetchSession).not.toHaveBeenCalled();
-  });
+      store.idToken.set('my-token-123');
+      TestBed.tick();
 
-  it('updates Authorization header when idToken changes', () => {
-    TestBed.createComponent(AppComponent);
+      expect(store.fetchSession).toHaveBeenCalledOnce();
+    });
 
-    store.idToken.set('token-v1');
-    TestBed.flushEffects();
-    store.idToken.set('token-v2');
-    TestBed.flushEffects();
+    it('does not set headers or fetch session when idToken is null on init', () => {
+      TestBed.createComponent(AppComponent);
+      TestBed.tick();
 
-    expect(setHeadersSpy).toHaveBeenLastCalledWith({
-      Authorization: 'Bearer token-v2',
+      expect(setHeadersSpy).not.toHaveBeenCalledWith(
+        expect.objectContaining({ Authorization: expect.any(String) }),
+      );
+      expect(store.fetchSession).not.toHaveBeenCalled();
+    });
+
+    it('updates Authorization header when idToken changes', () => {
+      TestBed.createComponent(AppComponent);
+
+      store.idToken.set('token-v1');
+      TestBed.tick();
+      store.idToken.set('token-v2');
+      TestBed.tick();
+
+      expect(setHeadersSpy).toHaveBeenLastCalledWith({
+        Authorization: 'Bearer token-v2',
+      });
     });
   });
 });
