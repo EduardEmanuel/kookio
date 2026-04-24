@@ -28,7 +28,7 @@ const BOT_SCAN_PATTERNS = [
   /^\/\.well-known\/vercel\//,
 ];
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
   const path = event.path.split('?')[0];
 
   if (
@@ -40,6 +40,6 @@ export default defineEventHandler((event) => {
 
   if (BOT_SCAN_PATTERNS.some((pattern) => pattern.test(path))) {
     setResponseStatus(event, 404);
-    return send(event, '');
+    await send(event, '');
   }
 });
