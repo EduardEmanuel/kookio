@@ -287,7 +287,14 @@ export const AuthStore = signalStore(
 
     return {
       onInit: () => {
-        if (!auth) return;
+        if (!auth) {
+          // Browser context but Firebase not configured (missing env vars) —
+          // still mark as ready so the form renders and can show a submit error.
+          if (isPlatformBrowser(platformId)) {
+            patchState(store, { authReady: true });
+          }
+          return;
+        }
 
         from(setPersistence(auth, browserLocalPersistence)).subscribe({
           error: (err) => log.warn({ err }, 'Failed to set auth persistence'),
