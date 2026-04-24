@@ -67,6 +67,9 @@ export default defineConfig(({ mode }) => {
         ssr: true,
         prerender: {
           routes: ['/about'],
+          sitemap: {
+            host: 'https://kookio.app',
+          },
         },
         nitro: {
           preset: nitroPreset,

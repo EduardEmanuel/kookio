@@ -14,6 +14,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import {
   DomSanitizer,
   provideClientHydration,
+  withEventReplay,
 } from '@angular/platform-browser';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 
@@ -57,7 +58,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideFileRouter(),
-    provideClientHydration(),
+    provideClientHydration(withEventReplay()),
     provideHttpClient(
       withFetch(),
       withInterceptors([requestContextInterceptor]),
