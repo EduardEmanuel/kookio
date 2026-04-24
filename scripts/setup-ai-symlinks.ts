@@ -9,7 +9,8 @@ import {
   writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
-import { logger } from './utils.mjs';
+
+import { logger } from './utils';
 
 const root = process.cwd();
 const aiDir = path.join(root, '.ai');
@@ -23,7 +24,7 @@ const GENERATED_HEADER =
   '<!-- AUTO-GENERATED — do not edit directly -->\n<!-- Edit source files in .ai/ and run: npm run setup:ai -->\n';
 
 const HELP = `
-Usage: node scripts/setup-ai-symlinks.mjs --targets=<a,b,...>
+Usage: tsx scripts/setup-ai-symlinks.ts --targets=<a,b,...>
 
 Builds .ai/guidelines.md from numbered source files (.ai/01_*.md, .ai/02_*.md, ...)
 then propagates it to all AI tool config files.
@@ -36,7 +37,7 @@ Options:
   --help               Show this help message
 
 Examples:
-  node scripts/setup-ai-symlinks.mjs --targets=AGENTS.md,CLAUDE.md,GEMINI.md,.github/copilot-instructions.md
+  tsx scripts/setup-ai-symlinks.ts --targets=AGENTS.md,CLAUDE.md,GEMINI.md,.github/copilot-instructions.md
 `;
 
 if (process.argv.includes('--help')) {
@@ -55,7 +56,6 @@ const targets = targetsArg
   .split(',')
   .filter(Boolean);
 
-// --- Phase 1: Build guidelines.md from numbered source files ---
 logger.info('📝 Building guidelines.md...\n');
 
 const sourceFiles = readdirSync(aiDir)
@@ -80,7 +80,6 @@ const assembled = GENERATED_HEADER + '\n' + sections.join('\n\n---\n\n') + '\n';
 writeFileSync(source, assembled, 'utf8');
 logger.info(`✅ Assembled: ${sourceFiles.length} file(s) → guidelines.md\n`);
 
-// --- Phase 2: Symlinks / Copies ---
 logger.info('🔗 Setting up symlinks...\n');
 
 mkdirSync(path.join(root, '.github'), { recursive: true });
@@ -103,7 +102,6 @@ for (const target of targets) {
   }
 }
 
-// --- Phase 3: .gitignore ---
 const gitignorePath = path.join(root, '.gitignore');
 const original = existsSync(gitignorePath)
   ? readFileSync(gitignorePath, 'utf8')
@@ -119,17 +117,13 @@ const block = [
 const startIdx = original.indexOf(GITIGNORE_MARKER_START);
 const endIdx = original.indexOf(GITIGNORE_MARKER_END);
 
-let updated;
-if (startIdx !== -1 && endIdx !== -1) {
-  updated =
-    original.slice(0, startIdx) +
-    block +
-    original.slice(endIdx + GITIGNORE_MARKER_END.length);
-} else {
-  updated = original.trimEnd() + '\n\n' + block + '\n';
-}
+const updated =
+  startIdx !== -1 && endIdx !== -1
+    ? original.slice(0, startIdx) +
+      block +
+      original.slice(endIdx + GITIGNORE_MARKER_END.length)
+    : original.trimEnd() + '\n\n' + block + '\n';
 
 writeFileSync(gitignorePath, updated, 'utf8');
 logger.info('📝 Updated:  .gitignore');
-
 logger.info('\n✅ AI guidelines setup complete.');

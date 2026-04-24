@@ -1,9 +1,9 @@
-import { logger } from './utils.mjs';
+import { logger } from './utils';
 
 const url =
-  process.env.BENCH_URL || 'https://dev.kookio.app/api/internal/bench-db';
-const bypass = process.env.BYPASS_TOKEN;
-const key = process.env.BENCH_KEY;
+  process.env['BENCH_URL'] || 'https://dev.kookio.app/api/internal/bench-db';
+const bypass = process.env['BYPASS_TOKEN'];
+const key = process.env['BENCH_KEY'];
 
 if (!bypass) {
   logger.error('missing BYPASS_TOKEN');
@@ -28,7 +28,7 @@ if (!res.ok) {
   process.exit(1);
 }
 
-let data;
+let data: unknown;
 try {
   data = await res.json();
 } catch {
@@ -36,4 +36,5 @@ try {
   logger.error((await res.text()).slice(0, 400));
   process.exit(1);
 }
+
 logger.info('ℹ️ ', JSON.stringify(data, null, 2));
