@@ -11,7 +11,7 @@
     "bench:preview": "tsxscripts/with-vercel-env.mjs --env=preview -- node ./scripts/bench-preview.mjs",
     "db:bootstrap": "npm run with:env -- --env=development -- tsx scripts/bootstrap-cockroach.ts",
     "setup:ai": "node scripts/setup-ai-symlinks.mjs --targets=AGENTS.md,CLAUDE.md,GEMINI.md,.github/copilot-instructions.md",
-    "reset-user-password": "npm run with:env -- --env=development -- tsx scripts/reset-user-password.ts dinea.eduard+development@gmail.com",
+    "reset-user-password": "npm run with:env -- --env=development -- tsx scripts/reset-user-password.ts",
     "with:env": "node ./scripts/with-vercel-env.mjs",
     "start:web": "npm run with:env -- --env=development -- nx serve web",
     "build:web": "npm run with:env -- --env=production -- nx build web",
