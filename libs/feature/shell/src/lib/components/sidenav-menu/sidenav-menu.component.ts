@@ -19,14 +19,7 @@ import { AuthStore } from '@kookio/feature-auth';
 
 import type { NavItem } from '../../models';
 
-const AUTH_ROUTES = [
-  '/login',
-  '/register',
-  '/onboarding',
-  '/404',
-  '/403',
-  '/401',
-];
+const AUTH_ROUTES = ['/login', '/register', '/onboarding', '/404', '/401'];
 
 const NAV_ITEMS: readonly NavItem[] = [
   { label: 'Home', icon: 'home', route: '/' },

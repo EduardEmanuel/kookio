@@ -16,14 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import type { TabItem } from '../../models';
 
-const AUTH_ROUTES = [
-  '/login',
-  '/register',
-  '/onboarding',
-  '/404',
-  '/403',
-  '/401',
-];
+const AUTH_ROUTES = ['/login', '/register', '/onboarding', '/404', '/401'];
 
 @Component({
   selector: 'kookio-bottom-tabs',
