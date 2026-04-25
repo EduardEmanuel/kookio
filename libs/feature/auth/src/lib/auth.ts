@@ -296,13 +296,22 @@ export const AuthStore = signalStore(
           return;
         }
 
+        // Safety net: if onAuthStateChanged never fires (Firebase hangs or
+        // fails silently), unblock the UI after 5 s so forms remain usable.
+        const readyTimer = isPlatformBrowser(platformId)
+          ? setTimeout(() => patchState(store, { authReady: true }), 5_000)
+          : null;
+
         from(setPersistence(auth, browserLocalPersistence)).subscribe({
           error: (err) => log.warn({ err }, 'Failed to set auth persistence'),
         });
 
         onAuthStateChanged(
           auth,
-          (user) => patchState(store, { currentUser: user, authReady: true }),
+          (user) => {
+            if (readyTimer !== null) clearTimeout(readyTimer);
+            patchState(store, { currentUser: user, authReady: true });
+          },
           (err) => log.warn({ err }, 'onAuthStateChanged error'),
         );
       },
