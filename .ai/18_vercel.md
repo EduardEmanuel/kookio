@@ -1,3 +1,61 @@
+## Asset Serving & Cache Headers
+
+### `vercel.json` Cache-Control
+
+- Always configure `Cache-Control` headers in `vercel.json`:
+
+```json
+{
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, must-revalidate" }]
+    }
+  ]
+}
+```
+
+- `/assets/*` filenames include a content hash — `immutable` is safe and avoids
+  re-validation on every request
+- HTML and API routes must use `must-revalidate` — without it, browsers serve stale
+  HTML after a redeploy that rotates bundle hashes, causing clients to request
+  asset URLs that no longer exist on the new deployment
+
+### Missing Assets After Redeploy
+
+- After a redeploy, bundle filenames change (content hash rotation). Clients with
+  stale HTML request old asset URLs that no longer exist on the new deployment.
+- Without intervention, Nitro's SSR handler catches these missing `/assets/*` requests
+  and returns a 200 HTML response — the browser then tries to execute an HTML page
+  as JavaScript, producing parse errors.
+- Fix: add a Nitro middleware that returns 404 for any `/assets/*` request that
+  reaches the SSR handler (meaning the static file was not found):
+
+```typescript
+// src/server/middleware/assets.ts
+import { defineEventHandler, createError } from 'h3';
+
+export default defineEventHandler((event) => {
+  if (event.path.startsWith('/assets/')) {
+    throw createError({ statusCode: 404, statusMessage: 'Asset not found' });
+  }
+});
+```
+
+### Diagnosing Vercel Failures
+
+- **Build logs** and **runtime logs** are separate on Vercel:
+  - Build logs: Vercel Dashboard → Deployment → Build Logs
+  - Runtime logs: `vercel logs <deployment-url>` or Dashboard → Functions tab
+- A deployment that shows "Ready" can still fail at runtime — always check runtime
+  logs when the app behaves unexpectedly after a deploy
+- `vercel logs <url>` streams live function invocation errors — use this first when
+  debugging a broken production deployment; do not rely on build logs alone
+
 ### Checking Deployment Status
 
 - Monitor deployments at `vercel.com/dashboard`

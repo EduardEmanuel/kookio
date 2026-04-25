@@ -239,3 +239,48 @@ const secret = process.env['MY_SECRET'];
 - ❌ Returning different HTML on server vs client → causes hydration mismatch errors
 - ❌ Using `Date.now()` or `Math.random()` in templates → non-deterministic,
   causes hydration mismatches
+
+## AnalogJS Build — Known Failure Patterns
+
+### `manualChunks` — do not use with AnalogJS
+
+- Never set `manualChunks` in `vite.config.ts` when using AnalogJS
+- Rollup does not guarantee load order for parallel chunk imports — splitting Angular,
+  Material, or NgRx into named chunks causes `Class extends value undefined` at bootstrap
+  (blank page on Vercel) because a derived-class chunk may evaluate before its base-class chunk
+- AnalogJS already controls bundle splitting internally for both SSR and client builds;
+  external `manualChunks` interfere with that control and produce unpredictable ordering
+
+### `ssr.external: true` — do not set
+
+- Never set `ssr.external: true` at the Vite config root
+- AnalogJS overrides this option internally — it has no effect on the SSR build
+- It _does_ affect Vite's client pre-bundler, changing Angular's module initialisation
+  order and reproducing the same `Class extends value undefined` crash on Vercel
+
+### `nitro.externals.external` — Nitro's Rollup step only
+
+- `nitro.externals.external` prevents Nitro's Rollup (not Vite) from following and
+  inlining large packages during the "Building Server..." step
+- It only works when the Vite SSR output contains _bare_ package imports (e.g. `@angular/core`)
+- If `manualChunks` is active in the SSR build pass, bare imports become local chunk
+  references — `nitro.externals.external` never matches them and the package is still
+  inlined into the Rollup bundle → OOM
+
+### `defineConfig` callback does not receive `isSsrBuild`
+
+- The `defineConfig(({ mode }) => ...)` callback is evaluated once by AnalogJS and
+  **never** receives `isSsrBuild: true`
+- Conditionals on `isSsrBuild` inside the callback have no effect
+- Plugin `config` hooks are called per build pass and do receive the correct flag, but
+  even there AnalogJS controls SSR bundling internally — do not rely on this to gate
+  bundle manipulation between client and SSR builds
+
+### CI heap OOM during Nitro bundle step
+
+- AnalogJS forces Angular (~1.5 MB) and Material (~714 kB) into Nitro's Rollup AST
+  regardless of externalization settings — this exhausts the default Node.js heap
+  (~2 GB) on CI runners with 7 GB RAM
+- Fix: set `NODE_OPTIONS=--max-old-space-size=6144` on the build step in CI
+- This is the correct fix, not a workaround — Rollup's AST construction is inherently
+  memory-intensive for these package sizes and cannot be avoided via config

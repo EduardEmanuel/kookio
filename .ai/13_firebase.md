@@ -12,7 +12,7 @@ Client (Angular)
 ↓ signIn / signOut (Firebase Client SDK)
 Firebase Auth
 ↓ ID Token (JWT)
-Client → tRPC / API route (Authorization: Bearer <token>)
+Client → tRPC / API route (Authorization: Bearer `<token>`)
 ↓ verifyIdToken (Firebase Admin SDK)
 Server (Nitro/h3 context)
 ↓ ctx.user (verified user injected into tRPC context)
@@ -123,6 +123,62 @@ export const AuthStore = signalStore(
 - Expose `user` and `loading` signals — never read `auth.currentUser` directly in components
 - Use `AuthStore.user()` in templates and guards — do not subscribe to `onAuthStateChanged` in components
 
+### AuthStore — Known Edge Cases
+
+#### Firebase not configured in the browser (preview / local without env vars)
+
+- When none of the `NG_APP_FIREBASE_*` variables are set, Firebase is not initialised
+  and `onAuthStateChanged` never fires — `loading` stays `true` indefinitely, blocking
+  the login form behind an infinite skeleton
+- Guard `onAuthStateChanged` with an env var check and set `loading = false` immediately
+  when Firebase is not configured:
+
+```typescript
+withHooks((store) => ({
+  onInit() {
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
+
+    if (!import.meta.env['NG_APP_FIREBASE_API_KEY']) {
+      patchState(store, { loading: false });
+      return;
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      patchState(store, { user, loading: false });
+    });
+  },
+})),
+```
+
+#### Safety timeout on `authReady`
+
+- `onAuthStateChanged` can fail to fire when Firebase is configured but silently
+  blocked (network issue, SDK initialisation stalled by a browser extension, etc.)
+- A safety timeout that sets `loading = false` after X ms prevents an infinite skeleton
+  in these edge cases; always clear the timeout immediately when the real callback fires:
+
+```typescript
+onInit() {
+  const timeout = setTimeout(
+    () => patchState(store, { loading: false }),
+    /* X */ 2000,
+  );
+
+  onAuthStateChanged(auth, (user) => {
+    clearTimeout(timeout);
+    patchState(store, { user, loading: false });
+  });
+},
+```
+
+- **The correct value for X is unvalidated.** The 5 s value introduced in the
+  codebase was added while a `manualChunks` chunk-ordering bug was also present,
+  which itself caused blank-page / infinite-skeleton symptoms at runtime. The timeout
+  may have masked that root cause rather than solved a genuine Firebase delay.
+- Before settling on a value: measure `onAuthStateChanged` callback latency in
+  production without any timeout active; only then decide whether a safety timeout
+  is necessary and what the threshold should be.
+
 ### ID Token — Sending to Server
 
 - Always attach the Firebase ID token as a Bearer token on authenticated requests:
@@ -151,7 +207,7 @@ export const authInterceptor: HttpInterceptorFn = async (req, next) => {
 
 ## Admin SDK (Server Side)
 
-### Singleton
+### Admin Singleton
 
 - Always use a singleton Admin app — never initialize per request:
 
