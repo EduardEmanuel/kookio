@@ -29,7 +29,7 @@ export const routeMeta: RouteMeta = {
         <h1>Sign in</h1>
 
         @if (authStore.loginError()) {
-          <p class="text-red-600">{{ authStore.loginError() }}</p>
+          <p class="text-[var(--color-error)]">{{ authStore.loginError() }}</p>
         }
 
         <form (ngSubmit)="onSubmit()">

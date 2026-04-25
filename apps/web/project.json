@@ -14,21 +14,6 @@
         "parallel": false
       }
     },
-    "material-icons-filled": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          {
-            "command": "vite-node --config vite.config.ts import-material-icons.ts --style=filled"
-          },
-          {
-            "command": "vite-node --config vite.config.ts generate-icon-file.ts --namespace=material"
-          }
-        ],
-        "cwd": "apps/web/scripts/",
-        "parallel": false
-      }
-    },
     "build": {
       "executor": "@analogjs/platform:vite",
       "options": {

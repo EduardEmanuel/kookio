@@ -27,11 +27,13 @@ export const routeMeta: RouteMeta = {
         <h1>Create account</h1>
 
         @if (authStore.registerError()) {
-          <p class="text-red-600">{{ authStore.registerError() }}</p>
+          <p class="text-[var(--color-error)]">
+            {{ authStore.registerError() }}
+          </p>
         }
 
         @if (passwordMismatch) {
-          <p class="text-red-600">Passwords do not match.</p>
+          <p class="text-[var(--color-error)]">Passwords do not match.</p>
         }
 
         <form (ngSubmit)="onSubmit()">
