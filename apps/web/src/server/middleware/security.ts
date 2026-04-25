@@ -31,10 +31,15 @@ const BOT_SCAN_PATTERNS = [
 export default defineEventHandler(async (event) => {
   const path = event.path.split('?')[0];
 
-  if (
-    STATIC_ASSET_EXACT.has(path) ||
-    STATIC_ASSET_PREFIXES.some((prefix) => path.startsWith(prefix))
-  ) {
+  if (STATIC_ASSET_EXACT.has(path)) {
+    return;
+  }
+
+  // If an /assets/* request reaches Nitro the file doesn't exist on the CDN.
+  // Return 404 instead of falling through to SSR and serving HTML with 200.
+  if (STATIC_ASSET_PREFIXES.some((prefix) => path.startsWith(prefix))) {
+    setResponseStatus(event, 404);
+    await send(event, '');
     return;
   }
 
