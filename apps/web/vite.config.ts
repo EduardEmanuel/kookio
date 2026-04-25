@@ -9,17 +9,6 @@ import { defineConfig } from 'vite';
 
 const nitroPreset = process.env['NITRO_PRESET'] ?? 'node-server';
 
-const CHUNK_RULES: Array<{ pattern: RegExp; chunk: string }> = [
-  { pattern: /node_modules\/@angular\/(material|cdk)/, chunk: 'material' },
-  { pattern: /node_modules\/@ngrx\//, chunk: 'ngrx' },
-  { pattern: /node_modules\/@angular\//, chunk: 'angular' },
-  { pattern: /node_modules\/(firebase|@firebase)\//, chunk: 'firebase' },
-  { pattern: /node_modules\//, chunk: 'vendor' },
-];
-
-const manualChunks = (id: string): string | undefined =>
-  CHUNK_RULES.find(({ pattern }) => pattern.test(id))?.chunk;
-
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
@@ -49,18 +38,6 @@ export default defineConfig(({ mode }) => {
       sourcemapIgnoreList: false,
     },
     plugins: [
-      // The defineConfig callback is evaluated once and doesn't receive isSsrBuild from AnalogJS.
-      // Plugin config hooks ARE called separately per build pass, so this is the correct place
-      // to gate manualChunks. Without this, manualChunks forces Angular into named SSR chunks,
-      // which prevents ssr.external from working and causes Nitro's Rollup to OOM.
-      {
-        name: 'client-chunks-only',
-        config: (_, { isSsrBuild }) =>
-          isSsrBuild
-            ? undefined
-            : { build: { rollupOptions: { output: { manualChunks } } } },
-      },
-
       tailwindcss(),
 
       analog({
