@@ -1,0 +1,11 @@
+{
+  "name": "@kookio/core-config",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./index.cjs",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "@kookio/core-security": "0.0.1"
+  }
+}

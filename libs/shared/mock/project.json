@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/mock/src",
   "projectType": "library",
-  "tags": ["type:shared", "scope:mock"],
+  "tags": ["scope:shared", "type:mock"],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -13,7 +13,14 @@
         "main": "libs/shared/mock/src/index.ts",
         "tsConfig": "libs/shared/mock/tsconfig.lib.json",
         "assets": ["libs/shared/mock/*.md"],
-        "format": ["cjs"]
+        "format": ["esm"]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "libs/shared/mock/vite.config.ts",
+        "passWithNoTests": true
       }
     }
   }

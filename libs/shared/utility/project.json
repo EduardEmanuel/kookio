@@ -1,0 +1,32 @@
+{
+  "name": "utility",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/utility/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:utility"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/shared/utility",
+        "main": "libs/shared/utility/src/index.ts",
+        "tsConfig": "libs/shared/utility/tsconfig.lib.json",
+        "assets": [
+          "libs/shared/utility/*.md",
+          "libs/shared/utility/package.json"
+        ],
+        "format": ["esm"],
+        "generatePackageJson": false,
+        "updateBuildableProjectDepsInPackageJson": false
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "libs/shared/utility/vite.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

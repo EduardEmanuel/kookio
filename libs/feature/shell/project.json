@@ -1,0 +1,25 @@
+{
+  "name": "feature-shell",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/feature/shell/src",
+  "projectType": "library",
+  "tags": ["scope:frontend", "type:feature"],
+  "targets": {
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "configFile": "libs/feature/shell/vite.config.ts"
+      }
+    },
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/feature/shell",
+        "main": "libs/feature/shell/src/index.ts",
+        "tsConfig": "libs/feature/shell/tsconfig.lib.json",
+        "assets": ["libs/feature/shell/*.md"]
+      }
+    }
+  }
+}

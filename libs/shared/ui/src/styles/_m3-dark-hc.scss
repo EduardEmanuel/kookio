@@ -1,0 +1,89 @@
+@media (prefers-color-scheme: dark) and (prefers-contrast: forced) {
+  :root {
+    --md-sys-color-primary: rgb(255 236 229);
+    --md-sys-color-surface-tint: rgb(255 182 147);
+    --md-sys-color-on-primary: rgb(0 0 0);
+    --md-sys-color-primary-container: rgb(255 176 139);
+    --md-sys-color-on-primary-container: rgb(26 5 0);
+    --md-sys-color-secondary: rgb(255 236 229);
+    --md-sys-color-on-secondary: rgb(0 0 0);
+    --md-sys-color-secondary-container: rgb(255 176 139);
+    --md-sys-color-on-secondary-container: rgb(26 5 0);
+    --md-sys-color-tertiary: rgb(255 243 120);
+    --md-sys-color-on-tertiary: rgb(0 0 0);
+    --md-sys-color-tertiary-container: rgb(209 198 59);
+    --md-sys-color-on-tertiary-container: rgb(13 12 0);
+    --md-sys-color-error: rgb(255 236 233);
+    --md-sys-color-on-error: rgb(0 0 0);
+    --md-sys-color-error-container: rgb(255 174 164);
+    --md-sys-color-on-error-container: rgb(34 0 1);
+    --md-sys-color-background: rgb(28 17 12);
+    --md-sys-color-on-background: rgb(245 222 212);
+    --md-sys-color-surface: rgb(28 17 12);
+    --md-sys-color-on-surface: rgb(255 255 255);
+    --md-sys-color-surface-variant: rgb(88 66 56);
+    --md-sys-color-on-surface-variant: rgb(255 255 255);
+    --md-sys-color-outline: rgb(255 236 229);
+    --md-sys-color-outline-variant: rgb(219 188 175);
+    --md-sys-color-shadow: rgb(0 0 0);
+    --md-sys-color-scrim: rgb(0 0 0);
+    --md-sys-color-inverse-surface: rgb(245 222 212);
+    --md-sys-color-inverse-on-surface: rgb(0 0 0);
+    --md-sys-color-inverse-primary: rgb(124 48 0);
+    --md-sys-color-primary-fixed: rgb(255 219 204);
+    --md-sys-color-on-primary-fixed: rgb(0 0 0);
+    --md-sys-color-primary-fixed-dim: rgb(255 182 147);
+    --md-sys-color-on-primary-fixed-variant: rgb(36 9 0);
+    --md-sys-color-secondary-fixed: rgb(255 219 204);
+    --md-sys-color-on-secondary-fixed: rgb(0 0 0);
+    --md-sys-color-secondary-fixed-dim: rgb(255 182 147);
+    --md-sys-color-on-secondary-fixed-variant: rgb(36 9 0);
+    --md-sys-color-tertiary-fixed: rgb(242 230 88);
+    --md-sys-color-on-tertiary-fixed: rgb(0 0 0);
+    --md-sys-color-tertiary-fixed-dim: rgb(213 202 62);
+    --md-sys-color-on-tertiary-fixed-variant: rgb(20 18 0);
+    --md-sys-color-surface-dim: rgb(28 17 12);
+    --md-sys-color-surface-bright: rgb(93 77 70);
+    --md-sys-color-surface-container-lowest: rgb(0 0 0);
+    --md-sys-color-surface-container-low: rgb(41 29 23);
+    --md-sys-color-surface-container: rgb(59 45 39);
+    --md-sys-color-surface-container-high: rgb(71 56 50);
+    --md-sys-color-surface-container-highest: rgb(83 67 61);
+
+    --mat-sys-primary: var(--md-sys-color-primary);
+    --mat-sys-on-primary: var(--md-sys-color-on-primary);
+    --mat-sys-primary-container: var(--md-sys-color-primary-container);
+    --mat-sys-on-primary-container: var(--md-sys-color-on-primary-container);
+    --mat-sys-secondary: var(--md-sys-color-secondary);
+    --mat-sys-on-secondary: var(--md-sys-color-on-secondary);
+    --mat-sys-secondary-container: var(--md-sys-color-secondary-container);
+    --mat-sys-on-secondary-container: var(
+      --md-sys-color-on-secondary-container
+    );
+    --mat-sys-tertiary: var(--md-sys-color-tertiary);
+    --mat-sys-on-tertiary: var(--md-sys-color-on-tertiary);
+    --mat-sys-tertiary-container: var(--md-sys-color-tertiary-container);
+    --mat-sys-on-tertiary-container: var(--md-sys-color-on-tertiary-container);
+    --mat-sys-error: var(--md-sys-color-error);
+    --mat-sys-on-error: var(--md-sys-color-on-error);
+    --mat-sys-error-container: var(--md-sys-color-error-container);
+    --mat-sys-on-error-container: var(--md-sys-color-on-error-container);
+    --mat-sys-surface: var(--md-sys-color-surface);
+    --mat-sys-on-surface: var(--md-sys-color-on-surface);
+    --mat-sys-surface-variant: var(--md-sys-color-surface-variant);
+    --mat-sys-on-surface-variant: var(--md-sys-color-on-surface-variant);
+    --mat-sys-outline: var(--md-sys-color-outline);
+    --mat-sys-outline-variant: var(--md-sys-color-outline-variant);
+    --mat-sys-surface-container-lowest: var(
+      --md-sys-color-surface-container-lowest
+    );
+    --mat-sys-surface-container-low: var(--md-sys-color-surface-container-low);
+    --mat-sys-surface-container: var(--md-sys-color-surface-container);
+    --mat-sys-surface-container-high: var(
+      --md-sys-color-surface-container-high
+    );
+    --mat-sys-surface-container-highest: var(
+      --md-sys-color-surface-container-highest
+    );
+  }
+}

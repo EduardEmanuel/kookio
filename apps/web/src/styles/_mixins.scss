@@ -1,0 +1,109 @@
+@use 'sass:map';
+@use 'variables' as v;
+
+// ---------------------------------------------------------------------------
+// Responsive breakpoints (mobile-first)
+// ---------------------------------------------------------------------------
+// Usage:
+//   @use '../../styles/mixins' as m;
+//   @include m.respond-to('md') { ... }
+
+$_breakpoints: (
+  'sm': v.$bp-sm,
+  'md': v.$bp-md,
+  'lg': v.$bp-lg,
+  'xl': v.$bp-xl,
+);
+
+@mixin respond-to($breakpoint) {
+  @if map.has-key($_breakpoints, $breakpoint) {
+    @media (min-width: map.get($_breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn 'Unknown breakpoint: #{$breakpoint}. Available: sm, md, lg, xl.';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Typography helpers
+// ---------------------------------------------------------------------------
+
+// Single-line text truncation with ellipsis.
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Multi-line clamp (requires modern browser support).
+@mixin line-clamp($lines) {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+}
+
+// ---------------------------------------------------------------------------
+// Accessibility
+// ---------------------------------------------------------------------------
+
+// Visually hide an element while keeping it accessible to screen readers.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// WCAG AA focus ring — use on interactive elements.
+// $color defaults to the design-system primary token.
+@mixin focus-ring($color: var(--color-primary), $offset: 2px) {
+  outline: 2px solid $color;
+  outline-offset: $offset;
+}
+
+// ---------------------------------------------------------------------------
+// Motion
+// ---------------------------------------------------------------------------
+
+// Wrap animation declarations to auto-disable for users who prefer reduced motion.
+// Usage:
+//   @include m.reduced-motion { animation: none; }
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Elevation
+// ---------------------------------------------------------------------------
+
+// Material-aligned shadow levels (1–4).
+@mixin elevation($level: 1) {
+  @if $level == 1 {
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 12%),
+      0 1px 3px rgb(0 0 0 / 8%);
+  } @else if $level == 2 {
+    box-shadow:
+      0 2px 4px rgb(0 0 0 / 12%),
+      0 2px 6px rgb(0 0 0 / 8%);
+  } @else if $level == 3 {
+    box-shadow:
+      0 4px 8px rgb(0 0 0 / 12%),
+      0 4px 12px rgb(0 0 0 / 8%);
+  } @else if $level == 4 {
+    box-shadow:
+      0 8px 16px rgb(0 0 0 / 12%),
+      0 8px 24px rgb(0 0 0 / 8%);
+  } @else {
+    @warn 'Unknown elevation level: #{$level}. Use 1–4.';
+  }
+}

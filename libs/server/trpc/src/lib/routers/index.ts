@@ -1,6 +1,8 @@
 import { router } from '../trpc';
-import { ingredient } from './ingredient.router';
+import { auth } from './auth.router';
+import { user } from './user.router';
 
 export const appRouter = router({
-  ingredient,
+  auth,
+  user,
 });

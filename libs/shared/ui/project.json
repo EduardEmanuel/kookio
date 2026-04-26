@@ -1,0 +1,28 @@
+{
+  "name": "ui",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/ui/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": ["scope:frontend", "type:ui"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/vite:test"
+    },
+    "build-tokens": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": ".",
+        "commands": [
+          {
+            "command": "cat libs/shared/ui/src/styles/_tokens.scss libs/shared/ui/src/styles/_m3-light.scss libs/shared/ui/src/styles/_m3-dark.scss libs/shared/ui/src/styles/_m3-light-mc.scss libs/shared/ui/src/styles/_m3-light-hc.scss libs/shared/ui/src/styles/_m3-dark-mc.scss libs/shared/ui/src/styles/_m3-dark-hc.scss > apps/web/src/styles/kookio-tokens.css"
+          }
+        ]
+      }
+    }
+  }
+}

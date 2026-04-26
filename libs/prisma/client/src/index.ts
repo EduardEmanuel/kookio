@@ -1,2 +1,25 @@
 export * from './lib/prisma-client';
-export * from './lib/repositories/ingredient/ingredient.repository';
+export * from './prisma-zod-generator/schemas/index';
+// !! -- Named re-exports shadow the wildcard above — keep this order -- !!
+export {
+  CookingSessionFindManyResultSchema,
+  DietaryRestrictionFindManyResultSchema,
+  IngredientCatalogFindManyResultSchema,
+  MealAreaFindManyResultSchema,
+  MealCategoryFindManyResultSchema,
+  MealPlanFindManyResultSchema,
+  MealPlanSlotFindManyResultSchema,
+  PantryItemFindManyResultSchema,
+  RecipeFindManyResultSchema,
+  RecipeCollectionFindManyResultSchema,
+  RecipeCollectionEntryFindManyResultSchema,
+  RecipeIngredientFindManyResultSchema,
+  RecipeTagFindManyResultSchema,
+  UserFindManyResultSchema,
+  UserDietaryRestrictionFindManyResultSchema,
+  UserProfileFindManyResultSchema,
+  UserUtensilFindManyResultSchema,
+  UtensilFindManyResultSchema,
+  WebAuthnCredentialFindManyResultSchema,
+} from './lib/prisma-zod-overrides/index';
+export * from './lib/types/index';

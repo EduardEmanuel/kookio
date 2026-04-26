@@ -1,0 +1,19 @@
+{
+  "name": "core-logging",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/core/logging/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:logging"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/core/logging",
+        "main": "libs/core/logging/src/index.ts",
+        "tsConfig": "libs/core/logging/tsconfig.lib.json",
+        "assets": ["libs/core/logging/*.md"]
+      }
+    }
+  }
+}

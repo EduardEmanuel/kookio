@@ -1,5 +1,5 @@
 import { prisma } from '@kookio/prisma-client';
 
-export default async function globalTeardown() {
+export default async () => {
   await prisma.$disconnect();
-}
+};

@@ -4,11 +4,27 @@
   "projectType": "application",
   "sourceRoot": "apps/web-e2e/src",
   "implicitDependencies": ["web"],
+  "tags": ["scope:web", "type:e2e"],
   "targets": {
     "e2e": {
       "executor": "@nx/playwright:playwright",
       "options": {
         "config": "apps/web-e2e/playwright.config.ts"
+      }
+    },
+    "e2e-report": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": [
+        { "target": "e2e", "projects": "self", "params": "forward" }
+      ],
+      "options": {
+        "cwd": ".",
+        "commands": [
+          {
+            "command": "tsx --tsconfig tsconfig.base.json apps/web-e2e/src/metrics/e2e-pass-rate.ts"
+          }
+        ]
       }
     }
   }

@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/server/logger/src",
   "projectType": "library",
-  "tags": ["type:server", "scope:logger"],
+  "tags": ["scope:server", "type:logger"],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -13,8 +13,20 @@
         "main": "libs/server/logger/src/index.ts",
         "tsConfig": "libs/server/logger/tsconfig.lib.json",
         "assets": ["libs/server/logger/*.md"],
-        "format": ["cjs"],
-        "generatePackageJson": true
+        "platform": "node",
+        "bundle": true,
+        "format": ["esm"],
+        "sourcemap": true,
+        "external": ["pino", "pino-pretty"],
+        "generatePackageJson": false,
+        "updateBuildableProjectDepsInPackageJson": false
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "libs/server/logger/vite.config.ts",
+        "passWithNoTests": true
       }
     }
   }

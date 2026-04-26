@@ -1,0 +1,12 @@
+{
+  "name": "@kookio/core-logging",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.cjs",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@kookio/prisma-client": "0.0.1"
+  }
+}
