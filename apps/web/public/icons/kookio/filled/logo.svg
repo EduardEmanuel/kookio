@@ -1,7 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95 38">
-  <text x="64" y="14" text-anchor="middle" font-family="Fredoka" font-size="18" font-weight="bold" fill="#F17026">Let’s</text>
-  <circle cx="16" cy="22" r="15" fill="#F17026"/>
-  <rect x="28" y="8" width="15" height="5" rx="2" transform="rotate(-45 32 10)" fill="#F17026"/>
-  <text x="16" y="30" text-anchor="middle" font-family="Fredoka" font-size="24" font-weight="bold" fill="#FFFFFF">K</text>
-  <text x="64" y="30" text-anchor="middle" font-family="Fredoka" font-size="18" font-weight="bold" fill="#F17026">ookio it!</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 50">
+  <text x="65" y="21"
+        text-anchor="middle"
+        font-family="Fredoka, sans-serif"
+        font-size="18" font-weight="bold"
+        fill="var(--md-sys-color-primary, #a04100)">Let's</text>
+  <circle cx="18" cy="32" r="15" fill="var(--md-sys-color-primary, #a04100)"/>
+  <rect x="30" y="11" width="15" height="5" rx="1.5"
+        transform="rotate(-45 37.5 17.5)"
+        fill="var(--md-sys-color-primary, #a04100)"/>
+  <text x="18" y="40"
+        text-anchor="middle"
+        font-family="Fredoka, sans-serif"
+        font-size="24" font-weight="bold"
+        fill="var(--md-sys-color-surface, #fff8f6)">K</text>
+  <text x="34" y="40"
+        text-anchor="start"
+        font-family="Fredoka, sans-serif"
+        font-size="22" font-weight="bold"
+        fill="var(--md-sys-color-primary, #a04100)">ookio it!</text>
 </svg>

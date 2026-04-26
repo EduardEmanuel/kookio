@@ -53,3 +53,14 @@ vite.config.*.timestamp*
 vitest.config.*.timestamp*
 .vercel
 .env*.local
+
+# Prisma generated output (regenerated via `nx run prisma-client:generate`)
+libs/prisma/client/src/prisma-zod-generator/
+
+# BEGIN: AI Setup (auto-generated — do not edit manually)
+.ai/guidelines.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.github/copilot-instructions.md
+# END: AI Setup

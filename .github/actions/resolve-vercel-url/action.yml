@@ -1,0 +1,71 @@
+name: Resolve Vercel URL
+description: Resolve the Vercel deployment URL for the current branch or from provided inputs
+
+inputs:
+  vercel_app_url:
+    required: false
+    type: string
+  vercel_token:
+    required: false
+    type: string
+  vercel_project_id:
+    required: false
+    type: string
+  vercel_org_id:
+    required: false
+    type: string
+
+outputs:
+  base_url:
+    value: ${{ steps.out.outputs.base_url }}
+  source:
+    value: ${{ steps.out.outputs.source }}
+  branch_used:
+    value: ${{ steps.out.outputs.branch_used }}
+
+runs:
+  using: composite
+  steps:
+    - id: out
+      shell: bash
+      env:
+        VERCEL_APP_URL: ${{ inputs.vercel_app_url }}
+        VERCEL_TOKEN: ${{ inputs.vercel_token }}
+        VERCEL_PROJECT_ID: ${{ inputs.vercel_project_id }}
+        VERCEL_ORG_ID: ${{ inputs.vercel_org_id }}
+        REF_NAME: ${{ github.ref_name }}
+        HEAD_REF: ${{ github.head_ref }}
+        EVENT_NAME: ${{ github.event_name }}
+      run: |
+        set -e
+        BRANCH="$REF_NAME"
+        if [ "$EVENT_NAME" = "pull_request" ] && [ -n "$HEAD_REF" ]; then
+          BRANCH="$HEAD_REF"
+        fi
+        echo "branch_used=$BRANCH" >> "$GITHUB_OUTPUT"
+
+        if [ -n "$VERCEL_APP_URL" ]; then
+          echo "base_url=$VERCEL_APP_URL" >> "$GITHUB_OUTPUT"
+          echo "source=vars" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_PROJECT_ID" ] && [ -n "$VERCEL_ORG_ID" ]; then
+          sudo apt-get update >/dev/null && sudo apt-get install -y jq >/dev/null
+          url=$(
+            curl -fsSL -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=30" \
+            | jq -r --arg b "$BRANCH" '
+                .deployments[] | select(.state=="READY") | select(.target=="preview")
+                | select(.meta.githubCommitRef==$b) | .url
+              ' | head -n 1
+          )
+          if [ -n "$url" ]; then
+            echo "base_url=https://$url" >> "$GITHUB_OUTPUT"
+            echo "source=vercel" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+        fi
+
+        echo "base_url=" >> "$GITHUB_OUTPUT"
+        echo "source=none" >> "$GITHUB_OUTPUT"

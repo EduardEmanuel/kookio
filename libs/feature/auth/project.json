@@ -1,0 +1,26 @@
+{
+  "name": "feature-auth",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/feature/auth/src",
+  "projectType": "library",
+  "tags": ["scope:frontend", "type:feature"],
+  "targets": {
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "libs/feature/auth/vite.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/feature/auth",
+        "main": "libs/feature/auth/src/index.ts",
+        "tsConfig": "libs/feature/auth/tsconfig.lib.json",
+        "assets": ["libs/feature/auth/*.md"]
+      }
+    }
+  }
+}

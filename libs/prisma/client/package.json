@@ -2,14 +2,19 @@
   "name": "@kookio/prisma-client",
   "version": "0.0.1",
   "private": true,
-  "type": "commonjs",
-  "main": "./src/index.js",
+  "type": "module",
+  "main": "./src/index.cjs",
   "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.cjs"
+    }
+  },
+  "sideEffects": false,
   "dependencies": {
     "tslib": "^2.3.0",
-    "@kookio/prisma-validator": "0.0.1",
-    "@kookio/shared-mock": "0.0.1",
-    "@kookio/server-logger": "0.0.1",
-    "@prisma/client": "~6.17.1"
+    "@prisma/client": "~6.17.1",
+    "zod": "~3.25.76"
   }
 }

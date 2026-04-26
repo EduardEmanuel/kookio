@@ -1,0 +1,90 @@
+// Utility classes that complement Tailwind v4.
+// Tailwind covers spacing, layout, typography and color — add here only what it doesn't.
+//
+// Include this file in a component SCSS when you need these classes:
+//   @use '../../styles/utilities';
+
+// ---------------------------------------------------------------------------
+// Accessibility
+// ---------------------------------------------------------------------------
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.not-sr-only {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+// ---------------------------------------------------------------------------
+// Food domain — ingredient status
+// ---------------------------------------------------------------------------
+
+.ingredient-available {
+  color: var(--color-ingredient-available);
+}
+
+.ingredient-missing {
+  color: var(--color-ingredient-missing);
+}
+
+.ingredient-partial {
+  color: var(--color-ingredient-partial);
+}
+
+// ---------------------------------------------------------------------------
+// Food domain — expiry status
+// ---------------------------------------------------------------------------
+
+.expiry-ok {
+  color: var(--color-expiry-ok);
+}
+
+.expiry-soon {
+  color: var(--color-expiry-soon);
+}
+
+.expiry-expired {
+  color: var(--color-expiry-expired);
+}
+
+// ---------------------------------------------------------------------------
+// Skeleton loading
+// ---------------------------------------------------------------------------
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.skeleton {
+  background-color: var(--color-surface-container);
+  border-radius: var(--radius-sm);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.6;
+  }
+}

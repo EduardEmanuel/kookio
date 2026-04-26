@@ -1,5 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 38">
-  <circle cx="16" cy="22" r="15" fill="#F17026"/>
-  <rect x="28" y="8" width="15" height="5" rx="2" transform="rotate(-45 32 10)" fill="#F17026"/>
-  <text x="16" y="30" text-anchor="middle" font-family="Fredoka" font-size="24" font-weight="bold" fill="#FFFFFF">K</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <circle cx="10" cy="14" r="9" fill="var(--md-sys-color-primary, #a04100)"/>
+  <rect x="15" y="2" width="9" height="3" rx="1"
+        transform="rotate(-45 20 3.5)"
+        fill="var(--md-sys-color-primary, #a04100)"/>
+  <text x="10" y="19"
+        text-anchor="middle"
+        font-family="Fredoka, sans-serif"
+        font-size="14" font-weight="bold"
+        fill="var(--md-sys-color-surface, #fff8f6)">K</text>
 </svg>

@@ -1,0 +1,65 @@
+name: Playwright E2E
+description: Run Playwright E2E tests against a given base_url
+inputs:
+  base_url:
+    required: true
+    type: string
+  cache_bust:
+    required: false
+    type: string
+    default: ''
+  node_version:
+    required: false
+    type: string
+    default: '24'
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node_version }}
+        cache: npm
+
+    - name: Install deps
+      shell: bash
+      run: npm ci
+
+    # Detect Playwright cache dir per OS
+    - name: Detect Playwright cache dir
+      id: pwdir
+      shell: bash
+      run: |
+        if [ -n "${PLAYWRIGHT_BROWSERS_PATH:-}" ]; then
+          echo "dir=$PLAYWRIGHT_BROWSERS_PATH" >> "$GITHUB_OUTPUT"
+        else
+          case "${RUNNER_OS}" in
+            Linux)   echo "dir=$HOME/.cache/ms-playwright" >> "$GITHUB_OUTPUT" ;;
+            macOS)   echo "dir=$HOME/Library/Caches/ms-playwright" >> "$GITHUB_OUTPUT" ;;
+            Windows) echo "dir=$LOCALAPPDATA/ms-playwright" >> "$GITHUB_OUTPUT" ;;
+          esac
+        fi
+        echo "Playwright cache dir: $(cat $GITHUB_OUTPUT | cut -d= -f2 || true)"
+
+    # Restore cache before playwright install
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pwdir.outputs.dir }}
+        key: ${{ runner.os }}-pw-${{ inputs.cache_bust }}-${{ hashFiles('**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pw-
+
+    - name: Install Playwright browsers (with deps)
+      shell: bash
+      env:
+        PLAYWRIGHT_BROWSERS_PATH: ${{ steps.pwdir.outputs.dir }}
+      run: npx playwright install --with-deps
+
+    - name: Run E2E
+      if: ${{ inputs.base_url != '' }}
+      shell: bash
+      env:
+        PLAYWRIGHT_BROWSERS_PATH: ${{ steps.pwdir.outputs.dir }}
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        PLAYWRIGHT_BASE_URL: ${{ inputs.base_url }}
+      run: npx nx run-many -t e2e --output-style=stream

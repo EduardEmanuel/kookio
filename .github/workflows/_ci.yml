@@ -1,0 +1,45 @@
+name: _ci
+on:
+  workflow_call:
+    inputs:
+      node_version:
+        required: false
+        type: string
+        default: '24'
+    outputs:
+      nx_base:
+        description: NX_BASE propagated
+        value: ${{ jobs.ci.outputs.nx_base }}
+      nx_head:
+        description: NX_HEAD propagated
+        value: ${{ jobs.ci.outputs.nx_head }}
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    outputs:
+      nx_base: ${{ steps.nx.outputs.base }}
+      nx_head: ${{ steps.nx.outputs.head }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-npm
+        with:
+          node_version: ${{ inputs.node_version }}
+
+      - uses: ./.github/actions/nx-basehead
+        id: nx
+
+      - name: Format check (affected)
+        run: npx nx format:check --base=${{ steps.nx.outputs.base }} --head=${{ steps.nx.outputs.head }}
+
+      - name: Lint/Test/Build (affected)
+        env:
+          NODE_OPTIONS: '--max-old-space-size=6144'
+        run: npx nx affected -t lint test build --base=${{ steps.nx.outputs.base }} --head=${{ steps.nx.outputs.head }} --output-style=stream

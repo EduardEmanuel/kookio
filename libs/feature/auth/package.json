@@ -1,0 +1,20 @@
+{
+  "name": "@kookio/feature-auth",
+  "version": "0.0.1",
+  "private": true,
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@angular/core": "~20.2.4",
+    "@angular/common": "~20.2.4",
+    "@angular/router": "~20.2.4",
+    "rxjs": "~7.8.2",
+    "@ngrx/signals": "^20.1.0",
+    "firebase": "^12.8.0",
+    "@kookio/core-logging": "0.0.1",
+    "@kookio/prisma-client": "0.0.1",
+    "@kookio/shared-utility": "0.0.1"
+  }
+}

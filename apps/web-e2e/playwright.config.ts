@@ -1,6 +1,12 @@
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+
 import { defineConfig, devices } from '@playwright/test';
 import { nxE2EPreset } from '@nx/playwright/preset';
 import { workspaceRoot } from '@nx/devkit';
+
+const require = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
 
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
@@ -16,6 +22,7 @@ const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
  */
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: './src' }),
+  globalSetup: require.resolve('./global-setup'),
   globalTeardown: require.resolve('./global-teardown'),
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -26,8 +33,9 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'npx nx run web:serve',
-    url: 'http://localhost:4200',
+    url: baseURL,
     reuseExistingServer: true,
+    timeout: 180_000,
     cwd: workspaceRoot,
   },
   projects: [
@@ -44,6 +52,7 @@ export default defineConfig({
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      grepInvert: /@no-webkit/,
     },
 
     // Uncomment for mobile browsers support
@@ -65,5 +74,13 @@ export default defineConfig({
       name: 'Google Chrome',
       use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     } */
+  ],
+  reporter: [
+    ['list'],
+    ['json', { outputFile: '../../dist/test/metrics/playwright-report.json' }],
+    [
+      'html',
+      { open: 'never', outputFolder: '../../dist/test/playwright-html' },
+    ],
   ],
 });

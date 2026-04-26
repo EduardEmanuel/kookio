@@ -1,77 +1,553 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Kookio — Prisma Schema
+// Updated: April 2026
+// https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
 }
 
 generator zod {
-  provider = "prisma-zod-generator"
-  output   = "../validator/src/generated/zod"
+  provider         = "prisma-zod-generator"
+  output           = "./src/prisma-zod-generator"
   useMultipleFiles = true  // generate a separate file for each model
-  useTimestamps = true     // use `z.date()` for DateTime fields instead of `z.string()`
-  useBigInt = true         // use `z.bigint()` for BigInt fields instead of `z.number()`
-  useDecimal = true        // use `z.instanceof(Decimal)` for Decimal fields instead of `z.number()`
+  useTimestamps    = true  // use `z.date()` for DateTime fields instead of `z.string()`
+  useBigInt        = true  // use `z.bigint()` for BigInt fields instead of `z.number()`
+  useDecimal       = true  // use `z.instanceof(Decimal)` for Decimal fields instead of `z.number()`
 }
 
 datasource db {
-  provider = "cockroachdb"
-  url      = env("DATABASE_URL")
+  provider  = "cockroachdb"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
-model Ingredient {
-  id        String    @id @default(uuid()) @db.Uuid
-  name      String
-  quantity  Int
-  unit      String
-  optional  Boolean   @default(false)
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
+
+/// Application roles (business-level).
+enum Role {
+  USER
+  ADMIN
+}
+
+enum RecipeStatus {
+  PUBLIC
+  PRIVATE
+}
+
+enum MealSlotType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+/// Normalized units of measure for recipe ingredients.
+/// Raw strings from TheMealDB are parsed into these values during seed.
+enum MeasureUnit {
+  G
+  KG
+  ML
+  L
+  TSP
+  TBSP
+  CUP
+  OZ
+  LB
+  PIECE
+  SLICE
+  CLOVE
+  BUNCH
+  PINCH
+  TO_TASTE
+  TO_SERVE
+  GARNISH
+  OTHER
+}
+
+/// Controlled vocabulary for ingredient categories.
+/// Managed by Kookio — users cannot define their own.
+enum IngredientCategory {
+  MEAT
+  FISH
+  DAIRY
+  PRODUCE
+  GRAINS
+  LEGUMES
+  SPICES
+  CONDIMENTS
+  HERBS
+  NUTS
+  BEVERAGES
+  SWEETS
+  OTHER
+}
+
+// ─────────────────────────────────────────────
+// IDENTITY & AUTH
+// ─────────────────────────────────────────────
+
+/// User identity & authorization state.
+/// Field names align with OIDC where relevant (e.g., AMR).
+/// Intentionally separate from UserProfile: this model owns authentication
+/// and authorization concerns only. Application-level preferences (household
+/// size, dietary restrictions, utensils, onboarding state) live in UserProfile,
+/// following the Single Responsibility Principle and keeping auth concerns
+/// isolated from product concerns. UserProfile is optional/null until the
+/// onboarding flow is completed.
+model User {
+  /// Primary key (UUID v4).
+  id          String   @id @default(uuid())
+
+  /// Unique email address (natural identifier).
+  email       String   @unique
+
+  /// Unique ID for firebase auth.
+  firebaseUid String?  @unique
+
+  /// Optional display name.
+  name        String?
+
+  /// Assigned roles (from Role enum).
+  roles       Role[]   @default([])
+
+  /// Authentication Methods References — OIDC AMR claim (RFC 8176).
+  /// Stored as a String array (e.g. ["password", "webauthn"]) following the
+  /// OIDC specification, which defines AMR as a JSON array of strings.
+  /// Deliberate denormalization: extracting into a junction table would add
+  /// join overhead with no query benefit, as AMR values are always read and
+  /// written together as a set bound to a single authentication event.
+  amr         String[] @default([])
+
+  /// Soft-disable flag (revokes access without deletion).
+  isDisabled  Boolean  @default(false)
+
+  /// Soft-delete timestamp; null means active.
+  deletedAt   DateTime?
+
+  /// Creation timestamp (server-side).
+  createdAt   DateTime @default(now())
+
+  /// Last update timestamp (server-side).
+  updatedAt   DateTime @updatedAt
+
+  /// Linked WebAuthn credentials.
+  credentials     WebAuthnCredential[]
+
+  /// User profile & onboarding preferences.
+  profile         UserProfile?
+
+  /// Pantry items (ingredients in stock).
+  pantryItems     PantryItem[]
+
+  /// Recipes authored by this user.
+  recipes         Recipe[]
+
+  /// Recipe collections (replaces SavedRecipe).
+  collections     RecipeCollection[]
+
+  /// Meal plans created by this user.
+  mealPlans       MealPlan[]
+
+  /// Cooking sessions recorded by this user.
+  cookingSessions CookingSession[]
+
+  @@index([email], map: "idx_user_email")
+}
+
+/// FIDO/WebAuthn credential bound to a user.
+/// Names intentionally mirror WebAuthn/server libraries to minimize glue-code.
+model WebAuthnCredential {
+  /// Primary key (UUID v4).
+  id             String    @id @default(uuid())
+
+  /// FK to User.
+  userId         String
+
+  /// Raw credential ID (binary). Base64url <-> bytes at I/O boundaries.
+  credentialId   Bytes
+
+  /// Public key in COSE/DER bytes.
+  publicKey      Bytes
+
+  /// Signature counter from authenticator (aka signCount).
+  counter        Int       @default(0)
+
+  /// Authenticator transports ("internal","usb","ble","nfc").
+  transports     String[]  @default([])
+
+  /// Authenticator Attestation GUID (model-level), if available.
+  aaguid         String?   @db.Uuid
+
+  /// Attestation format ("packed","fido-u2f","apple","tpm","none",...).
+  attestationFmt String?
+
+  /// Eligible for backup per FIDO spec.
+  backupEligible Boolean   @default(false)
+
+  /// Currently backed up (multi-device capable).
+  backupState    Boolean   @default(false)
+
+  /// Optional friendly device type ("singleDevice" | "multiDevice").
+  deviceType     String?
+
+  /// Last successful authentication timestamp for this credential.
+  lastUsedAt     DateTime?
+
+  /// Vendor/UA quirks or future flags.
+  meta           Json?
+
+  /// Creation timestamp (server-side).
+  createdAt      DateTime  @default(now())
+
+  /// Last update timestamp (server-side).
+  updatedAt      DateTime  @updatedAt
+
+  /// Relation to owning user.
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, credentialId], map: "uq_webauthn_user_cred")
+  @@index([userId], map: "idx_webauthn_user")
+}
+
+// ─────────────────────────────────────────────
+// USER PROFILE & ONBOARDING
+// ─────────────────────────────────────────────
+
+/// Application-level preferences and onboarding state for a user.
+/// Intentionally separate from User, which owns identity and authentication.
+/// This model is optional/null until the onboarding flow is completed,
+/// allowing the system to distinguish between a registered-but-not-onboarded
+/// user and a fully configured one without nullable columns on User itself.
+model UserProfile {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  adultsCount    Int      @default(1)
+  childrenCount  Int      @default(0)
+
+  /// Whether the user has completed the onboarding flow.
+  onboardingDone Boolean  @default(false)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  dietaryRestrictions UserDietaryRestriction[]
+  utensils            UserUtensil[]
+}
+
+/// Controlled list of dietary restrictions.
+/// Seeded by Kookio — not user-defined.
+model DietaryRestriction {
+  id          String   @id @default(uuid())
+
+  /// Machine-readable identifier e.g. "gluten-free", "vegan".
+  slug        String   @unique
+
+  /// Human-readable label.
+  label       String
+
+  /// Emoji for UI display.
+  emoji       String?
+
+  description String?
+
+  users       UserDietaryRestriction[]
+}
+
+model UserDietaryRestriction {
+  userId               String
+  dietaryRestrictionId String
+
+  user        UserProfile        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  restriction DietaryRestriction @relation(fields: [dietaryRestrictionId], references: [id])
+
+  @@id([userId, dietaryRestrictionId])
+}
+
+/// Controlled list of kitchen utensils.
+/// Seeded by Kookio — not user-defined.
+/// TheMealDB does not provide utensil data.
+model Utensil {
+  id       String  @id @default(uuid())
+  slug     String  @unique
+  name     String
+  emoji    String?
+
+  /// e.g. "cutting", "cooking", "baking", "measuring"
+  category String?
+
+  users    UserUtensil[]
+}
+
+model UserUtensil {
   userId    String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  
-  @@unique([userId, name], map: "userId_name_unique")
-  @@index([userId], map: "ingredient_user_idx")
+  utensilId String
+
+  user    UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  utensil Utensil     @relation(fields: [utensilId], references: [id])
+
+  @@id([userId, utensilId])
 }
 
-// export interface Ingredient {
-//     id: string;
-//     name: string;
-//     quantity: number;
-//     unit: string; // e.g., "kg", "g", "ml", "pcs"
-//     optional?: boolean; // Indicates if the ingredient is optional in a recipe
-//     description?: string; // Optional field for additional information about the ingredient
-//     imageUrl?: string; // Optional field for an image URL of the ingredient
-//     nutritionalInfo?: { // Optional field for nutritional information
-//         calories?: number; // Optional field for calories per unit
-//         protein?: number; // Optional field for protein content per unit
-//         fat?: number; // Optional field for fat content per unit
-//         carbohydrates?: number; // Optional field for carbohydrates content per unit
-//         fiber?: number; // Optional field for fiber content per unit
-//         sugar?: number; // Optional field for sugar content per unit
-//     };
-//     tags?: string[]; // Optional field for tags or labels (e.g., "gluten-free", "low-carb")
-//     allergens?: string[]; // Optional field for allergens (e.g., "nuts", "dairy")
-//     origin?: string; // Optional field for the origin of the ingredient (e.g., "local", "imported")
-//     storageInstructions?: string; // Optional field for storage instructions
-//     preparationInstructions?: string; // Optional field for preparation instructions
-//     purchaseLocation?: string; // Optional field for where to buy the ingredient
-//     price?: number; // Optional field for the price of the ingredient
-//     priceCurrency?: string; // Optional field for the currency of the price (e.g., "USD", "EUR")
-//     unitPrice?: number; // Optional field for the price per unit
-//     unitPriceCurrency?: string; // Optional field for the currency of the unit price (e.g., "USD", "EUR")
-//     unitPricePer?: string; // Optional field for the unit price basis (e.g., "kg", "g", "ml")
-//     unitPriceDescription?: string; // Optional field for a description of the unit price (e.g., "per kg", "per liter")
-//     unitPriceImageUrl?: string; // Optional field for an image URL of the unit price (e.g., a price tag image)
-//     unitPriceNutritionalInfo?: { // Optional field for nutritional information per unit price
-//         calories?: number; // Optional field for calories per unit price
-//         protein?: number; // Optional field for protein content per unit price
-//         fat?: number; // Optional field for fat content per unit price
-//         carbohydrates?: number; // Optional field for carbohydrates content per unit price
-//     }
-//     category?: string; // e.g., "vegetable", "fruit", "dairy"
-//     isOrganic?: boolean; // Optional field to indicate if the ingredient is organic
-//     expirationDate?: Date; // Optional field for expiration date
-// }
+// ─────────────────────────────────────────────
+// CATALOG (seeded from TheMealDB, read-only)
+// ─────────────────────────────────────────────
+
+/// Meal categories sourced from TheMealDB (e.g. Beef, Dessert, Seafood).
+model MealCategory {
+  id          String   @id @default(uuid())
+
+  /// TheMealDB strCategory slug — unique identifier from external source.
+  externalId  String   @unique
+
+  name        String
+  imageUrl    String?
+  description String?
+
+  createdAt   DateTime @default(now())
+
+  recipes     Recipe[]
+}
+
+/// Geographic areas sourced from TheMealDB (e.g. Italian, Japanese).
+model MealArea {
+  id         String   @id @default(uuid())
+
+  /// TheMealDB strArea slug — unique identifier from external source.
+  externalId String   @unique
+
+  name       String
+  flag       String?
+
+  createdAt  DateTime @default(now())
+
+  recipes    Recipe[]
+}
+
+/// Master ingredient catalog, seeded from TheMealDB and normalized.
+model IngredientCatalog {
+  id             String              @id @default(uuid())
+
+  /// TheMealDB ingredient ID, if sourced externally.
+  externalId     String?             @unique
+
+  name           String
+  normalizedName String              @unique
+  description    String?
+  imageUrl       String?
+  category       IngredientCategory?
+
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  recipeIngredients RecipeIngredient[]
+  pantryItems       PantryItem[]
+}
+
+// ─────────────────────────────────────────────
+// RECIPES
+// ─────────────────────────────────────────────
+
+model Recipe {
+  id              String   @id @default(uuid())
+
+  /// TheMealDB idMeal — null for user-authored recipes.
+  externalId      String?  @unique
+
+  slug            String   @unique
+  title           String
+  description     String?
+  imageUrl        String?
+  youtubeUrl      String?
+  sourceUrl       String?
+  instructions    String
+  status          RecipeStatus @default(PUBLIC)
+  servings        Int      @default(4)
+
+  /// TheMealDB does not provide these — populated manually or via AI post-licență.
+  prepTimeMinutes Int?
+  cookTimeMinutes Int?
+
+  categoryId      String?
+  areaId          String?
+  authorId        String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  category        MealCategory?      @relation(fields: [categoryId], references: [id])
+  area            MealArea?          @relation(fields: [areaId], references: [id])
+  author          User?              @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  ingredients     RecipeIngredient[]
+  tags            RecipeTag[]
+  collectionEntries RecipeCollectionEntry[]
+  mealPlanSlots   MealPlanSlot[]
+  cookingSessions CookingSession[]
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([areaId])
+  @@index([authorId])
+  @@index([externalId])
+}
+
+/// Junction table between Recipe and IngredientCatalog.
+/// Units are normalized during seed — no raw strings stored.
+model RecipeIngredient {
+  id                  String             @id @default(uuid())
+  recipeId            String
+  ingredientCatalogId String
+  quantity            Float?
+  unit                MeasureUnit?
+
+  /// Describes the ingredient *in the context of this recipe*, not the ingredient itself.
+  /// Correctly placed here (not on IngredientCatalog) as it depends on the
+  /// (recipe, ingredient) pair — e.g. "chopped", "heaped", "to taste".
+  notes               String?
+
+  recipe              Recipe             @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient          IngredientCatalog  @relation(fields: [ingredientCatalogId], references: [id])
+
+  @@unique([recipeId, ingredientCatalogId])
+  @@index([recipeId])
+  @@index([ingredientCatalogId])
+}
+
+/// Normalized tags for a recipe.
+/// Extracted from TheMealDB strTags during seed.
+/// Replaces the denormalized `tags String[]` field to satisfy 1NF.
+model RecipeTag {
+  id       String @id @default(uuid())
+  recipeId String
+  tag      String
+
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, tag])
+  @@index([recipeId])
+  @@index([tag])
+}
+
+// ─────────────────────────────────────────────
+// PANTRY
+// ─────────────────────────────────────────────
+
+/// A user's current stock of a specific ingredient.
+model PantryItem {
+  id                  String            @id @default(uuid())
+  userId              String
+  ingredientCatalogId String
+  quantity            Float
+  unit                MeasureUnit
+  expiresAt           DateTime?
+
+  addedAt             DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredient          IngredientCatalog @relation(fields: [ingredientCatalogId], references: [id])
+
+  @@unique([userId, ingredientCatalogId])
+  @@index([userId])
+  @@index([expiresAt])   // for expiry notifications
+}
+
+// ─────────────────────────────────────────────
+// RECIPE COLLECTIONS (replaces SavedRecipe)
+// ─────────────────────────────────────────────
+
+/// A named collection of recipes owned by a user.
+/// Two default collections are created at onboarding: "Favorite" and "De încercat".
+model RecipeCollection {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  emoji     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipes   RecipeCollectionEntry[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model RecipeCollectionEntry {
+  collectionId String
+  recipeId     String
+  addedAt      DateTime         @default(now())
+
+  collection   RecipeCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  recipe       Recipe           @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, recipeId])
+}
+
+// ─────────────────────────────────────────────
+// MEAL PLAN
+// ─────────────────────────────────────────────
+
+/// A meal plan for a user, spanning up to 7 days with 3 meals/day.
+model MealPlan {
+  id        String         @id @default(uuid())
+  userId    String
+  name      String?
+  startDate DateTime
+  endDate   DateTime       // max startDate + 7 days
+
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slots     MealPlanSlot[]
+
+  @@index([userId])
+}
+
+/// A single meal slot within a meal plan.
+model MealPlanSlot {
+  id         String       @id @default(uuid())
+  mealPlanId String
+  recipeId   String?
+  date       DateTime
+  slotType   MealSlotType
+  servings   Int          @default(1)
+
+  mealPlan   MealPlan     @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  recipe     Recipe?      @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+
+  @@unique([mealPlanId, date, slotType])
+  @@index([mealPlanId])
+}
+
+// ─────────────────────────────────────────────
+// COOKING SESSION
+// ─────────────────────────────────────────────
+
+/// Records a user cooking a recipe.
+/// completedAt being non-null triggers pantry deduction.
+/// Enables "how many times have you cooked X" queries.
+model CookingSession {
+  id          String    @id @default(uuid())
+  userId      String
+  recipeId    String
+  servings    Int
+
+  /// Null = session started but not finished — pantry is NOT deducted.
+  completedAt DateTime?
+
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe      Recipe    @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([recipeId])
+  @@index([userId, recipeId])  // for "how many times cooked" queries
+}

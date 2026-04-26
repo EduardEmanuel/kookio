@@ -1,0 +1,56 @@
+name: Set NX base/head
+description: Compute NX base/head for affected runs and expose as outputs
+outputs:
+  base:
+    description: NX base sha
+    value: ${{ steps.set.outputs.base }}
+  head:
+    description: NX head sha
+    value: ${{ steps.set.outputs.head }}
+runs:
+  using: composite
+  steps:
+    - name: Compute base/head for pull_request
+      id: set_pr
+      if: ${{ github.event_name == 'pull_request' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        BASE="${{ github.event.pull_request.base.sha }}"
+        HEAD="${{ github.event.pull_request.head.sha }}"
+        echo "base=$BASE" >> "$GITHUB_OUTPUT"
+        echo "head=$HEAD" >> "$GITHUB_OUTPUT"
+        echo "NX_BASE=$BASE" >> "$GITHUB_ENV"
+        echo "NX_HEAD=$HEAD" >> "$GITHUB_ENV"
+
+    - name: Compute base/head for push/other
+      id: set_push
+      if: ${{ github.event_name != 'pull_request' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        BEFORE="${{ github.event.before }}"
+        HEAD="${{ github.sha }}"
+
+        if [ -z "${BEFORE}" ] || [[ "${BEFORE}" =~ ^0+$ ]]; then
+          if git rev-parse --verify "${HEAD}~1" >/dev/null 2>&1; then
+            BEFORE="$(git rev-parse "${HEAD}~1")"
+          else
+            BEFORE="${HEAD}"
+          fi
+        fi
+
+        echo "base=$BEFORE" >> "$GITHUB_OUTPUT"
+        echo "head=$HEAD"   >> "$GITHUB_OUTPUT"
+        echo "NX_BASE=$BEFORE" >> "$GITHUB_ENV"
+        echo "NX_HEAD=$HEAD"   >> "$GITHUB_ENV"
+
+    - name: Normalize outputs
+      id: set
+      shell: bash
+      run: |
+        set -euo pipefail
+        BASE="${{ steps.set_pr.outputs.base != '' && steps.set_pr.outputs.base || steps.set_push.outputs.base }}"
+        HEAD="${{ steps.set_pr.outputs.head != '' && steps.set_pr.outputs.head || steps.set_push.outputs.head }}"
+        echo "base=$BASE" >> "$GITHUB_OUTPUT"
+        echo "head=$HEAD" >> "$GITHUB_OUTPUT"

@@ -1,0 +1,13 @@
+@use 'sass:math';
+
+// Convert px to rem (base 16px).
+// Usage: font-size: rem(14);  →  0.875rem
+@function rem($px, $base: 16) {
+  @return math.div($px, $base) * 1rem;
+}
+
+// Convert px to em relative to a given parent font-size.
+// Usage: padding: em(12, 14);  →  0.857em (inside a 14px context)
+@function em($px, $base: 16) {
+  @return math.div($px, $base) * 1em;
+}

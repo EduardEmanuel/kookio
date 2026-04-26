@@ -1,0 +1,2000 @@
+{
+  "fetchedAt": "2026-04-17T16:28:33.578Z",
+  "cleanedAt": "2026-04-18T00:27:56.376Z",
+  "source": "https://www.themealdb.com",
+  "categories": [
+    {
+      "externalId": "Beef",
+      "name": "Beef",
+      "imageUrl": "https://www.themealdb.com/images/category/beef.png",
+      "description": "Beef is the culinary name for meat from cattle, particularly skeletal muscle. Humans have been eating beef since prehistoric times.[1] Beef is a source of high-quality protein and essential nutrients.[2]"
+    },
+    {
+      "externalId": "Chicken",
+      "name": "Chicken",
+      "imageUrl": "https://www.themealdb.com/images/category/chicken.png",
+      "description": "Chicken is a type of domesticated fowl, a subspecies of the red junglefowl. It is one of the most common and widespread domestic animals, with a total population of more than 19 billion as of 2011.[1] Humans commonly keep chickens as a source of food (consuming both their meat and eggs) and, more rarely, as pets."
+    },
+    {
+      "externalId": "Dessert",
+      "name": "Dessert",
+      "imageUrl": "https://www.themealdb.com/images/category/dessert.png",
+      "description": "Dessert is a course that concludes a meal. The course usually consists of sweet foods, such as confections dishes or fruit, and possibly a beverage such as dessert wine or liqueur, however in the United States it may include coffee, cheeses, nuts, or other savory items regarded as a separate course elsewhere. In some parts of the world, such as much of central and western Africa, and most parts of China, there is no tradition of a dessert course to conclude a meal.\n\nThe term dessert can apply to many confections, such as biscuits, cakes, cookies, custards, gelatins, ice creams, pastries, pies, puddings, and sweet soups, and tarts. Fruit is also commonly found in dessert courses because of its naturally occurring sweetness. Some cultures sweeten foods that are more commonly savory to create desserts."
+    },
+    {
+      "externalId": "Lamb",
+      "name": "Lamb",
+      "imageUrl": "https://www.themealdb.com/images/category/lamb.png",
+      "description": "Lamb, hogget, and mutton are the meat of domestic sheep (species Ovis aries) at different ages.\n\nA sheep in its first year is called a lamb, and its meat is also called lamb. The meat of a juvenile sheep older than one year is hogget; outside the USA this is also a term for the living animal. The meat of an adult sheep is mutton, a term only used for the meat, not the living animals. The term mutton is almost always used to refer to goat meat in the Indian subcontinent."
+    },
+    {
+      "externalId": "Miscellaneous",
+      "name": "Miscellaneous",
+      "imageUrl": "https://www.themealdb.com/images/category/miscellaneous.png",
+      "description": "General foods that don't fit into another category"
+    },
+    {
+      "externalId": "Pasta",
+      "name": "Pasta",
+      "imageUrl": "https://www.themealdb.com/images/category/pasta.png",
+      "description": "Pasta is a staple food of traditional Italian cuisine, with the first reference dating to 1154 in Sicily.\n\nAlso commonly used to refer to the variety of pasta dishes, pasta is typically a noodle made from an unleavened dough of a durum wheat flour mixed with water or eggs and formed into sheets or various shapes, then cooked by boiling or baking. As an alternative for those wanting a different taste, or who need to avoid products containing gluten, some pastas can be made using rice flour in place of wheat.[3][4] Pastas may be divided into two broad categories, dried (pasta secca) and fresh (pasta fresca)."
+    },
+    {
+      "externalId": "Pork",
+      "name": "Pork",
+      "imageUrl": "https://www.themealdb.com/images/category/pork.png",
+      "description": "Pork is the culinary name for meat from a domestic pig (Sus scrofa domesticus). It is the most commonly consumed meat worldwide,[1] with evidence of pig husbandry dating back to 5000 BC. Pork is eaten both freshly cooked and preserved. Curing extends the shelf life of the pork products. Ham, smoked pork, gammon, bacon and sausage are examples of preserved pork. Charcuterie is the branch of cooking devoted to prepared meat products, many from pork.\n\nPork is the most popular meat in Eastern and Southeastern Asia, and is also very common in the Western world, especially in Central Europe. It is highly prized in Asian cuisines for its fat content and pleasant texture. Consumption of pork is forbidden by Jewish and Muslim dietary law, a taboo that is deeply rooted in tradition, with several suggested possible causes. The sale of pork is limited in Israel and illegal in certain Muslim countries."
+    },
+    {
+      "externalId": "Seafood",
+      "name": "Seafood",
+      "imageUrl": "https://www.themealdb.com/images/category/seafood.png",
+      "description": "Seafood is any form of sea life regarded as food by humans. Seafood prominently includes fish and shellfish. Shellfish include various species of molluscs, crustaceans, and echinoderms. Historically, sea mammals such as whales and dolphins have been consumed as food, though that happens to a lesser extent in modern times. Edible sea plants, such as some seaweeds and microalgae, are widely eaten as seafood around the world, especially in Asia (see the category of sea vegetables). In North America, although not generally in the United Kingdom, the term \"seafood\" is extended to fresh water organisms eaten by humans, so all edible aquatic life may be referred to as seafood. For the sake of completeness, this article includes all edible aquatic life."
+    },
+    {
+      "externalId": "Side",
+      "name": "Side",
+      "imageUrl": "https://www.themealdb.com/images/category/side.png",
+      "description": "A side dish, sometimes referred to as a side order, side item, or simply a side, is a food item that accompanies the entrée or main course at a meal. Side dishes such as salad, potatoes and bread are commonly used with main courses throughout many countries of the western world. New side orders introduced within the past decade[citation needed], such as rice and couscous, have grown to be quite popular throughout Europe, especially at formal occasions (with couscous appearing more commonly at dinner parties with Middle Eastern dishes)."
+    },
+    {
+      "externalId": "Starter",
+      "name": "Starter",
+      "imageUrl": "https://www.themealdb.com/images/category/starter.png",
+      "description": "An entrée in modern French table service and that of much of the English-speaking world (apart from the United States and parts of Canada) is a dish served before the main course of a meal; it may be the first dish served, or it may follow a soup or other small dish or dishes. In the United States and parts of Canada, an entrée is the main dish or the only dish of a meal.\n\nHistorically, the entrée was one of the stages of the “Classical Order” of formal French table service of the 18th and 19th centuries. It formed a part of the “first service” of the meal, which consisted of potage, hors d’œuvre, and entrée (including the bouilli and relevé). The “second service” consisted of roast (rôti), salad, and entremets (the entremets sometimes being separated into a “third service” of their own). The final service consisted only of dessert.[3]:3–11 :13–25"
+    },
+    {
+      "externalId": "Vegan",
+      "name": "Vegan",
+      "imageUrl": "https://www.themealdb.com/images/category/vegan.png",
+      "description": "Veganism is both the practice of abstaining from the use of animal products, particularly in diet, and an associated philosophy that rejects the commodity status of animals.[b] A follower of either the diet or the philosophy is known as a vegan (pronounced /ˈviːɡən/ VEE-gən). Distinctions are sometimes made between several categories of veganism. Dietary vegans (or strict vegetarians) refrain from consuming animal products, not only meat but also eggs, dairy products and other animal-derived substances.[c] The term ethical vegan is often applied to those who not only follow a vegan diet but extend the philosophy into other areas of their lives, and oppose the use of animals for any purpose.[d] Another term is environmental veganism, which refers to the avoidance of animal products on the premise that the harvesting or industrial farming of animals is environmentally damaging and unsustainable."
+    },
+    {
+      "externalId": "Vegetarian",
+      "name": "Vegetarian",
+      "imageUrl": "https://www.themealdb.com/images/category/vegetarian.png",
+      "description": "Vegetarianism is the practice of abstaining from the consumption of meat (red meat, poultry, seafood, and the flesh of any other animal), and may also include abstention from by-products of animal slaughter.\n\nVegetarianism may be adopted for various reasons. Many people object to eating meat out of respect for sentient life. Such ethical motivations have been codified under various religious beliefs, as well as animal rights advocacy. Other motivations for vegetarianism are health-related, political, environmental, cultural, aesthetic, economic, or personal preference. There are variations of the diet as well: an ovo-lacto vegetarian diet includes both eggs and dairy products, an ovo-vegetarian diet includes eggs but not dairy products, and a lacto-vegetarian diet includes dairy products but not eggs. A vegan diet excludes all animal products, including eggs and dairy. Some vegans also avoid other animal products such as beeswax, leather or silk clothing, and goose-fat shoe polish."
+    },
+    {
+      "externalId": "Breakfast",
+      "name": "Breakfast",
+      "imageUrl": "https://www.themealdb.com/images/category/breakfast.png",
+      "description": "Breakfast is the first meal of a day. The word in English refers to breaking the fasting period of the previous night. There is a strong likelihood for one or more \"typical\", or \"traditional\", breakfast menus to exist in most places, but their composition varies widely from place to place, and has varied over time, so that globally a very wide range of preparations and ingredients are now associated with breakfast."
+    },
+    {
+      "externalId": "Goat",
+      "name": "Goat",
+      "imageUrl": "https://www.themealdb.com/images/category/goat.png",
+      "description": "The domestic goat or simply goat (Capra aegagrus hircus) is a subspecies of C. aegagrus domesticated from the wild goat of Southwest Asia and Eastern Europe. The goat is a member of the animal family Bovidae and the subfamily Caprinae, meaning it is closely related to the sheep. There are over 300 distinct breeds of goat. Goats are one of the oldest domesticated species of animal, and have been used for milk, meat, fur and skins across much of the world. Milk from goats is often turned into goat cheese."
+    }
+  ],
+  "areas": [
+    {
+      "externalId": "Algerian",
+      "name": "Algerian",
+      "flag": null
+    },
+    {
+      "externalId": "American",
+      "name": "American",
+      "flag": null
+    },
+    {
+      "externalId": "Argentinian",
+      "name": "Argentinian",
+      "flag": null
+    },
+    {
+      "externalId": "Australian",
+      "name": "Australian",
+      "flag": null
+    },
+    {
+      "externalId": "British",
+      "name": "British",
+      "flag": null
+    },
+    {
+      "externalId": "Canadian",
+      "name": "Canadian",
+      "flag": null
+    },
+    {
+      "externalId": "Chinese",
+      "name": "Chinese",
+      "flag": null
+    },
+    {
+      "externalId": "Croatian",
+      "name": "Croatian",
+      "flag": null
+    },
+    {
+      "externalId": "Dutch",
+      "name": "Dutch",
+      "flag": null
+    },
+    {
+      "externalId": "Egyptian",
+      "name": "Egyptian",
+      "flag": null
+    },
+    {
+      "externalId": "Filipino",
+      "name": "Filipino",
+      "flag": null
+    },
+    {
+      "externalId": "French",
+      "name": "French",
+      "flag": null
+    },
+    {
+      "externalId": "Greek",
+      "name": "Greek",
+      "flag": null
+    },
+    {
+      "externalId": "Indian",
+      "name": "Indian",
+      "flag": null
+    },
+    {
+      "externalId": "Irish",
+      "name": "Irish",
+      "flag": null
+    },
+    {
+      "externalId": "Italian",
+      "name": "Italian",
+      "flag": null
+    },
+    {
+      "externalId": "Jamaican",
+      "name": "Jamaican",
+      "flag": null
+    },
+    {
+      "externalId": "Japanese",
+      "name": "Japanese",
+      "flag": null
+    },
+    {
+      "externalId": "Kenyan",
+      "name": "Kenyan",
+      "flag": null
+    },
+    {
+      "externalId": "Malaysian",
+      "name": "Malaysian",
+      "flag": null
+    },
+    {
+      "externalId": "Mexican",
+      "name": "Mexican",
+      "flag": null
+    },
+    {
+      "externalId": "Moroccan",
+      "name": "Moroccan",
+      "flag": null
+    },
+    {
+      "externalId": "Norwegian",
+      "name": "Norwegian",
+      "flag": null
+    },
+    {
+      "externalId": "Polish",
+      "name": "Polish",
+      "flag": null
+    },
+    {
+      "externalId": "Portuguese",
+      "name": "Portuguese",
+      "flag": null
+    },
+    {
+      "externalId": "Russian",
+      "name": "Russian",
+      "flag": null
+    },
+    {
+      "externalId": "Saudi Arabian",
+      "name": "Saudi Arabian",
+      "flag": null
+    },
+    {
+      "externalId": "Slovakian",
+      "name": "Slovakian",
+      "flag": null
+    },
+    {
+      "externalId": "Spanish",
+      "name": "Spanish",
+      "flag": null
+    },
+    {
+      "externalId": "Syrian",
+      "name": "Syrian",
+      "flag": null
+    },
+    {
+      "externalId": "Thai",
+      "name": "Thai",
+      "flag": null
+    },
+    {
+      "externalId": "Tunisian",
+      "name": "Tunisian",
+      "flag": null
+    },
+    {
+      "externalId": "Turkish",
+      "name": "Turkish",
+      "flag": null
+    },
+    {
+      "externalId": "Ukrainian",
+      "name": "Ukrainian",
+      "flag": null
+    },
+    {
+      "externalId": "Uruguayan",
+      "name": "Uruguayan",
+      "flag": null
+    },
+    {
+      "externalId": "Venezulan",
+      "name": "Venezulan",
+      "flag": null
+    },
+    {
+      "externalId": "Vietnamese",
+      "name": "Vietnamese",
+      "flag": null
+    }
+  ],
+  "ingredients": [
+    {
+      "externalId": "3",
+      "name": "Beef",
+      "normalizedName": "beef",
+      "description": "Beef is the culinary name for meat from cattle, particularly skeletal muscle. Humans have been eating beef since prehistoric times. Beef is a source of high-quality protein and nutrients.\n\nMost beef skeletal muscle meat can be used as is by merely cutting into certain parts, such as roasts, short ribs or steak (filet mignon, sirloin steak, rump steak, rib steak, rib eye steak, hanger steak, etc.), while other cuts are processed (corned beef or beef jerky). Trimmings, on the other hand, are usually mixed with meat from older, leaner (therefore tougher) cattle, are ground, minced or used in sausages. The blood is used in some varieties called blood sausage. Other parts that are eaten include other muscles and offal, such as the oxtail, liver, tongue, tripe from the reticulum or rumen, glands (particularly the pancreas and thymus, referred to as sweetbread), the heart, the brain (although forbidden where there is a danger of bovine spongiform encephalopathy, BSE, commonly referred to as mad cow disease), the kidneys, and the tender testicles of the bull (known in the United States as calf fries, prairie oysters, or Rocky Mountain oysters). Some intestines are cooked and eaten as is, but are more often cleaned and used as natural sausage casings. The bones are used for making beef stock.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Beef-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "4",
+      "name": "Pork",
+      "normalizedName": "pork",
+      "description": "Pork is the culinary name for the flesh of a domestic pig (Sus scrofa domesticus). It is the most commonly consumed meat worldwide,[1] with evidence of pig husbandry dating back to 5000 BC.\n\nPork is eaten both freshly cooked and preserved. Curing extends the shelf life of the pork products. Ham, smoked pork, gammon, bacon and sausage are examples of preserved pork. Charcuterie is the branch of cooking devoted to prepared meat products, many from pork.\n\nPig is the most popular meat in the Eastern and non-Muslim parts of Southeastern Asia (Indochina, Philippines, Singapore, East Timor) and is also very common in the Western world, especially in Central Europe. It is highly prized in Asian cuisines for its fat content and pleasant texture. Consumption of pork is forbidden by Jewish, Muslim and Rastafarian dietary law, for religious reasons, with several suggested possible causes.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Pork-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "14",
+      "name": "Bacon",
+      "normalizedName": "bacon",
+      "description": "Bacon is a type of salt-cured pork. Bacon is prepared from several different cuts of meat, typically from the pork belly or from back cuts, which have less fat than the belly. It is eaten on its own, as a side dish (particularly in breakfasts), or used as a minor ingredient to flavour dishes (e.g., the club sandwich). Bacon is also used for barding and larding roasts, especially game, including venison and pheasant. The word is derived from the Old High German bacho, meaning \"buttock\", \"ham\" or \"side of bacon\", and is cognate with the Old French bacon.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Bacon-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "15",
+      "name": "Baking Powder",
+      "normalizedName": "baking_powder",
+      "description": "Baking powder is a dry chemical leavening agent, a mixture of a carbonate or bicarbonate and a weak acid. The base and acid are prevented from reacting prematurely by the inclusion of a buffer such as cornstarch. Baking powder is used to increase the volume and lighten the texture of baked goods. It works by releasing carbon dioxide gas into a batter or dough through an acid-base reaction, causing bubbles in the wet mixture to expand and thus leavening the mixture. The first single-acting baking powder was developed by Birmingham based food manufacturer Alfred Bird in England in 1843. The first double-acting baking powder was developed by Eben Norton Horsford in America in the 1860s.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Baking%20Powder-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "17",
+      "name": "Basil",
+      "normalizedName": "basil",
+      "description": "Basil, also called great basil, is a culinary herb of the family Lamiaceae (mints).\n\nBasil is native to tropical regions from central Africa to Southeast Asia. It is a tender plant, and is used in cuisines worldwide. Depending on the species and cultivar, the leaves may taste somewhat like anise, with a strong, pungent, often sweet smell.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Basil-Small.png",
+      "category": "HERBS"
+    },
+    {
+      "externalId": "18",
+      "name": "Basil Leaf",
+      "normalizedName": "basil_leaf",
+      "description": "Basil, also called great basil, is a culinary herb of the family Lamiaceae (mints).",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Basil%20Leaves-Small.png",
+      "category": "HERBS"
+    },
+    {
+      "externalId": "20",
+      "name": "Bay Leaf",
+      "normalizedName": "bay_leaf",
+      "description": "The bay leaf is an aromatic leaf commonly used in cooking. It can be used whole, or as dried and ground.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Bay%20Leaf-Small.png",
+      "category": "HERBS"
+    },
+    {
+      "externalId": "23",
+      "name": "Beef Brisket",
+      "normalizedName": "beef_brisket",
+      "description": "Beef is the culinary name for meat from cattle, particularly skeletal muscle. Humans have been eating beef since prehistoric times. Beef is a source of high-quality protein and nutrients.\n\nMost beef skeletal muscle meat can be used as is by merely cutting into certain parts, such as roasts, short ribs or steak (filet mignon, sirloin steak, rump steak, rib steak, rib eye steak, hanger steak, etc.), while other cuts are processed (corned beef or beef jerky). Trimmings, on the other hand, are usually mixed with meat from older, leaner (therefore tougher) cattle, are ground, minced or used in sausages. The blood is used in some varieties called blood sausage. Other parts that are eaten include other muscles and offal, such as the oxtail, liver, tongue, tripe from the reticulum or rumen, glands (particularly the pancreas and thymus, referred to as sweetbread), the heart, the brain (although forbidden where there is a danger of bovine spongiform encephalopathy, BSE, commonly referred to as mad cow disease), the kidneys, and the tender testicles of the bull (known in the United States as calf fries, prairie oysters, or Rocky Mountain oysters). Some intestines are cooked and eaten as is, but are more often cleaned and used as natural sausage casings. The bones are used for making beef stock.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Beef%20Brisket-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "29",
+      "name": "Black Pepper",
+      "normalizedName": "black_pepper",
+      "description": "Black pepper (Piper nigrum) is a flowering vine in the family Piperaceae, cultivated for its fruit, known as a peppercorn, which is usually dried and used as a spice and seasoning. When fresh and fully mature, it is about 5 mm (0.20 in) in diameter and dark red, and contains a single seed, like all drupes. Peppercorns and the ground pepper derived from them may be described simply as pepper, or more precisely as black pepper (cooked and dried unripe fruit), green pepper (dried unripe fruit), or white pepper (ripe fruit seeds).\n\nBlack pepper is native to present-day Kerala in Southwestern India, and is extensively cultivated there and elsewhere in tropical regions. Vietnam is the world's largest producer and exporter of pepper, producing 34% of the world's crop, as of 2013.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Black%20Pepper-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "30",
+      "name": "Black Treacle",
+      "normalizedName": "black_treacle",
+      "description": "Molasses (American English) or black treacle (British English) is a viscous product resulting from refining sugarcane or sugar beets into sugar. Molasses varies by amount of sugar, method of extraction, and age of plant. Sugarcane molasses is primarily used for sweetening and flavoring foods in the United States, Canada, and elsewhere. Molasses is a defining component of fine commercial brown sugar.\n\nSweet sorghum syrup may be colloquially called \"sorghum molasses\" in the southern United States.[2][3] Similar products include honey, maple syrup, corn syrup, and invert syrup. Most of these alternative syrups have milder flavors.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Black%20Treacle-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "35",
+      "name": "Bread",
+      "normalizedName": "bread",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Bread-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "36",
+      "name": "Breadcrumb",
+      "normalizedName": "breadcrumb",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Breadcrumbs-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "37",
+      "name": "Broccoli",
+      "normalizedName": "broccoli",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Broccoli-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "40",
+      "name": "Brown Sugar",
+      "normalizedName": "brown_sugar",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Brown%20Sugar-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "41",
+      "name": "Butter",
+      "normalizedName": "butter",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Butter-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "46",
+      "name": "Cannellini Bean",
+      "normalizedName": "cannellini_bean",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cannellini%20Beans-Small.png",
+      "category": "LEGUMES"
+    },
+    {
+      "externalId": "47",
+      "name": "Cardamom",
+      "normalizedName": "cardamom",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cardamom-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "49",
+      "name": "Carrot",
+      "normalizedName": "carrot",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Carrots-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "52",
+      "name": "Caster Sugar",
+      "normalizedName": "caster_sugar",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Caster%20Sugar-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "53",
+      "name": "Cayenne Pepper",
+      "normalizedName": "cayenne_pepper",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cayenne%20Pepper-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "55",
+      "name": "Celery",
+      "normalizedName": "celery",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Celery-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "56",
+      "name": "Celery Salt",
+      "normalizedName": "celery_salt",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Celery%20Salt-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "57",
+      "name": "Challot",
+      "normalizedName": "challot",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Challots-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "60",
+      "name": "Cheese",
+      "normalizedName": "cheese",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cheese-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "62",
+      "name": "Cherry Tomatoes",
+      "normalizedName": "cherry_tomatoes",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cherry%20Tomatoes-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "65",
+      "name": "Chicken Breast",
+      "normalizedName": "chicken_breast",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "67",
+      "name": "Chicken Leg",
+      "normalizedName": "chicken_leg",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chicken%20Legs-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "68",
+      "name": "Chicken Stock",
+      "normalizedName": "chicken_stock",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chicken%20Stock-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "70",
+      "name": "Chicken Thigh",
+      "normalizedName": "chicken_thigh",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chicken%20Thighs-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "71",
+      "name": "Chickpeas",
+      "normalizedName": "chickpeas",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chickpeas-Small.png",
+      "category": "LEGUMES"
+    },
+    {
+      "externalId": "75",
+      "name": "Chilli Powder",
+      "normalizedName": "chilli_powder",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chilli%20Powder-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "78",
+      "name": "Chopped Onion",
+      "normalizedName": "chopped_onion",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chopped%20Onion-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "80",
+      "name": "Chopped Tomatoes",
+      "normalizedName": "chopped_tomatoes",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chopped%20Tomatoes-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "81",
+      "name": "Chorizo",
+      "normalizedName": "chorizo",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chorizo-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "83",
+      "name": "Cilantro",
+      "normalizedName": "cilantro",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cilantro-Small.png",
+      "category": "HERBS"
+    },
+    {
+      "externalId": "84",
+      "name": "Cinnamon",
+      "normalizedName": "cinnamon",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cinnamon-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "85",
+      "name": "Cinnamon Stick",
+      "normalizedName": "cinnamon_stick",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cinnamon%20Stick-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "87",
+      "name": "Clove",
+      "normalizedName": "clove",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cloves-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "90",
+      "name": "Coconut Cream",
+      "normalizedName": "coconut_cream",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Coconut%20Cream-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "91",
+      "name": "Coconut Milk",
+      "normalizedName": "coconut_milk",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Coconut%20Milk-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "94",
+      "name": "Condensed Milk",
+      "normalizedName": "condensed_milk",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Condensed%20Milk-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "95",
+      "name": "Coriander",
+      "normalizedName": "coriander",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Coriander-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "96",
+      "name": "Coriander Leaf",
+      "normalizedName": "coriander_leaf",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Coriander%20Leaves-Small.png",
+      "category": "HERBS"
+    },
+    {
+      "externalId": "99",
+      "name": "Cornstarch",
+      "normalizedName": "cornstarch",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cornstarch-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "104",
+      "name": "Cumin",
+      "normalizedName": "cumin",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cumin-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "106",
+      "name": "Curry Powder",
+      "normalizedName": "curry_powder",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Curry%20Powder-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "113",
+      "name": "Dill",
+      "normalizedName": "dill",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Dill-Small.png",
+      "category": "HERBS"
+    },
+    {
+      "externalId": "115",
+      "name": "Double Cream",
+      "normalizedName": "double_cream",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Double%20Cream-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "116",
+      "name": "Dried Oregano",
+      "normalizedName": "dried_oregano",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Dried%20Oregano-Small.png",
+      "category": "HERBS"
+    },
+    {
+      "externalId": "122",
+      "name": "Egg Yolk",
+      "normalizedName": "egg_yolk",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Egg%20Yolks-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "125",
+      "name": "English Mustard",
+      "normalizedName": "english_mustard",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/English%20Mustard-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "126",
+      "name": "Extra Virgin Olive Oil",
+      "normalizedName": "extra_virgin_olive_oil",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Extra%20Virgin%20Olive%20Oil-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "131",
+      "name": "Fennel Seed",
+      "normalizedName": "fennel_seed",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Fennel%20Seeds-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "134",
+      "name": "Fish Sauce",
+      "normalizedName": "fish_sauce",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Fish%20Sauce-Small.png",
+      "category": "FISH"
+    },
+    {
+      "externalId": "137",
+      "name": "Flour",
+      "normalizedName": "flour",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Flour-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "148",
+      "name": "Garam Masala",
+      "normalizedName": "garam_masala",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Garam%20Masala-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "149",
+      "name": "Garlic",
+      "normalizedName": "garlic",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Garlic-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "150",
+      "name": "Garlic Clove",
+      "normalizedName": "garlic_clove",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Garlic%20Clove-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "154",
+      "name": "Ginger",
+      "normalizedName": "ginger",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Ginger-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "160",
+      "name": "Granulated Sugar",
+      "normalizedName": "granulated_sugar",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Granulated%20Sugar-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "162",
+      "name": "Greek Yogurt",
+      "normalizedName": "greek_yogurt",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Greek%20Yogurt-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "163",
+      "name": "Green Bean",
+      "normalizedName": "green_bean",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Green%20Beans-Small.png",
+      "category": "LEGUMES"
+    },
+    {
+      "externalId": "165",
+      "name": "Green Chilli",
+      "normalizedName": "green_chilli",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Green%20Chilli-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "170",
+      "name": "Ground Cumin",
+      "normalizedName": "ground_cumin",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Ground%20Cumin-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "171",
+      "name": "Ground Ginger",
+      "normalizedName": "ground_ginger",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Ground%20Ginger-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "177",
+      "name": "Honey",
+      "normalizedName": "honey",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Honey-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "189",
+      "name": "King Prawn",
+      "normalizedName": "king_prawn",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/King%20Prawns-Small.png",
+      "category": "FISH"
+    },
+    {
+      "externalId": "191",
+      "name": "Lamb",
+      "normalizedName": "lamb",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Lamb-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "193",
+      "name": "Lamb Mince",
+      "normalizedName": "lamb_mince",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Lamb%20Mince-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "196",
+      "name": "Leek",
+      "normalizedName": "leek",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Leek-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "197",
+      "name": "Lemon",
+      "normalizedName": "lemon",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Lemon-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "198",
+      "name": "Lemon Juice",
+      "normalizedName": "lemon_juice",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Lemon%20Juice-Small.png",
+      "category": "BEVERAGES"
+    },
+    {
+      "externalId": "199",
+      "name": "Lemon Zest",
+      "normalizedName": "lemon_zest",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Lemon%20Zest-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "201",
+      "name": "Lettuce",
+      "normalizedName": "lettuce",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Lettuce-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "202",
+      "name": "Lime",
+      "normalizedName": "lime",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Lime-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "206",
+      "name": "Madras Paste",
+      "normalizedName": "madras_paste",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Madras%20Paste-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "211",
+      "name": "Milk",
+      "normalizedName": "milk",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Milk-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "218",
+      "name": "Mushroom",
+      "normalizedName": "mushroom",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Mushrooms-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "222",
+      "name": "Nutmeg",
+      "normalizedName": "nutmeg",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Nutmeg-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "223",
+      "name": "Oil",
+      "normalizedName": "oil",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Oil-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "224",
+      "name": "Olive Oil",
+      "normalizedName": "olive_oil",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Olive%20Oil-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "232",
+      "name": "Paprika",
+      "normalizedName": "paprika",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Paprika-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "234",
+      "name": "Parmesan",
+      "normalizedName": "parmesan",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Parmesan-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "235",
+      "name": "Parmesan Cheese",
+      "normalizedName": "parmesan_cheese",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Parmesan%20Cheese-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "237",
+      "name": "Parsley",
+      "normalizedName": "parsley",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Parsley-Small.png",
+      "category": "HERBS"
+    },
+    {
+      "externalId": "244",
+      "name": "Pepper",
+      "normalizedName": "pepper",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Pepper-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "245",
+      "name": "Pine Nut",
+      "normalizedName": "pine_nut",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Pine%20Nuts-Small.png",
+      "category": "NUTS"
+    },
+    {
+      "externalId": "248",
+      "name": "Plain Flour",
+      "normalizedName": "plain_flour",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Plain%20Flour-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "249",
+      "name": "Plum Tomatoes",
+      "normalizedName": "plum_tomatoes",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Plum%20Tomatoes-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "253",
+      "name": "Potatoes",
+      "normalizedName": "potatoes",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Potatoes-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "255",
+      "name": "Puff Pastry",
+      "normalizedName": "puff_pastry",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Puff%20Pastry-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "257",
+      "name": "Raw King Prawn",
+      "normalizedName": "raw_king_prawn",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Raw%20King%20Prawns-Small.png",
+      "category": "FISH"
+    },
+    {
+      "externalId": "259",
+      "name": "Red Chilli",
+      "normalizedName": "red_chilli",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Red%20Chilli-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "263",
+      "name": "Red Onion",
+      "normalizedName": "red_onion",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Red%20Onions-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "264",
+      "name": "Red Pepper",
+      "normalizedName": "red_pepper",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Red%20Pepper-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "265",
+      "name": "Red Pepper Flake",
+      "normalizedName": "red_pepper_flake",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Red%20Pepper%20Flakes-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "268",
+      "name": "Rice",
+      "normalizedName": "rice",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Rice-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "269",
+      "name": "Rice Noodle",
+      "normalizedName": "rice_noodle",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Rice%20Noodles-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "276",
+      "name": "Saffron",
+      "normalizedName": "saffron",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Saffron-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "281",
+      "name": "Salt",
+      "normalizedName": "salt",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Salt-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "283",
+      "name": "Sausage",
+      "normalizedName": "sausage",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Sausages-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "284",
+      "name": "Sea Salt",
+      "normalizedName": "sea_salt",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Sea%20Salt-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "286",
+      "name": "Self-raising Flour",
+      "normalizedName": "selfraising_flour",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Self-raising%20Flour-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "288",
+      "name": "Sesame Seed",
+      "normalizedName": "sesame_seed",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Sesame%20Seed-Small.png",
+      "category": "NUTS"
+    },
+    {
+      "externalId": "295",
+      "name": "Sour Cream",
+      "normalizedName": "sour_cream",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Sour%20Cream-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "296",
+      "name": "Soy Sauce",
+      "normalizedName": "soy_sauce",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Soy%20Sauce-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "298",
+      "name": "Spaghetti",
+      "normalizedName": "spaghetti",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Spaghetti-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "299",
+      "name": "Spinach",
+      "normalizedName": "spinach",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Spinach-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "301",
+      "name": "Spring Onion",
+      "normalizedName": "spring_onion",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Spring%20Onions-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "305",
+      "name": "Sugar",
+      "normalizedName": "sugar",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Sugar-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "307",
+      "name": "Sunflower Oil",
+      "normalizedName": "sunflower_oil",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Sunflower%20Oil-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "309",
+      "name": "Tamarind Paste",
+      "normalizedName": "tamarind_paste",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Tamarind%20Paste-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "313",
+      "name": "Thyme",
+      "normalizedName": "thyme",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Thyme-Small.png",
+      "category": "HERBS"
+    },
+    {
+      "externalId": "316",
+      "name": "Tomato Puree",
+      "normalizedName": "tomato_puree",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Tomato%20Puree-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "317",
+      "name": "Tomatoes",
+      "normalizedName": "tomatoes",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Tomatoes-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "320",
+      "name": "Turmeric",
+      "normalizedName": "turmeric",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Turmeric-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "323",
+      "name": "Vanilla",
+      "normalizedName": "vanilla",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Vanilla-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "324",
+      "name": "Vanilla Extract",
+      "normalizedName": "vanilla_extract",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Vanilla%20Extract-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "327",
+      "name": "Vegetable Oil",
+      "normalizedName": "vegetable_oil",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Vegetable%20Oil-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "328",
+      "name": "Vegetable Stock",
+      "normalizedName": "vegetable_stock",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Vegetable%20Stock-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "332",
+      "name": "Vinegar",
+      "normalizedName": "vinegar",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Vinegar-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "333",
+      "name": "Water",
+      "normalizedName": "water",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Water-Small.png",
+      "category": "BEVERAGES"
+    },
+    {
+      "externalId": "337",
+      "name": "White Vinegar",
+      "normalizedName": "white_vinegar",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/White%20Vinegar-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "338",
+      "name": "White Wine",
+      "normalizedName": "white_wine",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/White%20Wine-Small.png",
+      "category": "BEVERAGES"
+    },
+    {
+      "externalId": "339",
+      "name": "Whole Milk",
+      "normalizedName": "whole_milk",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Whole%20Milk-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "347",
+      "name": "Icing Sugar",
+      "normalizedName": "icing_sugar",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Icing%20Sugar-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "352",
+      "name": "Fettuccine",
+      "normalizedName": "fettuccine",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Fettuccine-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "353",
+      "name": "Clotted Cream",
+      "normalizedName": "clotted_cream",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Clotted%20Cream-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "354",
+      "name": "Corn Flour",
+      "normalizedName": "corn_flour",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Corn%20Flour-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "360",
+      "name": "Squid",
+      "normalizedName": "squid",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Squid-Small.png",
+      "category": "FISH"
+    },
+    {
+      "externalId": "362",
+      "name": "Pilchard",
+      "normalizedName": "pilchard",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Pilchards-Small.png",
+      "category": "FISH"
+    },
+    {
+      "externalId": "363",
+      "name": "Black Olive",
+      "normalizedName": "black_olive",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Black%20Olives-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "364",
+      "name": "Onion",
+      "normalizedName": "onion",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Onion-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "365",
+      "name": "Tomato",
+      "normalizedName": "tomato",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Tomato-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "368",
+      "name": "Chicken Stock Cube",
+      "normalizedName": "chicken_stock_cube",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chicken%20Stock%20Cube-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "371",
+      "name": "Linguine Pasta",
+      "normalizedName": "linguine_pasta",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Linguine%20Pasta-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "373",
+      "name": "Sugar Snap Peas",
+      "normalizedName": "sugar_snap_peas",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Sugar%20Snap%20Peas-Small.png",
+      "category": "LEGUMES"
+    },
+    {
+      "externalId": "375",
+      "name": "Fromage Frais",
+      "normalizedName": "fromage_frais",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Fromage%20Frais-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "376",
+      "name": "Clam",
+      "normalizedName": "clam",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Clams-Small.png",
+      "category": "FISH"
+    },
+    {
+      "externalId": "377",
+      "name": "Passata",
+      "normalizedName": "passata",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Passata-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "378",
+      "name": "Rapeseed Oil",
+      "normalizedName": "rapeseed_oil",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Rapeseed%20Oil-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "379",
+      "name": "Stilton Cheese",
+      "normalizedName": "stilton_cheese",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Stilton%20Cheese-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "380",
+      "name": "Lamb Leg",
+      "normalizedName": "lamb_leg",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Lamb%20Leg-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "391",
+      "name": "Goose Fat",
+      "normalizedName": "goose_fat",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Goose%20Fat-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "393",
+      "name": "Fennel",
+      "normalizedName": "fennel",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Fennel-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "394",
+      "name": "Red Wine Vinegar",
+      "normalizedName": "red_wine_vinegar",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Red%20Wine%20Vinegar-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "395",
+      "name": "Haricot Bean",
+      "normalizedName": "haricot_bean",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Haricot%20Beans-Small.png",
+      "category": "LEGUMES"
+    },
+    {
+      "externalId": "396",
+      "name": "Rosemary",
+      "normalizedName": "rosemary",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Rosemary-Small.png",
+      "category": "HERBS"
+    },
+    {
+      "externalId": "397",
+      "name": "Butter Bean",
+      "normalizedName": "butter_bean",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Butter%20Beans-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "398",
+      "name": "Pinto Bean",
+      "normalizedName": "pinto_bean",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Pinto%20Beans-Small.png",
+      "category": "LEGUMES"
+    },
+    {
+      "externalId": "399",
+      "name": "Tomato Sauce",
+      "normalizedName": "tomato_sauce",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Tomato%20Sauce-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "401",
+      "name": "Mascarpone",
+      "normalizedName": "mascarpone",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Mascarpone-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "402",
+      "name": "Mozzarella",
+      "normalizedName": "mozzarella",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Mozzarella-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "403",
+      "name": "Ricotta",
+      "normalizedName": "ricotta",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Ricotta-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "407",
+      "name": "Banana",
+      "normalizedName": "banana",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Banana-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "418",
+      "name": "Pumpkin",
+      "normalizedName": "pumpkin",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Pumpkin-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "426",
+      "name": "Courgette",
+      "normalizedName": "courgette",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Courgettes-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "427",
+      "name": "Tinned Tomatos",
+      "normalizedName": "tinned_tomatos",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Tinned%20Tomatos-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "440",
+      "name": "Cabbage",
+      "normalizedName": "cabbage",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cabbage-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "471",
+      "name": "Almond",
+      "normalizedName": "almond",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Almonds-Small.png",
+      "category": "NUTS"
+    },
+    {
+      "externalId": "472",
+      "name": "Black Pudding",
+      "normalizedName": "black_pudding",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Black%20Pudding-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "475",
+      "name": "Yeast",
+      "normalizedName": "yeast",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Yeast-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "483",
+      "name": "Egg",
+      "normalizedName": "egg",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Egg-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "497",
+      "name": "Star Anise",
+      "normalizedName": "star_anise",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Star%20Anise-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "500",
+      "name": "Desiccated Coconut",
+      "normalizedName": "desiccated_coconut",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Desiccated%20Coconut-Small.png",
+      "category": "NUTS"
+    },
+    {
+      "externalId": "501",
+      "name": "Frozen Peas",
+      "normalizedName": "frozen_peas",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Frozen%20Peas-Small.png",
+      "category": "LEGUMES"
+    },
+    {
+      "externalId": "512",
+      "name": "Ground Beef",
+      "normalizedName": "ground_beef",
+      "description": null,
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Ground%20Beef-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "513",
+      "name": "Baby Aubergine",
+      "normalizedName": "baby_aubergine",
+      "description": "Eggplant (Solanum melongena) or aubergine is a species of nightshade grown for its edible fruit. Eggplant is the common name in North America, Australia and New Zealand; in British English, it is aubergine, and in South Asia and South Africa, brinjal.\n\nThe fruit is widely used in cooking. As a member of the genus Solanum, it is related to the tomato and the potato. It was originally domesticated from the wild nightshade species, the thorn or bitter apple, S. incanum, probably with two independent domestications, one in South Asia and one in East Asia.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Baby%20Aubergine-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "514",
+      "name": "Paella Rice",
+      "normalizedName": "paella_rice",
+      "description": "Paella[a] is a Valencian rice dish that has ancient roots but its modern form originated in the mid-19th century in the area around Albufera lagoon on the east coast of Spain, adjacent to the city of Valencia. Many non-Spaniards view paella as Spain's national dish, but most Spaniards consider it to be a regional Valencian dish. Valencians, in turn, regard paella as one of their identifying symbols.\n\nTypes of paella include Valencian paella, vegetable paella (Spanish: paella de verduras), seafood paella (Spanish: paella de mariscos), and mixed paella (Spanish: paella mixta), among many others. Valencian paella is believed to be the original recipe and consists of white rice, green beans (bajoqueta and tavella), meat (chicken, duck and rabbit), white beans (garrofón), snails, and seasoning such as saffron and rosemary. Another very common but seasonal ingredient is artichokes. Seafood paella replaces meat with seafood and omits beans and green vegetables. Mixed paella is a free-style combination of meat from land animals, seafood, vegetables, and sometimes beans. Most paella chefs use bomba rice due to it being less likely to overcook, but Valencians tend to use a slightly stickier (and thus more susceptible to overcooking) variety known as Senia. All types of paellas use olive oil.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Paella%20Rice-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "515",
+      "name": "Scotch Bonnet",
+      "normalizedName": "scotch_bonnet",
+      "description": "Scotch bonnet, also known as bonney peppers, or Caribbean red peppers, is a variety of chili pepper named for its resemblance to a tam o' shanter hat. Also called ata rodo by Yoruba speakers of Nigeria, it is found mainly in the Caribbean islands; it is also found in Guyana (where it is called the ball-of-fire pepper), the Maldives Islands (where it is called githeyo mirus), Panama (where it is called aji chombo) and West Africa. Most Scotch bonnets have a heat rating of 100,000–350,000 Scoville units. For comparison, most jalapeño peppers have a heat rating of 2,500 to 8,000 on the Scoville scale. However, completely sweet varieties of Scotch bonnet are grown on some of the Caribbean islands, called cachucha peppers.\n\nThese peppers are used to flavour many different dishes and cuisines worldwide and are often used in hot sauces and condiments. The Scotch bonnet has a sweeter flavour and stouter shape, distinct from its habanero relative with which it is often confused, and gives jerk dishes (pork/chicken) and other Caribbean dishes their unique flavour. Scotch bonnets are mostly used in West African, Antiguan, Kittitian/Nevisian, Anguilan, Dominican, St. Lucian, St Vincentian, Grenadian, Trinidadian, Jamaican, Barbadian, Guyanese, Surinamese, Haitian and Cayman cuisines and pepper sauces, though they often show up in other Caribbean recipes. It is also used in Costa Rica and Panama for Caribbean-styled recipes such as rice and beans, Rondón, saus, beef patties, and Ceviche.\n\nFresh, ripe Scotch bonnets can change from green to yellow to scarlet red, however many other breeds of this pepper can ripen to orange, yellow, peach, or even a chocolate brown.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Scotch%20Bonnet-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "520",
+      "name": "Rice Vinegar",
+      "normalizedName": "rice_vinegar",
+      "description": "Rice vinegar is a vinegar made from fermented rice in China, Japan, Korea, and Vietnam.\n\nChinese rice vinegars are stronger than Japanese ones, and range in colour from clear to various shades of red, brown and black and are therefore known as rice wine vinegar. Chinese and especially Japanese vinegars are less acidic than the distilled Western vinegars which, for that reason, are not appropriate substitutes for rice vinegars. The majority of the Asian rice vinegar types are also more mild and sweet than vinegars typically used in the Western world, with black vinegars as a notable exception. Chinese rice vinegars are made from huangjiu, a type of rice wine.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Rice%20Vinegar-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "521",
+      "name": "Water Chestnut",
+      "normalizedName": "water_chestnut",
+      "description": "Eleocharis dulcis, the Chinese water chestnut or water chestnut, is a grass-like sedge native to Asia (China, Japan, India, Philippines, etc.), Australia, tropical Africa, and various islands of the Pacific and Indian Oceans. It is grown in many countries for its edible corms.\n\nThe water chestnut is not a nut at all, but an aquatic vegetable that grows in marshes, under water, in the mud. It has stem-like, tubular green leaves that grow to about 1.5 m. The water caltrop, which also is referred to by the same name, is unrelated and often confused with the water chestnut.\n\nThe small, rounded corms have a crisp, white flesh and may be eaten raw, slightly boiled, or grilled, and often are pickled or tinned. They are a popular ingredient in Chinese dishes. In China, they are most often eaten raw, sometimes sweetened. They also may be ground into a flour form used for making water chestnut cake, which is common as part of dim sum cuisine. They are unusual among vegetables for remaining crisp even after being cooked or canned, because their cell walls are cross-linked and strengthened by certain phenolic compounds, such as oligomers of ferulic acid. This property is shared by other vegetables that remain crisp in this manner, including the tiger nut and lotus root. The corms contain the antibiotic agent puchiin, which is stable to high temperature. Apart from the edible corms, the leaves can be used for cattlefeed, mulch or compost.\n\nThe corms are rich in carbohydrates (about 90% by dry weight), especially starch (about 60% by dry weight), and are also a good source of dietary fiber, riboflavin, vitamin B6, potassium, copper, and manganese.\n\nIf eaten uncooked, the surface of the plants may transmit fasciolopsiasis.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Water%20Chestnut-Small.png",
+      "category": "NUTS"
+    },
+    {
+      "externalId": "525",
+      "name": "Scallion",
+      "normalizedName": "scallion",
+      "description": "Scallions (green onion, spring onion and salad onion) are vegetables of various Allium onion species. Scallions have a milder taste than most onions. Their close relatives include the garlic, shallot, leek, chive, and Chinese onion.\n\nAlthough the bulbs of many Allium species are used as food, the defining characteristic of scallion species is that they lack a fully developed bulb. In common with all Allium species, scallions have hollow, tubular green leaves, growing directly from the bulb. These leaves are used as a vegetable; they are eaten either raw or cooked. The leaves are often chopped into other dishes, in the manner of onions or garlic. Also known as scallions or green onions, spring onions are in fact very young onions, harvested before the bulb has had a chance to swell.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Scallions-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "528",
+      "name": "Starch",
+      "normalizedName": "starch",
+      "description": "Starch or amylum is a polymeric carbohydrate consisting of a large number of glucose units joined by glycosidic bonds. This polysaccharide is produced by most green plants as energy storage. It is the most common carbohydrate in human diets and is contained in large amounts in staple foods like potatoes, wheat, maize (corn), rice, and cassava.\n\nPure starch is a white, tasteless and odorless powder that is insoluble in cold water or alcohol. It consists of two types of molecules: the linear and helical amylose and the branched amylopectin. Depending on the plant, starch generally contains 20 to 25% amylose and 75 to 80% amylopectin by weight.[4] Glycogen, the glucose store of animals, is a more highly branched version of amylopectin.\n\nIn industry, starch is converted into sugars, for example by malting, and fermented to produce ethanol in the manufacture of beer, whisky and biofuel. It is processed to produce many of the sugars used in processed foods. Mixing most starches in warm water produces a paste, such as wheatpaste, which can be used as a thickening, stiffening or gluing agent. The biggest industrial non-food use of starch is as an adhesive in the papermaking process. Starch can be applied to parts of some garments before ironing, to stiffen them.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Starch-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "531",
+      "name": "Duck Sauce",
+      "normalizedName": "duck_sauce",
+      "description": "Duck sauce (or orange sauce) is a condiment with a sweet and sour flavor and a translucent orange appearance similar to a thin jelly. Offered at Chinese-American restaurants, it is used as a dip for deep-fried dishes such as wonton strips, spring rolls, egg rolls, duck, chicken, fish, or with rice or noodles. It is often provided in single-serving packets along with soy sauce, mustard, hot sauce or red chili powder. It may be used as a glaze on foods, such as poultry. Despite its name the sauce is not prepared using duck meat.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Duck%20Sauce-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "533",
+      "name": "Bean Sprout",
+      "normalizedName": "bean_sprout",
+      "description": "Bean sprouts are a common ingredient across the world. They are particularly common in Eastern Asian cuisine.\n\nThere are two types of common bean sprouts:\n\nMung bean sprout is made from the greenish-capped mung beans\nSoybean sprout is made from yellow, larger-grained soybean\nIt typically takes one week for them to become fully grown. The sprouted beans are more nutritious than the original beans and they require much less cooking time.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Bean%20Sprouts-Small.png",
+      "category": "LEGUMES"
+    },
+    {
+      "externalId": "548",
+      "name": "Allspice",
+      "normalizedName": "allspice",
+      "description": "Allspice is a spice from the dried berry of the Pimenta dioica tree, known for its flavor that combines notes of cinnamon, cloves, nutmeg, and black pepper. It is used in both sweet and savory dishes, such as jerk chicken, mulled drinks, gingerbread, and stews, and is also called pimento or Jamaican pepper. Allspice is available whole or ground, and whole berries should be removed before serving if used in soups or stews.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Allspice-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "553",
+      "name": "Goat Meat",
+      "normalizedName": "goat_meat",
+      "description": "The domestic goat or simply goat (Capra aegagrus hircus) is a subspecies of C. aegagrus domesticated from the wild goat of Southwest Asia and Eastern Europe. The goat is a member of the animal family Bovidae and the goat—antelope subfamily Caprinae, meaning it is closely related to the sheep. There are over 300 distinct breeds of goat. Goats are one of the oldest domesticated species of animal, and have been used for milk, meat, fur, and skins across much of the world. Milk from goats is often turned into goat cheese.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Goat%20Meat-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "569",
+      "name": "Ground Pork",
+      "normalizedName": "ground_pork",
+      "description": "Ground meat, called mince or minced meat outside of North America (i.e. in U.K. and Commonwealth countries), and keema or qeema (Hindustani: क़ीमा (Devanagari), قیمہ (Nastaleeq), (pronounced [ˈqiːmaː])) in the Indian subcontinent, is meat finely chopped by a meat grinder or a chopping knife. A common type of ground meat is ground beef, but many other types of meats are prepared in a similar fashion, including pork, lamb, and poultry. In the Indian subcontinent, both mutton and goat meat are also minced to produce keema.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Ground%20Pork-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "596",
+      "name": "Sauerkraut",
+      "normalizedName": "sauerkraut",
+      "description": "Sauerkraut is finely cut raw cabbage that has been fermented by various lactic acid bacteria. It has a long shelf life and a distinctive sour flavor, both of which result from the lactic acid formed when the bacteria ferment the sugars in the cabbage leaves.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Sauerkraut-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "598",
+      "name": "Herring",
+      "normalizedName": "herring",
+      "description": "Herring are forage fish, mostly belonging to the family Clupeidae. Herring often move in large schools around fishing banks and near the coast, found particularly in shallow, temperate waters of the North Pacific and North Atlantic Oceans, including the Baltic Sea, as well as off the west coast of South America.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Herring-Small.png",
+      "category": "FISH"
+    },
+    {
+      "externalId": "605",
+      "name": "Sardine",
+      "normalizedName": "sardine",
+      "description": "\"Sardine\" and \"pilchard\" are common names that refer to various small, oily forage fish in the herring family Clupeidae. The term \"sardine\" was first used in English during the early 15th century and may come from the Mediterranean island of Sardinia, around which sardines were once abundant.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Sardines-Small.png",
+      "category": "FISH"
+    },
+    {
+      "externalId": "630",
+      "name": "Chilli Flake",
+      "normalizedName": "chilli_flake",
+      "description": "Chili flakes, also known as crushed red pepper or chile flakes, are a spice made from dried and crushed red chili peppers. They are created by drying and then coarsely crushing whole red chili peppers, so you can see the skin, veins, and seeds, which is different from finely ground chili powder. Used as a condiment or cooking ingredient, they add a spicy kick to dishes like pizza, pasta, and stir-fries.\nWhat they are made of\nPeppers: Made from dried and crushed red chili peppers, most commonly cayenne-type peppers, but a variety of chilies can be used depending on the desired flavor and heat level.\nForm: They are crushed, not ground into a powder, so they appear as small flakes or pieces.\nSeeds and veins: The visible seeds and veins contain capsaicin, the compound responsible for the heat.\nHow they are used\nGarnish: Sprinkled directly on food like pizza, pasta, or soups.\nCooking ingredient: Added to dishes during cooking to infuse a spicy heat.\nInfusion: Can be toasted in oil to create a flavorful, spicy oil.\nVarieties\nStandard: Most common flakes are made from a blend of peppers, with cayenne-type peppers often used.\nRegional: Specific types of chili flakes exist, such as Turkish pul biber, Aleppo pepper, and Korean gochugaru, each with a unique flavor profile.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Chilli%20Flakes-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "632",
+      "name": "Clear Honey",
+      "normalizedName": "clear_honey",
+      "description": "Clear honey is liquid, transparent honey that has been gently heated and filtered to remove particles like pollen, which prevents it from crystallizing quickly. This process results in a smooth, runny texture that is popular for drizzling over foods or sweetening drinks.\nProcessing and texture\nProcessing: Clear honey undergoes a filtration process, which often involves gentle heating and straining. This removes fine particles, like pollen, that would otherwise cause the honey to crystallize over time.\nTexture: The filtration process gives it a smooth, runny consistency, making it ideal for spreading or drizzling. This is different from set honey, which is usually whipped, creamy, and unfiltered.\nFlavor and use\nFlavor: Clear honey typically has a mild, often floral, taste.\nUses: It is very versatile and commonly used for drizzling on toast, porridge, or fruit, and for sweetening tea and other beverages.\nImportant note on \"clear\" vs. \"raw\"\nWhile some clear honey can be raw and unpasteurized, the term \"clear\" specifically refers to its filtered, liquid state.\nFiltering to achieve clarity can remove some of the natural beneficial enzymes and pollen found in unfiltered honey.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Clear%20Honey-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "633",
+      "name": "Jersey Royal Potatoes",
+      "normalizedName": "jersey_royal_potatoes",
+      "description": "A Jersey Royal is a type of new potato, small and kidney-shaped, with a firm, waxy texture and a nutty, earthy flavor. Grown exclusively on the island of Jersey, these potatoes have thin, paper-like skin and are prized for their delicate taste and versatile use in salads, as a boiled side dish, or roasted. They are considered a seasonal specialty, appearing in the spring.\nCharacteristics\nAppearance: Small, kidney-shaped potatoes with a smooth, thin skin.\nTexture: Firm and waxy flesh that holds its shape well during cooking.\nFlavor: Nutty and earthy, described as rich and buttery.\nBest served: Boiled or steamed with the skin on, as much of the flavor is just underneath.\nGrowing and origin\nOrigin: The potato variety was discovered by chance in Jersey in 1878.\nProtected status: Jersey Royals have a Protected Designation of Origin (PDO), meaning they can only be grown on the island of Jersey.\nGrowing conditions: The island's unique microclimate and fertile soil, often enriched with seaweed fertilizer (Vraic), contribute to their distinctive taste.\nHarvesting: They are planted by hand and are the first new potatoes of the year in the UK, harvested from approximately March to June.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Jersey%20Royal%20Potatoes-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "645",
+      "name": "Cider Vinegar",
+      "normalizedName": "cider_vinegar",
+      "description": "White vinegar is a clear, colorless liquid made from fermented grain alcohol that has a high concentration of acetic acid, making it useful for cooking, pickling, and household cleaning. It is also called distilled vinegar or spirit vinegar and is often used as a substitute for apple cider vinegar in baking when a less potent flavor or lighter color is desired.\nCulinary uses\nBaking: Used to provide leavening and can be a substitute for apple cider vinegar in baking recipes.\nPickling: Its high acidity makes it ideal for pickling vegetables and other foods.\nMarinades and dressings: Can be used as a base for marinades and dressings, though its strong flavor may be too overpowering for some dishes.\nCleaning and other uses\nHousehold cleaner: A popular and inexpensive disinfectant for cleaning surfaces, removing stains, and deodorizing.\nLaundry: Can be used as a natural fabric conditioner and stain remover.\nGardening: Can be used to kill weeds.\nCoffee makers: Can be used to descale and clean coffee makers.\nDifferences from apple cider vinegar\nOrigin: Apple cider vinegar is made from fermented apples, while white vinegar is made from a variety of grains, such as corn, or other ingredients like potatoes.\nFlavor and color: White vinegar is clear and has a sharp, tart flavor, while apple cider vinegar is brown and has a more fruity flavor.\nComposition: Apple cider vinegar contains a small amount of potassium, but both types have a similar acetic acid level and are acidic and should be used with care.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Cider%20Vinegar-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "651",
+      "name": "Full fat sour cream",
+      "normalizedName": "full_fat_sour_cream",
+      "description": "Full-fat sour cream is a dairy product made by fermenting cream with lactic acid bacteria, resulting in a higher milk fat content (typically 18%) than low-fat versions. This higher fat content gives it a richer flavor, a creamier texture, and makes it more stable in heat, though it should still not be boiled. It can be used in a wide range of dishes, from baked goods and creamy sauces to dips, toppings for baked potatoes, and in recipes where mayonnaise is typically used.\nCharacteristics and uses\nFlavor and texture: It has a richer, creamier taste and smoother texture compared to lower-fat versions.\nFat content: Typically contains at least 18% milk fat.\nHeat stability: The higher fat content provides better heat resistance, but it should not be boiled and is best used below $160^circ$F to prevent curdling.\nUsage examples:\nTopping: A dollop on hot or spicy foods, baked potatoes, or tacos.\nBaking: Used in quick breads, cakes, and cheesecakes for moisture and richness.\nSauces and dips: A base for creamy dips, salad dressings, and creamy sauces.\nMashed potatoes: Adds a rich flavor and smooth texture to mashed potatoes and puréed vegetables.\nOther uses: Can be incorporated into pasta salads or used in place of mayonnaise.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Full%20fat%20sour%20cream-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "658",
+      "name": "All purpose flour",
+      "normalizedName": "all_purpose_flour",
+      "description": "All-purpose flour is a versatile white flour made from a blend of hard and soft wheat, making it suitable for a wide range of baking and cooking tasks like cakes, cookies, and thickening sauces. In the UK, it is most commonly known as plain flour and contains a moderate protein content, placing it between high-protein bread flour and low-protein cake or pastry flour.\nComposition and characteristics\nProtein content: Contains a moderate amount of protein, typically 9-14%, which allows it to form a gluten structure strong enough for many baked goods but soft enough for tender items.\nWheat blend: Milled from a combination of hard and soft wheat to create a balance of gluten-forming proteins and a softer texture.\nRefinement: It is a white flour with the bran and germ removed, and in many countries, it is fortified with added nutrients like iron and B vitamins after milling.\nGluten: Contains less gluten than bread flour, so it creates a less stretchy dough.\nCommon uses\nCakes, biscuits, and cookies\nPastries and pie crusts\nQuick breads and pizza bases\nThickening for sauces, gravies, and soups\nCoating for meats and vegetables",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/All%20purpose%20flour-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "672",
+      "name": "Dulce de leche",
+      "normalizedName": "dulce_de_leche",
+      "description": "Dulce de leche sauce is a rich, creamy, and sweet caramel sauce made from slowly simmering sweetened milk until it thickens and caramelizes. It has a deep golden-brown color and a flavor that is a mix of sweet milk and caramel. This popular South American condiment is used to top desserts, fill pastries, and can be drizzled over ice cream or fruit.\nHow it's made\nStovetop method: Slowly heating and stirring milk and sugar for several hours to reduce the liquid and caramelize the sugars.\nBaking method: Baking sweetened condensed milk in a water bath until it thickens and darkens in color.\nCommon uses\nAs a dessert topping\nIn baked goods like cakes, pies, and brownies\nAs a filling for pastries\nDrizzled over ice cream, crepes, or toast\nIn drinks like coffee or tres leches cake",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Dulce%20de%20leche-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "679",
+      "name": "Strong white bread flour",
+      "normalizedName": "strong_white_bread_flour",
+      "description": "Strong white bread flour is a type of flour made from hard wheat, which has a high protein content (12-14%) and high gluten content. This high protein and gluten make it ideal for bread, pizza dough, and other baked goods that require a strong, elastic dough that can hold its shape and achieve a good rise. It is often referred to simply as \"bread flour,\" especially in the United States.\nKey characteristics\nHigh protein: Contains a higher percentage of protein (12-14%) compared to plain flour (10-12%).\nHigh gluten: The high protein content creates strong gluten, which provides structure and elasticity to dough.\nChewy texture: The strong gluten network leads to a chewier texture in the final product.\nDenser crumb: It allows the dough to rise but also gives it a denser, more structured crumb than products made with weaker flour.\nColor: Has a slightly off-white color.\nIdeal uses\nYeasted breads, including sourdough\nPizza dough\nBagels\nPretzels\nBaking biscuits\nCan be used to strengthen weaker flours when blending them togethe",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Strong%20white%20bread%20flour-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "680",
+      "name": "Dried white corn",
+      "normalizedName": "dried_white_corn",
+      "description": "Buy Dried Corn (Maize) – white or yellow - Buildrestfoods ...Dried white corn is a type of corn kernel that has been dried for preservation and can be prepared in two main ways: either as hominy (also called nixtamalized corn) or as dried corn kernels to be ground into meal. Hominy is made by soaking and simmering dried corn in an alkaline solution, which softens the hull and increases its nutritional value. These kernels can be cooked and used whole in stews and soups, such as the Mexican dish pozole, or ground into white cornmeal.\nHominy (Nixtamalized)\nPreparation: This process involves soaking the dried kernels in an alkaline solution (like lime) which softens the hard outer hull and germ.\nTexture: After the process, the kernels become soft, puffy, and easy to cook.\nNutrition: The nixtamalization process also makes niacin (vitamin B3) more available to the body, and lime adds calcium.\nUses: A staple in many Latin American dishes, it is used in soups and stews like pozole.\nDried corn kernels (to be cooked or ground)\nPreparation: Dried kernels can be used directly, but they require soaking and simmering for about an hour or more until tender.\nUses: They can be ground to make white cornmeal or grits, which are versatile ingredients.\nTexture: When cooked, they have a chewy, soft texture and an earthy-sweet flavor.\nOther dishes: They can also be cooked whole and used as a side dish or a thickener for stews.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Dried%20white%20corn-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "681",
+      "name": "Dried White Bean",
+      "normalizedName": "dried_white_bean",
+      "description": "Dried white beans are a type of legume that has been harvested and dehydrated, and include varieties like cannellini, navy, and great northern beans. They are a good source of protein, fiber, and complex carbohydrates, and they must be rehydrated and cooked for a significant amount of time before they can be eaten.\nWhat they are\nTypes: Dried white beans are a category that includes several varieties, such as:\nCannellini beans (also called white kidney beans)\nNavy beans (also called pea beans)\nGreat Northern beans\nBaby lima beans\nCharacteristics: When dried, they are hard and have a mild, starchy interior. They are a versatile ingredient used in many dishes.\nNutritional value: They are a healthy, gluten-free food that provides protein, fiber, and complex carbohydrates.\nHow to use them\nSoaking: Before cooking, you must soak dried white beans in cold water for at least 5 hours, or overnight, as they expand.\nCooking: After soaking, they need to be simmered in water for 1 to 1.5 hours, or until they are tender. They are not safe to eat if not fully cooked.\nVersatility: They can be added to soups, stews, salads, and other dishes.\nPreparation for recipes: Once cooked, they can be used in many recipes that call for white beans. Canned beans are pre-cooked, but dried beans require time and effort to prepare.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Dried%20white%20beans-Small.png",
+      "category": "LEGUMES"
+    },
+    {
+      "externalId": "682",
+      "name": "Seafood stock",
+      "normalizedName": "seafood_stock",
+      "description": "Seafood stock is a flavorful liquid made by simmering the bones and shells of fish and shellfish with aromatic vegetables like onion, celery, and carrots, along with herbs and spices. It serves as a versatile base for many seafood dishes, such as soups, stews, and risottos. To make it, the non-edible parts are simmered, then the liquid is strained to remove all solids, resulting in a rich, briny broth.\nKey ingredients\nFish bones and heads: Use white-fleshed, salt-water fish for a clean flavor, but avoid oily fish like salmon.\nCrustacean shells: Shrimp, crab, and lobster shells add a rich, briny flavor.\nAromatic vegetables: A classic combination includes onion, carrot, and celery. Garlic is also common.\nHerbs and spices: Bay leaves, parsley, and white peppercorns are popular choices, as they complement the seafood flavor without overpowering it.\nOther additions: Some recipes include white wine, tomato paste, or even the juices from clams or mussels.\nHow it's made\nSauté aromatics: Sautéing the vegetables can enhance their flavor.\nAdd seafood parts: Add the fish bones, heads, and/or crustacean shells to the pot.\nSimmer: Cover everything with water and bring to a boil. Reduce the heat to a low simmer and let it cook for about 30 to 60 minutes, or until the flavors have infused the liquid. Skim any foam that rises to the surface.\nStrain: Strain the mixture through a fine-mesh sieve or a sieve lined with cheesecloth to remove all solids, leaving a clear, flavorful liquid.\nCool and store: Cool the stock completely. It can be stored in the refrigerator for a few days or frozen for longer storage.\nTips for a better stock\nStart with fresh ingredients: Use the freshest ingredients possible for the best flavor.\nDon't overcook: Simmering for too long can make the stock bitter or cloudy.\nClean the bones: For fish stock, it's recommended to wash the bones to remove any dark blood, which can impart a fishy or bitter taste.\nAvoid strong herbs: Steer clear of strong-flavored herbs like rosemary or sage, which can overpower the delicate seafood flavor.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Seafood%20stock-Small.png",
+      "category": "FISH"
+    },
+    {
+      "externalId": "683",
+      "name": "Padron Pepper",
+      "normalizedName": "padron_pepper",
+      "description": "Padrón pepper, also called Herbón pepper, is a landrace variety of pepper (Capsicum annuum) from the municipality of Padrón in northwestern Spain (mainly in the valley of the parish of Herbón).\n\nCharacteristics\nPadrón peppers are small, about 2 inches (5 cm) long and have an elongated shape. They are often picked, sold and eaten unripe, when they are still green. The taste is mild, but some exemplars can be quite hot. This property has given rise to the popular Galician aphorism \"Os pementos de Padrón, uns pican e outros non\" (\"Padrón peppers, some are hot, some are not\"). Drought-stressed plants tend to produce hotter peppers. Like several other peppers, Padrón peppers become spicier as they mature. Their ripe colour is red.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Padron%20peppers-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "684",
+      "name": "Raw Tiger Prawn",
+      "normalizedName": "raw_tiger_prawn",
+      "description": "Raw tiger prawns are a type of large, freshwater or marine crustacean that are sold uncooked, with a sweet flavor and firm texture. They are known for their characteristic stripes, which is where they get their name. These prawns are often sold whole, with the shell and head on, and are versatile in cooking, commonly being grilled, pan-fried, or added to dishes like stir-fries, curries, and paella.\nAppearance: When raw, they are typically blue-grey or translucent.\nFlavor and texture: They have a sweet and slightly nutty flavor with a firm, succulent texture.\nVariations: They can be bought with the head and shell on or peeled and deveined.\nCulinary uses: Raw tiger prawns are a great source of protein and are versatile. They can be marinated, grilled, sautéed, or used in many other cooked dishes.\nPreparation: They should be cooked briefly to prevent the flesh from becoming tough.\nSource: They are farmed or caught wild and are available from various sources.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Raw%20tiger%20prawns-Small.png",
+      "category": "FISH"
+    },
+    {
+      "externalId": "687",
+      "name": "Sherry vinegar",
+      "normalizedName": "sherry_vinegar",
+      "description": "Sherry vinegar is a type of vinegar from Spain, made from sherry wine, and aged in oak barrels. It has a rich, complex flavor with nutty and sweet notes, and its quality varies based on its aging period, with minimums of six months for basic vinagre de Jerez, two years for Reserva, and ten years for Gran Reserva. It is used in Spanish and other cuisines for dressings, sauces, and marinades.\nProduction and characteristics\nOrigin: It is produced in the \"sherry triangle\" region of the Spanish province of Cádiz.\nIngredients: It is made from sherry wine, primarily from the Palomino grape, but also from sweeter varieties like Pedro Ximénez or Moscatel.\nAging: The vinegar is aged in American oak barrels using a solera system, where older and younger vinegars are blended.\nFlavor and color: It has a pale-golden to dark amber color and a complex, nutty, and slightly sweet flavor profile.\nRegulation: Authentic sherry vinegar is protected by a Protected Designation of Origin (PDO) that regulates its production and aging process.\nGrades of sherry vinegar\nVinagre de Jerez: Minimum of six months aging in wood.\nReserva: Minimum of two years aging in wood.\nGran Reserva: Minimum of ten years aging in wood.\nCulinary uses\nSalad dressings: It is a popular base for vinaigrettes.\nSauces: It adds a tangy and complex flavor to sauces like romesco and salsa verde.\nMarinades: It can be used to marinate meats or vegetables.\nFinishing touch: Just a few drops can brighten the flavor of a finished dish.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Sherry%20vinegar-Small.png",
+      "category": "CONDIMENTS"
+    },
+    {
+      "externalId": "689",
+      "name": "Pork Belly Slice",
+      "normalizedName": "pork_belly_slice",
+      "description": "Pork belly slices are cuts of pork from the belly, which are known for being fatty, rich, and flavorful. They are popular in many cuisines, like Korean barbecue, and can be prepared in various ways, such as grilling, frying, slow-roasting, or air-frying, often to achieve crispy crackling on the outside and tender meat on the inside. The slices are essentially the same cut of meat used for bacon, but are uncured and unsmoked.\nWhat they are\nCut: Slices taken from the underside of the pig, which contains a high amount of fat and meat.\nCharacteristics: Rich in flavor, succulent, and can become very crispy when cooked properly.\nFlavor Profile: Very rich and \"porky\".\nHow they are cooked\nGrilling/Pan-frying: Often cooked to render the fat and create a crispy exterior.\nSlow-roasting: Can be slow-roasted to tenderize the meat, leaving it stringy and flavorful.\nAir-frying: Can be cooked in an air fryer to achieve crispy results.\nBraising: Can be braised with other ingredients for a rich, tender dish.\nServing suggestions\nAppetizer or main course: Serve on their own, or with side dishes like arugula salad, steamed asparagus, or sautéed spinach.\nWith breakfast/brunch: Pair with eggs, fresh berries, or keto biscuits.\nIn dishes: Used in recipes like Chinese, Korean, or Philippine dishes.\nToppings: Can be used in sandwiches, like with mustard and greens.\nAccompaniments: Often served with wrap vegetables like lettuce and perilla leaves, along with a dipping sauce in Korean barbecue.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Pork%20belly%20slices-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "690",
+      "name": "Bacon lardon",
+      "normalizedName": "bacon_lardon",
+      "description": "A bacon lardon is a small cube or strip of fatty bacon used to add flavor and richness to savory dishes, originating from French cuisine. Lardons are typically made from pork belly and are cut from a thick slab of bacon, though they can be made from any thick-cut, fatty bacon.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Bacon%20lardon-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "697",
+      "name": "White bread",
+      "normalizedName": "white_bread",
+      "description": "White bread is a soft, light-colored bread made from refined wheat flour, which has had the bran and germ removed. This refining process, which leaves only the starchy endosperm, results in a bread that is popular for its soft texture but is lower in fiber and nutrients compared to whole wheat bread.\nIngredients: White bread is typically made from wheat flour, water, salt, and yeast. The flour is \"refined\" by removing the outer bran and inner germ layers.\nProcessing: The removal of the bran and germ, which contain most of the fiber, vitamins, and minerals, gives white bread its characteristic light color and soft texture.\nNutritional differences: This refining process means white bread retains less natural fiber, vitamins, and minerals than whole wheat bread, which is made from the entire wheat grain. Some nutrients may be added back through enrichment, but it still lacks the fiber of whole grain options.\nUses: Its soft texture makes it a popular choice for sandwiches and toast.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/White%20bread-Small.png",
+      "category": "GRAINS"
+    },
+    {
+      "externalId": "702",
+      "name": "Beef tomatoes",
+      "normalizedName": "beef_tomatoes",
+      "description": "Beef tomatoes, also known as beefsteak tomatoes, are large, meaty tomatoes prized for their robust flavor and texture, making them ideal for sandwiches, salads, and cooking.\nCharacteristics of Beef Tomatoes\nSize and Shape: Beef tomatoes are among the largest varieties of cultivated tomatoes, often measuring up to 20 cm (7.9 inches) in diameter and weighing over 450 grams (1 lb). They typically have a kidney-like shape, with a smooth and glossy skin.\n2\nTexture and Flavor: These tomatoes are known for their dense, fleshy pulp and high water content, which gives them a juicy and succulent texture. They have a rich, tangy flavor that is less acidic than many other tomato varieties, making them a favorite for fresh consumption.\n2\nColor: Beef tomatoes are usually pink or red, but they can also be found in yellow, orange, and even purple varieties.\n2\n\n4 Sources\nCulinary Uses\nVersatility: Beef tomatoes are incredibly versatile and can be used in a variety of dishes. They are commonly enjoyed in salads, sandwiches, and burgers due to their ability to hold their shape when sliced.\n2\nCooking: Their thick flesh makes them suitable for grilling, roasting, and baking, as they do not easily fall apart during cooking.\n2\nPopular Dishes: They are often used in classic dishes like BLTs (bacon, lettuce, and tomato sandwiches) and Caprese salads, where their size and flavor can shine.\n2\n\n3 Sources\nGrowing Beef Tomatoes\nCultivation: Beef tomatoes are typically grown in home gardens and are popular among gardeners due to their size and flavor. They are indeterminate varieties, meaning they continue to grow and produce fruit throughout the growing season.\n2\nCare: These tomatoes require adequate sunlight, water, and support as they can grow quite tall. They are slower to mature compared to other tomato varieties, often taking up to 90 days to produce ripe fruit.\n1\n\nIn summary, beef tomatoes are a large, flavorful variety of tomato that is highly valued in culinary applications for their texture and taste. They are a staple in many kitchens and gardens, appreciated for their versatility and robust flavor.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Beef%20tomatoes-Small.png",
+      "category": "MEAT"
+    },
+    {
+      "externalId": "712",
+      "name": "Ground Coriander",
+      "normalizedName": "ground_coriander",
+      "description": "Ground coriander is the powdered form of the dried, mature seed of the coriander plant, which is also the source of the fresh herb cilantro. It has a warm, nutty, and slightly citrusy flavor that is different from the fresh leaves. This versatile spice is a staple in many cuisines, including Indian, Mexican, and Middle Eastern, and is used in dishes like curries, stews, and spice blends.\nFlavor profile: The flavor is warm, earthy, and slightly sweet with a hint of citrus. Roasting the seeds before grinding can intensify its flavor.\nCulinary uses: It can be added to a wide variety of savory dishes like curries, soups, and stews, as well as to roasted vegetables, meats, and legumes. It can also be used in sweet applications like baked goods and breads.\nCuisine staple: Ground coriander is a key ingredient in many spice blends, such as garam masala, ras el hanout, and various curry powders. It is particularly important in Indian and Middle Eastern cooking.\nVersatility: It is considered a very versatile spice, often paired with other spices like cumin. It is a great foundational spice for beginner cooks to have on hand.\nFrom plant to powder: The term \"coriander\" can refer to both the seeds and the leaves of the plant, which is known as cilantro. The ground version is made from the seeds, while the fresh leaves are used separately as an herb.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Ground%20Coriander-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "715",
+      "name": "Birds-eye Chillies",
+      "normalizedName": "birdseye_chillies",
+      "description": "Bird's eye chilies are small, very hot peppers, measuring around 50,000 to 100,000 Scoville Heat Units (SHU). They are a staple in many Southeast Asian cuisines like Thai and are also known as Prik Kee Noo. They can be used fresh, dried, or ground into a powder and are named for their small, pointed shape and because birds are known to disperse their seeds.\nKey characteristics\nHeat level: They are significantly hotter than a jalapeño but not as hot as a habanero.\nShape and color: The plant produces small, thin, pointed peppers that are green when unripe and turn red when ripe.\nOrigin: They are commonly found in Southeast Asian countries like Thailand, Laos, and Vietnam, though other varieties may originate from places like Africa.\nFlavor: They provide a fruity and peppery taste with a punch of heat.\nCulinary uses: They are used to add spice to a wide variety of dishes, including curries, sauces, and stir-fries. They can also be used as a garnish or a condiment, often dried and ground into a powder.\nHow they are used\nIn cooking: Thinly sliced and added to curries, stir-fries, and sauces.\nAs a condiment: Dried and ground into a powder that can be placed on the table for diners to add to their food.\nAs a garnish: Sliced fresh and sprinkled over salads.\nIn drinks: Used to add a spicy kick to cocktails.\nStorage\nFresh: Store in the refrigerator's crisper drawer for up to two weeks. Do not rinse until ready to use to prevent decay.\nDried: Properly canned or dried chilies can last at room temperature for up to a year.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Birds-eye%20Chillies-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "723",
+      "name": "Ground Nut Oil",
+      "normalizedName": "ground_nut_oil",
+      "description": "Groundnut oil is a vegetable oil made from pressing peanuts, also known as peanut oil or arachis oil. It is a popular cooking oil, particularly for frying, due to its high smoke point and ability to withstand high temperatures. The flavor can range from mild and neutral to a stronger nutty taste depending on whether the peanuts were roasted",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Ground%20Nut%20Oil-Small.png",
+      "category": "NUTS"
+    },
+    {
+      "externalId": "758",
+      "name": "Soda Water",
+      "normalizedName": "soda_water",
+      "description": "Soda water is plain water that has been infused with carbon dioxide gas to create bubbles and may also contain added minerals like sodium bicarbonate to give it a slightly salty taste. It is a versatile ingredient used in cocktails, as a mixer, and as a healthier alternative to sugary drinks, and can even be used in some cooking applications",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Soda%20Water-Small.png",
+      "category": "BEVERAGES"
+    },
+    {
+      "externalId": "759",
+      "name": "Purple Sprouting Broccoli",
+      "normalizedName": "purple_sprouting_broccoli",
+      "description": "Purple sprouting broccoli is a variety of broccoli with a deep purple color and a sweet, nutty flavor that turns green when cooked. It features tender stems and leaves that are all edible, and unlike regular broccoli, it produces multiple slender spears over a long harvest period. This \"cut-and-come-again\" vegetable is rich in nutrients and can be prepared in various ways, including steaming, stir-frying, roasting, or boiling.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Purple%20Sprouting%20Broccoli-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "783",
+      "name": "Romano Pepper",
+      "normalizedName": "romano_pepper",
+      "description": "Romano peppers are a type of sweet, long, and tapering pepper that looks similar to a large chili but has a mild, sweet flavor like a bell pepper. They have a thin skin, which makes them ideal for roasting, and are very versatile, used raw in salads or as crudités, or cooked in stir-fries, sauces, and stews.\nKey characteristics\nAppearance: Long, slender, and pointed, often with a glossy red finish when ripe.\nFlavor: Sweet and mild, not spicy, with a flavor profile closer to bell peppers than to chili peppers.\nTexture: Crisp and juicy when raw, becoming soft and tender when cooked.\nSkin: Thin and smooth.\nCulinary uses\nRaw: Slice into strips for salads, wraps, or sandwiches, or serve as crudités with dips.\nRoasted: Roasting brings out their natural sweetness and can give them a smoky flavor. They can be roasted whole or in strips.\nStuffed: The long shape is well-suited for stuffing with ingredients like rice, couscous, or cheese.\nCooked: They are great for adding to stir-fries, soups, sauces, and stews.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Romano%20Pepper-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "785",
+      "name": "Red Pepper Paste",
+      "normalizedName": "red_pepper_paste",
+      "description": "Red pepper paste is a condiment made from cooked and dehydrated red peppers, often a fundamental ingredient in cuisines like Turkish, Armenian, and Portuguese. It can be sweet or spicy, depending on the type of peppers used, and its consistency is similar to tomato paste. It adds depth and a rich color to dishes such as stews, sauces, marinades, and dips like muhammara.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Red%20Pepper%20Paste-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "787",
+      "name": "Pul Biber",
+      "normalizedName": "pul_biber",
+      "description": "Aleppo Chilli Flakes | Pul Biber - Agora MarketPul biber is a coarsely ground chili pepper, also known as Aleppo pepper, with a mild, fruity heat and a slightly tangy, cumin-like flavor. It is a popular condiment in Turkish and Syrian cuisine, named after the city of Aleppo, and is used to add warmth and depth to dishes like kebabs, salads, and stews.\nWhat it is\nType: A semi-dried, coarsely ground, rust-red pepper.\nFlavor: Mild heat with a fruity, tangy flavor and subtle cumin undertones.\nOrigin: Primarily grown in Syria and Turkey.\nHow to use it\nSprinkle over dishes like doner kebabs, roasted meats, vegetables, and eggs.\nIncorporate into marinades for grilled meats, fish, or chicken.\nAdd to soups, stews, dips (like yogurt or sour cream), and dressings.\nUse as a finishing touch for dishes like hummus or rice.\nSubstitutes\nIf you can't find pul biber, you can substitute it with ancho chili or a combination of sweet paprika and cayenne pepper.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Pul%20Biber-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "827",
+      "name": "Poppy Seed",
+      "normalizedName": "poppy_seed",
+      "description": "Poppy seeds are tiny, kidney-shaped oilseeds from the Papaver somniferum poppy plant, used whole or ground in cooking for thousands of years, especially in Central Europe and South Asia. They are also pressed to create poppyseed oil. While Papaver somniferum is also the source of opium for the pharmaceutical industry, many varieties have been specifically bred to be low in opium content, making the seeds safe for culinary use.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Poppy%20Seeds-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "835",
+      "name": "Unsweetened Cocoa",
+      "normalizedName": "unsweetened_cocoa",
+      "description": "Unsweetened cocoa powder is made from dried cocoa bean solids with the cocoa butter removed and no sugar or other ingredients added. It has a naturally bitter, intense chocolate flavor and is a common baking ingredient, though it is not typically eaten on its own and needs a sweetener to be palatable. It's available in two main types: natural, which is more acidic and lighter in color, and Dutch-processed, which is treated to be milder and darker.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Unsweetened%20Cocoa-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "869",
+      "name": "Russet Potato",
+      "normalizedName": "russet_potato",
+      "description": "A russet potato is a large, starchy potato with a rough, dark brown skin and white, mealy flesh that is ideal for baking, mashing, and frying. Also known as an Idaho potato, it is a versatile all-purpose potato with a thick skin that crisps up when baked and an interior that becomes light and fluffy.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Russet%20Potato-Small.png",
+      "category": "PRODUCE"
+    },
+    {
+      "externalId": "870",
+      "name": "All-purpose Seasoning",
+      "normalizedName": "allpurpose_seasoning",
+      "description": "All-purpose seasoning is a versatile blend of herbs and spices designed to enhance the flavor of a wide variety of dishes, from meats and vegetables to soups and sauces. Common ingredients often include salt, pepper, garlic powder, onion powder, and paprika, though the specific components vary by brand and recipe. It's a convenient way to add a savory base flavor without needing to measure out many individual spices.\nCommon ingredients\nSalt\nBlack pepper\nGarlic powder\nOnion powder\nPaprika\nOther spices may include sugar, mustard powder, cumin, celery powder, and chili.\nHow to use it\nAs a rub: Sprinkle on meat, poultry, or fish before cooking.\nFor vegetables: Toss with vegetables before roasting or sautéing.\nIn sauces and stews: Stir into sauces, soups, or stews to boost their flavor.\nWith potatoes: Use on roasted potatoes or french fries.\nOn grains: Sprinkle on rice or other grains for added flavor.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/All-purpose%20Seasoning-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "880",
+      "name": "Jamaican Curry Powder",
+      "normalizedName": "jamaican_curry_powder",
+      "description": "Jamaican curry powder is a distinct spice blend with a warm, earthy flavor and a vibrant yellow color, rich in turmeric, and featuring ingredients like allspice, cumin, coriander, and fenugreek. It differs from other curry powders by incorporating Jamaican allspice (pimento) and often contains other spices like cloves, cinnamon, and ginger for a balanced taste that is bold but not necessarily very hot.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Jamaican%20Curry%20Powder-Small.png",
+      "category": "SPICES"
+    },
+    {
+      "externalId": "903",
+      "name": "Egg Roll Wrapper",
+      "normalizedName": "egg_roll_wrapper",
+      "description": "Egg roll wrappers are thick, doughy wrappers made from wheat flour and eggs, designed to be deep-fried until golden, crispy, and chewy. They are distinct from the thinner wrappers used for spring rolls and are typically found in the refrigerated or frozen sections of grocery stores. Their main ingredients are flour, water, and eggs, along with salt and other additives for preservation.\nCharacteristics and ingredients\nThick and chewy: Unlike the delicate skin of spring rolls, egg roll wrappers are noticeably thicker and have a chewier texture once cooked.\nPebbled texture: They often have a slightly rough or \"pebbly\" surface.\nKey ingredients: The primary components are wheat flour, water, and eggs. Some variations may include other ingredients like salt, starches, or preservatives.\nPreparation: They are usually fried, which causes them to blister and become crispy, but they can also be steamed.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Egg%20Roll%20Wrappers-Small.png",
+      "category": "DAIRY"
+    },
+    {
+      "externalId": "904",
+      "name": "Plum Sauce",
+      "normalizedName": "plum_sauce",
+      "description": "Plum sauce is a sweet and sour condiment, traditionally used in Cantonese cuisine, made from plums, sugar, vinegar, and spices like ginger and chili. It is a versatile sauce used as a dip for fried foods, a glaze for roasted meats, or a sauce for stir-fries.\nWhat it is\nFlavor Profile: It has a complex, sweet, and tangy flavor that balances the palate.\nIngredients: The core ingredients are sweet plums, sugar, vinegar, and salt. Recipes often add ginger, chili peppers, and other spices or fruits like apple, peach, or apricot.\nAppearance: It is a viscous, light-brown sauce.\nHow it's used\nDipping Sauce: It's a classic dip for fried dishes like spring rolls, egg rolls, and deep-fried chicken balls.\nGlaze or Basting Sauce: It can be used to coat and flavor roasted meats such as duck, pork, or chicken.\nStir-fry Sauce: It can be an ingredient in stir-fries or other cooked dishes.\nOther Uses: It can also be drizzled over noodles, rice, or used as a dressing for salads.\nWhat it's not\nNot Hoisin Sauce: Plum sauce is not the same as hoisin sauce. Hoisin is much darker, more savory, and has a fermented soybean base, whereas plum sauce is lighter in color and fruitier.",
+      "imageUrl": "https://www.themealdb.com/images/ingredients/Plum%20Sauce-Small.png",
+      "category": "CONDIMENTS"
+    }
+  ]
+}

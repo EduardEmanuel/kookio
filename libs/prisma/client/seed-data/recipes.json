@@ -1,0 +1,3902 @@
+{
+  "fetchedAt": "2026-04-17T16:37:07.340Z",
+  "source": "https://www.themealdb.com",
+  "totalFetched": 54,
+  "totalSkipped": 0,
+  "recipes": [
+    {
+      "externalId": "53262",
+      "slug": "53262",
+      "title": "Adana kebab",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/04axct1763793018.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=Wj7sXu9B_ME",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/adana-kebab",
+      "instructions": "step 1\nFinely chop the peppers in a food processor, then tip them in a sieve and press into the sieve so that the peppers release all of their juices. Tip into a bowl along with the mince, red pepper paste, pul biber, 1½ tsp flaky sea salt, and 2 tbsp of the oil. Mix together, kneading well for at least 2-3 mins. If you need to, wet your hands with cold water to prevent the mixture from sticking. The mixture should be sticky when ready. Cover and chill for at least 2 hrs, or up to 12 hrs.\n\nstep 2\nWhen ready to cook, heat the grill to high or an oven to 220C/200C fan/gas 6. Divide the mixture into 12 equal portions, around 85g each. If you’d like to skewer them, divide into 8 equal portions and roll into balls. Using wet hands, thread the balls onto the end of the skewers, massaging the mixture down the skewers in between the palms of your hands, until evenly distributed. Ensure that the mixture is fully wrapped tightly around the skewers without any exposed metal. Alternatively, lay them on a large baking tray lined with parchment paper if cooking in the oven, or foil if cooking under the grill. Shape into 20cm-long köfte. Wet your fingers with a little cold water and make indents all along the köfte for the traditional shape.\n\nstep 3\nGently brush each köfte with the remaining 1 tbsp oil and cook under the grill, on the top shelf for 10-12 mins, turning regularly, or cook in the oven for 16-18 mins, until crispy on the outside and juicy in the middle",
+      "categoryExternalId": "Lamb",
+      "areaExternalId": "Turkish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "romano_pepper",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "large"
+        },
+        {
+          "ingredientNormalizedName": "lamb_mince",
+          "quantity": 800,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "red_pepper_paste",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "pul_biber",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sunflower_oil",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52974",
+      "slug": "52974",
+      "title": "Keleya Zaara",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/8x09hy1560460923.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=u_OSIChzuL0",
+      "sourceUrl": "http://allrecipes.co.uk/recipe/43723/keleya-zaara-tunisian-lamb-with-saffron.aspx",
+      "instructions": "Heat the vegetable oil in a large frying pan over medium-high heat. Add the lamb and cook until browned on all sides, about 5 minutes. Season with saffron, salt and pepper to taste; stir in all but 4 tablespoons of the onion, and pour in the water. Bring to the boil, then cover, reduce heat to medium-low, and simmer until the lamb is tender, about 15 minutes.\nUncover the pan, stir in the butter and allow the sauce reduce 5 to 10 minutes to desired consistency. Season to taste with salt and pepper, then pour into a serving dish. Sprinkle with the remaining chopped onions and parsley. Garnish with lemon wedges to serve.",
+      "categoryExternalId": "Lamb",
+      "areaExternalId": "Tunisian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 4,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lamb",
+          "quantity": 750,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "saffron",
+          "quantity": 1,
+          "unit": null,
+          "notes": "1/2 tsp"
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "large Chopped"
+        },
+        {
+          "ingredientNormalizedName": "water",
+          "quantity": 25,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": 30,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lemon",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52808",
+      "slug": "52808",
+      "title": "Lamb Rogan josh",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/vvstvq1487342592.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=NZVo32n7iS8",
+      "sourceUrl": "http://www.bbcgoodfood.com/recipes/9643/onepan-rogan-josh",
+      "instructions": "Put the onions in a food processor and whizz until very finely chopped. Heat the oil in a large heavy-based pan, then fry the onion with the lid on, stirring every now and then, until it is really golden and soft. Add the garlic and ginger, then fry for 5 mins more.\nTip the curry paste, all the spices and the bay leaves into the pan, with the tomato purée. Stir well over the heat for about 30 secs, then add the meat and 300ml water. Stir to mix, turn down the heat, then add the yogurt.\nCover the pan, then gently simmer for 40-60 mins until the meat is tender and the sauce nice and thick. Serve scattered with coriander, with plain basmati or pilau rice.",
+      "categoryExternalId": "Lamb",
+      "areaExternalId": "Indian",
+      "tags": [
+        {
+          "tag": "curry"
+        },
+        {
+          "tag": "spicy"
+        },
+        {
+          "tag": "alcoholic"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "quartered"
+        },
+        {
+          "ingredientNormalizedName": "sunflower_oil",
+          "quantity": 4,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 4,
+          "unit": "CLOVE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ginger",
+          "quantity": null,
+          "unit": null,
+          "notes": "Thumb sized peeled and very finely grated"
+        },
+        {
+          "ingredientNormalizedName": "madras_paste",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "paprika",
+          "quantity": 2,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cinnamon_stick",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cardamom",
+          "quantity": 6,
+          "unit": "OTHER",
+          "notes": "bashed to break shells"
+        },
+        {
+          "ingredientNormalizedName": "cloves",
+          "quantity": 4,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bay_leaf",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tomato_puree",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lamb",
+          "quantity": 1,
+          "unit": "KG",
+          "notes": "cubed"
+        },
+        {
+          "ingredientNormalizedName": "greek_yogurt",
+          "quantity": 150,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "coriander",
+          "quantity": null,
+          "unit": null,
+          "notes": "Garnish chopped"
+        }
+      ]
+    },
+    {
+      "externalId": "53260",
+      "slug": "53260",
+      "title": "Slow-roast lamb with cinnamon, fennel & citrus",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/gr4lo51763791826.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=4_mbvxabtJc",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/slow-roast-lamb-cinnamon-fennel-citrus",
+      "instructions": "step 1\nPut the lamb into a large food bag with all the juice and marinate overnight.\n\nstep 2\nThe next day, take the lamb out of the fridge 1 hr before you want to cook it. Heat oven to 220C/200C fan/gas 7. Take the lamb out of the marinade (reserve remaining marinade) and pat dry. Rub with half the oil and roast for 15-20 mins until browned. Remove lamb and reduce oven to 160C/140C fan/gas 3.\n\nstep 3\nMix the zests, remaining oil, honey, spices and garlic with plenty of seasoning. Lay a large sheet of baking parchment on a large sheet of foil. Sit the lamb leg on top, rub all over with the paste and pull up the sides of the foil. Drizzle marinade into base, and scrunch foil to seal.\n\nstep 4\nRoast for 4 hrs, until very tender. Rest, still wrapped, for 30 mins. Unwrap and serve with juices.",
+      "categoryExternalId": "Lamb",
+      "areaExternalId": "Turkish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "lamb_leg",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lemon",
+          "quantity": null,
+          "unit": null,
+          "notes": "Zest and juice of 1"
+        },
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 4,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "clear_honey",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cinnamon",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "fennel_seeds",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ground_cumin",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 3,
+          "unit": "CLOVE",
+          "notes": "Crushed"
+        }
+      ]
+    },
+    {
+      "externalId": "53373",
+      "slug": "53373",
+      "title": "Air Fryer Egg Rolls",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/grhn401765687086.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=XnA-wcVb4l0",
+      "sourceUrl": "https://www.simplyrecipes.com/recipes/air_fryer_chinese_egg_rolls/",
+      "instructions": "Alternative Pan Fry Method: If you don’t have access to an air fryer, you can make these egg rolls using a traditional pan fry method. Add enough oil to a medium skillet with high walls so the oil is about 1/2 inch up the side of the skillet. Heat oil on medium high heat until it reaches 350°F. Add egg rolls and fry for 3 to 4 minutes, flip, and fry for another 3 to 4 minutes until golden brown. Remove and let them drain and cool on a few paper towels.\n\nCook the filling:\nIn a large skillet over medium heat, add the olive oil along with the ground pork or chicken. Break apart the meat with a spatula or wooden spoon as it cooks. Cook until the meat is cooked through, 6 to 8 minutes.\n\nAdd garlic, ginger, carrot, scallions, and cabbage. Continue to cook until cabbage wilts down and is soft, another 3 to 4 minutes, stirring regularly. Season the filling with soy sauce and rice wine vinegar, and take off the heat to cool. (This filling can be made in advance.)\n\nAssemble the egg rolls:\nPlace a single egg roll wrapper on a dry surface with one point of the square facing you (like a diamond). Place about 1/4 cup of the egg roll filling mixture in the middle of the wrapper.\n\nDip your fingers in water and run around the edges of the wrapper. Then fold the edges of the wrapper over the center and start rolling the egg roll away from you to form a tight cylinder. Place on a plate and repeat until you are out of filling. You should get at least a dozen egg rolls.\n\nAir fry the egg rolls:\nPlace the egg rolls in the basket of your air fryer. Spray or brush them lightly with oil. Add as many as you can without stacking the egg rolls, making sure they don’t touch. Air needs to circulate around them. Brush the egg rolls lightly with oil.\n\nPlace the basket in the air fryer and turn the air fryer to 350°F. Cook for 6 to 7 minutes, then flip the egg rolls, spray or brush with oil a second time on the bottom side, and cook for another 4 to 5 minutes.\n\nFinished egg rolls should be golden brown and crispy! Serve immediately.",
+      "categoryExternalId": "Side",
+      "areaExternalId": "Chinese",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ground_pork",
+          "quantity": 1,
+          "unit": "LB",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 1,
+          "unit": "CLOVE",
+          "notes": "peeled crushed"
+        },
+        {
+          "ingredientNormalizedName": "ginger",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "carrots",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "medium"
+        },
+        {
+          "ingredientNormalizedName": "scallions",
+          "quantity": 3,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "cabbage",
+          "quantity": 3,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "soy_sauce",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "rice_vinegar",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "egg_roll_wrappers",
+          "quantity": 12,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "oil",
+          "quantity": null,
+          "unit": null,
+          "notes": "For brushing"
+        },
+        {
+          "ingredientNormalizedName": "duck_sauce",
+          "quantity": null,
+          "unit": "TO_SERVE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "plum_sauce",
+          "quantity": null,
+          "unit": "TO_SERVE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "soy_sauce",
+          "quantity": null,
+          "unit": "TO_SERVE",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53310",
+      "slug": "53310",
+      "title": "Challah",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/fm01ky1764366365.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=RAYv3n4q-Wc",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/challah",
+      "instructions": "step 1\nCombine the yeast, a pinch of the sugar and a couple tablespoons of lukewarm water in a small bowl. Stir to dissolve the yeast, then leave for 10 mins until foamy.\n\nstep 2\nMeanwhile, combine the flour, the remaining sugar and 2 tsp fine salt in a large bowl. Make a well in the centre, then add half the beaten egg, the yeast mixture and the oil. Pour in 200ml lukewarm water (it should feel slightly warm to the touch) and stir with a spoon, then mix using one hand, keeping the other clean while you bring the dough together. If there are a lot of very dry bits, gradually add a little water to just bring it together – you don't want it to get too wet and sticky. The dough should be moist, but not soggy.\n\nstep 3\nOnce the dough has come together, turn it out onto a lightly floured surface. Knead using both hands for 10 mins until smooth and a bit springy. If it gets very sticky, add a very small amount of flour – as little as possible. A dough scraper is useful if the dough is sticking to the work surface. Stretch the sides of the dough down and pull together to form a ball. Lightly oil a bowl, then lightly roll the dough ball around the bowl so it's coated in the oil. Cover with a clean tea towel and leave in a warm place for 1 hr, or until dough has doubled in size.\n\nstep 4\nLine a baking sheet with baking parchment. Turn the dough out onto a clean work surface and divide into three equal pieces, weighing for accuracy, if you like. Roll each piece into a long sausage shape about 25cm long, tapering them slightly at both ends. Lay the pieces out in front of you, parallel to one another with a couple centimetres between each. Bring the sausages together at the top end, then plait them down the length, tucking in the ends when you reach the bottom. Carefully transfer the loaf to the prepared baking sheet and loosely cover with a clean tea towel. Leave to rise until puffy and billowy, about 40 mins.\n\nstep 5\nMeanwhile, heat the oven to 200C/180C fan/gas 6. Gently brush the rest of the beaten egg all over the challah, getting it into all the crevices, and sprinkle with the poppy or sesame seeds, if using. Bake on a middle shelf of the oven for 25-30 mins, until the loaf is golden brown underneath and sounds hollow when tapped. Check after about 15 mins – if the top of the loaf has started to get too dark, cover it with foil. Leave to cool on a wire rack, then serve.",
+      "categoryExternalId": "Side",
+      "areaExternalId": "Polish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "strong_white_bread_flour",
+          "quantity": 500,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "caster_sugar",
+          "quantity": 70,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "yeast",
+          "quantity": 10,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "egg",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "beaten"
+        },
+        {
+          "ingredientNormalizedName": "sunflower_oil",
+          "quantity": 70,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "poppy_seeds",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53353",
+      "slug": "53353",
+      "title": "Jamaican Boiled Dumplings",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/tsdbcq1764795636.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=RhUxdkYIHPY",
+      "sourceUrl": "https://www.myforkinglife.com/jamaican-boiled-dumplings/#recipe",
+      "instructions": "Instructions\n\nIn a large pot, bring water and salt to a boil to boil the dumplings.\nIn a large mixing bowl, combine the all-purpose flour and salt, stirring to distribute the salt evenly throughout the flour. Gradually add water to the flour mixture, mixing with your hands until a dough forms.\nDivide the dough into equal-sized pieces, rolling each into a smooth ball. Flatten each ball slightly with the palm of your hand to form a round, circular dumpling. It should look like a thick disk.\nCarefully drop the dumplings into the boiling water, one at a time, ensuring that they don't stick together. You can use a wooden spoon to stir the dumplings in the water.\nBoil the dumplings for 15-20 minutes, or until they are cooked through and have risen to the surface of the water. Stir occasionally to prevent sticking.\nUse a slotted spoon to remove the cooked dumplings from the pot, allowing any excess water to drain.\nServe with your favorite recipes.",
+      "categoryExternalId": "Side",
+      "areaExternalId": "Jamaican",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "water",
+          "quantity": 8,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": 0.5,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "all_purpose_flour",
+          "quantity": 2,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "water",
+          "quantity": 0.5,
+          "unit": "CUP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53019",
+      "slug": "53019",
+      "title": "Pierogi (Polish Dumplings)",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/45xxr21593348847.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=lyqDmUroZrI",
+      "sourceUrl": "https://www.allrecipes.com/recipe/109914/pierogi-polish-dumplings/",
+      "instructions": "To prepare the sauerkraut filling, melt the butter in a skillet over medium heat. Stir in the onion, and cook until translucent, about 5 minutes. Add the drained sauerkraut and cook for an additional 5 minutes. Season to taste with salt and pepper, then remove to a plate to cool.\n\nFor the mashed potato filling, melt the butter in a skillet over medium heat. Stir in the onion, and cook until translucent, about 5 minutes. Stir into the mashed potatoes, and season with salt and white pepper.\n\nTo make the dough, beat together the eggs and sour cream until smooth. Sift together the flour, salt, and baking powder; stir into the sour cream mixture until dough comes together. Knead the dough on a lightly floured surface until firm and smooth. Divide the dough in half, then roll out one half to 1/8 inch thickness. Cut into 3 inch rounds using a biscuit cutter.\n\nPlace a small spoonful of the mashed potato filling into the center of each round. Moisten the edges with water, fold over, and press together with a fork to seal. Repeat procedure with the remaining dough and the sauerkraut filling.\n\nBring a large pot of lightly salted water to a boil. Add perogies and cook for 3 to 5 minutes or until pierogi float to the top. Remove with a slotted spoon.",
+      "categoryExternalId": "Side",
+      "areaExternalId": "Polish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chopped_onion",
+          "quantity": 0.3333333333333333,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sauerkraut",
+          "quantity": 1,
+          "unit": null,
+          "notes": "1/2 cups"
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chopped_onion",
+          "quantity": 0.5,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "potatoes",
+          "quantity": 2,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "eggs",
+          "quantity": 3,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sour_cream",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "pot"
+        },
+        {
+          "ingredientNormalizedName": "flour",
+          "quantity": 3,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": 0.25,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "baking_powder",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53158",
+      "slug": "53158",
+      "title": "Air fryer patatas bravas",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/3m8yae1763257951.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=kzLaw6PG2UY",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/air-fryer-patatas-bravas",
+      "instructions": "step 1\nSoak the potatoes in just-boiled water for 30 mins, then drain and leave to air-dry for 5 mins. Heat the air fryer to 200C. Tip the potatoes into a bowl and drizzle over 1 tbsp of the oil and add 1/2 tsp each of salt and freshly ground black pepper. Mix to coat the potatoes all over, then tip into the air fryer basket and cook for 20-30 mins until crisp and golden.\n\nstep 2\nMeanwhile, heat the remaining oil in a small pan over a medium-low heat and fry the onion for 8-10 mins until softened but not golden. Stir in the garlic and cook for a minute before adding the paprika and cooking for 30 seconds more. Stir in the tomato purée, cook for 1 min, then tip in the chopped tomatoes. Cook for 5-10 mins over a medium heat until thickened slightly.\n\nstep 3\nOnce the potatoes are cooked, tip out onto a platter and pour over the tomato sauce. Sprinkle with the basil leaves, then serve.",
+      "categoryExternalId": "Vegetarian",
+      "areaExternalId": "Spanish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "potatoes",
+          "quantity": 900,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 1,
+          "unit": "CLOVE",
+          "notes": "peeled crushed"
+        },
+        {
+          "ingredientNormalizedName": "paprika",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "tblsp"
+        },
+        {
+          "ingredientNormalizedName": "tomato_puree",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "tblsp"
+        },
+        {
+          "ingredientNormalizedName": "tinned_tomatos",
+          "quantity": 225,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "basil_leaves",
+          "quantity": null,
+          "unit": "TO_SERVE",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53266",
+      "slug": "53266",
+      "title": "Falafel",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/u5e9qq1763795441.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=NZcWedPKysk",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/spicy-falafels",
+      "instructions": "step 1\nHeat 1 tbsp oil in a large pan, then fry the onion and garlic over a low heat for 5 mins until softened. Tip into a large mixing bowl with the chickpeas and spices, then mash together with a fork or potato masher until the chickpeas are totally broken down. Stir in the parsley or dried herbs, with seasoning to taste. Add the egg, then squish the mixture together with your hands.\n\nstep 2\nMould the mix into 6 balls, then flatten into patties. Heat the remaining oil in the pan, then fry the falafels on a medium heat for 3 mins on each side, until golden brown and firm. Serve hot or cold with couscous, pitta bread or salad.",
+      "categoryExternalId": "Vegetarian",
+      "areaExternalId": "Turkish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "sunflower_oil",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 1,
+          "unit": "CLOVE",
+          "notes": "peeled crushed"
+        },
+        {
+          "ingredientNormalizedName": "chickpeas",
+          "quantity": 400,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ground_cumin",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ground_coriander",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": null,
+          "unit": null,
+          "notes": "Handful"
+        },
+        {
+          "ingredientNormalizedName": "egg",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "beaten"
+        }
+      ]
+    },
+    {
+      "externalId": "53172",
+      "slug": "53172",
+      "title": "Patatas bravas",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/bvg8sn1763298713.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=2Hup2nypG2w",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/patatas-bravas-0",
+      "instructions": "step 1\nHeat the oil in a pan and fry the onion for about 5 mins until softened. Add the garlic, chopped tomatoes, tomato purée, sweet paprika, chilli powder, sugar and a pinch of salt, then bring to the boil, stirring occasionally. Lower to a simmer and cook for 10 mins until pulpy. Can be kept chilled for up to 24 hrs.\n\nstep 2\nHeat oven to 200C/180C fan/gas 6. Pat the potatoes dry with kitchen paper, then tip into a roasting tin and toss in the olive oil and some seasoning. Roast for 40-50 mins until crisp and golden. Tip the potatoes into serving dishes and spoon over the tomato sauce. Sprinkle with some fresh parsley to serve.",
+      "categoryExternalId": "Vegetarian",
+      "areaExternalId": "Spanish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "small finely diced"
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 2,
+          "unit": "CLOVE",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "tinned_tomatos",
+          "quantity": 225,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tomato_puree",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "paprika",
+          "quantity": 2,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chilli_powder",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sugar",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": null,
+          "unit": null,
+          "notes": "Chopped"
+        },
+        {
+          "ingredientNormalizedName": "potatoes",
+          "quantity": 900,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52849",
+      "slug": "52849",
+      "title": "Spinach & Ricotta Cannelloni",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/wspuvp1511303478.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=rYGaEJjyLQA",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/531632/spinach-and-ricotta-cannelloni",
+      "instructions": "First make the tomato sauce. Heat the oil in a large pan and fry the garlic for 1 min. Add the sugar, vinegar, tomatoes and some seasoning and simmer for 20 mins, stirring occasionally, until thick. Add the basil and divide the sauce between 2 or more shallow ovenproof dishes (see Tips for freezing, below). Set aside. Make a sauce by beating the mascarpone with the milk until smooth, season, then set aside.\n\nPut the spinach in a large colander and pour over a kettle of boiling water to wilt it (you may need to do this in batches). When cool enough to handle squeeze out the excess water. Roughly chop the spinach and mix in a large bowl with 100g Parmesan and ricotta. Season well with salt, pepper and the nutmeg.\n\nHeat oven to 200C/180C fan/gas 6. Using a piping bag or plastic food bag with the corner snipped off, squeeze the filling into the cannelloni tubes. Lay the tubes, side by side, on top of the tomato sauce and spoon over the mascarpone sauce. Top with Parmesan and mozzarella. You can now freeze the cannelloni, uncooked, or you can cook it first and then freeze. Bake for 30-35 mins until golden and bubbling. Remove from oven and let stand for 5 mins before serving.",
+      "categoryExternalId": "Vegetarian",
+      "areaExternalId": "Italian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 8,
+          "unit": "CLOVE",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "caster_sugar",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "red_wine_vinegar",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "tblsp"
+        },
+        {
+          "ingredientNormalizedName": "chopped_tomatoes",
+          "quantity": 3,
+          "unit": null,
+          "notes": "400g Cans"
+        },
+        {
+          "ingredientNormalizedName": "basil_leaves",
+          "quantity": null,
+          "unit": null,
+          "notes": "Bunch"
+        },
+        {
+          "ingredientNormalizedName": "mascarpone",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "tubs"
+        },
+        {
+          "ingredientNormalizedName": "milk",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parmesan",
+          "quantity": 85,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "mozzarella",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "sliced"
+        },
+        {
+          "ingredientNormalizedName": "spinach",
+          "quantity": 1,
+          "unit": "KG",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parmesan",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ricotta",
+          "quantity": 3,
+          "unit": "OTHER",
+          "notes": "tubs"
+        },
+        {
+          "ingredientNormalizedName": "nutmeg",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cannellini_beans",
+          "quantity": 400,
+          "unit": "G",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53169",
+      "slug": "53169",
+      "title": "Ajo blanco",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/5jdtie1763289302.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=AS2mSRtWyW0",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/ajo-blanco",
+      "instructions": "step 1\nTip the bread into a bowl and pour over 350ml water. Leave to soak for 10 mins.\n\nstep 2\nBlend the ingredients together with 350ml water and 1 tsp salt.\n\nstep 3\nLet the soup cool in the fridge for 1 hr or so, then serve with a drizzle of oil and some black pepper.",
+      "categoryExternalId": "Starter",
+      "areaExternalId": "Spanish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "white_bread",
+          "quantity": 150,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "almonds",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "extra_virgin_olive_oil",
+          "quantity": 50,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "garlic_clove",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "red_wine_vinegar",
+          "quantity": 1,
+          "unit": null,
+          "notes": "½ tbsp"
+        }
+      ]
+    },
+    {
+      "externalId": "52842",
+      "slug": "52842",
+      "title": "Broccoli & Stilton soup",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/tvvxpv1511191952.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=_HgVLpmNxTY",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/1940679/broccoli-and-stilton-soup",
+      "instructions": "Heat the rapeseed oil in a large saucepan and then add the onions. Cook on a medium heat until soft. Add a splash of water if the onions start to catch.\n\nAdd the celery, leek, potato and a knob of butter. Stir until melted, then cover with a lid. Allow to sweat for 5 minutes. Remove the lid.\n\nPour in the stock and add any chunky bits of broccoli stalk. Cook for 10 – 15 minutes until all the vegetables are soft.\n\nAdd the rest of the broccoli and cook for a further 5 minutes. Carefully transfer to a blender and blitz until smooth. Stir in the stilton, allowing a few lumps to remain. Season with black pepper and serve.",
+      "categoryExternalId": "Starter",
+      "areaExternalId": "British",
+      "tags": [
+        {
+          "tag": "soup"
+        },
+        {
+          "tag": "cheesy"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "rapeseed_oil",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "tblsp"
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "finely chopped"
+        },
+        {
+          "ingredientNormalizedName": "celery",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "leek",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "sliced"
+        },
+        {
+          "ingredientNormalizedName": "potatoes",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "medium"
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "knob"
+        },
+        {
+          "ingredientNormalizedName": "vegetable_stock",
+          "quantity": 1,
+          "unit": "L",
+          "notes": "hot"
+        },
+        {
+          "ingredientNormalizedName": "broccoli",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "head chopped"
+        },
+        {
+          "ingredientNormalizedName": "stilton_cheese",
+          "quantity": 140,
+          "unit": "G",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52840",
+      "slug": "52840",
+      "title": "Clam chowder",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/rvtvuw1511190488.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=fEN_fm6kX6k",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/clam-chowder",
+      "instructions": "Rinse the clams in several changes of cold water and drain well. Tip the clams into a large pan with 500ml of water. Cover, bring to the boil and simmer for 2 mins until the clams have just opened. Tip the contents of the pan into a colander over a bowl to catch the clam stock. When cool enough to handle, remove the clams from their shells – reserving a handful of empty shells for presentation if you want. Strain the clam stock into a jug, leaving any grit in the bottom of the bowl. You should have around 800ml stock.\nHeat the butter in the same pan and sizzle the bacon for 3-4 mins until it starts to brown. Stir in the onion, thyme and bay and cook everything gently for 10 mins until the onion is soft and golden. Scatter over the flour and stir in to make a sandy paste, cook for 2 mins more, then gradually stir in the clam stock then the milk and the cream.\nThrow in the potatoes, bring everything to a simmer and leave to bubble away gently for 10 mins or until the potatoes are cooked. Use a fork to crush a few of the potato chunks against the side of the pan to help thicken – you still want lots of defined chunks though. Stir through the clam meat and the few clam shells, if you've gone down that route, and simmer for a minute to reheat. Season with plenty of black pepper and a little salt, if needed, then stir through the parsley just before ladling into bowls or hollowed-out crusty rolls.",
+      "categoryExternalId": "Starter",
+      "areaExternalId": "American",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "clams",
+          "quantity": 1,
+          "unit": null,
+          "notes": "½ kg"
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 50,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bacon",
+          "quantity": 150,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "finely chopped"
+        },
+        {
+          "ingredientNormalizedName": "thyme",
+          "quantity": null,
+          "unit": null,
+          "notes": "sprigs of fresh"
+        },
+        {
+          "ingredientNormalizedName": "bay_leaf",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "plain_flour",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "tbls"
+        },
+        {
+          "ingredientNormalizedName": "milk",
+          "quantity": 150,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "double_cream",
+          "quantity": 150,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "potatoes",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "medium"
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": null,
+          "unit": null,
+          "notes": "Chopped"
+        }
+      ]
+    },
+    {
+      "externalId": "52779",
+      "slug": "52779",
+      "title": "Cream Cheese Tart",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/wurrux1468416624.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=UhQPwO4uymo",
+      "sourceUrl": "https://www.instagram.com/p/BHyuMZ1hZX0",
+      "instructions": "Crust: make a dough from 250g flour (I like mixing different flours like plain and wholegrain spelt flour), 125g butter, 1 egg and a pinch of salt, press it into a tart form and place it in the fridge. Filling: stir 300g cream cheese and 100ml milk until smooth, add in 3 eggs, 100g grated parmesan cheese and season with salt, pepper and nutmeg. Take the crust out of the fridge and prick the bottom with a fork. Pour in the filling and bake at 175 degrees C for about 25 minutes. Cover the tart with some aluminium foil after half the time. In the mean time, slice about 350g mini tomatoes. In a small pan heat 3tbsp olive oil, 3tbsp white vinegar, 1 tbsp honey, salt and pepper and combine well. Pour over the tomato slices and mix well. With a spoon, place the tomato slices on the tart, avoiding too much liquid on it. Decorate with basil leaves and enjoy",
+      "categoryExternalId": "Starter",
+      "areaExternalId": "American",
+      "tags": [
+        {
+          "tag": "tart"
+        },
+        {
+          "tag": "savory"
+        },
+        {
+          "tag": "cheesy"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "flour",
+          "quantity": 250,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 125,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "egg",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cheese",
+          "quantity": 300,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "milk",
+          "quantity": 100,
+          "unit": "ML",
+          "notes": "milk"
+        },
+        {
+          "ingredientNormalizedName": "eggs",
+          "quantity": 3,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parmesan_cheese",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "plum_tomatoes",
+          "quantity": 350,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "white_vinegar",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "honey",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "basil",
+          "quantity": null,
+          "unit": null,
+          "notes": "Topping"
+        }
+      ]
+    },
+    {
+      "externalId": "53138",
+      "slug": "53138",
+      "title": "Alfajores",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/a4kgf21763075288.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=9WR40GHpsyo",
+      "sourceUrl": "https://www.munchery.com/blog/the-ten-iconic-dishes-of-argentina-and-how-to-cook-them-at-home/",
+      "instructions": "Make the Dough: Cream butter and sugar. Add egg yolks and lemon zest. Gradually mix in flour and cornstarch to form a dough. Chill for 1 hour.\nBake the Cookies: Roll out the dough, cut into circles, and bake at 180°C (350°F) for 12-15 minutes. Let cool.\nAssemble: Spread dulce de leche on one cookie, then sandwich with another. Roll the edges in coconut flakes.\nPro Tips:\n\nChill the dough before rolling it out to make it easier to handle and to prevent the cookies from spreading too much while baking.\nDip the alfajores in melted chocolate and let them set on a wire rack for an extra decadent treat.",
+      "categoryExternalId": "Dessert",
+      "areaExternalId": "Argentinian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "all_purpose_flour",
+          "quantity": 300,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cornstarch",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sugar",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "egg_yolks",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lemon_zest",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "dulce_de_leche",
+          "quantity": null,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "desiccated_coconut",
+          "quantity": null,
+          "unit": null,
+          "notes": "Sprinkling"
+        }
+      ]
+    },
+    {
+      "externalId": "53324",
+      "slug": "53324",
+      "title": "Chocolate empanadas",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/u9ezi21764375474.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=Cdo14aXSHrA",
+      "sourceUrl": "https://jennyisbaking.com/2020/05/01/chocolate-empanadas-with-dulce-de-leche/",
+      "instructions": "For the filling place the can in a large pot and cover completely with water. Boil for two and a half hours, occassionally adding water. Let cool before opening. For further tips, please check here.\n\n2\nFor the dough combine the flour, cocoa powder, and salt in a large bowl. Add the cold butter in small pieces and rub into crumbs with your fingers Add the egg and work into a dough. You may have to add milk, a tablespoon at a time if it still is to dry. Wrap and chill for at least half an hour or overnight.\n\n3\nLine a baking sheeet with parchment paper and preheat the oven to 180 degrees Celsius.\n\n4\nRoll out the dough on a lightly floured surface, it should be thin. Cut out circles of 12cm either with a cookie cutter or with a smaller plate/dish. Put two to three teaspoons of the dulce de leche in the middle of each circle. Brush the edges with milk, I do this with my pinkie. Fold each circle in half so that you have a half moon and press down the edges with a fork. You can also turn the edges about half a centimeter inwards every centimeter or so to create a pattern.\n\n5\nPlace the prepared empanadas on the baking sheet and brush with egg wash. Bake for about 20-25min.\n\n6\nTowards the end of the baking time, melt the remaining butter and mix the sugar and cinnamon in a small bowl. Once you take the empanadas out, immediately brush with the butter and sprinkle with the sugar mix. Empanadas can be enjoyed either still warm or cold. If eating warm, be careful not to burn yourself with hot filling!",
+      "categoryExternalId": "Dessert",
+      "areaExternalId": "Uruguayan",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "condensed_milk",
+          "quantity": 400,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "all_purpose_flour",
+          "quantity": 250,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "unsweetened_cocoa",
+          "quantity": 25,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 125,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "egg",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "milk",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 30,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sugar",
+          "quantity": 30,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cinnamon",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53351",
+      "slug": "53351",
+      "title": "Jamaican Banana Fritters",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/ul2uy31764794321.jpg",
+      "youtubeUrl": "https://www.youtube.com/shorts/I3wZ04FgW0I",
+      "sourceUrl": "https://www.myforkinglife.com/banana-fritters/#recipe",
+      "instructions": "Mash bananas with fork in bowl.\nAdd brown sugar, vanilla, extract, cinnamon, nutmeg and a pinch of salt. Sift in flour and stir with spoon until fully combined.\nAdd oil to a 10 inch skillet over medium-high heat. Once oil is hot, drop banana fritter batter in oil by the spoonful. Once one side is golden and bubbles appear on the top, flip fritter and cook until the other side is browned as well.\nRemove fritters and drain on paper towels. Enjoy",
+      "categoryExternalId": "Dessert",
+      "areaExternalId": "Jamaican",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "banana",
+          "quantity": 3,
+          "unit": "OTHER",
+          "notes": "medium"
+        },
+        {
+          "ingredientNormalizedName": "vanilla_extract",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cinnamon",
+          "quantity": 0.5,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "nutmeg",
+          "quantity": 0.25,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "brown_sugar",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "all_purpose_flour",
+          "quantity": 1,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "oil",
+          "quantity": null,
+          "unit": null,
+          "notes": "For frying"
+        }
+      ]
+    },
+    {
+      "externalId": "53046",
+      "slug": "53046",
+      "title": "Portuguese custard tarts",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/vmz7gl1614350221.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=lWLCxui1Mw8",
+      "sourceUrl": "https://www.olivemagazine.com/recipes/baking-and-desserts/portuguese-custard-tarts/",
+      "instructions": "STEP 1\nRoll the pastry\nMix the flour and icing sugar, and use this to dust the work surface. Roll the pastry out to make a 45 x 30cm rectangle. Roll up lengthways to create a long sausage shape.\n\nSTEP 2\nCutting pastry into rounds\nCut the pastry into 24 wheels, about 1-2cm thick.\n\nSTEP 3\nRoll out each pastry portion\nRoll each wheel lightly with the rolling pin to fit 2 x 12-hole non-stick fairy cake tins.\n\nSTEP 4\nPress pastry into the tin\nPress the pastry circles into the tins and mould into the tins to make thin cases. Chill until needed.\n\nSTEP 5\nMake the infused syrup\nHeat the oven to 220C/fan 200C/gas 7. Make a sugar syrup by bringing the sugar, 200ml water, lemon zest and cinnamon stick to the boil. Reduce until syrupy, allow to cool, then remove the cinnamon and lemon. Whisk the eggs, egg yolks and cornflour until smooth in another large pan.\n\nSTEP 6\nMaking custard\nHeat the milk and vanilla pod seeds in a separate pan until just below the boil. Gradually pour the hot milk over the eggs and cornflour, then cook on a low heat, continually whisking.\n\nSTEP 7\nAdd syrup to custard\nAdd the cooled sugar syrup to the custard and whisk until thickened slightly.\n\nSTEP 8\nPour custard into the tins\nPour the custard through a sieve. Pour into the pastry cases and bake for 15 minutes until the pastry is golden and the custard has darkened.\n\nSTEP 9\ncool and dust with icing sugar\nCool completely in the tins then sift over icing sugar and ground cinnamon to serve.",
+      "categoryExternalId": "Dessert",
+      "areaExternalId": "Portuguese",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "plain_flour",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "icing_sugar",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "puff_pastry",
+          "quantity": 375,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "caster_sugar",
+          "quantity": 250,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lemon_zest",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "strips"
+        },
+        {
+          "ingredientNormalizedName": "cinnamon",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "stick"
+        },
+        {
+          "ingredientNormalizedName": "eggs",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "egg_yolks",
+          "quantity": 4,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "corn_flour",
+          "quantity": 50,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "whole_milk",
+          "quantity": 500,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "vanilla",
+          "quantity": null,
+          "unit": null,
+          "notes": "Pod of"
+        },
+        {
+          "ingredientNormalizedName": "cinnamon",
+          "quantity": null,
+          "unit": "TO_SERVE",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53281",
+      "slug": "53281",
+      "title": "Algerian Kefta (Meatballs)",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/8rfd4q1764112993.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=IRadJQNLvPs",
+      "sourceUrl": "https://www.allrecipes.com/recipe/153790/algerian-kefta-meatballs/",
+      "instructions": "Combine ground beef with 1/2 of the minced garlic and 1 tablespoon chopped onion in a large bowl. Mix with your hands until fully incorporated. Shape meat mixture into 1 1/2-inch oblong patties; you should have 12 to 14 meatballs.\n\nHeat a large skillet over medium-high heat. Brown patties in batches in the hot skillet until crispy on both sides and no longer pink in the center, about 10 minutes. Set meatballs aside in a rimmed serving dish.\n\nReduce heat to medium and stir remaining chopped onion into drippings in the skillet. Season with salt and pepper. Cook, stirring constantly, until onion has softened and turned translucent, about 5 minutes. Stir in remaining garlic and cook for 30 seconds. Stir in Roma tomatoes, dried parsley, and ras el hanout. Pour in water. Cook until tomatoes are soft, about 5 minutes.\n\nPour tomato sauce over meatballs to serve.",
+      "categoryExternalId": "Beef",
+      "areaExternalId": "Algerian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "ground_beef",
+          "quantity": 1,
+          "unit": "LB",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 4,
+          "unit": "CLOVE",
+          "notes": "Crushed"
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 0.5,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": null,
+          "unit": "TO_TASTE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "pepper",
+          "quantity": null,
+          "unit": "TO_TASTE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "plum_tomatoes",
+          "quantity": 3,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "water",
+          "quantity": 0.5,
+          "unit": "CUP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53053",
+      "slug": "53053",
+      "title": "Beef Rendang",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/bc8v651619789840.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=Ot-dmfBaZrA",
+      "sourceUrl": "https://rasamalaysia.com/beef-rendang-recipe-rendang-daging/",
+      "instructions": "Chop the spice paste ingredients and then blend it in a food processor until fine.\nHeat the oil in a stew pot, add the spice paste, cinnamon, cloves, star anise, and cardamom and stir-fry until aromatic. Add the beef and the pounded lemongrass and stir for 1 minute. Add the coconut milk, tamarind juice, water, and simmer on medium heat, stirring frequently until the meat is almost cooked. Add the kaffir lime leaves, kerisik (toasted coconut), sugar or palm sugar, stirring to blend well with the meat.\nLower the heat to low, cover the lid, and simmer for 1 to 1 1/2 hours or until the meat is really tender and the gravy has dried up. Add more salt and sugar to taste. Serve immediately with steamed rice and save some for overnight.",
+      "categoryExternalId": "Beef",
+      "areaExternalId": "Malaysian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "beef",
+          "quantity": 1,
+          "unit": "LB",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "vegetable_oil",
+          "quantity": 5,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cinnamon_stick",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cloves",
+          "quantity": 3,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "star_anise",
+          "quantity": 3,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cardamom",
+          "quantity": 3,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "coconut_cream",
+          "quantity": 1,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "water",
+          "quantity": 1,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tamarind_paste",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lime",
+          "quantity": 6,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sugar",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "challots",
+          "quantity": 5,
+          "unit": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53058",
+      "slug": "53058",
+      "title": "Croatian Bean Stew",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/tnwy8m1628770384.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=mrjnQal3S1A",
+      "sourceUrl": "https://www.visit-croatia.co.uk/croatian-cuisine/croatian-recipes/",
+      "instructions": "Heat the oil in a pan. Add the chopped vegetables and sauté until tender. Take a pot, empty the beans together with the vegetables into it, put the sausages inside and cook for further 20 minutes on a low heat. Or, put it in an oven and bake it at a temperature of 180ºC/350ºF for 30 minutes. This dish is even better reheated the next day.",
+      "categoryExternalId": "Beef",
+      "areaExternalId": "Croatian",
+      "tags": [
+        {
+          "tag": "warming"
+        },
+        {
+          "tag": "soup"
+        },
+        {
+          "tag": "beans"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "cannellini_beans",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "cans"
+        },
+        {
+          "ingredientNormalizedName": "vegetable_oil",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tomatoes",
+          "quantity": 2,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "challots",
+          "quantity": 5,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 2,
+          "unit": "CLOVE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chorizo",
+          "quantity": 0.5,
+          "unit": "KG",
+          "notes": "chopped"
+        }
+      ]
+    },
+    {
+      "externalId": "52927",
+      "slug": "52927",
+      "title": "Montreal Smoked Meat",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/uttupv1511815050.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=g5oCDoyxbBk",
+      "sourceUrl": "http://www.meatwave.com/blog/montreal-smoked-meat-recipe",
+      "instructions": "To make the cure, in a small bowl mix together salt, pink salt, black pepper, coriander, sugar, bay leaf, and cloves. Coat entire brisket with the cure and place in an extra-large resealable plastic bag. Place in the coldest part of the refrigerator and cure for 4 days, flipping brisket twice a day.\nRemove brisket from bag and wash as much cure off as possible under cold running water. Place brisket in a large container and fill with water and let soak for 2 hours, replacing water every 30 minutes. Remove from water and pat dry with paper towels.\nTo make the rub, mix together black pepper, coriander, paprika, garlic powder, onion powder, dill weed, mustard, celery seed, and crushed red papper in a small bowl. Coat entire brisket with the rub.\nFire up smoker or grill to 225 degrees, adding chunks of smoking wood chunks when at temperature. When wood is ignited and producing smoke, place brisket in, fat side up, and smoke until an instant read thermometer registers 165 degrees when inserted into thickest part of the brisket, about 6 hours.\nTransfer brisket to large roasting pan with V-rack. Place roasting pan over two burners on stovetop and fill with 1-inch of water. Bring water to a boil over high heat, reduce heat to medium, cover roasting pan with aluminum foil, and steam brisket until an instant read thermometer registers 180 degrees when inserted into thickest part of the meat, 1 to 2 hours, adding more hot water as needed.\nTransfer brisket to cutting board and let cool slightly. Slice and serve, preferably on rye with mustard.",
+      "categoryExternalId": "Beef",
+      "areaExternalId": "Canadian",
+      "tags": [
+        {
+          "tag": "speciality"
+        },
+        {
+          "tag": "snack"
+        },
+        {
+          "tag": "strongflavor"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "beef_brisket",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "black_pepper",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "coriander",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sugar",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bay_leaf",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cloves",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "black_pepper",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "coriander",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "paprika",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "dill",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "english_mustard",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "celery_salt",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "red_pepper_flakes",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53156",
+      "slug": "53156",
+      "title": "Arroz al horno (baked rice)",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/qt4i0n1763256454.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=f-waAIrn2iA",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/arroz-al-horno-baked-rice",
+      "instructions": "step 1\nHeat oven to 200C/180C/gas 6. Heat half the oil in a deep frying or sauté pan (or shallow casserole dish) measuring around 30cm in diameter. Over a high heat, colour the pork belly slices on each side in several batches, then transfer to a bowl. Add the remaining oil to the pan and lower the heat to medium, then add the black pudding and bacon and fry all over for several mins. Remove with a slotted spoon. Fry the onion and peppers for around 10 mins until soft and pale gold, then add the tomato and cook until soft. Add the garlic, smoked paprika and chilli flakes and cook for another 2 mins, then put the pork, black pudding and bacon back in the pan. Add the beans, stock and whichever herb you're using, and bring everything to the boil.\n\nstep 2\nSprinkle the rice around the pork belly, pushing it underneath the stock. Let the stock come to the boil again, season well, then transfer to the oven (leave it uncovered). Cook for 20 mins without stirring, then check to see how the rice is doing. The rice should be tender and the stock absorbed. If it’s not ready, put back in the oven for another 5 mins, then check again. Taste for seasoning.\n\nstep 3\nSqueeze lemon juice over the top and drizzle over some extra virgin olive oil just before serving, if you like.",
+      "categoryExternalId": "Pork",
+      "areaExternalId": "Spanish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "extra_virgin_olive_oil",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "pork_belly_slices",
+          "quantity": 800,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "black_pudding",
+          "quantity": 150,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bacon_lardon",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "red_pepper",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "plum_tomatoes",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "garlic_clove",
+          "quantity": 8,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "paprika",
+          "quantity": 4,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chilli_flakes",
+          "quantity": 0.5,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "dried_white_beans",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chicken_stock",
+          "quantity": 1,
+          "unit": null,
+          "notes": "1/2 L"
+        },
+        {
+          "ingredientNormalizedName": "thyme",
+          "quantity": 6,
+          "unit": "OTHER",
+          "notes": "parts"
+        },
+        {
+          "ingredientNormalizedName": "paella_rice",
+          "quantity": 375,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lemon_juice",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53185",
+      "slug": "53185",
+      "title": "Chorizo & tomato salad",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/6cskio1763338156.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=RFlENguMJNA",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/chorizo-tomato-salad",
+      "instructions": "step 1\nPut the tomatoes in a bowl with the onion and thyme. Season, then drizzle with the vinegar and oil. Let the flavours mingle while you cook the chorizo.\n\nstep 2\nIn a hot, dry pan, fry the chorizo slices until browned on both sides. Serve the tomatoes with the fried chorizo, drizzled with a little oil from the pan.",
+      "categoryExternalId": "Pork",
+      "areaExternalId": "Spanish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "beef_tomatoes",
+          "quantity": 3,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "red_onions",
+          "quantity": 0.5,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "thyme",
+          "quantity": null,
+          "unit": null,
+          "notes": "Sprigs of fresh"
+        },
+        {
+          "ingredientNormalizedName": "sherry_vinegar",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "extra_virgin_olive_oil",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "tblsp"
+        },
+        {
+          "ingredientNormalizedName": "chorizo",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52847",
+      "slug": "52847",
+      "title": "Pork Cassoulet",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/wxuvuv1511299147.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=MEdHMTD0VCA",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/jacks-pork-cassoulet",
+      "instructions": "Heat oven to 140C/120C fan/gas 1. Put a large ovenproof pan (with a tight-fitting lid) on a high heat. Add your fat and diced meat, cook for a few mins to seal the edges, giving it a quick stir to cook evenly. Reduce the heat to low, add the sliced onion, whole garlic cloves, carrot and fennel seeds, and cook gently to soften the veg for a few mins.\nPour over the red wine vinegar, scraping any meaty bits off the bottom of the pan. Add the stock, tomato purée, and half the rosemary and parsley. Bring to the boil and simmer for 10 mins, then season, cover with a lid and put into the oven for 2 hrs, removing the lid for the final hour of cooking. Stir occasionally and add the beans with 30 mins to go.\nRemove the pan from the oven and heat the grill. Scatter the top with the remaining herbs and breadcrumbs, drizzle a little oil over the top, and return to the oven for 5-10 mins, until the breadcrumbs are golden. Serve with crusty bread and green veg.",
+      "categoryExternalId": "Pork",
+      "areaExternalId": "French",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "goose_fat",
+          "quantity": 4,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "pork",
+          "quantity": 350,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "large"
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 10,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "carrots",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "thinly sliced"
+        },
+        {
+          "ingredientNormalizedName": "fennel_seeds",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "red_wine_vinegar",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "tblsp"
+        },
+        {
+          "ingredientNormalizedName": "vegetable_stock",
+          "quantity": 600,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tomato_puree",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "tblsp"
+        },
+        {
+          "ingredientNormalizedName": "rosemary",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "sticks"
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": null,
+          "unit": null,
+          "notes": "Handful"
+        },
+        {
+          "ingredientNormalizedName": "haricot_beans",
+          "quantity": 400,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "breadcrumbs",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "tblsp"
+        },
+        {
+          "ingredientNormalizedName": "oil",
+          "quantity": null,
+          "unit": null,
+          "notes": "drizzle"
+        },
+        {
+          "ingredientNormalizedName": "bread",
+          "quantity": null,
+          "unit": "TO_SERVE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "broccoli",
+          "quantity": null,
+          "unit": "TO_SERVE",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52949",
+      "slug": "52949",
+      "title": "Sweet and Sour Pork",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/1529442316.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=mdaBIhgEAMo",
+      "sourceUrl": "https://www.chinahighlights.com/travelguide/chinese-food/cooking/sweet-sour-pork.htm",
+      "instructions": "Preparation\n1. Crack the egg into a bowl. Separate the egg white and yolk.\n\nSweet and Sour Pork\n2. Slice the pork tenderloin into strips.\n\n3. Prepare the marinade using a pinch of salt, one teaspoon of starch, two teaspoons of light soy sauce, and an egg white.\n\n4. Marinade the pork strips for about 20 minutes.\n\n5. Put the remaining starch in a bowl. Add some water and vinegar to make a starchy sauce.\n\nSweet and Sour Pork\nCooking Instructions\n1. Pour the cooking oil into a wok and heat to 190°C (375°F). Add the marinated pork strips and fry them until they turn brown. Remove the cooked pork from the wok and place on a plate.\n\n2. Leave some oil in the wok. Put the tomato sauce and white sugar into the wok, and heat until the oil and sauce are fully combined.\n\n3. Add some water to the wok and thoroughly heat the sweet and sour sauce before adding the pork strips to it.\n\n4. Pour in the starchy sauce. Stir-fry all the ingredients until the pork and sauce are thoroughly mixed together.\n\n5. Serve on a plate and add some coriander for decoration.",
+      "categoryExternalId": "Pork",
+      "areaExternalId": "Chinese",
+      "tags": [
+        {
+          "tag": "sweet"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "pork",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "egg",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "water",
+          "quantity": null,
+          "unit": null,
+          "notes": "Dash"
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": 0.5,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sugar",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "soy_sauce",
+          "quantity": 10,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "starch",
+          "quantity": 10,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tomato_puree",
+          "quantity": 30,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "vinegar",
+          "quantity": 10,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "coriander",
+          "quantity": null,
+          "unit": null,
+          "notes": "Dash"
+        }
+      ]
+    },
+    {
+      "externalId": "53147",
+      "slug": "53147",
+      "title": "Arroz con gambas y calamar",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/jc6oub1763196663.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=nFFp0ebOlOo",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/arroz-con-gambas-y-calamar",
+      "instructions": "step 1\nPeel and devein most of the prawns (a fishmonger should be able to do this for you), keeping a few whole for decoration, if you like. Heat the olive oil in a large frying pan or shallow flameproof casserole over a medium-low heat and fry the onion for 5 mins until softened. Add the bay leaf, saffron, rice and tomato purée, and cook for 1-2 mins more, stirring.\n\nstep 2\nPour in the wine and bubble for 1-2 mins, then pour in the seafood stock and 150ml water. Cook for 5 mins, then add the squid, season well and stir to combine. Bring to the boil, then cover and reduce the heat to a gentle simmer. Cook for 12 mins more, adding a little more water if the mixture starts to look dry.\n\nstep 3\nUncover the pan and stir through the peeled prawns, then arrange any whole prawns on top of the rice mixture. Cover again and simmer for a further 5-6 mins until the prawns are pink and cooked through. Leave to stand for a couple of minutes before serving from the pan.",
+      "categoryExternalId": "Seafood",
+      "areaExternalId": "Spanish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "raw_king_prawns",
+          "quantity": 24,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "small"
+        },
+        {
+          "ingredientNormalizedName": "bay_leaf",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "saffron",
+          "quantity": 1,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "paella_rice",
+          "quantity": 450,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tomato_puree",
+          "quantity": 2,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "white_wine",
+          "quantity": 200,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "seafood_stock",
+          "quantity": 650,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "squid",
+          "quantity": 3,
+          "unit": "OTHER",
+          "notes": "medium"
+        }
+      ]
+    },
+    {
+      "externalId": "53041",
+      "slug": "53041",
+      "title": "Grilled Portuguese sardines",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/lpd4wy1614347943.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=JYtMjKa6cdY",
+      "sourceUrl": "https://www.olivemagazine.com/recipes/fish-and-seafood/grilled-portuguese-sardines/",
+      "instructions": "STEP 1\n\nPut all of the ingredients, except the sardines, into a bowl and mix together with some seasoning. Pour into a baking dish, add the sardines and toss really well. Cover and chill for a few hours.\n\nSTEP 2\n\nHeat a BBQ or griddle pan until hot. Cook the sardines for 4-5 minutes on each side or until really caramelised and charred. Put onto a serving plate, drizzle with oil, sprinkle with a little more paprika and squeeze over the lemon wedges.",
+      "categoryExternalId": "Seafood",
+      "areaExternalId": "Portuguese",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "sardines",
+          "quantity": 8,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 3,
+          "unit": "CLOVE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "paprika",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lemon",
+          "quantity": 0.5,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "rosemary",
+          "quantity": 4,
+          "unit": "OTHER",
+          "notes": "sprigs"
+        },
+        {
+          "ingredientNormalizedName": "red_chilli",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53200",
+      "slug": "53200",
+      "title": "Prawn stir-fry",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/96lt871763480970.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=DddM8OGb4Jc",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/thai-prawn-ginger-spring-onion-stir-fry",
+      "instructions": "step 1\nPut the prawns in a bowl. Put the chilli, garlic, coriander stalks (snip these up using scissors first) and caster sugar in a spice grinder or small food processor and whizz together. Add half of the lime juice and the fish sauce, then pour this over the prawns.\n\nstep 2\nHeat 1 tbsp oil in a wok, add the ginger and spring onions and fry for 1 min. Add the red pepper and fry for 1 min, until the pepper starts to soften. Add the water chestnuts and bean sprouts, and toss together until the bean sprouts start to wilt. Add the soy sauce and a really good grind of black pepper, then tip the lot into a serving dish.\n\nstep 3\nHeat the remaining oil in the wok and add the prawns, lifting them out of their juices. Toss for 1-2 mins until they turn pink, add the marinade and swirl the wok quickly, then tip the lot onto the veg. Snip over the coriander leaves and sprinkle on the remaining lime. Serves over noodles with extra lime for squeezing over.",
+      "categoryExternalId": "Seafood",
+      "areaExternalId": "Thai",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "raw_tiger_prawns",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "green_chilli",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 3,
+          "unit": "CLOVE",
+          "notes": "Crushed"
+        },
+        {
+          "ingredientNormalizedName": "coriander",
+          "quantity": 1,
+          "unit": "BUNCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "caster_sugar",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "tblsp"
+        },
+        {
+          "ingredientNormalizedName": "lime",
+          "quantity": null,
+          "unit": null,
+          "notes": "Juice of 1"
+        },
+        {
+          "ingredientNormalizedName": "fish_sauce",
+          "quantity": 3,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ground_nut_oil",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ginger",
+          "quantity": 3,
+          "unit": "OTHER",
+          "notes": "cm piece"
+        },
+        {
+          "ingredientNormalizedName": "spring_onions",
+          "quantity": 8,
+          "unit": "SLICE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "red_pepper",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "sliced"
+        },
+        {
+          "ingredientNormalizedName": "water_chestnut",
+          "quantity": 85,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bean_sprouts",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "soy_sauce",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "rice_noodles",
+          "quantity": null,
+          "unit": "TO_SERVE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lime",
+          "quantity": null,
+          "unit": "TO_SERVE",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53023",
+      "slug": "53023",
+      "title": "Sledz w Oleju (Polish Herrings)",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/7ttta31593350374.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=v6I3GZlBkOM",
+      "sourceUrl": "https://www.thespruceeats.com/polish-herrings-in-oil-recipe-1135618",
+      "instructions": "Soak herring in cold water for at least 1 hour. If very salty, repeat, changing the water each time.\n\nDrain thoroughly and slice herring into bite-size pieces.\n\nPlace in a jar large enough to accommodate the pieces and cover with oil, allspice, peppercorns, and bay leaf. Close the jar.\n\nRefrigerate for 2 to 3 days before eating. This will keep refrigerated up to 2 weeks.\n\nServe with finely chopped onion or onion slices, lemon, and parsley or dill.",
+      "categoryExternalId": "Seafood",
+      "areaExternalId": "Polish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "herring",
+          "quantity": 8,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "sliced"
+        },
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 0.5,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "allspice",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "pepper",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bay_leaf",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53050",
+      "slug": "53050",
+      "title": "Ayam Percik",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/020z181619788503.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=9ytR28QK6I8",
+      "sourceUrl": "http://www.curiousnut.com/roasted-spiced-chicken-ayam-percik/",
+      "instructions": "In a blender, add the ingredients for the spice paste and blend until smooth.\nOver medium heat, pour the spice paste in a skillet or pan and fry for 10 minutes until fragrant. Add water or oil 1 tablespoon at a time if the paste becomes too dry. Don't burn the paste. Lower the fire slightly if needed.\nAdd the cloves, cardamom, tamarind pulp, coconut milk, water, sugar and salt. Turn the heat up and bring the mixture to boil. Turn the heat to medium low and simmer for 10 minutes. Stir occasionally. It will reduce slightly. This is the marinade/sauce, so taste and adjust seasoning if necessary. Don't worry if it's slightly bitter. It will go away when roasting.\nWhen the marinade/sauce has cooled, pour everything over the chicken and marinate overnight to two days.\nPreheat the oven to 425 F.\nRemove the chicken from the marinade. Spoon the marinade onto a greased (or aluminum lined) baking sheet. Lay the chicken on top of the sauce (make sure the chicken covers the sauce and the sauce isn't exposed or it'll burn) and spread the remaining marinade on the chicken. Roast for 35-45 minutes or until internal temp of the thickest part of chicken is at least 175 F.\nLet chicken rest for 5 minutes. Brush the chicken with some of the oil. Serve chicken with the sauce over steamed rice (or coconut rice).",
+      "categoryExternalId": "Chicken",
+      "areaExternalId": "Malaysian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "chicken_thighs",
+          "quantity": 6,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "challots",
+          "quantity": 16,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ginger",
+          "quantity": 1,
+          "unit": null,
+          "notes": "1/2"
+        },
+        {
+          "ingredientNormalizedName": "garlic_clove",
+          "quantity": 6,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cayenne_pepper",
+          "quantity": 8,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "turmeric",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cumin",
+          "quantity": 1,
+          "unit": null,
+          "notes": "1/2"
+        },
+        {
+          "ingredientNormalizedName": "coriander",
+          "quantity": 1,
+          "unit": null,
+          "notes": "1/2"
+        },
+        {
+          "ingredientNormalizedName": "fennel",
+          "quantity": 1,
+          "unit": null,
+          "notes": "1/2"
+        },
+        {
+          "ingredientNormalizedName": "tamarind_paste",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "coconut_milk",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "can"
+        },
+        {
+          "ingredientNormalizedName": "sugar",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "water",
+          "quantity": 1,
+          "unit": "CUP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52920",
+      "slug": "52920",
+      "title": "Chicken Marengo",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/qpxvuq1511798906.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=U33HYUr-0Fw",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/3146682/chicken-marengo",
+      "instructions": "Heat the oil in a large flameproof casserole dish and stir-fry the mushrooms until they start to soften. Add the chicken legs and cook briefly on each side to colour them a little.\nPour in the passata, crumble in the stock cube and stir in the olives. Season with black pepper – you shouldn’t need salt. Cover and simmer for 40 mins until the chicken is tender. Sprinkle with parsley and serve with pasta and a salad, or mash and green veg, if you like.",
+      "categoryExternalId": "Chicken",
+      "areaExternalId": "French",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "mushrooms",
+          "quantity": 300,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chicken_legs",
+          "quantity": 4,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "passata",
+          "quantity": 500,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chicken_stock_cube",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "black_olives",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": null,
+          "unit": null,
+          "notes": "Chopped"
+        }
+      ]
+    },
+    {
+      "externalId": "52820",
+      "slug": "52820",
+      "title": "Katsu Chicken curry",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/vwrpps1503068729.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=MWzxDFRtVbc",
+      "sourceUrl": "http://allrecipes.co.uk/recipe/29578/chicken-katsu-curry.aspx",
+      "instructions": "Prep:15min  ›  Cook:30min  ›  Ready in:45min\n\nFor the curry sauce: Heat oil in medium non-stick saucepan, add onion and garlic and cook until softened. Stir in carrots and cook over low heat for 10 to 12 minutes.\nAdd flour and curry powder; cook for 1 minute. Gradually stir in stock until combined; add honey, soy sauce and bay leaf. Slowly bring to the boil.\nTurn down heat and simmer for 20 minutes or until sauce thickens but is still of pouring consistency. Stir in garam masala. Pour the curry sauce through a sieve; return to saucepan and keep on low heat until ready to serve.\nFor the chicken: Season both sides of chicken breasts with salt and pepper. Place flour, egg and breadcrumbs in separate bowls and arrange in a row. Coat the chicken breasts in flour, then dip them into the egg, then coat in breadcrumbs, making sure you cover both sides.\nHeat oil in large frying pan over medium-high heat. Place chicken into hot oil and cook until golden brown, about 3 or 4 minutes each side. Once cooked, place on kitchen paper to absorb excess oil.\nPour curry sauce over chicken, serve with white rice and enjoy!",
+      "categoryExternalId": "Chicken",
+      "areaExternalId": "Japanese",
+      "tags": [
+        {
+          "tag": "curry"
+        },
+        {
+          "tag": "meat"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "chicken_breast",
+          "quantity": 4,
+          "unit": "OTHER",
+          "notes": "pounded to 1cm thickness"
+        },
+        {
+          "ingredientNormalizedName": "plain_flour",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "egg",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "beaten"
+        },
+        {
+          "ingredientNormalizedName": "breadcrumbs",
+          "quantity": 100,
+          "unit": "G",
+          "notes": "fine"
+        },
+        {
+          "ingredientNormalizedName": "vegetable_oil",
+          "quantity": 230,
+          "unit": "ML",
+          "notes": "frying"
+        },
+        {
+          "ingredientNormalizedName": "sunflower_oil",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onions",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "sliced"
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 5,
+          "unit": "OTHER",
+          "notes": "chopped cloves"
+        },
+        {
+          "ingredientNormalizedName": "carrot",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "sliced"
+        },
+        {
+          "ingredientNormalizedName": "plain_flour",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "curry_powder",
+          "quantity": 4,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chicken_stock",
+          "quantity": 600,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "honey",
+          "quantity": 2,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "soy_sauce",
+          "quantity": 4,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bay_leaf",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "garam_masala",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53181",
+      "slug": "53181",
+      "title": "Spanish beans with chicken & chorizo",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/bpkxtw1763332446.jpg",
+      "youtubeUrl": null,
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/spanish-beans-chicken-chorizo",
+      "instructions": "step 1\nSoak the beans for at least 4 hrs or overnight in a large bowl with plenty of water to cover. Next day, rinse and drain, then put in a large heavy based pan with the onion, paprika, herb bundle and chicken. Pour over enough water or stock to cover, bring to the boil, then reduce the heat, cover and simmer for 45 mins.\n\nstep 2\nRemove the chicken to a plate, then add the potatoes and chorizo to the pan. Continue cooking for 30 mins until the beans and potatoes are tender.\n\nstep 3\nDiscard the skin and bones from the chicken and tear into large chunks. Return the chicken to the pan with the spinach and simmer for 5 mins.",
+      "categoryExternalId": "Chicken",
+      "areaExternalId": "Spanish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "pinto_beans",
+          "quantity": 300,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "paprika",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "thyme",
+          "quantity": null,
+          "unit": null,
+          "notes": "Sprigs of fresh"
+        },
+        {
+          "ingredientNormalizedName": "bay_leaves",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": null,
+          "unit": null,
+          "notes": "Bunch"
+        },
+        {
+          "ingredientNormalizedName": "chicken_thighs",
+          "quantity": 4,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "jersey_royal_potatoes",
+          "quantity": 250,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chorizo",
+          "quantity": 250,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "spinach",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52848",
+      "slug": "52848",
+      "title": "Bean & Sausage Hotpot",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/vxuyrx1511302687.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=B0YX0yPX4Wo",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/339607/bean-and-sausage-hotpot",
+      "instructions": "In a large casserole, fry the sausages until brown all over – about 10 mins.\n\nAdd the tomato sauce, stirring well, then stir in the beans, treacle or sugar and mustard. Bring to the simmer, cover and cook for 30 mins. Great served with crusty bread or rice.",
+      "categoryExternalId": "Miscellaneous",
+      "areaExternalId": "British",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "sausages",
+          "quantity": 8,
+          "unit": "OTHER",
+          "notes": "large"
+        },
+        {
+          "ingredientNormalizedName": "tomato_sauce",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "jar"
+        },
+        {
+          "ingredientNormalizedName": "butter_beans",
+          "quantity": 1200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "black_treacle",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "tbls"
+        },
+        {
+          "ingredientNormalizedName": "english_mustard",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53146",
+      "slug": "53146",
+      "title": "Locro",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/5sgsob1763196284.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=vX0KYKAkBTU",
+      "sourceUrl": "https://www.munchery.com/blog/the-ten-iconic-dishes-of-argentina-and-how-to-cook-them-at-home/",
+      "instructions": "Soak: Soak corn and beans overnight in water.\nCook Meats: In a large pot, brown the beef and pork. Add onions and spices, cooking until translucent.\nSimmer the Stew: Add soaked corn and beans, pumpkin, potato, and enough water to cover. Simmer for 2-3 hours, until thick.\nServe: Enjoy hot, with bread on the side.\nPro Tips:\n\nToasting the corn slightly before adding it to the stew enhances its flavor.\nAdd a spoonful of paprika or a dash of cumin for an extra layer of warmth and complexity",
+      "categoryExternalId": "Miscellaneous",
+      "areaExternalId": "Argentinian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "dried_white_corn",
+          "quantity": 500,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "dried_white_beans",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "pumpkin",
+          "quantity": 300,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "potatoes",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "beef",
+          "quantity": 300,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "pork",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chorizo",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "paprika",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": null,
+          "unit": "TO_TASTE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "pepper",
+          "quantity": null,
+          "unit": "TO_TASTE",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53230",
+      "slug": "53230",
+      "title": "Purple sprouting broccoli tempura with nuoc cham",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/xnv4wf1763756529.jpg",
+      "youtubeUrl": null,
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/purple-sprouting-broccoli-tempura-with-nuoc-cham",
+      "instructions": "step 1\nFor the nuoc cham, whisk together all of the ingredients with 5 tbsp hot water in a small bowl. Set aside while you make the tempura.\n\nstep 2\nWhisk the cornflour, plain flour, sesame seeds (if using) and a large pinch of salt together. Fill a large, deep pan no more than a third full with the vegetable oil and heat until it reaches 180C or a cube of bread dropped in browns in 20 seconds.\n\nstep 3\nQuickly whisk the soda water into the flour mixture, being careful not to overmix, then dunk in the broccoli using tongs. Carefully lower into the hot oil and cook for 2-3 mins until crisp. Drain on kitchen paper, then serve with the nuoc cham on the side for dipping.",
+      "categoryExternalId": "Miscellaneous",
+      "areaExternalId": "Vietnamese",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "corn_flour",
+          "quantity": 50,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "plain_flour",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sesame_seed",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "vegetable_oil",
+          "quantity": null,
+          "unit": null,
+          "notes": "For frying"
+        },
+        {
+          "ingredientNormalizedName": "soda_water",
+          "quantity": 250,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "purple_sprouting_broccoli",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "fish_sauce",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lime",
+          "quantity": null,
+          "unit": null,
+          "notes": "Juice of 2"
+        },
+        {
+          "ingredientNormalizedName": "birdseye_chillies",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "sugar",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53095",
+      "slug": "53095",
+      "title": "Syrian Rice with Meat",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/zg2b9l1760524940.jpg",
+      "youtubeUrl": null,
+      "sourceUrl": "https://www.allrecipes.com/recipe/272233/syrian-rice-with-meat/",
+      "instructions": "Heat 1/4 cup butter in a large saucepan over medium-high heat. Add ground beef and season with salt, allspice, cinnamon, and black pepper. Cook and stir until beef is browned and crumbly, 7 to 10 minutes.\n\nStir chicken broth and rice into beef in the saucepan; bring to a boil. Reduce heat to low, cover, and cook until liquid is absorbed, about 20 minutes.\n\nMeanwhile, melt 2 tablespoons butter in a small skillet over medium heat. Cook and stir pine nuts in hot butter until lightly browned, 3 to 5 minutes.\n\nMix pine nuts into beef-rice mixture before serving.",
+      "categoryExternalId": "Miscellaneous",
+      "areaExternalId": "Syrian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 0.25,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ground_beef",
+          "quantity": 2,
+          "unit": "LB",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": 2,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "allspice",
+          "quantity": 0.5,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cinnamon",
+          "quantity": 0.5,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "black_pepper",
+          "quantity": 0.5,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chicken_stock",
+          "quantity": 5,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "rice",
+          "quantity": 2,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "pine_nuts",
+          "quantity": 0.5,
+          "unit": "CUP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53076",
+      "slug": "53076",
+      "title": "Bread omelette",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/hqaejl1695738653.jpg",
+      "youtubeUrl": null,
+      "sourceUrl": null,
+      "instructions": "Make and enjoy",
+      "categoryExternalId": "Breakfast",
+      "areaExternalId": "Indian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "bread",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "egg",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": 0.5,
+          "unit": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52895",
+      "slug": "52895",
+      "title": "English Breakfast",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/utxryw1511721587.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=FXjYU2Ensck",
+      "sourceUrl": "https://www.bbc.co.uk/food/recipes/stressfreefullenglis_67721",
+      "instructions": "Heat the flat grill plate over a low heat, on top of 2 rings/flames if it fits, and brush sparingly with light olive oil.\nCook the sausages first. Add the sausages to the hot grill plate/the coolest part if there is one and allow to cook slowly for about 15-20 minutes, turning occasionally, until golden. After the first 10 minutes, increase the heat to medium before beginning to cook the other ingredients. If you are struggling for space, completely cook the sausages and keep hot on a plate in the oven.\nSnip a few small cuts into the fatty edge of the bacon. Place the bacon straight on to the grill plate and fry for 2-4 minutes each side or until your preferred crispiness is reached. Like the sausages, the cooked bacon can be kept hot on a plate in the oven.\nFor the mushrooms, brush away any dirt using a pastry brush and trim the stalk level with the mushroom top. Season with salt and pepper and drizzle over a little olive oil. Place stalk-side up on the grill plate and cook for 1-2 minutes before turning and cooking for a further 3-4 minutes. Avoid moving the mushrooms too much while cooking, as this releases the natural juices, making them soggy.\nFor the tomatoes, cut the tomatoes across the centre/or in half lengthways if using plum tomatoes , and with a small, sharp knife remove the green 'eye'. Season with salt and pepper and drizzle with a little olive oil. Place cut-side down on the grill plate and cook without moving for 2 minutes. Gently turn over and season again. Cook for a further 2-3 minutes until tender but still holding their shape.\nFor the black pudding, cut the black pudding into 3-4 slices and remove the skin. Place on the grill plate and cook for 1½-2 minutes each side until slightly crispy.\nFor 'proper' fried bread it's best to cook it in a separate pan. Ideally, use bread that is a couple of days old. Heat a frying pan to a medium heat and cover the base with oil. Add the bread and cook for 2-3 minutes each side until crispy and golden. If the pan becomes too dry, add a little more oil. For a richer flavour, add a knob of butter after you turn the slice.\nFor the fried eggs, break the egg straight into the pan with the fried bread and leave for 30 seconds. Add a good knob of butter and lightly splash/baste the egg with the butter when melted. Cook to your preferred stage, season and gently remove with a fish slice.\nOnce all the ingredients are cooked, serve on warm plates and enjoy straight away with a good squeeze of tomato ketchup or brown sauce.",
+      "categoryExternalId": "Breakfast",
+      "areaExternalId": "British",
+      "tags": [
+        {
+          "tag": "breakfast"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "sausages",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bacon",
+          "quantity": 3,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "mushrooms",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tomatoes",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "black_pudding",
+          "quantity": 1,
+          "unit": "SLICE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "eggs",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bread",
+          "quantity": 1,
+          "unit": "SLICE",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52967",
+      "slug": "52967",
+      "title": "Home-made Mandazi",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/thazgm1555350962.jpg",
+      "youtubeUrl": null,
+      "sourceUrl": "http://chef-raphael.com/home-made-mandazi-recipe/#more-106",
+      "instructions": "This is one recipe a lot of people have requested and I have tried to make it as simple as possible and I hope it will work for you. Make sure you use the right flour which is basically one with raising agents. Adjust the amount of sugar to your taste and try using different flavours to have variety whenever you have them.\nYou can use Coconut milk instead of regular milk, you can also add desiccated coconut to the dry flour or other spices like powdered cloves or cinnamon.\nFor “healthy looking” mandazis do not roll the dough too thin before frying and use the procedure I have indicated above.\n\n1. Mix the flour,cinnamon and sugar in a suitable bowl.\n2. In a separate bowl whisk the egg into the milk\n3. Make a well at the centre of the flour and add the milk and egg mixture and slowly mix to form a dough.\n4. Knead the dough for 3-4 minutes or until it stops sticking to the sides of the bowl and you have a smooth surface.\n5. Cover the dough with a damp cloth  and allow to rest for 15 minutes.\n6. Roll the dough on a lightly floured surface into a 1cm thick piece.\n7. Using a sharp small knife, cut the dough into the desired size setting aside ready for deep frying.\n8. Heat your oil in a suitable pot and gently dip the mandazi pieces to cook until light brown on the first side then turn to cook on the second side.\n9. Serve them warm or cold",
+      "categoryExternalId": "Breakfast",
+      "areaExternalId": "Kenyan",
+      "tags": [
+        {
+          "tag": "baking"
+        },
+        {
+          "tag": "breakfast"
+        },
+        {
+          "tag": "egg"
+        },
+        {
+          "tag": "warm"
+        },
+        {
+          "tag": "snack"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "selfraising_flour",
+          "quantity": 750,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sugar",
+          "quantity": 6,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "eggs",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "milk",
+          "quantity": 1,
+          "unit": "CUP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53118",
+      "slug": "53118",
+      "title": "Rømmegrøt – Norwegian Sour Cream Porridge",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/hyk47c1762772689.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=v4rIJOWXM3w",
+      "sourceUrl": "https://scandinaviancookbook.com/rommegrot-norwegian-sour-cream-porridge/",
+      "instructions": "▢\nCook the sour cream in a covered saucepan on medium heat for about 5 minutes.\n▢\nTurn down the heat and add half of the flour and stir well with a whisk. Once the flour is fully incorporated, let the mixture continue to cook, stirring occasionally, until fat starts to release. Use a spoon to gather as much of the fat as you can in a small bowl, saving for later. (Don't worry if you can't get any fat – in that case you can add butter later.)\n▢\nWhisk in the rest of the flour and then slowly add the milk, whisking constantly to avoid lumps. Let the porridge continue to cook on low heat for 5 minutes and then add salt.\n▢\nServe with sugar, cinnamon, and the fat from the porridge. If you're using lower fat sour cream you can top the rømmegrøt with some butter instead.",
+      "categoryExternalId": "Breakfast",
+      "areaExternalId": "Norwegian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "full_fat_sour_cream",
+          "quantity": 2,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "flour",
+          "quantity": 0.75,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "milk",
+          "quantity": 2,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sugar",
+          "quantity": null,
+          "unit": null,
+          "notes": "Sprinkling"
+        },
+        {
+          "ingredientNormalizedName": "cinnamon",
+          "quantity": null,
+          "unit": null,
+          "notes": "Sprinkling"
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": null,
+          "unit": "TO_TASTE",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52839",
+      "slug": "52839",
+      "title": "Chilli prawn linguine",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/usywpp1511189717.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=SC17Mc70Db0",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/1269/chilli-prawn-linguine",
+      "instructions": "Mix the dressing ingredients in a small bowl and season with salt and pepper. Set aside.\n\nCook the pasta according to the packet instructions. Add the sugar snap peas for the last minute or so of cooking time.\n\nMeanwhile, heat the oil in a wok or large frying pan, toss in the garlic and chilli and cook over a fairly gentle heat for about 30 seconds without letting the garlic brown. Tip in the prawns and cook over a high heat, stirring frequently, for about 3 minutes until they turn pink.\n\nAdd the tomatoes and cook, stirring occasionally, for 3 minutes until they just start to soften. Drain the pasta and sugar snaps well, then toss into the prawn mixture. Tear in the basil leaves, stir, and season with salt and pepper.\n\nServe with salad leaves drizzled with the lime dressing, and warm crusty bread.",
+      "categoryExternalId": "Pasta",
+      "areaExternalId": "Italian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "linguine_pasta",
+          "quantity": 280,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "sugar_snap_peas",
+          "quantity": 200,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 2,
+          "unit": "OTHER",
+          "notes": "tblsp"
+        },
+        {
+          "ingredientNormalizedName": "garlic_clove",
+          "quantity": 2,
+          "unit": "CLOVE",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "red_chilli",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "large"
+        },
+        {
+          "ingredientNormalizedName": "king_prawns",
+          "quantity": 24,
+          "unit": "OTHER",
+          "notes": "skinned"
+        },
+        {
+          "ingredientNormalizedName": "cherry_tomatoes",
+          "quantity": 12,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "basil_leaves",
+          "quantity": null,
+          "unit": null,
+          "notes": "Handful"
+        },
+        {
+          "ingredientNormalizedName": "lettuce",
+          "quantity": null,
+          "unit": null,
+          "notes": "Leaves"
+        },
+        {
+          "ingredientNormalizedName": "bread",
+          "quantity": null,
+          "unit": "TO_SERVE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "fromage_frais",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lime",
+          "quantity": null,
+          "unit": null,
+          "notes": "Grated Zest of 2"
+        },
+        {
+          "ingredientNormalizedName": "caster_sugar",
+          "quantity": 2,
+          "unit": "TSP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52835",
+      "slug": "52835",
+      "title": "Fettucine alfredo",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/uquqtu1511178042.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=FLEnwZvGzOE",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/fettucine-alfredo",
+      "instructions": "In a medium saucepan, stir the clotted cream, butter and cornflour over a low-ish heat and bring to a low simmer. Turn off the heat and keep warm.\nMeanwhile, put the cheese and nutmeg in a small bowl and add a good grinding of black pepper, then stir everything together (don’t add any salt at this stage).\nPut the pasta in another pan with 2 tsp salt, pour over some boiling water and cook following pack instructions (usually 3-4 mins). When cooked, scoop some of the cooking water into a heatproof jug or mug and drain the pasta, but not too thoroughly.\nAdd the pasta to the pan with the clotted cream mixture, then sprinkle over the cheese and gently fold everything together over a low heat using a rubber spatula. When combined, splash in 3 tbsp of the cooking water. At first, the pasta will look wet and sloppy: keep stirring until the water is absorbed and the sauce is glossy. Check the seasoning before transferring to heated bowls. Sprinkle over some chives or parsley, then serve immediately.",
+      "categoryExternalId": "Pasta",
+      "areaExternalId": "Italian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "clotted_cream",
+          "quantity": 227,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 25,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "corn_flour",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parmesan_cheese",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "nutmeg",
+          "quantity": null,
+          "unit": null,
+          "notes": "Grated"
+        },
+        {
+          "ingredientNormalizedName": "fettuccine",
+          "quantity": 250,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": null,
+          "unit": null,
+          "notes": "Chopped"
+        }
+      ]
+    },
+    {
+      "externalId": "52987",
+      "slug": "52987",
+      "title": "Lasagna Sandwiches",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/xr0n4r1576788363.jpg",
+      "youtubeUrl": null,
+      "sourceUrl": null,
+      "instructions": "1. In a small bowl, combine the first four ingredients; spread on four slices of bread. Layer with bacon, tomato and cheese; top with remaining bread.\n\n2. In a large skillet or griddle, melt 2 tablespoons butter. Toast sandwiches until lightly browned on both sides and cheese is melted, adding butter if necessary.\n\nNutrition Facts\n1 sandwich: 445 calories, 24g fat (12g saturated fat), 66mg cholesterol, 1094mg sodium, 35g carbohydrate (3g sugars, 2g fiber), 21g protein.",
+      "categoryExternalId": "Pasta",
+      "areaExternalId": "American",
+      "tags": [
+        {
+          "tag": "sandwich"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "sour_cream",
+          "quantity": 0.25,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "chopped_onion",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "dried_oregano",
+          "quantity": 0.5,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": 0.25,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bread",
+          "quantity": 8,
+          "unit": "SLICE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bacon",
+          "quantity": 8,
+          "unit": "SLICE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tomato",
+          "quantity": 8,
+          "unit": "SLICE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "mozzarella",
+          "quantity": 4,
+          "unit": "SLICE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "butter",
+          "quantity": 2,
+          "unit": null,
+          "notes": "1/2 Tbs"
+        }
+      ]
+    },
+    {
+      "externalId": "52837",
+      "slug": "52837",
+      "title": "Pilchard puttanesca",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/vvtvtr1511180578.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=wqZzLAPmr9k",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/pilchard-puttanesca",
+      "instructions": "Cook the pasta following pack instructions. Heat the oil in a non-stick frying pan and cook the onion, garlic and chilli for 3-4 mins to soften. Stir in the tomato purée and cook for 1 min, then add the pilchards with their sauce. Cook, breaking up the fish with a wooden spoon, then add the olives and continue to cook for a few more mins.\n\nDrain the pasta and add to the pan with 2-3 tbsp of the cooking water. Toss everything together well, then divide between plates and serve, scattered with Parmesan.",
+      "categoryExternalId": "Pasta",
+      "areaExternalId": "Italian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "spaghetti",
+          "quantity": 300,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "tbls"
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "finely chopped"
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 2,
+          "unit": "CLOVE",
+          "notes": "minced"
+        },
+        {
+          "ingredientNormalizedName": "red_chilli",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tomato_puree",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "tbls"
+        },
+        {
+          "ingredientNormalizedName": "pilchards",
+          "quantity": 425,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "black_olives",
+          "quantity": 70,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "parmesan",
+          "quantity": null,
+          "unit": null,
+          "notes": "Shaved"
+        }
+      ]
+    },
+    {
+      "externalId": "53092",
+      "slug": "53092",
+      "title": "Fasoliyyeh Bi Z-Zayt (Syrian Green Beans with Olive Oil)",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/21yc5s1760524759.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=_EadiEPxQI0",
+      "sourceUrl": "https://www.allrecipes.com/recipe/56161/fasoliyyeh-bi-z-zayt-syrian-green-beans-with-olive-oil/",
+      "instructions": "Place the green beans into a large pot, and drizzle with olive oil. Season with salt to taste, and put the lid on the pot. Cook over medium-high heat, stirring occasionally, until beans are cooked to your desired doneness. Syrians like it cooked until the green beans are turning brownish in color. The idea is not to saute them, but to let them steam in the moisture released by the ice crystals.\n\nAdd cilantro and garlic to the beans, and continue to cook just until the cilantro has started to wilt. Eat as a main course by scooping up with warm pita bread or serve as a side dish.",
+      "categoryExternalId": "Vegan",
+      "areaExternalId": "Syrian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "green_beans",
+          "quantity": 16,
+          "unit": "OZ",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 0.25,
+          "unit": "CUP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": null,
+          "unit": null,
+          "notes": "Dash"
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 1,
+          "unit": "CLOVE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cilantro",
+          "quantity": 0.25,
+          "unit": "CUP",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53150",
+      "slug": "53150",
+      "title": "Padron peppers",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/0ljvc51763248075.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=wD6NE3cMKBY",
+      "sourceUrl": "https://www.bbcgoodfood.com/recipes/padron-peppers",
+      "instructions": "step 1\nHeat the olive oil in a large frying pan over a high heat, or if using an air-fryer, heat to 205C for 3 mins. Fry the peppers, stirring frequently, for 5 mins until blistered and wilted. The peppers should be soft and slightly charred.\n\nstep 2\nTransfer the peppers to a serving plate and season with some sea salt. Serve with dips or as part of a tapas spread, if you like.",
+      "categoryExternalId": "Vegan",
+      "areaExternalId": "Spanish",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "olive_oil",
+          "quantity": 1,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "padron_peppers",
+          "quantity": 500,
+          "unit": "G",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53115",
+      "slug": "53115",
+      "title": "Red onion pickle",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/ppodrp1762325183.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=3z2jTcsL28g",
+      "sourceUrl": "https://www.bbc.co.uk/food/recipes/red_onion_pickle_98165",
+      "instructions": "Peel the onions, cut them in half from top to bottom and finely slice into half-moon pieces. Put in a colander placed over a bowl and sprinkle with salt, lightly turning over the onion pieces with your hands so the surfaces are all covered. Set aside for an hour or so to brine.\n\nMeanwhile put the vinegar, 50ml/2fl oz water and the sugar in a saucepan. Bring to a simmer, stirring to help the sugar dissolve, and cook for a couple of minutes. Set aside.\n\nPack the onions into the sterilised jars, sprinkling in a little pepper as you go. Cover with the warm vinegar and finish by tucking a couple of bay leaves down the side of the jars. Seal. The onions are best kept in the fridge and used within to 4 weeks.",
+      "categoryExternalId": "Vegan",
+      "areaExternalId": "Norwegian",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "red_onions",
+          "quantity": 3,
+          "unit": "OTHER",
+          "notes": "large"
+        },
+        {
+          "ingredientNormalizedName": "sea_salt",
+          "quantity": 2,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "cider_vinegar",
+          "quantity": 200,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "granulated_sugar",
+          "quantity": 50,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "black_pepper",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "bay_leaves",
+          "quantity": 4,
+          "unit": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52942",
+      "slug": "52942",
+      "title": "Roast fennel and aubergine paella",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/1520081754.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=H5SmjR-fxUs",
+      "sourceUrl": "https://www.homestylemag.co.uk/recipe/517/main-courses/roast-fennel-and-aubergine-paella",
+      "instructions": "1 Put the fennel, aubergine, pepper and courgette in a roasting tray. Add a glug of olive oil, season with salt and pepper and toss around to coat the veggies in the oil. Roast in the oven for 20 minutes, turning a couple of times until the veg are pretty much cooked through and turning golden.\n\n2 Meanwhile, heat a paella pan or large frying pan over a low– medium heat and add a glug of olive oil. Sauté the onion for 8–10 minutes until softened. Increase the heat to medium and stir in the rice, paprika and saffron. Cook for around 1 minute to start toasting the rice, then add the white wine. Reduce by about half before stirring in two-thirds of the stock. Reduce to a simmer and cook for 10 minutes without a lid, stirring a couple of times.\n\n3 Stir in the peas, add some seasoning, then gently mix in the roasted veg. Pour over the remaining stock, arrange the lemon wedges on top and cover with a lid or some aluminium foil. Cook for a further 10 minutes.\n\n4 To ensure you get the classic layer of toasted rice at the bottom of the pan, increase the heat to high until you hear a slight crackle. Remove from the heat and sit for 5 minutes before sprinkling over the parsley and serving.",
+      "categoryExternalId": "Vegan",
+      "areaExternalId": "Spanish",
+      "tags": [
+        {
+          "tag": "vegan"
+        },
+        {
+          "tag": "paella"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "baby_aubergine",
+          "quantity": 6,
+          "unit": "OTHER",
+          "notes": "small"
+        },
+        {
+          "ingredientNormalizedName": "fennel",
+          "quantity": 4,
+          "unit": "OTHER",
+          "notes": "small"
+        },
+        {
+          "ingredientNormalizedName": "red_pepper",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "thinly sliced"
+        },
+        {
+          "ingredientNormalizedName": "courgettes",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "medium"
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "finely chopped"
+        },
+        {
+          "ingredientNormalizedName": "paella_rice",
+          "quantity": 300,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "paprika",
+          "quantity": 1,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "saffron",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "white_wine",
+          "quantity": 200,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "vegetable_stock",
+          "quantity": 700,
+          "unit": "ML",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "frozen_peas",
+          "quantity": 100,
+          "unit": "G",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "lemon",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "parsley",
+          "quantity": null,
+          "unit": null,
+          "notes": "Handful"
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "black_pepper",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "53354",
+      "slug": "53354",
+      "title": "Jamaican Curry Goat",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/uc9qp11764796575.jpg",
+      "youtubeUrl": "https://www.youtube.com/watch?v=SrX2KMsWbF4",
+      "sourceUrl": "https://www.myforkinglife.com/jamaican-curry-goat/#recipe",
+      "instructions": "Equipment\n\n6QT Pressure cooker\n\nInstructions\n\nRinse goat meat with vinegar and water.\nSeason goat meat with 1 ½ tablespoon curry powder, all-purpose seasoning, ground ginger, allspice, onion, garlic cloves, and thyme. Marinate for at least 4 hours or up to overnight.\nRemove onion and garlic from goat and set aside.\nSet an electric pressure cooker, like an Instant Pot, on high sauté and add oil. Add goat meat and brown, about 2-3 minutes per side. Remove goat from insert and add 1 tablespoon oil and remaining curry powder and sauté for about 10 seconds. Then add onions and garlic and sauté until softened. About 4 minutes. If the onions look dry, add a little water and continue to sauté.\nAdd goat and water to the pressure cooker and cover the pressure cooker. Cook for 40 minutes on high pressure. Allow to naturally release for 10 minutes, then release the remaining pressure.\nOnce all the pressure has been released, open the pressure cooker. Place on sauté for 10-15 minutes, add potatoes and a whole scotch bonnet pepper. Cook until potatoes have softened. Remove scotch bonnet pepper.",
+      "categoryExternalId": "Goat",
+      "areaExternalId": "Jamaican",
+      "tags": [],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "goat_meat",
+          "quantity": 3,
+          "unit": "LB",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "jamaican_curry_powder",
+          "quantity": 2.5,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "ground_ginger",
+          "quantity": 0.5,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "allpurpose_seasoning",
+          "quantity": 0.5,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "allspice",
+          "quantity": 0.25,
+          "unit": "TSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "chopped"
+        },
+        {
+          "ingredientNormalizedName": "garlic",
+          "quantity": 6,
+          "unit": "CLOVE",
+          "notes": "sliced"
+        },
+        {
+          "ingredientNormalizedName": "thyme",
+          "quantity": 3,
+          "unit": "OTHER",
+          "notes": "sprigs"
+        },
+        {
+          "ingredientNormalizedName": "oil",
+          "quantity": 2,
+          "unit": "TBSP",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "water",
+          "quantity": 1,
+          "unit": null,
+          "notes": "1/4 cup"
+        },
+        {
+          "ingredientNormalizedName": "scotch_bonnet",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "russet_potato",
+          "quantity": 1,
+          "unit": "OTHER",
+          "notes": "large"
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": null,
+          "unit": "TO_TASTE",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "pepper",
+          "quantity": null,
+          "unit": "TO_TASTE",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "externalId": "52968",
+      "slug": "52968",
+      "title": "Mbuzi Choma (Roasted Goat)",
+      "imageUrl": "https://www.themealdb.com/images/media/meals/cuio7s1555492979.jpg",
+      "youtubeUrl": null,
+      "sourceUrl": null,
+      "instructions": "1. Steps for the Meat:\nRoast meat over medium heat for 50 minutes and salt it as you turn it.\n\n2. Steps for Ugali:\nBring the water and salt to a boil in a heavy-bottomed saucepan. Stir in the cornmeal slowly, letting it fall through the fingers of your hand.\n\n3. Reduce heat to medium-low and continue stirring regularly, smashing any lumps with a spoon, until the mush pulls away from the sides of the pot and becomes very thick, about 10 minutes.\n\n4.Remove from heat and allow to cool.\n\n5. Place the ugali into a large serving bowl. Wet your hands with water, form a ball and serve.\n\n6. Steps for Kachumbari: Mix the tomatoes, onions, chili and coriander leaves in a bowl.\n\n7. Serve and enjoy!",
+      "categoryExternalId": "Goat",
+      "areaExternalId": "Kenyan",
+      "tags": [
+        {
+          "tag": "bbq"
+        },
+        {
+          "tag": "meat"
+        }
+      ],
+      "ingredients": [
+        {
+          "ingredientNormalizedName": "goat_meat",
+          "quantity": 1,
+          "unit": "KG",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "corn_flour",
+          "quantity": 1,
+          "unit": "KG",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "tomatoes",
+          "quantity": 2,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "salt",
+          "quantity": null,
+          "unit": "PINCH",
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "onion",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "green_chilli",
+          "quantity": 1,
+          "unit": null,
+          "notes": null
+        },
+        {
+          "ingredientNormalizedName": "coriander_leaves",
+          "quantity": 1,
+          "unit": "BUNCH",
+          "notes": null
+        }
+      ]
+    }
+  ]
+}
