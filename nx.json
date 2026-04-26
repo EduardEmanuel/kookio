@@ -40,10 +40,12 @@
     },
     "@nx/vite:test": {
       "cache": true,
+      "dependsOn": ["prisma-client:generate"],
       "inputs": ["default", "^production"]
     },
     "@analogjs/vitest-angular:test": {
       "cache": true,
+      "dependsOn": ["prisma-client:generate"],
       "inputs": ["default", "^production"]
     },
     "@nx/js:swc": {
