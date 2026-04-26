@@ -10,9 +10,9 @@ export const seedRecipeCollections = async (
 
   for (const col of collections) {
     await prisma.recipeCollection.upsert({
-      where: { userId_name: { userId: col.userId, name: col.name } },
+      where: { id: col.id },
       create: col,
-      update: { emoji: col.emoji },
+      update: { userId: col.userId, name: col.name, emoji: col.emoji },
     } as never);
   }
 

@@ -4,9 +4,9 @@ import { logger } from './seed-helpers';
 
 const seedMockUser = async (row: UserMock): Promise<UserSeeded> => {
   const result = (await prisma.user.upsert({
-    where: { email: row.email },
+    where: { id: row.id },
     create: { ...row, firebaseUid: null },
-    update: { roles: row.roles, name: row.name },
+    update: { email: row.email, roles: row.roles, name: row.name },
     select: { id: true, email: true, roles: true, firebaseUid: true },
   } as never)) as UserSeeded;
 

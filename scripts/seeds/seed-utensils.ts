@@ -7,9 +7,14 @@ export const seedUtensils = async (rows: UtensilMock[]): Promise<void> => {
 
   for (const row of rows) {
     await prisma.utensil.upsert({
-      where: { slug: row.slug },
+      where: { id: row.id },
       create: row,
-      update: { name: row.name, emoji: row.emoji, category: row.category },
+      update: {
+        slug: row.slug,
+        name: row.name,
+        emoji: row.emoji,
+        category: row.category,
+      },
     } as never);
   }
 

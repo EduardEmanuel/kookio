@@ -9,9 +9,10 @@ export const seedDietaryRestrictions = async (
 
   for (const row of rows) {
     await prisma.dietaryRestriction.upsert({
-      where: { slug: row.slug },
+      where: { id: row.id },
       create: row,
       update: {
+        slug: row.slug,
         label: row.label,
         emoji: row.emoji,
         description: row.description,
