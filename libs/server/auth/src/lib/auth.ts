@@ -56,10 +56,16 @@ export const toSession = async (
     return null;
   }
 
-  let user: Awaited<ReturnType<typeof prisma.user.findUnique>>;
+  const findUserWithProfile = () =>
+    prisma.user.findUnique({
+      where: { email },
+      include: { profile: { select: { onboardingDone: true } } },
+    });
+
+  let user: Awaited<ReturnType<typeof findUserWithProfile>>;
 
   try {
-    user = await prisma.user.findUnique({ where: { email } });
+    user = await findUserWithProfile();
   } catch (err) {
     log.error({ err, email }, 'DB lookup failed during session resolution');
     return null;
@@ -75,5 +81,6 @@ export const toSession = async (
     email: user.email,
     roles: user.roles,
     amr: user.amr,
+    onboardingDone: user.profile?.onboardingDone ?? false,
   };
 };

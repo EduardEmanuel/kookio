@@ -16,4 +16,5 @@ export type AuthSession = {
   email: string;
   roles: Role[];
   amr: string[];
+  onboardingDone: boolean;
 };

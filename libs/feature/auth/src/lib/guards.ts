@@ -49,6 +49,27 @@ export const guestGuard: CanActivateFn = (): Observable<boolean | UrlTree> => {
 };
 
 /**
+ * Blocks authenticated users who have not yet completed onboarding.
+ * Redirects to /onboarding. Apply AFTER authGuard:
+ *   canActivate: [authGuard, onboardingGuard]
+ * The /onboarding route itself must NOT use this guard (would loop).
+ */
+export const onboardingGuard: CanActivateFn = (): Observable<
+  boolean | UrlTree
+> => {
+  const router = inject(Router);
+  const authStore = inject(AuthStore);
+
+  return authStore
+    .ready$()
+    .pipe(
+      map(() =>
+        authStore.onboardingDone() ? true : router.parseUrl(URLS.ONBOARDING),
+      ),
+    );
+};
+
+/**
  * Factory — blocks users without the required role(s).
  * Redirects to /403 when authenticated but lacking role.
  * Redirects to /login when not authenticated at all.

@@ -14,6 +14,13 @@
         "tsConfig": "libs/server/auth/tsconfig.lib.json",
         "assets": ["libs/server/auth/*.md"]
       }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "libs/server/auth/vite.config.ts",
+        "passWithNoTests": true
+      }
     }
   }
 }

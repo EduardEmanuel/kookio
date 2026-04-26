@@ -21,6 +21,7 @@ const SessionSchema = z.object({
   email: z.string(),
   roles: z.array(z.nativeEnum(role)),
   amr: z.array(z.string()),
+  onboardingDone: z.boolean(),
 });
 
 export const auth = router({
@@ -38,6 +39,7 @@ export const auth = router({
       try {
         const existing = await ctx.prisma.user.findUnique({
           where: { email },
+          include: { profile: { select: { onboardingDone: true } } },
         });
 
         if (existing) {
@@ -47,6 +49,7 @@ export const auth = router({
             email: existing.email,
             roles: existing.roles as Role[],
             amr: existing.amr,
+            onboardingDone: existing.profile?.onboardingDone ?? false,
           };
         }
 
@@ -66,6 +69,7 @@ export const auth = router({
           email: created.email,
           roles: created.roles as Role[],
           amr: created.amr,
+          onboardingDone: false,
         };
       } catch (err) {
         log.error({ err, email }, 'auth.register failed');
@@ -91,6 +95,7 @@ export const auth = router({
         email: s.email,
         roles: s.roles,
         amr: s.amr,
+        onboardingDone: s.onboardingDone,
       };
     }),
 });

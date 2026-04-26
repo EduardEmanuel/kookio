@@ -109,8 +109,9 @@ const resolveAuth = (options: FirebaseOptions): Auth | null => {
 export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withComputed(({ currentUser }) => ({
+  withComputed(({ currentUser, session }) => ({
     isAuthenticated: computed(() => !!currentUser()),
+    onboardingDone: computed(() => session()?.onboardingDone ?? false),
   })),
   withMethods((store) => {
     const platformId = inject(PLATFORM_ID);
