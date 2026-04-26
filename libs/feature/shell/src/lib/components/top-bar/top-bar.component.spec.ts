@@ -72,11 +72,11 @@ describe('TopBarComponent', () => {
   });
 
   describe('behaviour', () => {
-    it('calls logout() when deconectare button is clicked', async () => {
+    it('calls logout() when sign-out button is clicked', async () => {
       const { fixture, store } = await setup(mockUser);
 
       const accountBtn = fixture.nativeElement.querySelector(
-        'button[aria-label="Cont"]',
+        'button[aria-label="Account"]',
       ) as HTMLButtonElement;
       accountBtn.click();
       fixture.detectChanges();

@@ -30,10 +30,10 @@ export class BottomTabsComponent {
 
   readonly tabs: readonly TabItem[] = [
     { label: 'Home', icon: 'home', route: '/' },
-    { label: 'Rețete', icon: 'menu_book', route: '/recipes' },
+    { label: 'Recipes', icon: 'menu_book', route: '/recipes' },
     { label: 'Pantry', icon: 'kitchen', route: '/pantry' },
     { label: 'Plan', icon: 'calendar_today', route: '/meal-plan' },
-    { label: 'Cont', icon: 'person', route: '/account' },
+    { label: 'Account', icon: 'person', route: '/account' },
   ];
 
   private readonly currentUrl = toSignal(

@@ -52,7 +52,7 @@ describe('BottomTabsComponent', () => {
       );
       expect(labels).toContain('Home');
       expect(labels).toContain('Pantry');
-      expect(labels).toContain('Cont');
+      expect(labels).toContain('Account');
     });
   });
 

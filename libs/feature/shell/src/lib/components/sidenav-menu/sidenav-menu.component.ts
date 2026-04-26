@@ -24,17 +24,17 @@ const AUTH_ROUTES = ['/login', '/register', '/onboarding', '/404', '/401'];
 const NAV_ITEMS: readonly NavItem[] = [
   { label: 'Home', icon: 'home', route: '/' },
   { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-  { label: 'Rețete', icon: 'menu_book', route: '/recipes' },
-  { label: 'Gătesc cu ce am', icon: 'restaurant', route: '/recipes/match' },
-  { label: 'Salvate', icon: 'bookmark', route: '/recipes/saved' },
+  { label: 'Recipes', icon: 'menu_book', route: '/recipes' },
+  { label: 'Cook with stocks', icon: 'restaurant', route: '/recipes/match' },
+  { label: 'Saved', icon: 'bookmark', route: '/recipes/saved' },
   { label: 'Pantry', icon: 'kitchen', route: '/pantry' },
-  { label: 'Plan mese', icon: 'calendar_today', route: '/meal-plan' },
+  { label: 'Meal Plan', icon: 'calendar_today', route: '/meal-plan' },
   {
-    label: 'Listă cumpărături',
+    label: 'Shopping List',
     icon: 'shopping_cart',
     route: '/shopping-list',
   },
-  { label: 'Cont', icon: 'person', route: '/account' },
+  { label: 'Account', icon: 'person', route: '/account' },
   {
     label: 'Admin',
     icon: 'admin_panel_settings',

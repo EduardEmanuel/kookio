@@ -1,5 +1,5 @@
 @if (!isHidden()) {
-  <nav class="bottom-tabs" role="navigation" aria-label="Meniu principal">
+  <nav class="bottom-tabs" role="navigation" aria-label="Main menu">
     @for (tab of tabs; track tab.route) {
       <a
         [routerLink]="tab.route"
