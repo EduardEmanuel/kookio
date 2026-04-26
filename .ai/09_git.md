@@ -168,9 +168,13 @@ git push origin feat/my-feature
 
 This project is developed with the help of AI coding assistants (Claude, ChatGPT, Gemini, GitHub Copilot, or similar tools).
 
-### Commit Attribution
+### Commit Messages Must Be AI-Free
 
-- **Never** add AI co-authorship trailers to commit messages:
+Commit messages on this repo must contain **no trace** that an AI assistant
+was involved. This is broader than just attribution trailers — it covers
+the entire message, subject and body.
+
+**1. Never add co-authorship trailers:**
 
 ```text
 # ❌ never add any of these
@@ -179,10 +183,59 @@ Co-Authored-By: GitHub Copilot <copilot@github.com>
 Co-Authored-By: ChatGPT <noreply@openai.com>
 ```
 
+**2. Never reference AI-guideline files in the message body:**
+
+```text
+# ❌ avoid — reveals an AI workflow
+- "per CLAUDE.md i18n guidelines"
+- "as documented in AGENTS.md"
+- "following GEMINI.md conventions"
+- "per .ai/ instructions"
+
+# ✅ rephrase using neutral project terms
+- "per project i18n guidelines"
+- "matching the team conventions in README"
+- "following the project's standard refactor pattern"
+- (or just drop the justification — the diff speaks for itself)
+```
+
+**3. Never name AI products or assistants in the message:**
+
+```text
+# ❌ avoid
+- "debugged together with Claude"
+- "Cursor flagged this issue"
+- "Copilot suggested this approach"
+
+# ✅ instead, justify through technical reasoning or project conventions
+- "fixes the race in the test runner"
+- "aligns with the existing repository pattern"
+```
+
+**4. Never embed tool-call output or AI-style phrasing** that betrays an
+AI workflow:
+
+```text
+# ❌ avoid
+- "the agent reported that ..."
+- "based on the analysis above ..."
+- "after reviewing the codebase ..."
+
+# ✅ write it as a human-authored note
+- "the test failed because ..."
+- "the relevant constraint is ..."
+- (or just remove — most explanations are noise anyway)
+```
+
 - The human author is solely responsible for every commit — AI tools are instruments, not collaborators
 - This applies regardless of how much of the code was suggested by the AI
+- When justifying a decision in the body, cite project files that are not AI-specific (README, RUNBOOK, individual source files), or describe the reasoning in plain technical terms
 
-**Why:** This is an academic project. The boundary between using a specialized tool and academic dishonesty depends on authorship transparency. Embedding AI attribution directly in git history creates ambiguity about the origin of work that could be misinterpreted during evaluation. AI assistants are treated as tools (like a linter, a compiler, or Stack Overflow) — not as co-authors.
+**Why:** This is an academic project. The boundary between using a specialized tool and academic dishonesty depends on authorship transparency. AI references in git history — even subtle ones like citing an AI-guideline file — create ambiguity about the origin of decisions that could be misinterpreted during evaluation. Every commit is part of the evaluable production, and the declared author is the singular author of the decision. AI assistants are treated as tools (like a linter, a compiler, or Stack Overflow) — not as co-authors, and not as cited sources.
+
+**How to apply:** Before running `git commit`, read the message as if a
+reviewer who knows nothing about your tooling were reading it. If anything
+in the message would tip them off that an AI was involved, rewrite it.
 
 ## General Rules
 
