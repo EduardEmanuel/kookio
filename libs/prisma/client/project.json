@@ -147,6 +147,7 @@
     },
     "test": {
       "executor": "@nx/vite:test",
+      "dependsOn": [{ "target": "generate", "projects": "self" }],
       "options": {
         "config": "libs/prisma/client/vite.config.ts",
         "passWithNoTests": true
