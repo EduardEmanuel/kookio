@@ -146,7 +146,9 @@ runs:
 
         if [[ "$HTTP_CODE" =~ ^2 ]]; then
           echo "✅ Discord notification sent (HTTP $HTTP_CODE) for event: $EVENT_TYPE"
-          [ -n "$MENTION_USER_ID" ] && echo "   Mentioned user: $MENTION_USER_ID"
+          if [ -n "$MENTION_USER_ID" ]; then
+            echo "   Mentioned user: $MENTION_USER_ID"
+          fi
         else
           echo "⚠️  Discord notification failed (HTTP $HTTP_CODE) for event: $EVENT_TYPE"
           echo "Response:"
