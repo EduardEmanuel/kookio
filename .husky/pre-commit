@@ -1,8 +1,9 @@
-# Format all files before linting
+# Format all files before linting.
+# Do NOT use `git add -u` afterwards: it would re-stage every modified
+# tracked file in the working tree, dragging unrelated in-progress work
+# into commits where the author had `git add`-ed only specific files.
+# lint-staged below already restages files it modifies on its own.
 npx nx format:write
-
-# Re-stage any files changed by the formatter
-git add -u
 
 # Run linters only on staged files
 npm exec lint-staged
