@@ -6,14 +6,6 @@
   "sourceRoot": "apps/web/src",
   "tags": ["scope:web", "type:app"],
   "targets": {
-    "kookio-icons-filled": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "vite-node --config vite.config.ts generate-icon-file.ts --namespace=kookio",
-        "cwd": "apps/web/scripts/",
-        "parallel": false
-      }
-    },
     "build": {
       "executor": "@analogjs/platform:vite",
       "options": {

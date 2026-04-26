@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'kookio-web-home',
-  imports: [MatIconModule],
+  imports: [],
   templateUrl: `./(home).page.html`,
 })
 export default class HomeComponent {

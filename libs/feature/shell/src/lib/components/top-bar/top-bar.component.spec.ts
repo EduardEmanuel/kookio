@@ -41,11 +41,9 @@ describe('TopBarComponent', () => {
   };
 
   describe('rendering', () => {
-    it('shows the Kookio brand name', async () => {
+    it('shows the Kookio logo', async () => {
       const { el } = await setup();
-      expect(el.querySelector('.topbar__brand')?.textContent?.trim()).toBe(
-        'Kookio',
-      );
+      expect(el.querySelector('svg[aria-label="Kookio"]')).toBeTruthy();
     });
 
     it('shows login link when not authenticated', async () => {

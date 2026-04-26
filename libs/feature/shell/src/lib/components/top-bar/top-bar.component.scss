@@ -17,12 +17,9 @@
   color: inherit;
 }
 
-.topbar__brand {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  padding: 0 var(--space-xs);
+.topbar__logo-svg {
+  width: 130px;
+  height: 50px;
 }
 
 .topbar__spacer {
