@@ -7,7 +7,7 @@ export type Context = {
   prisma: typeof prisma;
 };
 
-// Adapter hook (set dintr-un adapter real mai târziu)
+// Adapter hook (set from a real adapter later)
 export type SessionAdapter = (token?: string) => Promise<AuthSession | null>;
 let resolveSession: SessionAdapter = async () => null;
 export const setSessionResolver = (fn: SessionAdapter) => {

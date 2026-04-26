@@ -21,8 +21,8 @@ type MakeEntityLabelersOptions = {
   entityName: string;
 
   /**
-   * (opțional) set de “identity rules” pentru where:
-   * fiecare rule e o listă de keyPaths care trebuie să existe ca să formatăm un label.
+   * (optional) set “identity rules” on where:
+   * each rule is a keyPaths list required in order to make a label
    */
   whereIdentity?: Array<{
     keys: KeyPath[];
@@ -30,17 +30,17 @@ type MakeEntityLabelersOptions = {
   }>;
 
   /**
-   * (opțional) set de “identity rules” pentru create.data
+   * (optional) set “identity rules” on create.data
    */
   createIdentity?: Array<{
     keys: KeyPath[];
     format: (data: UnknownRecord) => string;
   }>;
 
-  /** (opțional) cum extragi name pentru createMany */
+  /** (optional) getting a name on createMany */
   createManyNameKey?: string; // default: "name"
 
-  /** (opțional) custom string pentru unknown */
+  /** (optional) custom string for unknown */
   unknownLabel?: string; // default: `${entityName}(unknown)`
 };
 

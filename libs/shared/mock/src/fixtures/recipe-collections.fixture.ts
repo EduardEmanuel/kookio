@@ -14,7 +14,7 @@ export const devRecipeCollections = [
   }),
   createMockRecipeCollection('usr_dev_user', {
     id: 'col_dev_try',
-    name: 'De încercat',
+    name: 'Try later',
     emoji: '🔖',
   }),
 ];
