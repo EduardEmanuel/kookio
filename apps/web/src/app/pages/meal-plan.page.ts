@@ -13,7 +13,7 @@ export const routeMeta: RouteMeta = {
   selector: 'kookio-meal-plan-page',
   template: `
     <section class="prose mx-auto p-6">
-      <h1>Plan mese</h1>
+      <h1>Meal Plan</h1>
       <p>Plan your weekly meals. — coming soon</p>
     </section>
   `,

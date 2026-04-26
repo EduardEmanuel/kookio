@@ -13,7 +13,7 @@ export const routeMeta: RouteMeta = {
   selector: 'kookio-recipes-saved-page',
   template: `
     <section class="prose mx-auto p-6">
-      <h1>Salvate</h1>
+      <h1>Saved Recipes</h1>
       <p>Your saved recipes. — coming soon</p>
     </section>
   `,

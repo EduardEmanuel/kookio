@@ -13,7 +13,7 @@ export const routeMeta: RouteMeta = {
   selector: 'kookio-shopping-list-page',
   template: `
     <section class="prose mx-auto p-6">
-      <h1>Listă cumpărături</h1>
+      <h1>Shopping List</h1>
       <p>Your shopping list. — coming soon</p>
     </section>
   `,

@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'kookio-web-home',
   imports: [],
-  templateUrl: `./(home).page.html`,
+  template: `<h1>Welcome {{ message }}</h1>`,
 })
 export default class HomeComponent {
   protected message = 'to Kookio';

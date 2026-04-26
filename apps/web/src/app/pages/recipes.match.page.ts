@@ -13,7 +13,7 @@ export const routeMeta: RouteMeta = {
   selector: 'kookio-recipes-match-page',
   template: `
     <section class="prose mx-auto p-6">
-      <h1>Gătesc cu ce am</h1>
+      <h1>Cook with your stocks</h1>
       <p>Find recipes based on ingredients you have. — coming soon</p>
     </section>
   `,
