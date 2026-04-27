@@ -1,22 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection, signal } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import type { User } from 'firebase/auth';
 
 import { AuthStore } from '@kookio/feature-auth';
+import { createMockAuthStore } from '@kookio/feature-auth/testing';
 
 import { TopBarComponent } from './top-bar.component';
 
 const mockUser = { uid: 'u1', email: 'user@test.com' } as User;
-
-const makeAuthStore = (user: User | null = null) => ({
-  currentUser: signal<User | null>(user),
-  session: signal(null),
-  loading: signal(false),
-  isAuthenticated: signal(!!user),
-  logout: vi.fn(),
-});
 
 describe('TopBarComponent', () => {
   afterEach(() => {
@@ -25,7 +18,7 @@ describe('TopBarComponent', () => {
   });
 
   const setup = async (user: User | null = null) => {
-    const store = makeAuthStore(user);
+    const store = createMockAuthStore({ currentUser: user });
     await TestBed.configureTestingModule({
       imports: [TopBarComponent],
       providers: [

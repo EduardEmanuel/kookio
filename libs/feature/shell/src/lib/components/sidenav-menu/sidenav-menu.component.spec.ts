@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { Component, signal } from '@angular/core';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { Router, provideRouter } from '@angular/router';
 
+import type { AuthSession } from '@kookio/prisma-client';
 import { AuthStore } from '@kookio/feature-auth';
+import { createMockAuthStore } from '@kookio/feature-auth/testing';
 
 import { SideNavMenuComponent } from './sidenav-menu.component';
 
@@ -18,15 +19,15 @@ const routes = [
   { path: 'dashboard', component: StubPage },
 ];
 
-const makeAuthStore = (roles: string[] = []) => ({
-  currentUser: signal(null),
-  session: signal(
-    roles.length ? { uid: 'u1', email: 'u@test.com', roles, amr: [] } : null,
-  ),
-  loading: signal(false),
-  isAuthenticated: signal(roles.length > 0),
-  logout: vi.fn(),
-});
+const sessionWithRoles = (roles: string[]): AuthSession | null =>
+  roles.length
+    ? ({
+        uid: 'u1',
+        email: 'u@test.com',
+        roles,
+        amr: [],
+      } as unknown as AuthSession)
+    : null;
 
 describe('SideNavMenuComponent', () => {
   afterEach(() => {
@@ -35,7 +36,10 @@ describe('SideNavMenuComponent', () => {
   });
 
   const setup = async (roles: string[] = []) => {
-    const store = makeAuthStore(roles);
+    const store = createMockAuthStore({
+      session: sessionWithRoles(roles),
+      isAuthenticated: roles.length > 0,
+    });
     await TestBed.configureTestingModule({
       imports: [SideNavMenuComponent, StubPage],
       providers: [

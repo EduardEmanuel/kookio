@@ -1,28 +1,23 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
-import { signal } from '@angular/core';
-import type { User } from 'firebase/auth';
 
 import { AuthStore } from '@kookio/feature-auth';
-import AccountPage from './account.page';
+import { createMockAuthStore } from '@kookio/feature-auth/testing';
 
-const makeAuthStore = (email: string | null = null) => ({
-  currentUser: signal<Partial<User> | null>(email ? { email } : null),
-  session: signal(null),
-  isAuthenticated: signal(!!email),
-  loading: signal(false),
-  loginError: signal(null),
-  logout: vi.fn(),
-});
+import AccountPage from './account.page';
 
 describe('AccountPage', () => {
   let fixture: ComponentFixture<AccountPage>;
   let el: HTMLElement;
 
   const setup = async (email: string | null = 'user@example.com') => {
+    const store = createMockAuthStore({
+      currentUser: email ? { email } : null,
+      isAuthenticated: !!email,
+    });
     await TestBed.configureTestingModule({
       imports: [AccountPage],
-      providers: [{ provide: AuthStore, useValue: makeAuthStore(email) }],
+      providers: [{ provide: AuthStore, useValue: store }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AccountPage);

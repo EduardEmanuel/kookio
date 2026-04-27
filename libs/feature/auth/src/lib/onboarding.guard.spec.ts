@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { Router, UrlTree, provideRouter } from '@angular/router';
-import { firstValueFrom, of } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import type {
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
@@ -9,20 +9,16 @@ import type {
 
 import { AuthStore } from './auth';
 import { onboardingGuard } from './guards';
+import { createMockAuthStore } from './testing/auth-store.mock';
 
 const fakeRoute = {} as ActivatedRouteSnapshot;
 const fakeState = (url: string) => ({ url }) as RouterStateSnapshot;
-
-const makeAuthStore = (onboardingDone: boolean) => ({
-  ready$: () => of(undefined),
-  onboardingDone: () => onboardingDone,
-});
 
 const setup = (onboardingDone: boolean) => {
   TestBed.configureTestingModule({
     providers: [
       provideRouter([]),
-      { provide: AuthStore, useValue: makeAuthStore(onboardingDone) },
+      { provide: AuthStore, useValue: createMockAuthStore({ onboardingDone }) },
     ],
   });
 };

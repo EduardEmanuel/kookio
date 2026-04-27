@@ -9,6 +9,10 @@ import {
 import { Router, provideRouter } from '@angular/router';
 
 import { AuthStore } from '@kookio/feature-auth';
+import {
+  type MockAuthStore,
+  createMockAuthStore,
+} from '@kookio/feature-auth/testing';
 
 import { BreakpointService } from '../../services/breakpoint.service';
 
@@ -29,10 +33,8 @@ const routes = [
   { path: '403', component: StubPage },
 ];
 
-type FakeUser = { uid: string };
-
 interface SetupOptions {
-  user?: FakeUser | null;
+  user?: { uid: string } | null;
   onboardingDone?: boolean;
   isMobile?: boolean;
 }
@@ -41,17 +43,16 @@ interface SetupHandles {
   fixture: ReturnType<typeof TestBed.createComponent<CookNowFabComponent>>;
   el: HTMLElement;
   router: Router;
-  currentUser: WritableSignal<FakeUser | null>;
-  onboardingDone: WritableSignal<boolean>;
+  authStore: MockAuthStore;
   isMobile: WritableSignal<boolean>;
 }
 
 const setup = async (opts: SetupOptions = {}): Promise<SetupHandles> => {
-  const currentUser = signal<FakeUser | null>(opts.user ?? null);
-  const onboardingDone = signal(opts.onboardingDone ?? false);
+  const authStore = createMockAuthStore({
+    currentUser: opts.user ?? null,
+    onboardingDone: opts.onboardingDone ?? false,
+  });
   const isMobile = signal(opts.isMobile ?? true);
-
-  const authStore = { currentUser, onboardingDone };
   const bp = { isMobile, isDesktop: signal(!isMobile()) };
 
   await TestBed.configureTestingModule({
@@ -72,8 +73,7 @@ const setup = async (opts: SetupOptions = {}): Promise<SetupHandles> => {
     fixture,
     el: fixture.nativeElement as HTMLElement,
     router: TestBed.inject(Router),
-    currentUser,
-    onboardingDone,
+    authStore,
     isMobile,
   };
 };
@@ -172,13 +172,13 @@ describe('CookNowFabComponent', () => {
     });
 
     it('appears when onboardingDone flips from false to true', async () => {
-      const { fixture, el, onboardingDone } = await setup({
+      const { fixture, el, authStore } = await setup({
         user: { uid: 'u1' },
         onboardingDone: false,
       });
       expect(fab(el)).toBeNull();
 
-      onboardingDone.set(true);
+      authStore.onboardingDone.set(true);
       fixture.detectChanges();
       expect(fab(el)).toBeTruthy();
     });

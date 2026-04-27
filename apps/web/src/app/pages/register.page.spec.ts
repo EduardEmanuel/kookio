@@ -1,40 +1,29 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { DeferBlockBehavior } from '@angular/core/testing';
-import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
-import type { AuthSession } from '@kookio/prisma-client';
 
 import { AuthStore } from '@kookio/feature-auth';
+import {
+  type MockAuthStoreOptions,
+  createMockAuthStore,
+} from '@kookio/feature-auth/testing';
+
 import RegisterPage from './register.page';
 
-const makeAuthStore = (
-  opts: {
-    authReady?: boolean;
-    loading?: boolean;
-    registerError?: string | null;
-    session?: AuthSession | null;
-  } = {},
-) => ({
-  authReady: signal(opts.authReady ?? true),
-  loading: signal(opts.loading ?? false),
-  registerError: signal(opts.registerError ?? null),
-  session: signal(opts.session ?? null),
-  currentUser: signal(null),
-  isAuthenticated: signal(false),
-  register: vi.fn(),
-  provisionUser: vi.fn(),
-  fetchSession: vi.fn(),
-});
+type RegisterStoreOpts = Pick<
+  MockAuthStoreOptions,
+  'authReady' | 'loading' | 'registerError' | 'session'
+>;
 
 describe('RegisterPage', () => {
   let fixture: ComponentFixture<RegisterPage>;
   let el: HTMLElement;
-  let store: ReturnType<typeof makeAuthStore>;
+  let store: ReturnType<typeof createMockAuthStore>;
 
-  const setup = async (storeOpts: Parameters<typeof makeAuthStore>[0] = {}) => {
-    store = makeAuthStore(storeOpts);
+  const setup = async (storeOpts: RegisterStoreOpts = {}) => {
+    store = createMockAuthStore(storeOpts);
     await TestBed.configureTestingModule({
       imports: [RegisterPage],
       deferBlockBehavior: DeferBlockBehavior.Playthrough,

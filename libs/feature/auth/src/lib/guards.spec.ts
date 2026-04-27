@@ -2,27 +2,19 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { Router, UrlTree, provideRouter } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { of } from 'rxjs';
 import type {
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
 } from '@angular/router';
 
+import type { AuthSession } from '@kookio/prisma-client';
+
 import { authGuard, guestGuard, roleGuard } from './guards';
 import { AuthStore } from './auth';
-import type { AuthSession } from '@kookio/prisma-client';
+import { createMockAuthStore } from './testing/auth-store.mock';
 
 const fakeRoute = {} as ActivatedRouteSnapshot;
 const fakeState = (url: string) => ({ url }) as RouterStateSnapshot;
-
-const makeAuthStore = (opts: {
-  isAuthenticated: boolean;
-  session?: AuthSession | null;
-}) => ({
-  ready$: () => of(undefined),
-  isAuthenticated: () => opts.isAuthenticated,
-  session: () => opts.session ?? null,
-});
 
 const setup = (
   isAuthenticated: boolean,
@@ -33,7 +25,7 @@ const setup = (
       provideRouter([]),
       {
         provide: AuthStore,
-        useValue: makeAuthStore({ isAuthenticated, session }),
+        useValue: createMockAuthStore({ isAuthenticated, session }),
       },
     ],
   });

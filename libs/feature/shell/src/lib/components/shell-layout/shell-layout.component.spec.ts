@@ -1,25 +1,21 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { Component, signal } from '@angular/core';
-import { provideZonelessChangeDetection } from '@angular/core';
+import {
+  Component,
+  provideZonelessChangeDetection,
+  signal,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { AuthStore } from '@kookio/feature-auth';
+import { createMockAuthStore } from '@kookio/feature-auth/testing';
+
 import { BreakpointService } from '../../services/breakpoint.service';
 
 import { ShellLayoutComponent } from './shell-layout.component';
 
 @Component({ template: '' })
 class StubPage {}
-
-const makeAuthStore = () => ({
-  currentUser: signal(null),
-  session: signal(null),
-  loading: signal(false),
-  isAuthenticated: signal(false),
-  onboardingDone: signal(false),
-  logout: vi.fn(),
-});
 
 describe('ShellLayoutComponent', () => {
   afterEach(() => {
@@ -35,7 +31,7 @@ describe('ShellLayoutComponent', () => {
         provideZonelessChangeDetection(),
         provideRouter([{ path: '**', component: StubPage }]),
         { provide: BreakpointService, useValue: bp },
-        { provide: AuthStore, useValue: makeAuthStore() },
+        { provide: AuthStore, useValue: createMockAuthStore() },
       ],
     }).compileComponents();
 

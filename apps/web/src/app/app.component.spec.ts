@@ -2,10 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import type { User } from 'firebase/auth';
 
 import { AuthStore } from '@kookio/feature-auth';
+import { createMockAuthStore } from '@kookio/feature-auth/testing';
 import { BreakpointService } from '@kookio/feature-shell';
+
 import { TrpcHeaders } from '../trpc-client';
 import { AppComponent } from './app.component';
 
@@ -14,27 +15,12 @@ const mockBreakpointService = {
   isDesktop: signal(true),
 };
 
-const makeAuthStore = () => {
-  const currentUser = signal<Partial<User> | null>(null);
-  const idToken = signal<string | null>(null);
-  return {
-    currentUser,
-    idToken,
-    refreshToken: vi.fn(),
-    fetchSession: vi.fn(),
-    session: signal(null),
-    loading: signal(false),
-    isAuthenticated: signal(false),
-    onboardingDone: signal(false),
-  };
-};
-
 describe('AppComponent effects', () => {
-  let store: ReturnType<typeof makeAuthStore>;
+  let store: ReturnType<typeof createMockAuthStore>;
   let setHeadersSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
-    store = makeAuthStore();
+    store = createMockAuthStore();
     setHeadersSpy = vi.spyOn(TrpcHeaders, 'set');
 
     await TestBed.configureTestingModule({
