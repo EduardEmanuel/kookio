@@ -1,5 +1,7 @@
 # Firebase Guidelines
 
+> **Status: Active** — Firebase Auth is in use via `libs/feature/auth` (client) and `libs/server/auth` (admin SDK + token verification in tRPC context). The `AuthStore` edge cases (env-var guard, safety timeout) match the code; the timeout value remains unvalidated — see `project_authready-timeout-unvalidated.md` in memory.
+
 ## Services Used
 
 - Firebase Authentication (primary auth system)

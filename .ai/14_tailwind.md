@@ -1,5 +1,7 @@
 # Tailwind CSS v4 Guidelines
 
+> **Status: Active** — Tailwind v4 is loaded via `@import 'tailwindcss'` in `apps/web/src/styles.css` and used inside page templates. Material theming is kept separate per the responsibility split.
+
 ## Version & Setup
 
 - Tailwind CSS v4 via `@tailwindcss/vite` plugin

@@ -1,5 +1,7 @@
 # WebSockets & Server-Sent Events Guidelines
 
+> **Status: Future Direction** — there are **no** WebSocket or SSE handlers, no tRPC subscriptions, and `nitro.experimental.websocket` is not enabled in `vite.config.ts`. Treat the entire chapter as design intent for when a real-time feature is genuinely required.
+
 ## When to Use
 
 | Technology             | Use Case                                                                  |

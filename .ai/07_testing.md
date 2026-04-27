@@ -1,10 +1,13 @@
 # Unit Testing Guidelines
 
+> **Status: Active** — Vitest + Angular Testing Library are wired up via `vitest.workspace.ts`; spec files exist throughout `apps/web` and the `libs/`. Marble testing helpers are valid patterns; no marble specs exist in the codebase yet.
+
 ## Framework & Tools
 
 - Vitest as the test runner
 - Angular Testing Library (`@testing-library/angular`) for component tests
-- `@ngrx/store/testing` for NgRx Signal Store testing
+- Signal Stores are tested via `TestBed.inject()` against the public API — no
+  helper package; do not pull in `@ngrx/store/testing` (classic NgRx, not used here)
 
 ## Philosophy
 
@@ -176,22 +179,6 @@ describe('searchOperator', () => {
           switchMap((term) => searchService.search(term)),
         ),
       ).toBe(expected, { x: mockResults, y: mockResults2 });
-    });
-  });
-});
-```
-
-### Testing NgRx Effects with Marbles
-
-```typescript
-it('should dispatch success action after loading users', () => {
-  scheduler.run(({ hot, cold, expectObservable }) => {
-    actions$ = hot('-a', { a: UsersActions.loadUsers() });
-
-    mockUsersService.getAll.mockReturnValue(cold('-b|', { b: mockUsers }));
-
-    expectObservable(effects.loadUsers$).toBe('--c', {
-      c: UsersActions.loadUsersSuccess({ users: mockUsers }),
     });
   });
 });

@@ -10,7 +10,6 @@ export const routeMeta: RouteMeta = {
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   selector: 'kookio-account-page',
   template: `
     <section class="prose mx-auto p-6">

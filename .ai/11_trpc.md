@@ -1,5 +1,7 @@
 # tRPC Guidelines
 
+> **Status: Active (partial)** — tRPC v10 is wired up via `@analogjs/trpc`; routers live in `libs/server/trpc/src/lib/routers/` (auth, profile, user, webauthn, features) and the handler is at `apps/web/src/server/routes/api/trpc/[trpc].ts`. **Diverges** from the documented `src/server/trpc/` layout (routers are in a shared lib, not under the app). Subscriptions are **future direction** — no `subscription(...)` exists in any router today.
+
 ## Version & Integration
 
 - tRPC v10 via `@analogjs/trpc`

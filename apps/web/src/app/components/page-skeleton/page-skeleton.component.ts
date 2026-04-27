@@ -9,7 +9,6 @@ import {
 
 @Component({
   selector: 'kookio-page-skeleton',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgxSkeletonLoaderComponent],
   template: `

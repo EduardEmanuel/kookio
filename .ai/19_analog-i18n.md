@@ -1,3 +1,5 @@
+> **Status: Future Direction** — i18n is **not implemented**. There is no `src/i18n/` directory, no `provideI18n`, no `[locale].page.ts`, no `injectLocale`, no `$localize` calls, and no `i18n=` template attributes. `@angular/localize` is also not installed. The app is currently single-locale. Everything below is the intended design when localization is added.
+
 ## Translation Files
 
 ### Structure
@@ -108,7 +110,6 @@ import { LOCALE } from '@analogjs/router/tokens';
 import { DEFAULT_LOCALE } from '@kookio/types';
 
 @Component({
-  standalone: true,
   template: '',
 })
 export default class IndexPage {
@@ -135,7 +136,6 @@ import { Router } from '@angular/router';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@kookio/types';
 
 @Component({
-  standalone: true,
   imports: [RouterOutlet],
   template: `<router-outlet />`,
 })
@@ -221,7 +221,6 @@ import { SUPPORTED_LOCALES } from '@kookio/types';
 
 @Component({
   selector: 'app-language-switcher',
-  standalone: true,
   template: `
     <nav aria-label="Language selector">
       @for (locale of locales; track locale) {

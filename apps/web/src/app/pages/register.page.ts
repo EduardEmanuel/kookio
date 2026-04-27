@@ -18,7 +18,6 @@ export const routeMeta: RouteMeta = {
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   selector: 'kookio-register-page',
   imports: [FormsModule, PageSkeletonComponent],
   template: `

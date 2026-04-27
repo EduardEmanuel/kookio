@@ -1,5 +1,17 @@
 # Redis & Pino Guidelines
 
+> **Status: Active.** Pino logger lives at `libs/server/logger/`. Redis code lives at [apps/web/src/server/infra/redis.ts](../apps/web/src/server/infra/redis.ts) and [apps/web/src/server/infra/rate-limit.ts](../apps/web/src/server/infra/rate-limit.ts) — a single-file pair inside the app, **not** the multi-module `libs/server/src/redis/{client,cache,session,rate-limit,queue}.ts` split that the chapter below sketches. The chapter is preserved as a reference for the modules that don't exist yet, but the layout is intentional.
+>
+> **What exists:** `getRedis` (lazy-connect singleton), `redisKey` (prefix builder), `ipHash`, low-level `getString` / `setString` / `getJSON` / `setJSON` with mandatory TTL, `increaseWithTimeToLive` (atomic INCR + EXPIRE), and `rateLimitFixedWindow` + `h3ApplyRateLimit` adapter. Rate limiting uses **fixed window** (`INCR` + `EXPIRE`), not the sliding-window-with-sorted-sets pattern shown below — this is a deliberate choice for public endpoints and is fine at current volume.
+>
+> **What does not exist, and why:**
+>
+> - **`cache.ts` (cache-aside helpers like `cacheGetOrSet`).** The primitives `getJSON` / `setJSON` already cover storing values with a TTL; no query has been profiled as slow enough to justify a formal cache-aside layer. Add it the first time a real read hot-spot is identified, not speculatively.
+> - **`session.ts` (Redis-backed sessions).** Auth is Firebase. ID tokens are self-contained JWTs verified per request in the tRPC context via `firebase-admin`; there is no server-side session state to store. Add a session module only if the project moves to opaque server-issued session tokens, immediate revocation deny-lists, or per-session preferences.
+> - **`queue.ts` (pub-sub).** No tRPC subscription, WebSocket, or SSE handler exists in the codebase. Pub-sub becomes mandatory the moment a real-time feature ships on Vercel — events generated on one serverless instance must reach clients connected to other instances. The first such feature (e.g. live "ingredient expiring" alerts) is the trigger to add `queue.ts`, not before.
+>
+> Treat the cache / session / queue subsections below as **design intent for when one of those triggers fires** — do not preemptively introduce these modules.
+
 ## Redis
 
 ### Provider & Version

@@ -1,5 +1,7 @@
 # Git Guidelines
 
+> **Status: Active** — `main` / `test` / `dev` branch flow, Conventional Commits, and the AI-free commit-message rule are all enforced. The "no AI co-authorship in commits" rule is also pinned in memory (`feedback_no-co-authored-by.md`).
+
 ## Branching Strategy: GitHub Flow + Long-lived Preview Branches
 
 ### Branch Overview
@@ -98,9 +100,9 @@ type(scope): short description
   fix(store): correct loading state reset after error
   chore(deps): upgrade Angular to v20.1
 - Body is optional — use it to explain _why_, not _what_:
-  refactor(users-store): migrate from classic NgRx to Signal Store
-  Signal Store reduces boilerplate and aligns with the project's
-  preference for Signals over RxJS. No behavior changes.
+  refactor(auth-store): split sign-in flow into a dedicated rxMethod
+  Keeps the store surface focused and makes the cancellation
+  semantics explicit. No behavior changes.
 - Breaking changes go in the footer with `BREAKING CHANGE:`:
   feat(api): change users endpoint response shape
   BREAKING CHANGE: users array is now nested under data key.

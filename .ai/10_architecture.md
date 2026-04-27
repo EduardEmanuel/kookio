@@ -1,5 +1,7 @@
 # Architecture Guidelines
 
+> **Status: Active (partial)** — AnalogJS file-based routing under `apps/web/src/app/pages/` with `*.page.ts` is in use; tRPC handler at `apps/web/src/server/routes/api/trpc/[trpc].ts` and h3 routes (`health.get.ts`, `internal/bench-db.get.ts`) are live. **Diverges** from the described layout: actual lib tree is `libs/{core,feature,prisma,server,shared}` with sub-areas `core/{config,logging,security}`, `feature/{auth,shell}`, `server/{auth,logger,trpc}`, `shared/{mock,ui,utility}` — there is no `libs/shared/{ui,data-access,util,types}` split, no `libs/shared/types/`, and no `data-access` libs. Server-side data fetching via `injectLoad()` / `*.server.ts` is **future direction** (no `*.server.ts` page loaders exist yet).
+
 ## Stack
 
 - **Framework:** AnalogJS (meta-framework on top of Angular v20+)

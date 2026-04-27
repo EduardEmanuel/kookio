@@ -1,5 +1,7 @@
 # Form Guidelines
 
+> **Status: Active (partial)** — authenticated forms via tRPC mutations are in use (login, register, onboarding pages under `apps/web/src/app/pages/`). The "Form Actions" half of the strategy is **future direction**: there are no `*.server.ts` page-level action handlers, no `FormAction` directive usage, and no `readFormData` calls. Add Form Actions only when introducing a public form (newsletter, contact, public search).
+
 ## Strategy: Mixed Approach
 
 - **Form Actions** — public forms that don't require authentication
@@ -94,7 +96,6 @@ type FormErrors =
   | undefined;
 
 @Component({
-  standalone: true,
   imports: [FormAction, ReactiveFormsModule],
   template: `
     <form method="post" (onSuccess)="onSuccess()" (onError)="onError($event)" (onStateChange)="onStateChange($event)" FormAction>
@@ -203,7 +204,6 @@ import { injectLoad, FormAction } from '@analogjs/router';
 import type { load } from './search.server';
 
 @Component({
-  standalone: true,
   imports: [FormAction],
   template: `
     <form method="get" FormAction>

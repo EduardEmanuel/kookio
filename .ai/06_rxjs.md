@@ -1,5 +1,7 @@
 # RxJS Guidelines
 
+> **Status: Active** — `toSignal`/`toObservable` interop and `takeUntilDestroyed()` are used across `libs/feature/auth` and the trpc client. `rxMethod()` examples mirror future Signal Store growth and are valid patterns.
+
 ## Philosophy
 
 - Prefer Signals over RxJS for all local component state and derived state

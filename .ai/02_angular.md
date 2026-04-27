@@ -1,5 +1,7 @@
 # Angular Guidelines
 
+> **Status: Active (partial)** — Signals, OnPush, `inject()`, native control flow, Material/CDK conventions, and the "no explicit `standalone: true`" rule are followed across the codebase. One documented rule is still routinely deviated from in `apps/web/src/app/pages/`: every page uses inline `template:` rather than `templateUrl`. Bring code in line with the doc — or update the doc — before treating it as the source of truth.
+
 ## Version
 
 Angular v20+

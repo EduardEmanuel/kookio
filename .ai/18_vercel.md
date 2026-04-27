@@ -1,3 +1,5 @@
+> **Status: Active** — `vercel.json` is checked in at the repo root with the documented cache headers. The 404-on-missing-assets middleware lives at `apps/web/src/server/middleware/security.ts` (covers the same concern, named differently). The Prisma migration build step and the `NODE_OPTIONS=--max-old-space-size=6144` heap fix for the Nitro bundle pass are both load-bearing — see `feedback_vercel-asset-cache.md` and `feedback_analogjs-build-constraints.md` in memory.
+
 ## Asset Serving & Cache Headers
 
 ### `vercel.json` Cache-Control

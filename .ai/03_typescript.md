@@ -1,5 +1,7 @@
 # TypeScript Guidelines
 
+> **Status: Active** — strict mode and the conventions described here are enforced across the codebase via `tsconfig.base.json`, ESLint, and CI.
+
 ## Compiler
 
 - Always use strict mode (`"strict": true` in `tsconfig.json`)
@@ -67,9 +69,7 @@ function isUser(value: unknown): value is User {
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-import type { IngredientCatalogSeedRow } from '../../libs/prisma/client/src/dtos/ingredient-catalog';
-import type { MealAreaSeedRow } from '../../libs/prisma/client/src/dtos/meal-area';
-import { PrismaIngredientCatalogRepository } from '../../libs/prisma/client/src/lib/repositories/ingredient-catalog/ingredient-catalog.repository';
+import { prisma, type IngredientCatalogSeedRow, type MealAreaSeedRow } from '@kookio/prisma-client';
 
 import { logger } from './seed-helpers';
 ```

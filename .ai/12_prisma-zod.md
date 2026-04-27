@@ -1,5 +1,9 @@
 # Prisma + Zod Guidelines
 
+> **Status: Active.** Prisma v6 + CockroachDB schema lives at `libs/prisma/client/schema.prisma`, migrations at `libs/prisma/client/migrations/`, seed scripts at `scripts/seeds/`, seed data at `libs/prisma/client/seed-data/`. `prisma-zod-generator` is wired up; per-model zod overrides live in `libs/prisma/client/src/lib/prisma-zod-overrides/`. Per-model derived types (e.g. `*SeedRow` shapes) live in `libs/prisma/client/src/lib/types/{model}.ts`, derived from generated schemas via `.pick()` / `.omit()` / `.extend()` and `z.output<typeof X>` — **never hand-written interfaces that duplicate the Prisma shape**. tRPC routers consume `ctx.prisma.*` directly; retry-on-conflict for CockroachDB is implemented once as a Prisma client extension in [prisma-client.ts](../libs/prisma/client/src/lib/prisma-client.ts) and applied globally to every mutation.
+>
+> **Deliberately rejected — do not reintroduce.** A repository layer (`libs/prisma/client/src/lib/repositories/{model}/`), a `src/dtos/` folder mirroring CRUD operations (`CreateOneXDTO`, `FindManyXResultDTO`, etc.), and a `scripts/generate-prisma-zod-repositories.mjs` scaffold generator have all been considered and rejected. **Rationale baked in here so future readers don't have to dig:** Prisma Client is already a type-safe DB abstraction; tRPC is already the business-logic / transport layer. A repository class wrapping `prisma.<model>.<op>()` adds boilerplate without isolation benefit, mirrors a Java/Spring-style architecture that doesn't fit AnalogJS + tRPC + Prisma, and would force every consumer (routers, seeds, scripts) through a redundant indirection. If you find yourself wanting one, the right move is almost always: (a) put the logic in a tRPC procedure with `ctx.prisma`, (b) put a multi-step write inside an interactive transaction (`ctx.prisma.$transaction(async tx => ...)`) — not a separate class.
+
 ## Stack
 
 - Prisma ORM v6 with CockroachDB
@@ -8,29 +12,31 @@
 
 ## File Structure
 
+```text
 scripts/
-└── generate-prisma-zod-repositories.mjs ← CRUD scaffold generator (see below)
+├── bootstrap-cockroach.ts        ← initial DB bootstrap helper
+├── migration-guard.ts            ← migration safety checks
+└── seeds/                        ← seed scripts run via `nx seed prisma-client`
+    ├── seed-users.ts
+    ├── seed-catalog.ts
+    └── ...
 
-libs/
-└── prisma/client/
-├── prisma/
-│ ├── schema.prisma ← single source of truth for data model
-│ ├── migrations/ ← auto-generated migration files
-│ └── seed.ts ← database seeding script
+libs/prisma/client/
+├── schema.prisma                 ← single source of truth for the data model
+├── migrations/                   ← prisma-managed, do not edit by hand
+├── seed-data/                    ← static seed datasets (JSON / TS)
 └── src/
-├── lib/
-│ ├── prisma-client.ts ← PrismaClient singleton + withTxRetry
-│ └── repositories/
-│ └── {model}/ ← one folder per model, kebab-case
-│ ├── {model}.repository.ts
-│ └── {model}.repository.spec.ts
-├── dtos/
-│ └── {model}.ts ← DTO types derived from Zod schemas
-└── prisma-zod-generator/
-├── schemas/ ← auto-generated (do not edit)
-│ └── results/ ← auto-generated result schemas
-└── overrides/
-└── {model}.ts ← manual schema overrides
+    ├── index.ts                  ← public barrel — re-exports prisma + types + schemas
+    └── lib/
+        ├── prisma-client.ts      ← PrismaClient singleton + retry extension
+        ├── types/                ← per-model derived types (see "Type derivation")
+        │   ├── recipe.ts
+        │   └── {model}.ts        ← uses z.output<typeof X> over generated schemas
+        └── prisma-zod-overrides/ ← per-model zod schema overrides
+            └── {model}.ts        ← shadows generated FindManyResultSchema, etc.
+```
+
+There is intentionally **no** `repositories/` folder, **no** `src/dtos/` folder, and **no** repository-scaffold generator. See the status banner above for the rationale.
 
 ## Schema Design
 
@@ -95,32 +101,17 @@ libs/
 
 ### Singleton
 
-- Always use a singleton PrismaClient instance — never instantiate per request:
-
-```typescript
-// libs/prisma-client/src/client.ts
-import { PrismaClient } from '@prisma/client';
-
-function createPrismaClient() {
-  return new PrismaClient({
-    log: process.env['NODE_ENV'] === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  }).$extends({
-    // extensions here
-  });
-}
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: ReturnType<typeof createPrismaClient> | undefined;
-};
-
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env['NODE_ENV'] !== 'production') {
-  globalForPrisma.prisma = prisma;
-}
-```
-
-- Inject `prisma` via tRPC context — never import it directly in routers or components
+- Always use the singleton instance exported from
+  `libs/prisma/client/src/lib/prisma-client.ts` — never call `new PrismaClient()`
+  directly in app code or scripts.
+- The singleton applies a retry extension that wraps every mutation
+  (`create`, `createMany`, `update`, `updateMany`, `delete`, `deleteMany`,
+  `upsert`) with retry-on-conflict logic for CockroachDB serializable errors
+  (`P2034`, `P2036`, `40001`, "restart transaction"). Reads are not retried.
+- Inject `prisma` via the tRPC context (`ctx.prisma`) — never import it
+  directly in tRPC routers. Seed scripts and other server-side scripts
+  may import it from `@kookio/prisma-client` since they run outside the
+  request lifecycle.
 
 ### Extensions
 
@@ -291,26 +282,27 @@ if (process.env['NODE_ENV'] === 'production') {
 
 ### Setup
 
-- Configure generator in `schema.prisma`:
+- The generator is already configured in [schema.prisma](../libs/prisma/client/schema.prisma):
 
 ```prisma
   generator zod {
-    provider = "prisma-zod-generator"
-    output   = "../src/generated/zod"
+    provider         = "prisma-zod-generator"
+    output           = "./src/prisma-zod-generator"
+    useMultipleFiles = true  // one file per model
   }
 ```
 
-- Run `npx prisma generate` after every schema change to regenerate Zod schemas
-- Never edit files in `generated/zod/` — they are overwritten on every generate
+- Run `nx generate prisma-client` (which calls `prisma generate`) after every schema change
+- Never edit files under `src/prisma-zod-generator/` — they are overwritten on every generate. To customize a schema, add an override in `src/lib/prisma-zod-overrides/{model}.ts` (see "Zod Schema Overrides" below)
 
 ### Usage
 
-- Import generated schemas for tRPC input validation:
+- Import generated schemas via the public barrel `@kookio/prisma-client` for tRPC input validation:
 
 ```typescript
-import { UserCreateInputSchema, UserUpdateInputSchema } from '../generated/zod';
+import { UserCreateInputSchema, UserUpdateInputSchema } from '@kookio/prisma-client';
 
-export const usersRouter = router({
+export const users = router({
   create: protectedProcedure.input(UserCreateInputSchema).mutation(async ({ ctx, input }) => {
     return ctx.prisma.user.create({ data: input });
   }),
@@ -330,130 +322,72 @@ const UpdateProfileSchema = UserUpdateInputSchema.pick({
 - Use generated schemas as the single source of truth for data shapes across
   tRPC procedures, API route validation, and form validation
 
-## CRUD Repositories
+## Type derivation
 
-Every Prisma model has a matching repository under `src/lib/repositories/{kebab}/`.
-Repositories are the only place that imports `prisma` and `withTxRetry` directly —
-tRPC routers and services consume repositories, never raw Prisma.
-
-### Interface + Implementation
+Per-model derived types live in `libs/prisma/client/src/lib/types/{model}.ts`.
+They derive from the generated Zod schemas via `.pick()`, `.omit()`, `.extend()`
+and `z.output<typeof X>`. **Never write a local TypeScript interface that
+duplicates a Prisma model shape** — a schema change must propagate to every
+consumer through one regenerate-and-rebuild cycle, and a hand-written interface
+silently breaks that contract.
 
 ```typescript
-// src/lib/repositories/recipe/recipe.repository.ts
-import type { ... } from '../../../dtos/recipe';
-import { prisma, withTxRetry } from '../../prisma-client';
+// libs/prisma/client/src/lib/types/recipe.ts
+import z from 'zod';
+import { RecipeInputSchema } from '../../prisma-zod-generator/schemas/index';
+import { RecipeIngredientSeedRowSchema } from './recipe-ingredient';
+import { RecipeTagSeedRowSchema } from './recipe-tag';
 
-export interface RecipeRepository {
-  create(data: CreateOneRecipeDTO): Promise<CreateRecipeResultDTO>;
-  createMany(data: CreateManyRecipeDTO): Promise<CreateManyRecipeResultDTO>;
-  delete(clause: DeleteOneRecipeDTO): Promise<DeleteRecipeResultDTO>;
-  deleteMany(clause: DeleteManyRecipeDTO): Promise<DeleteManyRecipeResultDTO>;
-  findUnique(clause: FindUniqueRecipeDTO): Promise<FindUniqueRecipeResultDTO>;
-  findMany(clause: FindManyRecipeDTO): Promise<FindManyRecipeResultDTO>;
-  update(clause: UpdateOneRecipeDTO): Promise<UpdateRecipeResultDTO>;
-  updateMany(clause: UpdateManyRecipeDTO): Promise<UpdateManyRecipeResultDTO>;
-}
-
-export class PrismaRecipeRepository implements RecipeRepository {
-  create = (clause: CreateOneRecipeDTO) =>
-    withTxRetry(prisma, (tx) => tx.recipe.create(clause) as unknown as Promise<CreateRecipeResultDTO>);
-
-  findMany = async (clause: FindManyRecipeDTO) => {
-    const items = await prisma.recipe.findMany(clause);
-    return {
-      data: items,
-      pagination: { page: 1, pageSize: items.length, total: items.length, totalPages: 1, hasNext: false, hasPrev: false },
-    } as FindManyRecipeResultDTO;
-  };
-
-  // ... delete, deleteMany, findUnique, update, updateMany follow the same pattern
-}
+export const RecipeSeedRowSchema = RecipeInputSchema.pick({
+  externalId: true,
+  slug: true,
+  title: true,
+  imageUrl: true,
+  youtubeUrl: true,
+  sourceUrl: true,
+  instructions: true,
+}).extend({
+  categoryExternalId: z.string().nullable(),
+  areaExternalId: z.string().nullable(),
+  tags: z.array(RecipeTagSeedRowSchema),
+  ingredients: z.array(RecipeIngredientSeedRowSchema),
+});
+export type RecipeSeedRow = z.output<typeof RecipeSeedRowSchema>;
 ```
 
-- `findMany` always wraps results in a pagination envelope — never returns a bare array
-- Mutations (`create`, `update`, `delete`) always go through `withTxRetry` for CockroachDB
-  serializable conflict handling
-- `findUnique` and `findMany` bypass `withTxRetry` — reads don't need retry logic
-
-### Composite Primary Keys
-
-Models with `@@id([fieldA, fieldB])` (e.g. `UserDietaryRestriction`, `UserUtensil`,
-`RecipeCollectionEntry`) use a compound `where` clause generated by Prisma:
+Consumers import the derived type via the public barrel `@kookio/prisma-client`,
+never reaching into the generator output:
 
 ```typescript
-// findUnique on UserDietaryRestriction
-repo.findUnique({
+// scripts/seeds/seed-catalog.ts
+import { prisma, type IngredientCatalogSeedRow, type MealAreaSeedRow, type MealCategorySeedRow } from '@kookio/prisma-client';
+```
+
+### Composite primary keys
+
+Models with `@@id([fieldA, fieldB])` (e.g. `UserDietaryRestriction`,
+`RecipeCollectionEntry`) use the compound-key shape that Prisma generates
+automatically — the same pattern as single-ID models, just with a wider `where`:
+
+```typescript
+ctx.prisma.userDietaryRestriction.findUnique({
   where: { userId_dietaryRestrictionId: { userId, dietaryRestrictionId } },
 });
 ```
 
-The repository code is identical to single-ID models — only the DTO shape differs,
-handled automatically by the generated Zod schemas.
-
-## DTOs
-
-DTOs live in `src/dtos/{model}.ts` and are pure TypeScript type aliases derived from
-the generated Zod schemas. **Never write DTO shapes by hand** — always derive with
-`z.output<typeof SomeSchema>`.
-
-```typescript
-// src/dtos/recipe.ts
-import z from 'zod';
-import { RecipeCreateOneSchema, RecipeFindManyResultSchema, ... } from '../prisma-zod-generator/index';
-
-export type CreateOneRecipeDTO = z.output<typeof RecipeCreateOneSchema>;
-export type FindManyRecipeResultDTO = z.output<typeof RecipeFindManyResultSchema>;
-// ... one type per operation
-```
-
-- DTO files are the public contract — tRPC routers import from `dtos/`, not from schemas directly
-- If a model has extra domain exports (e.g. `User` exports `role` and `Role`), add them
-  at the bottom of the DTO file and register them in `scripts/generate-prisma-zod-repositories.mjs` via
-  `extraDtoImports` / `extraDtoExports` so they survive regeneration
-
-### Subset types from pure schemas
-
-When a consumer (seed script, service, form handler) needs only a subset of a model's
-fields, derive it from the generated pure schema via `.omit()` — never define a local
-`interface` that duplicates the Prisma shape.
-
-Pure schemas live in `src/prisma-zod-generator/schemas/variants/pure/{Model}.pure.ts`
-and are re-exported through `prisma-zod-generator/index.ts`.
-Add the derived type to the model's DTO file so it stays co-located with the rest of
-the model's types:
-
-```typescript
-// src/dtos/meal-category.ts
-import { MealCategoryModelSchema } from '../prisma-zod-generator/index';
-
-export const MealCategorySeedRowSchema = MealCategoryModelSchema.omit({
-  id: true,
-  createdAt: true,
-  recipes: true,
-});
-export type MealCategorySeedRow = z.output<typeof MealCategorySeedRowSchema>;
-```
-
-The consumer then imports the type from the DTO — never from the pure schema directly:
-
-```typescript
-// scripts/seeds/seed-catalog.ts
-import type { MealCategorySeedRow } from '../../libs/prisma/client/src/dtos/meal-category';
-```
-
-This way a schema change in `schema.prisma` → `prisma generate` propagates automatically
-to every consumer without touching the local interface.
+No special handling is required at the type layer — the generated zod schemas
+already encode the compound shape.
 
 ## Zod Schema Overrides
 
 `prisma-zod-generator` produces `FindManyResultSchema` with `pageSize: min(1)` and
 `totalPages: min(0)`. Both are wrong for an empty result page (0 items, 1 total page).
-Every model has an override in `src/prisma-zod-generator/overrides/{model}.ts`:
+Every affected model has an override under `libs/prisma/client/src/lib/prisma-zod-overrides/{model}.ts`:
 
 ```typescript
-// src/prisma-zod-generator/overrides/recipe.ts
+// libs/prisma/client/src/lib/prisma-zod-overrides/recipe.ts
 import { z } from 'zod';
-import { RecipeFindManyResultSchema as Base } from '../schemas/index';
+import { RecipeFindManyResultSchema as Base } from '../../prisma-zod-generator/schemas/index';
 
 export const RecipeFindManyResultSchema = Base.extend({
   pagination: Base.shape.pagination.extend({
@@ -463,57 +397,54 @@ export const RecipeFindManyResultSchema = Base.extend({
 });
 ```
 
-Override exports **must come after** `export * from './schemas/index'` in
-`prisma-zod-generator/index.ts` so they shadow the generated schema. The comment
+Override exports must be re-exported from the public barrel **after** the
+generator output, so they shadow the generated schema. The comment
 `!! -- Keep this order of exports in order to apply overrides correctly -- !!`
-marks this boundary — do not reorder.
+in the barrel marks this boundary — do not reorder.
 
-## CRUD Scaffold Generator
+## Adding a new model
 
-`scripts/generate-prisma-zod-repositories.mjs` generates the four files per model (override, DTO,
-repository, spec). Run it when adding a new model:
+When you add a model to `schema.prisma`, do **not** invoke any scaffold
+generator — the project doesn't have one and won't get one. The minimum steps:
 
-```bash
-node scripts/generate-prisma-zod-repositories.mjs
-```
-
-After running, manually update the three barrel exports:
-
-- `src/dtos/index.ts`
-- `src/index.ts`
-- `src/prisma-zod-generator/index.ts`
-
-All three use alphabetical order.
-
-### Adding a Model with Extra DTO Exports
-
-If the new model needs extra exports in its DTO (beyond the standard CRUD types),
-add `extraDtoImports` and `extraDtoExports` to the model entry in `MODELS`:
-
-```javascript
-{
-  name: 'User',
-  kebab: 'user',
-  prismaKey: 'user',
-  // ...
-  extraDtoImports: `  RoleSchema,`,
-  extraDtoExports: `
-export const role = RoleSchema.Values;
-export type Role = z.output<typeof RoleSchema>;`,
-},
-```
+1. Add the model to `schema.prisma`, then run `nx generate prisma-client` to
+   refresh the generated zod schemas.
+2. Create or update a migration (`migrate-dev-create-only` first, review the
+   SQL, then `migrate-deploy`). For CockroachDB enum gotchas, see the
+   "spurious DROP TYPE" note in the Migrations section.
+3. If the model needs derived types (seed rows, subset shapes), add a file at
+   `libs/prisma/client/src/lib/types/{model}.ts` and re-export it from
+   `src/lib/types/index.ts` and the public barrel `src/index.ts` (alphabetical
+   order in both).
+4. If the generated schemas need overrides (e.g. pagination floors), add a
+   file at `libs/prisma/client/src/lib/prisma-zod-overrides/{model}.ts` and
+   re-export it from the public barrel **after** the generator output.
+5. Use the new model directly via `ctx.prisma.<model>.<op>()` in the relevant
+   tRPC router. Wrap multi-step writes in `ctx.prisma.$transaction(async tx =>
+...)`. Do not introduce a wrapper class.
 
 ## General Rules
 
-- Never use `prisma.model.findUnique()` without handling the `null` case explicitly
+- **Do not introduce a repository layer**, a `src/dtos/` folder, or a CRUD
+  scaffold generator. tRPC routers are the business-logic layer; `ctx.prisma`
+  is the data layer; per-model derived types live in `src/lib/types/`. See the
+  rationale in the status banner at the top of this chapter.
+- Multi-step writes go inside `ctx.prisma.$transaction(async tx => ...)` —
+  never split a logically atomic write across multiple top-level calls.
+- The retry-on-conflict logic is applied globally via the Prisma extension in
+  `prisma-client.ts`. Do not call retry helpers manually in routers. The
+  exported `withTxRetry` symbol in `prisma-client.ts` is currently unused;
+  treat it as legacy until someone introduces a use case that the global
+  extension cannot cover.
+- Never use `prisma.<model>.findUnique()` without handling the `null` case explicitly
 - Never select more fields than needed — use `select` or `include` explicitly:
 
 ```typescript
 // ✅ correct — select only what's needed
-prisma.user.findMany({ select: { id: true, name: true, email: true } });
+ctx.prisma.user.findMany({ select: { id: true, name: true, email: true } });
 
 // ❌ avoid — fetches all fields including sensitive ones
-prisma.user.findMany();
+ctx.prisma.user.findMany();
 ```
 
 - Never expose raw Prisma errors to the client — catch and rethrow as `TRPCError`

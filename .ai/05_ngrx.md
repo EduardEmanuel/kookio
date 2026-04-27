@@ -1,10 +1,11 @@
 # NgRx Guidelines
 
+> **Status: Active** — Signal Store is the only state-management primitive used (`AuthStore` in `libs/feature/auth/src/lib/auth.ts`). Classic NgRx (`@ngrx/store`, `@ngrx/effects`, `@ngrx/entity`) is **not installed** and is intentionally out of scope — do not introduce it. Side effects belong inside `withMethods()` / `rxMethod()`; collection state uses `withEntities()` from `@ngrx/signals/entities`.
+
 ## Version & APIs Used
 
-- NgRx Signal Store for global state management
-- NgRx Effects for side effects
-- NgRx Entity for collection management
+- `@ngrx/signals` — Signal Store for global and feature state
+- `@ngrx/signals/entities` — `withEntities()` for collection state inside a Signal Store
 
 ## Signal Store
 
@@ -88,48 +89,31 @@ patchState(store, { users, loading: false });
   })
 ```
 
-## Effects
+## Side Effects
 
-### Structure
-
-- Define effects in a dedicated `*.effects.ts` file per feature
-- Keep effects focused — one effect per async operation
-- Use `createEffect()` with `Actions` pipe:
+- Side effects belong in `withMethods()` — wrap async work in `rxMethod()` so the
+  subscription is tied to the store's lifecycle:
 
 ```typescript
-loadUsers$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(UsersActions.loadUsers),
+loadUsers: rxMethod<void>(
+  pipe(
+    tap(() => patchState(store, { loading: true })),
     switchMap(() =>
-      this.usersService.getAll().pipe(
-        map((users) => UsersActions.loadUsersSuccess({ users })),
-        catchError((error) => of(UsersActions.loadUsersFailure({ error: error.message }))),
+      usersService.getAll().pipe(
+        tapResponse({
+          next: (users) => patchState(store, { users, loading: false }),
+          error: (error: string) => patchState(store, { error, loading: false }),
+        }),
       ),
     ),
   ),
-);
+),
 ```
 
-- Always handle errors inside effects with `catchError` — never let streams complete on error
-- Prefer `switchMap` for cancellable requests, `concatMap` for ordered, `exhaustMap` for non-concurrent
-
-### Actions
-
-- Use `createActionGroup()` to group related actions:
-
-```typescript
-export const UsersActions = createActionGroup({
-  source: 'Users',
-  events: {
-    'Load Users': emptyProps(),
-    'Load Users Success': props<{ users: User[] }>(),
-    'Load Users Failure': props<{ error: string }>(),
-  },
-});
-```
-
-- Action names must be descriptive and follow `[Source] Event` convention
-- Never dispatch actions from inside reducers or selectors
+- Use `tapResponse()` from `@ngrx/operators` inside `rxMethod()` — never bare
+  `tap()` + `catchError()` (the stream would complete on error)
+- Prefer `switchMap` for cancellable requests, `concatMap` for ordered,
+  `exhaustMap` for non-concurrent submissions
 
 ## Entity
 
@@ -165,8 +149,9 @@ withEntities({ selectId: (user: User) => user.userId });
 
 ## General Rules
 
-- Prefer Signal Store over classic NgRx Store for new features
+- Signal Store is the only state-management primitive — do not introduce
+  classic `@ngrx/store` / `@ngrx/effects` / `@ngrx/entity` dependencies
 - Keep store state normalized — avoid deeply nested objects
-- Selectors and computed signals must be pure — no side effects
+- Computed signals must be pure — no side effects
 - Do not access store state outside of components, directives, or other stores
 - Do not subscribe manually to store signals in components — use them directly in templates

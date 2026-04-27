@@ -1,5 +1,7 @@
 # Content Guidelines
 
+> **Status: Future Direction** — `@analogjs/content`, `marked`, `marked-*`, `prismjs`, and `front-matter` are installed in `package.json`, but there is **zero usage** in code: no `src/content/` directory, no `injectContent`/`injectContentFiles` calls, no `MarkdownComponent`, no `marked.config.ts`. Anything below is the intended design once a blog/docs surface is built.
+
 ## Stack
 
 - `@analogjs/content` for file-based content management

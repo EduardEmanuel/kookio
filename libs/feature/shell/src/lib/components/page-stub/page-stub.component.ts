@@ -4,7 +4,6 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'kookio-page-stub',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatCardModule, MatIconModule],
   templateUrl: './page-stub.component.html',

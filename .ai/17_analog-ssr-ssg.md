@@ -1,5 +1,7 @@
 # SSR & SSG Guidelines
 
+> **Status: Active (partial)** — SSR is enabled (Vercel preset, `provideClientHydration(withEventReplay())` in `apps/web/src/app/app.config.ts`, server entry at `main.server.ts`). The "AnalogJS build constraints" subsection (no `manualChunks`, no `ssr.external`, Nitro OOM heap fix) is **active** and load-bearing — confirmed by `feedback_analogjs-build-constraints.md` in memory. The "asset serving & cache headers" + assets 404 middleware match `vercel.json` and `apps/web/src/server/middleware/security.ts` (named middleware, not `assets.ts`). **Future direction**: `app.routes.server.ts` config with explicit `RenderMode.Prerender` per route, prerendering of content/blog routes, and the sitemap host config — none are wired up because the content surface doesn't exist yet.
+
 ## Strategy: Mixed Rendering
 
 - SSR for dynamic pages (authenticated, user-specific, real-time data)

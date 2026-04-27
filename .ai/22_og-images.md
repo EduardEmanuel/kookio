@@ -1,5 +1,7 @@
 # OG Image Generation Guidelines
 
+> **Status: Future Direction** — `satori`, `satori-html`, and `sharp` are **not installed**, and there are no `/api/v1/og/*` routes. Existing API routes are only `health.get.ts`, `internal/bench-db.get.ts`, and the tRPC handler. Add this only when SEO/social previews are explicitly needed.
+
 ## Stack
 
 - AnalogJS API routes (h3/Nitro) for the endpoint

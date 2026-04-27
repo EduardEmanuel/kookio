@@ -4,7 +4,6 @@ import { URLS } from '@kookio/feature-shell';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   selector: 'kookio-forbidden-page',
   template: `
     <section class="prose mx-auto p-6 text-center">

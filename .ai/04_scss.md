@@ -1,5 +1,7 @@
 # SCSS Guidelines
 
+> **Status: Active (partial)** — partials, BEM, Material theming, and the utility-first methodology are in use under `apps/web/src/styles/` and `libs/shared/ui/src/styles/`. Deviation: the global entry is `apps/web/src/styles.css` (CSS, not SCSS) due to a known NX + sass-embedded + Vite `?direct` bug — see `feedback_scss-global-styles.md` in memory. Do not migrate the entry to `.scss`.
+
 ## Architecture
 
 - Each component has its own scoped SCSS file — no global styles except in `styles/`

@@ -12,7 +12,6 @@ export const routeMeta: RouteMeta = {
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   selector: 'kookio-not-found-page',
   imports: [RouterLink, MatButtonModule, PageStubComponent],
   template: `

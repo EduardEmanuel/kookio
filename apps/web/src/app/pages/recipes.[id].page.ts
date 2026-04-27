@@ -18,7 +18,6 @@ export const routeMeta: RouteMeta = {
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   selector: 'kookio-recipe-detail-page',
   imports: [PageStubComponent],
   template: `
