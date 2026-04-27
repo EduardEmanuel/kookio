@@ -1,21 +1,26 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import type { RouteMeta } from '@analogjs/router';
 
-import { authGuard } from '@kookio/feature-auth';
+import { authGuard, onboardingGuard } from '@kookio/feature-auth';
+import { PageStubComponent } from '@kookio/feature-shell';
 
 export const routeMeta: RouteMeta = {
-  canActivate: [authGuard],
+  canActivate: [authGuard, onboardingGuard],
+  title: 'Cook with your stocks — Kookio',
 };
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   selector: 'kookio-recipes-match-page',
+  imports: [PageStubComponent],
   template: `
-    <section class="prose mx-auto p-6">
-      <h1>Cook with your stocks</h1>
-      <p>Find recipes based on ingredients you have. — coming soon</p>
-    </section>
+    <kookio-page-stub
+      icon="restaurant"
+      title="Cook with your stocks"
+      subtitle="Find recipes based on what you have"
+      route="/recipes/match"
+    />
   `,
 })
 export default class RecipesMatchPage {}

@@ -1,21 +1,24 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import type { RouteMeta } from '@analogjs/router';
 
-import { authGuard } from '@kookio/feature-auth';
+import { PageStubComponent } from '@kookio/feature-shell';
 
 export const routeMeta: RouteMeta = {
-  canActivate: [authGuard],
+  title: 'Recipes — Kookio',
 };
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   selector: 'kookio-recipes-page',
+  imports: [PageStubComponent],
   template: `
-    <section class="prose mx-auto p-6">
-      <h1>Recipes</h1>
-      <p>Browse and discover recipes. — coming soon</p>
-    </section>
+    <kookio-page-stub
+      icon="menu_book"
+      title="Recipes"
+      subtitle="Browse and discover recipes"
+      route="/recipes"
+    />
   `,
 })
 export default class RecipesPage {}

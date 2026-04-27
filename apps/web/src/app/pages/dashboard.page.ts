@@ -1,21 +1,26 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import type { RouteMeta } from '@analogjs/router';
 
-import { authGuard } from '@kookio/feature-auth';
+import { authGuard, onboardingGuard } from '@kookio/feature-auth';
+import { PageStubComponent } from '@kookio/feature-shell';
 
 export const routeMeta: RouteMeta = {
-  canActivate: [authGuard],
+  canActivate: [authGuard, onboardingGuard],
+  title: 'Dashboard — Kookio',
 };
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   selector: 'kookio-dashboard-page',
+  imports: [PageStubComponent],
   template: `
-    <section class="prose mx-auto p-6">
-      <h1>Dashboard</h1>
-      <p>Your personalized overview. — coming soon</p>
-    </section>
+    <kookio-page-stub
+      icon="dashboard"
+      title="Dashboard"
+      subtitle="Your personalized overview"
+      route="/dashboard"
+    />
   `,
 })
 export default class DashboardPage {}

@@ -1,7 +1,10 @@
 import { test, expect } from '@playwright/test';
 
-test('has title', async ({ page }) => {
+test('renders home page stub', async ({ page }) => {
   await page.goto('/');
 
-  expect(await page.locator('h1').innerText()).toContain('Welcome to Kookio');
+  await expect(page.locator('.page-stub__title')).toContainText('Home');
+  await expect(page.locator('.page-stub__subtitle')).toContainText(
+    'Public recipe feed',
+  );
 });

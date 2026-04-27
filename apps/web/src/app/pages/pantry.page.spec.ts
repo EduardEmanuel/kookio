@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
+
 import PantryPage from './pantry.page';
 
 describe('PantryPage', () => {
@@ -22,11 +23,9 @@ describe('PantryPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('renders the Pantry heading', () => {
-    expect(el.querySelector('h1')?.textContent?.trim()).toBe('Pantry');
-  });
-
-  it('renders a coming-soon message', () => {
-    expect(el.querySelector('p')?.textContent).toContain('coming soon');
+  it('renders the Pantry stub', () => {
+    const text = el.textContent ?? '';
+    expect(text).toContain('Pantry');
+    expect(text).toContain('/pantry');
   });
 });

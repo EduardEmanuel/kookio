@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import HomeComponent from './(home).page';
 
@@ -16,12 +16,12 @@ describe('HomeComponent', () => {
     fixture = TestBed.createComponent(HomeComponent);
   });
 
-  it('should render title', fakeAsync(() => {
+  it('renders the Home stub', () => {
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
-    expect(compiled.querySelector('h1')?.textContent).toContain(
-      'Welcome to Kookio',
-    );
-  }));
+    expect(text).toContain('Home');
+    expect(text).toContain('Public recipe feed');
+    expect(text).toContain('/');
+  });
 });

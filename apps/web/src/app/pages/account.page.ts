@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import type { RouteMeta } from '@analogjs/router';
 
-import { AuthStore, authGuard } from '@kookio/feature-auth';
+import { AuthStore, authGuard, onboardingGuard } from '@kookio/feature-auth';
 
 export const routeMeta: RouteMeta = {
-  canActivate: [authGuard],
+  canActivate: [authGuard, onboardingGuard],
+  title: 'Account — Kookio',
 };
 
 @Component({

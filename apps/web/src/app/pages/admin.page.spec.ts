@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
+
 import AdminPage from './admin.page';
 
 describe('AdminPage', () => {
@@ -22,11 +23,9 @@ describe('AdminPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('renders the Admin heading', () => {
-    expect(el.querySelector('h1')?.textContent?.trim()).toBe('Admin');
-  });
-
-  it('renders a coming-soon message', () => {
-    expect(el.querySelector('p')?.textContent).toContain('coming soon');
+  it('renders the Admin stub', () => {
+    const text = el.textContent ?? '';
+    expect(text).toContain('Admin');
+    expect(text).toContain('/admin');
   });
 });

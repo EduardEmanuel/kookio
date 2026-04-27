@@ -5,7 +5,7 @@ import {
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
@@ -23,17 +23,25 @@ describe('ShellLayoutComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  const setup = async (isMobile: boolean) => {
+  const setup = async (isMobile: boolean, navigateTo?: string) => {
     const bp = { isMobile: signal(isMobile), isDesktop: signal(!isMobile) };
     await TestBed.configureTestingModule({
       imports: [ShellLayoutComponent, StubPage],
       providers: [
         provideZonelessChangeDetection(),
-        provideRouter([{ path: '**', component: StubPage }]),
+        provideRouter([
+          { path: 'onboarding', component: StubPage },
+          { path: 'login', component: StubPage },
+          { path: '**', component: StubPage },
+        ]),
         { provide: BreakpointService, useValue: bp },
         { provide: AuthStore, useValue: createMockAuthStore() },
       ],
     }).compileComponents();
+
+    if (navigateTo) {
+      await TestBed.inject(Router).navigateByUrl(navigateTo);
+    }
 
     const fixture = TestBed.createComponent(ShellLayoutComponent);
     fixture.detectChanges();
@@ -93,5 +101,26 @@ describe('ShellLayoutComponent', () => {
 
     const { el: elDesktop } = await setup(false);
     expect(elDesktop.querySelector('kookio-cook-now-fab')).toBeTruthy();
+  });
+
+  describe('auth routes (onboarding/login/register)', () => {
+    it('hides the desktop sidenav on /onboarding to reclaim space', async () => {
+      const { el } = await setup(false, '/onboarding');
+      expect(el.querySelector('mat-sidenav')).toBeNull();
+      expect(el.querySelector('kookio-sidenav-menu')).toBeNull();
+      // mat-sidenav-container still wraps the main content
+      expect(el.querySelector('mat-sidenav-container')).toBeTruthy();
+      expect(el.querySelector('router-outlet')).toBeTruthy();
+    });
+
+    it('hides the desktop sidenav on /login', async () => {
+      const { el } = await setup(false, '/login');
+      expect(el.querySelector('kookio-sidenav-menu')).toBeNull();
+    });
+
+    it('keeps the desktop sidenav visible on regular routes', async () => {
+      const { el } = await setup(false, '/');
+      expect(el.querySelector('kookio-sidenav-menu')).toBeTruthy();
+    });
   });
 });

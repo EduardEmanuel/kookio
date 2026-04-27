@@ -1,0 +1,20 @@
+<section class="page-stub">
+  <mat-card class="page-stub__card" appearance="outlined">
+    <mat-card-header class="page-stub__header">
+      <mat-icon mat-card-avatar class="page-stub__icon">{{ icon() }}</mat-icon>
+      <mat-card-title class="page-stub__title">{{ title() }}</mat-card-title>
+      @if (subtitle()) {
+        <mat-card-subtitle class="page-stub__subtitle">{{
+          subtitle()
+        }}</mat-card-subtitle>
+      }
+    </mat-card-header>
+
+    <mat-card-content class="page-stub__content">
+      <p class="page-stub__placeholder">{{ placeholder() }}</p>
+      <p class="page-stub__route">
+        <code>{{ route() }}</code>
+      </p>
+    </mat-card-content>
+  </mat-card>
+</section>

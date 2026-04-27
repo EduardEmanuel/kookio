@@ -12,9 +12,11 @@
     <kookio-bottom-tabs class="shell__bottom-tabs" />
   } @else {
     <mat-sidenav-container class="shell__sidenav-container">
-      <mat-sidenav mode="side" opened class="shell__sidenav">
-        <kookio-sidenav-menu />
-      </mat-sidenav>
+      @if (!isAuthRoute()) {
+        <mat-sidenav mode="side" opened class="shell__sidenav">
+          <kookio-sidenav-menu />
+        </mat-sidenav>
+      }
       <mat-sidenav-content class="shell__main">
         <router-outlet />
       </mat-sidenav-content>

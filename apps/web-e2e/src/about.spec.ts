@@ -3,13 +3,13 @@ import { test, expect } from '@playwright/test';
 test('has title', async ({ page }) => {
   await page.goto('/about', { waitUntil: 'commit' });
 
-  await expect(page.locator('h1')).toContainText('About Kookio');
+  await expect(page.getByText('About Kookio')).toBeVisible();
 });
 
-test('has paragraph', async ({ page }) => {
+test('has subtitle', async ({ page }) => {
   await page.goto('/about', { waitUntil: 'commit' });
 
-  await expect(page.locator('p')).toContainText(
-    'Minimal SSG page prerendered by Analog.',
-  );
+  await expect(
+    page.getByText('Minimal SSG page prerendered by Analog'),
+  ).toBeVisible();
 });

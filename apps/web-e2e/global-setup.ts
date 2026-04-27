@@ -8,6 +8,15 @@ const ROUTES = [
   '/pantry',
   '/account',
   '/admin',
+  '/onboarding',
+  '/dashboard',
+  '/recipes',
+  '/recipes/match',
+  '/recipes/saved',
+  '/meal-plan',
+  '/shopping-list',
+  '/403',
+  '/404',
 ];
 
 const warmRoute = async (path: string): Promise<void> => {
