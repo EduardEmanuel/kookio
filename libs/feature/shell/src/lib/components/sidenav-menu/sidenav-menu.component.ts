@@ -16,29 +16,33 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 
 import { AuthStore } from '@kookio/feature-auth';
+import { URLS } from '@kookio/shared-utility';
+
+import { isOnAuthRoute } from '../../utils/auth-routes';
 
 import type { NavItem } from '../../models';
 
-const AUTH_ROUTES = ['/login', '/register', '/onboarding', '/404', '/401'];
-
 const NAV_ITEMS: readonly NavItem[] = [
-  { label: 'Home', icon: 'home', route: '/' },
-  { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-  { label: 'Recipes', icon: 'menu_book', route: '/recipes' },
-  { label: 'Cook with stocks', icon: 'restaurant', route: '/recipes/match' },
-  { label: 'Saved', icon: 'bookmark', route: '/recipes/saved' },
-  { label: 'Pantry', icon: 'kitchen', route: '/pantry' },
-  { label: 'Meal Plan', icon: 'calendar_today', route: '/meal-plan' },
+  { label: 'Home', icon: 'home', route: URLS.HOME },
+  { label: 'Dashboard', icon: 'dashboard', route: URLS.DASHBOARD },
+  {
+    label: 'Cook with stocks',
+    icon: 'restaurant',
+    route: URLS.RECIPES_MATCH,
+  },
+  { label: 'Saved', icon: 'bookmark', route: URLS.RECIPES_SAVED },
+  { label: 'Pantry', icon: 'kitchen', route: URLS.PANTRY },
+  { label: 'Meal Plan', icon: 'calendar_today', route: URLS.MEAL_PLAN },
   {
     label: 'Shopping List',
     icon: 'shopping_cart',
-    route: '/shopping-list',
+    route: URLS.SHOPPING_LIST,
   },
-  { label: 'Account', icon: 'person', route: '/account' },
+  { label: 'Account', icon: 'person', route: URLS.ACCOUNT },
   {
     label: 'Admin',
     icon: 'admin_panel_settings',
-    route: '/admin',
+    route: URLS.ADMIN,
     requiresRole: 'ADMIN',
   },
 ];
@@ -68,7 +72,7 @@ export class SideNavMenuComponent {
 
   readonly isHidden = computed(() => {
     const url = this.currentUrl();
-    return !url || AUTH_ROUTES.some((p) => url.startsWith(p));
+    return !url || isOnAuthRoute(url);
   });
 
   readonly visibleItems = computed(() => {

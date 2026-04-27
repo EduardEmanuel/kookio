@@ -40,9 +40,9 @@ describe('BottomTabsComponent', () => {
       expect(el.querySelector('nav.bottom-tabs')).toBeTruthy();
     });
 
-    it('renders 5 tab items', async () => {
+    it('renders 4 tab items', async () => {
       const { el } = await setup();
-      expect(el.querySelectorAll('.bottom-tabs__item').length).toBe(5);
+      expect(el.querySelectorAll('.bottom-tabs__item').length).toBe(4);
     });
 
     it('renders tab labels', async () => {

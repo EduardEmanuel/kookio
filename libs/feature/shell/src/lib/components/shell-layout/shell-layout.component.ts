@@ -9,13 +9,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { filter, map, startWith } from 'rxjs';
 
+import { isOnAuthRoute } from '../../utils/auth-routes';
 import { BreakpointService } from '../../services/breakpoint.service';
 import { TopBarComponent } from '../top-bar/top-bar.component';
 import { BottomTabsComponent } from '../bottom-tabs/bottom-tabs.component';
 import { CookNowFabComponent } from '../cook-now-fab/cook-now-fab.component';
 import { SideNavMenuComponent } from '../sidenav-menu/sidenav-menu.component';
-
-const AUTH_ROUTES = ['/login', '/register', '/onboarding', '/404', '/401'];
 
 @Component({
   selector: 'kookio-shell-layout',
@@ -45,8 +44,5 @@ export class ShellLayoutComponent {
     ),
   );
 
-  readonly isAuthRoute = computed(() => {
-    const url = this.currentUrl();
-    return !!url && AUTH_ROUTES.some((p) => url.startsWith(p));
-  });
+  readonly isAuthRoute = computed(() => isOnAuthRoute(this.currentUrl()));
 }

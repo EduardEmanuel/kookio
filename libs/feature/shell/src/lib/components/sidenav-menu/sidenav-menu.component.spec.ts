@@ -61,14 +61,14 @@ describe('SideNavMenuComponent', () => {
       expect(el.querySelector('nav.sidenav-menu')).toBeTruthy();
     });
 
-    it('shows Home, Dashboard, Recipes items for regular user', async () => {
+    it('shows Home and Dashboard items for regular user', async () => {
       const { el } = await setup(['USER']);
       const titles = Array.from(el.querySelectorAll('[matlistitemtitle]')).map(
         (t) => t.textContent?.trim(),
       );
       expect(titles).toContain('Home');
       expect(titles).toContain('Dashboard');
-      expect(titles).toContain('Recipes');
+      expect(titles).not.toContain('Recipes');
     });
 
     it('does not show Admin item when user has no ADMIN role', async () => {
