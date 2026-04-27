@@ -125,7 +125,7 @@ export const test = base.extend<AuthFixtures>({
     await page.fill('[name="email"]', testUser.email);
     await page.fill('[name="password"]', testUser.password);
     await page.click('[type="submit"]');
-    await page.waitForURL('/');
+    await page.waitForURL('/recipes');
     await use(page);
   },
 });

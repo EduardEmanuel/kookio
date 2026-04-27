@@ -1,27 +1,12 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, expect, it } from 'vitest';
 
-import HomeComponent from './(home).page';
+import { routeMeta } from './(home).page';
 
-describe('HomeComponent', () => {
-  let fixture: ComponentFixture<HomeComponent>;
-
-  afterEach(() => {
-    TestBed.resetTestingModule();
-  });
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [HomeComponent],
-    }).compileComponents();
-    fixture = TestBed.createComponent(HomeComponent);
-  });
-
-  it('renders the Home stub', () => {
-    fixture.detectChanges();
-    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-
-    expect(text).toContain('Home');
-    expect(text).toContain('Public recipe feed');
-    expect(text).toContain('/');
+describe('(home) route', () => {
+  it('redirects to /recipes with full path match', () => {
+    expect(routeMeta).toEqual({
+      redirectTo: '/recipes',
+      pathMatch: 'full',
+    });
   });
 });
