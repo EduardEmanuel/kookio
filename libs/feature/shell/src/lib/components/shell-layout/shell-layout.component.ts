@@ -5,6 +5,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { BreakpointService } from '../../services/breakpoint.service';
 import { TopBarComponent } from '../top-bar/top-bar.component';
 import { BottomTabsComponent } from '../bottom-tabs/bottom-tabs.component';
+import { CookNowFabComponent } from '../cook-now-fab/cook-now-fab.component';
 import { SideNavMenuComponent } from '../sidenav-menu/sidenav-menu.component';
 
 @Component({
@@ -15,6 +16,7 @@ import { SideNavMenuComponent } from '../sidenav-menu/sidenav-menu.component';
     MatSidenavModule,
     TopBarComponent,
     BottomTabsComponent,
+    CookNowFabComponent,
     SideNavMenuComponent,
   ],
   templateUrl: './shell-layout.component.html',

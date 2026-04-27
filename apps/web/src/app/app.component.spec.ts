@@ -25,6 +25,7 @@ const makeAuthStore = () => {
     session: signal(null),
     loading: signal(false),
     isAuthenticated: signal(false),
+    onboardingDone: signal(false),
   };
 };
 

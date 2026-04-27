@@ -17,6 +17,7 @@ const makeAuthStore = () => ({
   session: signal(null),
   loading: signal(false),
   isAuthenticated: signal(false),
+  onboardingDone: signal(false),
   logout: vi.fn(),
 });
 
@@ -86,5 +87,15 @@ describe('ShellLayoutComponent', () => {
 
     const { el: elDesktop } = await setup(false);
     expect(elDesktop.querySelector('kookio-top-bar')).toBeTruthy();
+  });
+
+  it('mounts the cook-now FAB on both layouts', async () => {
+    const { el: elMobile } = await setup(true);
+    expect(elMobile.querySelector('kookio-cook-now-fab')).toBeTruthy();
+
+    TestBed.resetTestingModule();
+
+    const { el: elDesktop } = await setup(false);
+    expect(elDesktop.querySelector('kookio-cook-now-fab')).toBeTruthy();
   });
 });

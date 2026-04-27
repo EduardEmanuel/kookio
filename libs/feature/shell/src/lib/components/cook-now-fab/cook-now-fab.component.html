@@ -1,0 +1,16 @@
+@if (isVisible()) {
+  <a
+    mat-fab
+    [extended]="showLabel()"
+    routerLink="/dashboard"
+    class="cook-now-fab"
+    [matTooltip]="label"
+    matTooltipPosition="left"
+    [attr.aria-label]="label"
+  >
+    <mat-icon>restaurant</mat-icon>
+    @if (showLabel()) {
+      <span class="cook-now-fab__label">{{ label }}</span>
+    }
+  </a>
+}
