@@ -4,11 +4,3 @@
   overflow-y: auto;
   background: var(--color-surface);
 }
-
-.sidenav-menu__item--active {
-  color: var(--color-primary);
-
-  mat-icon {
-    color: var(--color-primary);
-  }
-}

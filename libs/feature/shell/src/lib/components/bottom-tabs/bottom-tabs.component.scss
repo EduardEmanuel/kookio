@@ -18,14 +18,20 @@
   justify-content: center;
   gap: 2px;
   text-decoration: none;
-  color: var(--color-on-surface);
+  color: var(--mat-sys-on-surface);
   position: relative;
-  transition: color var(--transition-fast);
+  transition: background-color var(--transition-fast);
 
   mat-icon {
     font-size: 1.5rem;
     width: 1.5rem;
     height: 1.5rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--mat-sys-surface-container-highest);
   }
 
   &::before {
@@ -48,9 +54,9 @@
 }
 
 .bottom-tabs__item--active {
-  color: var(--color-primary);
+  background-color: var(--mat-sys-secondary-container);
 
   &::before {
-    background: var(--color-primary);
+    background: var(--mat-sys-on-secondary-container);
   }
 }
