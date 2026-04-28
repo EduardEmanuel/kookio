@@ -13,6 +13,8 @@ export { RecipeIngredientFindManyResultSchema } from './recipe-ingredient';
 export { RecipeTagFindManyResultSchema } from './recipe-tag';
 export { UserFindManyResultSchema } from './user';
 export { UserDietaryRestrictionFindManyResultSchema } from './user-dietary-restriction';
+export { UserPreferredAreaFindManyResultSchema } from './user-preferred-area';
+export { UserPreferredCategoryFindManyResultSchema } from './user-preferred-category';
 export { UserProfileFindManyResultSchema } from './user-profile';
 export { UserUtensilFindManyResultSchema } from './user-utensil';
 export { UtensilFindManyResultSchema } from './utensil';

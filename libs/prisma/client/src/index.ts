@@ -17,6 +17,8 @@ export {
   RecipeTagFindManyResultSchema,
   UserFindManyResultSchema,
   UserDietaryRestrictionFindManyResultSchema,
+  UserPreferredAreaFindManyResultSchema,
+  UserPreferredCategoryFindManyResultSchema,
   UserProfileFindManyResultSchema,
   UserUtensilFindManyResultSchema,
   UtensilFindManyResultSchema,

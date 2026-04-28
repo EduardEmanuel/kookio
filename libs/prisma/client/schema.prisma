@@ -9,10 +9,10 @@ generator client {
 generator zod {
   provider         = "prisma-zod-generator"
   output           = "./src/prisma-zod-generator"
-  useMultipleFiles = true  // generate a separate file for each model
-  useTimestamps    = true  // use `z.date()` for DateTime fields instead of `z.string()`
-  useBigInt        = true  // use `z.bigint()` for BigInt fields instead of `z.number()`
-  useDecimal       = true  // use `z.instanceof(Decimal)` for Decimal fields instead of `z.number()`
+  useMultipleFiles = true // generate a separate file for each model
+  useTimestamps    = true // use `z.date()` for DateTime fields instead of `z.string()`
+  useBigInt        = true // use `z.bigint()` for BigInt fields instead of `z.number()`
+  useDecimal       = true // use `z.instanceof(Decimal)` for Decimal fields instead of `z.number()`
 }
 
 datasource db {
@@ -98,19 +98,19 @@ enum IngredientCategory {
 /// onboarding flow is completed.
 model User {
   /// Primary key (UUID v4).
-  id          String   @id @default(uuid())
+  id String @id @default(uuid())
 
   /// Unique email address (natural identifier).
-  email       String   @unique
+  email String @unique
 
   /// Unique ID for firebase auth.
-  firebaseUid String?  @unique
+  firebaseUid String? @unique
 
   /// Optional display name.
-  name        String?
+  name String?
 
   /// Assigned roles (from Role enum).
-  roles       Role[]   @default([])
+  roles Role[] @default([])
 
   /// Authentication Methods References — OIDC AMR claim (RFC 8176).
   /// Stored as a String array (e.g. ["password", "webauthn"]) following the
@@ -118,40 +118,46 @@ model User {
   /// Deliberate denormalization: extracting into a junction table would add
   /// join overhead with no query benefit, as AMR values are always read and
   /// written together as a set bound to a single authentication event.
-  amr         String[] @default([])
+  amr String[] @default([])
 
   /// Soft-disable flag (revokes access without deletion).
-  isDisabled  Boolean  @default(false)
+  isDisabled Boolean @default(false)
 
   /// Soft-delete timestamp; null means active.
-  deletedAt   DateTime?
+  deletedAt DateTime?
 
   /// Creation timestamp (server-side).
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   /// Last update timestamp (server-side).
-  updatedAt   DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
   /// Linked WebAuthn credentials.
-  credentials     WebAuthnCredential[]
+  credentials WebAuthnCredential[]
 
   /// User profile & onboarding preferences.
-  profile         UserProfile?
+  profile UserProfile?
 
   /// Pantry items (ingredients in stock).
-  pantryItems     PantryItem[]
+  pantryItems PantryItem[]
 
   /// Recipes authored by this user.
-  recipes         Recipe[]
+  recipes Recipe[]
 
   /// Recipe collections (replaces SavedRecipe).
-  collections     RecipeCollection[]
+  collections RecipeCollection[]
 
   /// Meal plans created by this user.
-  mealPlans       MealPlan[]
+  mealPlans MealPlan[]
 
   /// Cooking sessions recorded by this user.
   cookingSessions CookingSession[]
+
+  /// Onboarding meal-category preferences ("Categories" subtab on the fridge step).
+  preferredCategories UserPreferredCategory[]
+
+  /// Onboarding meal-area preferences ("Cuisines" subtab on the fridge step).
+  preferredAreas UserPreferredArea[]
 
   @@index([email], map: "idx_user_email")
 }
@@ -160,52 +166,52 @@ model User {
 /// Names intentionally mirror WebAuthn/server libraries to minimize glue-code.
 model WebAuthnCredential {
   /// Primary key (UUID v4).
-  id             String    @id @default(uuid())
+  id String @id @default(uuid())
 
   /// FK to User.
-  userId         String
+  userId String
 
   /// Raw credential ID (binary). Base64url <-> bytes at I/O boundaries.
-  credentialId   Bytes
+  credentialId Bytes
 
   /// Public key in COSE/DER bytes.
-  publicKey      Bytes
+  publicKey Bytes
 
   /// Signature counter from authenticator (aka signCount).
-  counter        Int       @default(0)
+  counter Int @default(0)
 
   /// Authenticator transports ("internal","usb","ble","nfc").
-  transports     String[]  @default([])
+  transports String[] @default([])
 
   /// Authenticator Attestation GUID (model-level), if available.
-  aaguid         String?   @db.Uuid
+  aaguid String? @db.Uuid
 
   /// Attestation format ("packed","fido-u2f","apple","tpm","none",...).
   attestationFmt String?
 
   /// Eligible for backup per FIDO spec.
-  backupEligible Boolean   @default(false)
+  backupEligible Boolean @default(false)
 
   /// Currently backed up (multi-device capable).
-  backupState    Boolean   @default(false)
+  backupState Boolean @default(false)
 
   /// Optional friendly device type ("singleDevice" | "multiDevice").
-  deviceType     String?
+  deviceType String?
 
   /// Last successful authentication timestamp for this credential.
-  lastUsedAt     DateTime?
+  lastUsedAt DateTime?
 
   /// Vendor/UA quirks or future flags.
-  meta           Json?
+  meta Json?
 
   /// Creation timestamp (server-side).
-  createdAt      DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   /// Last update timestamp (server-side).
-  updatedAt      DateTime  @updatedAt
+  updatedAt DateTime @updatedAt
 
   /// Relation to owning user.
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, credentialId], map: "uq_webauthn_user_cred")
   @@index([userId], map: "idx_webauthn_user")
@@ -221,18 +227,18 @@ model WebAuthnCredential {
 /// allowing the system to distinguish between a registered-but-not-onboarded
 /// user and a fully configured one without nullable columns on User itself.
 model UserProfile {
-  id             String   @id @default(uuid())
-  userId         String   @unique
-  adultsCount    Int      @default(1)
-  childrenCount  Int      @default(0)
+  id            String @id @default(uuid())
+  userId        String @unique
+  adultsCount   Int    @default(1)
+  childrenCount Int    @default(0)
 
   /// Whether the user has completed the onboarding flow.
-  onboardingDone Boolean  @default(false)
+  onboardingDone Boolean @default(false)
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   dietaryRestrictions UserDietaryRestriction[]
   utensils            UserUtensil[]
@@ -241,20 +247,20 @@ model UserProfile {
 /// Controlled list of dietary restrictions.
 /// Seeded by Kookio — not user-defined.
 model DietaryRestriction {
-  id          String   @id @default(uuid())
+  id String @id @default(uuid())
 
   /// Machine-readable identifier e.g. "gluten-free", "vegan".
-  slug        String   @unique
+  slug String @unique
 
   /// Human-readable label.
-  label       String
+  label String
 
   /// Emoji for UI display.
-  emoji       String?
+  emoji String?
 
   description String?
 
-  users       UserDietaryRestriction[]
+  users UserDietaryRestriction[]
 }
 
 model UserDietaryRestriction {
@@ -271,15 +277,15 @@ model UserDietaryRestriction {
 /// Seeded by Kookio — not user-defined.
 /// TheMealDB does not provide utensil data.
 model Utensil {
-  id       String  @id @default(uuid())
-  slug     String  @unique
-  name     String
-  emoji    String?
+  id    String  @id @default(uuid())
+  slug  String  @unique
+  name  String
+  emoji String?
 
   /// e.g. "cutting", "cooking", "baking", "measuring"
   category String?
 
-  users    UserUtensil[]
+  users UserUtensil[]
 }
 
 model UserUtensil {
@@ -298,41 +304,75 @@ model UserUtensil {
 
 /// Meal categories sourced from TheMealDB (e.g. Beef, Dessert, Seafood).
 model MealCategory {
-  id          String   @id @default(uuid())
+  id String @id @default(uuid())
 
   /// TheMealDB strCategory slug — unique identifier from external source.
-  externalId  String   @unique
+  externalId String @unique
 
   name        String
   imageUrl    String?
   description String?
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  recipes     Recipe[]
+  recipes          Recipe[]
+  preferredByUsers UserPreferredCategory[]
+}
+
+/// Junction table — meal categories a user picked during onboarding.
+/// Owned directly by User (not UserProfile) so preferences survive profile resets.
+model UserPreferredCategory {
+  userId         String
+  mealCategoryId String
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mealCategory MealCategory @relation(fields: [mealCategoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([userId, mealCategoryId])
+  @@index([userId], map: "idx_user_pref_category_user")
+  @@map("user_preferred_categories")
 }
 
 /// Geographic areas sourced from TheMealDB (e.g. Italian, Japanese).
 model MealArea {
-  id         String   @id @default(uuid())
+  id String @id @default(uuid())
 
   /// TheMealDB strArea slug — unique identifier from external source.
-  externalId String   @unique
+  externalId String @unique
 
-  name       String
-  flag       String?
+  name String
+  flag String?
 
-  createdAt  DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  recipes    Recipe[]
+  recipes          Recipe[]
+  preferredByUsers UserPreferredArea[]
+}
+
+/// Junction table — meal areas (cuisines) a user picked during onboarding.
+/// Owned directly by User (not UserProfile) so preferences survive profile resets.
+model UserPreferredArea {
+  userId     String
+  mealAreaId String
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mealArea MealArea @relation(fields: [mealAreaId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([userId, mealAreaId])
+  @@index([userId], map: "idx_user_pref_area_user")
+  @@map("user_preferred_areas")
 }
 
 /// Master ingredient catalog, seeded from TheMealDB and normalized.
 model IngredientCatalog {
-  id             String              @id @default(uuid())
+  id String @id @default(uuid())
 
   /// TheMealDB ingredient ID, if sourced externally.
-  externalId     String?             @unique
+  externalId String? @unique
 
   name           String
   normalizedName String              @unique
@@ -340,8 +380,8 @@ model IngredientCatalog {
   imageUrl       String?
   category       IngredientCategory?
 
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   recipeIngredients RecipeIngredient[]
   pantryItems       PantryItem[]
@@ -352,41 +392,41 @@ model IngredientCatalog {
 // ─────────────────────────────────────────────
 
 model Recipe {
-  id              String   @id @default(uuid())
+  id String @id @default(uuid())
 
   /// TheMealDB idMeal — null for user-authored recipes.
-  externalId      String?  @unique
+  externalId String? @unique
 
-  slug            String   @unique
-  title           String
-  description     String?
-  imageUrl        String?
-  youtubeUrl      String?
-  sourceUrl       String?
-  instructions    String
-  status          RecipeStatus @default(PUBLIC)
-  servings        Int      @default(4)
+  slug         String       @unique
+  title        String
+  description  String?
+  imageUrl     String?
+  youtubeUrl   String?
+  sourceUrl    String?
+  instructions String
+  status       RecipeStatus @default(PUBLIC)
+  servings     Int          @default(4)
 
   /// TheMealDB does not provide these — populated manually or via AI post-licență.
   prepTimeMinutes Int?
   cookTimeMinutes Int?
 
-  categoryId      String?
-  areaId          String?
-  authorId        String?
+  categoryId String?
+  areaId     String?
+  authorId   String?
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  category        MealCategory?      @relation(fields: [categoryId], references: [id])
-  area            MealArea?          @relation(fields: [areaId], references: [id])
-  author          User?              @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  category MealCategory? @relation(fields: [categoryId], references: [id])
+  area     MealArea?     @relation(fields: [areaId], references: [id])
+  author   User?         @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
-  ingredients     RecipeIngredient[]
-  tags            RecipeTag[]
+  ingredients       RecipeIngredient[]
+  tags              RecipeTag[]
   collectionEntries RecipeCollectionEntry[]
-  mealPlanSlots   MealPlanSlot[]
-  cookingSessions CookingSession[]
+  mealPlanSlots     MealPlanSlot[]
+  cookingSessions   CookingSession[]
 
   @@index([status])
   @@index([categoryId])
@@ -398,7 +438,7 @@ model Recipe {
 /// Junction table between Recipe and IngredientCatalog.
 /// Units are normalized during seed — no raw strings stored.
 model RecipeIngredient {
-  id                  String             @id @default(uuid())
+  id                  String       @id @default(uuid())
   recipeId            String
   ingredientCatalogId String
   quantity            Float?
@@ -407,10 +447,10 @@ model RecipeIngredient {
   /// Describes the ingredient *in the context of this recipe*, not the ingredient itself.
   /// Correctly placed here (not on IngredientCatalog) as it depends on the
   /// (recipe, ingredient) pair — e.g. "chopped", "heaped", "to taste".
-  notes               String?
+  notes String?
 
-  recipe              Recipe             @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-  ingredient          IngredientCatalog  @relation(fields: [ingredientCatalogId], references: [id])
+  recipe     Recipe            @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient IngredientCatalog @relation(fields: [ingredientCatalogId], references: [id])
 
   @@unique([recipeId, ingredientCatalogId])
   @@index([recipeId])
@@ -425,7 +465,7 @@ model RecipeTag {
   recipeId String
   tag      String
 
-  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
   @@unique([recipeId, tag])
   @@index([recipeId])
@@ -438,22 +478,22 @@ model RecipeTag {
 
 /// A user's current stock of a specific ingredient.
 model PantryItem {
-  id                  String            @id @default(uuid())
+  id                  String      @id @default(uuid())
   userId              String
   ingredientCatalogId String
   quantity            Float
   unit                MeasureUnit
   expiresAt           DateTime?
 
-  addedAt             DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
+  addedAt   DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ingredient          IngredientCatalog @relation(fields: [ingredientCatalogId], references: [id])
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredient IngredientCatalog @relation(fields: [ingredientCatalogId], references: [id])
 
   @@unique([userId, ingredientCatalogId])
   @@index([userId])
-  @@index([expiresAt])   // for expiry notifications
+  @@index([expiresAt]) // for expiry notifications
 }
 
 // ─────────────────────────────────────────────
@@ -463,16 +503,16 @@ model PantryItem {
 /// A named collection of recipes owned by a user.
 /// Two default collections are created at onboarding: "Favorite" and "De încercat".
 model RecipeCollection {
-  id        String   @id @default(uuid())
-  userId    String
-  name      String
-  emoji     String?
+  id     String  @id @default(uuid())
+  userId String
+  name   String
+  emoji  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  recipes   RecipeCollectionEntry[]
+  user    User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipes RecipeCollectionEntry[]
 
   @@unique([userId, name])
   @@index([userId])
@@ -481,10 +521,10 @@ model RecipeCollection {
 model RecipeCollectionEntry {
   collectionId String
   recipeId     String
-  addedAt      DateTime         @default(now())
+  addedAt      DateTime @default(now())
 
-  collection   RecipeCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  recipe       Recipe           @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  collection RecipeCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  recipe     Recipe           @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
   @@id([collectionId, recipeId])
 }
@@ -495,17 +535,17 @@ model RecipeCollectionEntry {
 
 /// A meal plan for a user, spanning up to 7 days with 3 meals/day.
 model MealPlan {
-  id        String         @id @default(uuid())
+  id        String   @id @default(uuid())
   userId    String
   name      String?
   startDate DateTime
-  endDate   DateTime       // max startDate + 7 days
+  endDate   DateTime // max startDate + 7 days
 
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  slots     MealPlanSlot[]
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slots MealPlanSlot[]
 
   @@index([userId])
 }
@@ -519,8 +559,8 @@ model MealPlanSlot {
   slotType   MealSlotType
   servings   Int          @default(1)
 
-  mealPlan   MealPlan     @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
-  recipe     Recipe?      @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+  mealPlan MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  recipe   Recipe?  @relation(fields: [recipeId], references: [id], onDelete: SetNull)
 
   @@unique([mealPlanId, date, slotType])
   @@index([mealPlanId])
@@ -534,20 +574,20 @@ model MealPlanSlot {
 /// completedAt being non-null triggers pantry deduction.
 /// Enables "how many times have you cooked X" queries.
 model CookingSession {
-  id          String    @id @default(uuid())
-  userId      String
-  recipeId    String
-  servings    Int
+  id       String @id @default(uuid())
+  userId   String
+  recipeId String
+  servings Int
 
   /// Null = session started but not finished — pantry is NOT deducted.
   completedAt DateTime?
 
-  createdAt   DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  recipe      Recipe    @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([recipeId])
-  @@index([userId, recipeId])  // for "how many times cooked" queries
+  @@index([userId, recipeId]) // for "how many times cooked" queries
 }
