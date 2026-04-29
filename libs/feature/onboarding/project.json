@@ -1,0 +1,16 @@
+{
+  "name": "feature-onboarding",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/feature/onboarding/src",
+  "prefix": "kookio",
+  "projectType": "library",
+  "tags": ["scope:frontend", "type:feature"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/vite:test"
+    }
+  }
+}

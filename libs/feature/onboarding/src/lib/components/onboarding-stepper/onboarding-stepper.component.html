@@ -1,0 +1,129 @@
+<!--
+  i18n migration: replace each i18n: @@key comment with the matching
+  i18n="@@key" attribute (or i18n-label="@@key" for property bindings) once
+  @angular/localize is wired up.
+-->
+<div class="onboarding-shell">
+  <mat-card class="onboarding-shell__card" appearance="outlined">
+    <mat-card-actions class="onboarding-shell__footer" align="end">
+      @if (store.canGoPrev() && !store.isLastStep()) {
+        <button mat-button type="button" (click)="onPrev()">
+          <mat-icon>arrow_back</mat-icon>
+          <!-- i18n: @@onboarding.action.back -->
+          <span>{{ actions.back }}</span>
+        </button>
+      }
+
+      @if (canSkip()) {
+        <button
+          class="onboarding-shell__skip"
+          mat-button
+          type="button"
+          (click)="onSkip()"
+        >
+          <!-- i18n: @@onboarding.action.skip -->
+          <span>{{ actions.skip }}</span>
+        </button>
+      }
+
+      @if (store.isFirstStep()) {
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="onNext()"
+        >
+          <!-- i18n: @@onboarding.action.start -->
+          <span>{{ actions.start }}</span>
+          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        </button>
+      } @else if (store.isLastStep()) {
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          [disabled]="store.isSubmitting()"
+          (click)="onSubmit()"
+        >
+          @if (store.isSubmitting()) {
+            <mat-progress-spinner mode="indeterminate" diameter="20" />
+          } @else {
+            <!-- i18n: @@onboarding.action.submit -->
+            <span>{{ actions.submit }}</span>
+            <mat-icon iconPositionEnd>restaurant</mat-icon>
+          }
+        </button>
+      } @else {
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="onNext()"
+        >
+          <!-- i18n: @@onboarding.action.continue -->
+          <span>{{ actions.continue }}</span>
+          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        </button>
+      }
+    </mat-card-actions>
+
+    @if (store.submitError(); as error) {
+      <p class="onboarding-shell__error" role="alert">
+        <!-- i18n: @@onboarding.error.submit (interpolated) -->
+        {{ error }}
+      </p>
+    }
+
+    <mat-divider />
+
+    <mat-stepper
+      class="onboarding-shell__stepper"
+      orientation="vertical"
+      [linear]="false"
+      [selectedIndex]="store.currentStep()"
+      (selectionChange)="onStepperSelectionChange($event)"
+    >
+      <mat-step [label]="stepLabels[0]">
+        <div class="onboarding-shell__body">
+          <!-- i18n: @@onboarding.placeholder.start -->
+          <p>{{ stepPlaceholders[0] }}</p>
+        </div>
+      </mat-step>
+
+      <mat-step [label]="stepLabels[1]">
+        <div class="onboarding-shell__body">
+          <!-- i18n: @@onboarding.placeholder.fridge -->
+          <p>{{ stepPlaceholders[1] }}</p>
+        </div>
+      </mat-step>
+
+      <mat-step [label]="stepLabels[2]">
+        <div class="onboarding-shell__body">
+          <!-- i18n: @@onboarding.placeholder.utensils -->
+          <p>{{ stepPlaceholders[2] }}</p>
+        </div>
+      </mat-step>
+
+      <mat-step [label]="stepLabels[3]">
+        <div class="onboarding-shell__body">
+          <!-- i18n: @@onboarding.placeholder.people -->
+          <p>{{ stepPlaceholders[3] }}</p>
+        </div>
+      </mat-step>
+
+      <mat-step [label]="stepLabels[4]">
+        <div class="onboarding-shell__body">
+          <!-- i18n: @@onboarding.placeholder.restrictions -->
+          <p>{{ stepPlaceholders[4] }}</p>
+        </div>
+      </mat-step>
+
+      <mat-step [label]="stepLabels[5]">
+        <div class="onboarding-shell__body">
+          <!-- i18n: @@onboarding.placeholder.done -->
+          <p>{{ stepPlaceholders[5] }}</p>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </mat-card>
+</div>

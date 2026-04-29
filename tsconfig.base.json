@@ -21,6 +21,7 @@
       "@kookio/core-security": ["libs/core/security/src/index.ts"],
       "@kookio/feature-auth": ["libs/feature/auth/src/index.ts"],
       "@kookio/feature-auth/testing": ["libs/feature/auth/src/testing.ts"],
+      "@kookio/feature-onboarding": ["libs/feature/onboarding/src/index.ts"],
       "@kookio/feature-shell": ["libs/feature/shell/src/index.ts"],
       "@kookio/prisma-client": ["libs/prisma/client/src/index.ts"],
       "@kookio/prisma-client/*": ["libs/prisma/client/src/*"],

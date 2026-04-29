@@ -17,6 +17,7 @@ import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
 
 import { AUTH_TRPC, FIREBASE_OPTIONS } from '@kookio/feature-auth';
+import { ONBOARDING_TRPC } from '@kookio/feature-onboarding';
 import { APP_TRPC } from '@kookio/feature-shell';
 
 import { provideTrpcClient, TrpcClientApp } from '../trpc-client';
@@ -35,6 +36,7 @@ export const appConfig: ApplicationConfig = {
     provideNgxSkeletonLoader(),
     { provide: APP_TRPC, useExisting: TrpcClientApp },
     { provide: AUTH_TRPC, useExisting: TrpcClientApp },
+    { provide: ONBOARDING_TRPC, useExisting: TrpcClientApp },
     {
       provide: FIREBASE_OPTIONS,
       useValue: {

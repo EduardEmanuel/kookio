@@ -1,0 +1,44 @@
+:host {
+  display: block;
+}
+
+.onboarding-shell {
+  margin: 0 auto;
+  padding: var(--space-md);
+
+  @media (min-width: 768px) {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  &__card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  &__stepper {
+    background: transparent;
+  }
+
+  &__body {
+    padding: var(--space-md) 0;
+  }
+
+  &__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+  }
+
+  &__skip {
+    color: var(--md-sys-color-on-surface-variant);
+    margin-right: auto;
+  }
+
+  &__error {
+    margin: 0;
+    padding: var(--space-md);
+    color: var(--md-sys-color-error);
+    text-align: center;
+  }
+}
