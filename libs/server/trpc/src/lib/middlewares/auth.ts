@@ -31,5 +31,16 @@ export const requireAnyRole = (roles: Role[]) =>
     return next();
   });
 
+export const requireOnboarding = middleware(({ ctx, next }) => {
+  if (!ctx.session) throw new TRPCError({ code: 'UNAUTHORIZED' });
+  if (!ctx.session.onboardingDone) {
+    throw new TRPCError({
+      code: 'PRECONDITION_FAILED',
+      message: 'Onboarding not complete',
+    });
+  }
+  return next({ ctx: { ...ctx, session: ctx.session } });
+});
+
 export const protectedProcedure = requireAuth;
 export const roleProcedure = (roles: Role[]) => requireAnyRole(roles);
