@@ -20,19 +20,116 @@ export const STEP_LABELS = [
   "You're all set!",
 ] as const;
 
-export const STEP_PLACEHOLDERS = [
-  '"Welcome" step — placeholder content.',
-  '"Fridge" step — placeholder content.',
-  '"Utensils" step — placeholder content.',
-  '"People" step — placeholder content.',
-  '"Restrictions" step — placeholder content.',
-  '"Done" step — placeholder content.',
-] as const;
-
 export const ACTION_LABELS = {
   back: 'Back',
   skip: 'Skip',
   start: 'Get started',
   continue: 'Continue',
   submit: "Let's start cooking",
+} as const;
+
+/** Welcome step (index 0). */
+export const START_STRINGS = {
+  heading: 'Welcome to Kookio!',
+  subtitle:
+    "Let's get to know you. In a few quick steps you'll be ready to cook without food waste.",
+  chips: {
+    fridge: 'Fridge',
+    utensils: 'Utensils',
+    people: 'People',
+    restrictions: 'Restrictions',
+  },
+  hint: 'It takes less than 2 minutes.',
+} as const;
+
+/** Fridge step (index 1) — preferences for meal categories and cuisines. */
+export const FRIDGE_STRINGS = {
+  heading: "What's in your fridge — or what would you like to cook?",
+  subtitle: 'Pick the kinds of food you enjoy.',
+  tabs: {
+    pantry: 'Your ingredients',
+    preferences: 'Preferences',
+  },
+  pantryNotice:
+    "We'll let you add your ingredients later, in the Pantry section.",
+  pantryHint: "For now, let's focus on what kind of food you love.",
+  subTabs: {
+    categories: 'Categories',
+    areas: 'Cuisines',
+  },
+  emptyCategories: 'No categories available right now.',
+  emptyAreas: 'No cuisines available right now.',
+  ariaCategories: 'Preferred meal categories',
+  ariaAreas: 'Preferred cuisines',
+} as const;
+
+/** Utensils step (index 2). */
+export const UTENSILS_STRINGS = {
+  heading: 'What utensils do you have?',
+  subtitle:
+    "We'll use this to recommend recipes you can actually prepare with what you own.",
+  empty: 'No utensils available right now.',
+  uncategorized: 'Other',
+  ariaPrefix: 'Utensils — ',
+} as const;
+
+/**
+ * Mapping of utensil DB categories → user-facing group labels.
+ * Source of truth for categories: the `category` field on `Utensil` rows in
+ * the database. Unknown categories fall back to `UTENSILS_STRINGS.uncategorized`.
+ */
+export const UTENSIL_CATEGORY_LABELS: Record<string, string> = {
+  cutting: 'Cutting',
+  cooking: 'Cooking',
+  baking: 'Baking',
+  measuring: 'Measuring',
+};
+
+/**
+ * Order in which utensil groups appear in the UI. Categories not listed here
+ * are appended in alphabetical order at the end (`uncategorized` always last).
+ */
+export const UTENSIL_CATEGORY_ORDER = [
+  'cutting',
+  'cooking',
+  'baking',
+  'measuring',
+] as const;
+
+/** People step (index 3). */
+export const PEOPLE_STRINGS = {
+  heading: 'How many people are you cooking for?',
+  subtitle: "We'll scale recipe portions based on this.",
+  adults: 'Adults',
+  children: 'Children',
+  decreaseAdults: 'Decrease adults',
+  increaseAdults: 'Increase adults',
+  decreaseChildren: 'Decrease children',
+  increaseChildren: 'Increase children',
+  notice:
+    "For children we'll suggest smaller portions and age-appropriate ingredients.",
+} as const;
+
+/** Restrictions step (index 4). */
+export const RESTRICTIONS_STRINGS = {
+  heading: 'Any dietary restrictions?',
+  subtitle: "We'll filter recipes to respect your choices.",
+  empty: 'No dietary restrictions available right now.',
+} as const;
+
+/** Done step (index 5). */
+export const DONE_STRINGS = {
+  heading: "You're all set!",
+  hint: "Here's what you've configured:",
+  cta: 'Tap "Let\'s start cooking" to save your preferences.',
+  summary: {
+    people: (adults: number, children: number) =>
+      `${adults} adult${adults === 1 ? '' : 's'}, ${children} child${children === 1 ? '' : 'ren'}`,
+    categories: (count: number) =>
+      `${count} categor${count === 1 ? 'y' : 'ies'}`,
+    areas: (count: number) => `${count} cuisine${count === 1 ? '' : 's'}`,
+    utensils: (count: number) => `${count} utensil${count === 1 ? '' : 's'}`,
+    restrictions: (count: number) =>
+      `${count} restriction${count === 1 ? '' : 's'}`,
+  },
 } as const;

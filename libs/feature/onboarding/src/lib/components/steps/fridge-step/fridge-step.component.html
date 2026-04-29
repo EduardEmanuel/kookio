@@ -1,0 +1,99 @@
+<div class="fridge-step">
+  <h2 class="fridge-step__heading">
+    <!-- i18n: @@onboarding.fridge.heading -->
+    {{ strings.heading }}
+  </h2>
+  <p class="fridge-step__subtitle">
+    <!-- i18n: @@onboarding.fridge.subtitle -->
+    {{ strings.subtitle }}
+  </p>
+
+  <mat-tab-group class="fridge-step__tabs" mat-align-tabs="start">
+    <mat-tab [label]="strings.tabs.pantry">
+      <div class="fridge-step__pantry-info">
+        <mat-icon>info</mat-icon>
+        <div class="fridge-step__pantry-text">
+          <p>
+            <!-- i18n: @@onboarding.fridge.pantryNotice -->
+            {{ strings.pantryNotice }}
+          </p>
+          <p class="fridge-step__pantry-hint">
+            <!-- i18n: @@onboarding.fridge.pantryHint -->
+            {{ strings.pantryHint }}
+          </p>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab [label]="strings.tabs.preferences">
+      <mat-tab-group class="fridge-step__subtabs" mat-align-tabs="start">
+        <mat-tab [label]="strings.subTabs.categories">
+          <div class="fridge-step__panel">
+            @if (categories(); as items) {
+              @if (items.length === 0) {
+                <p class="fridge-step__empty">
+                  <!-- i18n: @@onboarding.fridge.emptyCategories -->
+                  {{ strings.emptyCategories }}
+                </p>
+              } @else {
+                <mat-chip-listbox
+                  multiple
+                  [attr.aria-label]="strings.ariaCategories"
+                >
+                  @for (cat of items; track cat.id) {
+                    <mat-chip-option
+                      [selected]="isCategorySelected(cat.id)"
+                      (click)="toggleCategory(cat.id)"
+                    >
+                      {{ cat.name }}
+                    </mat-chip-option>
+                  }
+                </mat-chip-listbox>
+              }
+            } @else {
+              <div class="fridge-step__loading">
+                <mat-progress-spinner mode="indeterminate" diameter="32" />
+              </div>
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab [label]="strings.subTabs.areas">
+          <div class="fridge-step__panel">
+            @if (areas(); as items) {
+              @if (items.length === 0) {
+                <p class="fridge-step__empty">
+                  <!-- i18n: @@onboarding.fridge.emptyAreas -->
+                  {{ strings.emptyAreas }}
+                </p>
+              } @else {
+                <mat-chip-listbox
+                  multiple
+                  [attr.aria-label]="strings.ariaAreas"
+                >
+                  @for (area of items; track area.id) {
+                    <mat-chip-option
+                      [selected]="isAreaSelected(area.id)"
+                      (click)="toggleArea(area.id)"
+                    >
+                      @if (area.flag) {
+                        <span class="fridge-step__flag" aria-hidden="true">
+                          {{ area.flag }}
+                        </span>
+                      }
+                      {{ area.name }}
+                    </mat-chip-option>
+                  }
+                </mat-chip-listbox>
+              }
+            } @else {
+              <div class="fridge-step__loading">
+                <mat-progress-spinner mode="indeterminate" diameter="32" />
+              </div>
+            }
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-tab>
+  </mat-tab-group>
+</div>

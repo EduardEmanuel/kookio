@@ -1,0 +1,47 @@
+<div class="restrictions-step">
+  <h2 class="restrictions-step__heading">
+    <!-- i18n: @@onboarding.restrictions.heading -->
+    {{ strings.heading }}
+  </h2>
+  <p class="restrictions-step__subtitle">
+    <!-- i18n: @@onboarding.restrictions.subtitle -->
+    {{ strings.subtitle }}
+  </p>
+
+  @if (restrictions(); as items) {
+    @if (items.length === 0) {
+      <p class="restrictions-step__empty">
+        <!-- i18n: @@onboarding.restrictions.empty -->
+        {{ strings.empty }}
+      </p>
+    } @else {
+      <div class="restrictions-step__list" role="group">
+        @for (r of items; track r.id) {
+          <mat-checkbox
+            class="restrictions-step__row"
+            [checked]="isChecked(r.id)"
+            (change)="onToggle(r.id, $event.checked)"
+          >
+            <span class="restrictions-step__row-content">
+              @if (r.emoji) {
+                <span class="restrictions-step__emoji" aria-hidden="true">
+                  {{ r.emoji }}
+                </span>
+              }
+              <span class="restrictions-step__text">
+                <strong>{{ r.label }}</strong>
+                @if (r.description) {
+                  <small>{{ r.description }}</small>
+                }
+              </span>
+            </span>
+          </mat-checkbox>
+        }
+      </div>
+    }
+  } @else {
+    <div class="restrictions-step__loading">
+      <mat-progress-spinner mode="indeterminate" diameter="32" />
+    </div>
+  }
+</div>

@@ -1,0 +1,25 @@
+<div class="done-step">
+  <span class="done-step__emoji" aria-hidden="true">🎉</span>
+  <h2 class="done-step__heading">
+    <!-- i18n: @@onboarding.done.heading -->
+    {{ strings.heading }}
+  </h2>
+  <p class="done-step__hint">
+    <!-- i18n: @@onboarding.done.hint -->
+    {{ strings.hint }}
+  </p>
+
+  <mat-chip-set class="done-step__summary" aria-label="Onboarding summary">
+    @for (chip of chips(); track chip.key) {
+      <mat-chip [class.done-step__chip--warn]="chip.emphasis === 'warn'">
+        <mat-icon matChipAvatar>{{ chip.icon }}</mat-icon>
+        {{ chip.label }}
+      </mat-chip>
+    }
+  </mat-chip-set>
+
+  <p class="done-step__cta">
+    <!-- i18n: @@onboarding.done.cta -->
+    {{ strings.cta }}
+  </p>
+</div>

@@ -29,7 +29,37 @@ const MAX_ADULTS = 20;
 const MIN_CHILDREN = 0;
 const MAX_CHILDREN = 20;
 
-/** Minimal tRPC surface required by OnboardingStore. */
+/** Catalog row shapes — only the fields the onboarding UI consumes. */
+export interface DietaryRestrictionRow {
+  id: string;
+  slug: string;
+  label: string;
+  emoji: string | null;
+  description: string | null;
+}
+
+export interface UtensilRow {
+  id: string;
+  slug: string;
+  name: string;
+  emoji: string | null;
+  category: string | null;
+}
+
+export interface MealCategoryRow {
+  id: string;
+  name: string;
+  imageUrl: string | null;
+  description: string | null;
+}
+
+export interface MealAreaRow {
+  id: string;
+  name: string;
+  flag: string | null;
+}
+
+/** Minimal tRPC surface required by OnboardingStore and step components. */
 export interface OnboardingTrpcClient {
   onboarding: {
     current: { query(): Promise<OnboardingCurrent> };
@@ -38,6 +68,12 @@ export interface OnboardingTrpcClient {
         input: OnboardingCommitInput,
       ): Promise<{ onboardingDone: boolean }>;
     };
+  };
+  onboardingCatalogs: {
+    dietaryRestrictions: { query(): Promise<DietaryRestrictionRow[]> };
+    utensils: { query(): Promise<UtensilRow[]> };
+    mealCategories: { query(): Promise<MealCategoryRow[]> };
+    mealAreas: { query(): Promise<MealAreaRow[]> };
   };
 }
 

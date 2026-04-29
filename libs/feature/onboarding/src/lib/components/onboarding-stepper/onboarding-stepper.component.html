@@ -85,43 +85,37 @@
     >
       <mat-step [label]="stepLabels[0]">
         <div class="onboarding-shell__body">
-          <!-- i18n: @@onboarding.placeholder.start -->
-          <p>{{ stepPlaceholders[0] }}</p>
+          <kookio-onboarding-start-step />
         </div>
       </mat-step>
 
       <mat-step [label]="stepLabels[1]">
         <div class="onboarding-shell__body">
-          <!-- i18n: @@onboarding.placeholder.fridge -->
-          <p>{{ stepPlaceholders[1] }}</p>
+          <kookio-onboarding-fridge-step />
         </div>
       </mat-step>
 
       <mat-step [label]="stepLabels[2]">
         <div class="onboarding-shell__body">
-          <!-- i18n: @@onboarding.placeholder.utensils -->
-          <p>{{ stepPlaceholders[2] }}</p>
+          <kookio-onboarding-utensils-step />
         </div>
       </mat-step>
 
       <mat-step [label]="stepLabels[3]">
         <div class="onboarding-shell__body">
-          <!-- i18n: @@onboarding.placeholder.people -->
-          <p>{{ stepPlaceholders[3] }}</p>
+          <kookio-onboarding-people-step />
         </div>
       </mat-step>
 
       <mat-step [label]="stepLabels[4]">
         <div class="onboarding-shell__body">
-          <!-- i18n: @@onboarding.placeholder.restrictions -->
-          <p>{{ stepPlaceholders[4] }}</p>
+          <kookio-onboarding-restrictions-step />
         </div>
       </mat-step>
 
       <mat-step [label]="stepLabels[5]">
         <div class="onboarding-shell__body">
-          <!-- i18n: @@onboarding.placeholder.done -->
-          <p>{{ stepPlaceholders[5] }}</p>
+          <kookio-onboarding-done-step />
         </div>
       </mat-step>
     </mat-stepper>

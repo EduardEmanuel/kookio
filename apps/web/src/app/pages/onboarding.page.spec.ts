@@ -6,35 +6,15 @@ import { provideRouter } from '@angular/router';
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
 import { ONBOARDING_TRPC } from '@kookio/feature-onboarding';
-import type { OnboardingTrpcClient } from '@kookio/feature-onboarding';
+import { buildTrpcMock } from '@kookio/feature-onboarding/testing';
 
 import OnboardingPage from './onboarding.page';
 
-const buildTrpc = (): {
-  trpc: OnboardingTrpcClient;
-  current: ReturnType<typeof vi.fn>;
-} => {
-  const current = vi.fn().mockResolvedValue({
-    adultsCount: 1,
-    childrenCount: 0,
-    preferredCategoryIds: [],
-    preferredAreaIds: [],
-    utensilIds: [],
-    dietaryRestrictionIds: [],
-  });
-  return {
-    current,
-    trpc: {
-      onboarding: {
-        commit: { mutate: vi.fn().mockResolvedValue({ onboardingDone: true }) },
-        current: { query: current },
-      },
-    },
-  };
-};
-
 const setup = async ({ isAuthenticated }: { isAuthenticated: boolean }) => {
-  const { trpc, current } = buildTrpc();
+  const trpc = buildTrpcMock();
+  // The page only cares about `onboarding.current.query`; we hold a typed
+  // alias to it so assertions read cleanly.
+  const current = trpc.onboarding.current.query as ReturnType<typeof vi.fn>;
   const authStore = createMockAuthStore({
     isAuthenticated,
     authReady: true,

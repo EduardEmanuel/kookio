@@ -1,0 +1,44 @@
+<div class="start-step">
+  <div class="start-step__hero">
+    <span class="start-step__emoji" aria-hidden="true">👋</span>
+    <h2 class="start-step__heading">
+      <!-- i18n: @@onboarding.start.heading -->
+      {{ strings.heading }}
+    </h2>
+    <p class="start-step__subtitle">
+      <!-- i18n: @@onboarding.start.subtitle -->
+      {{ strings.subtitle }}
+    </p>
+  </div>
+
+  <mat-chip-set
+    class="start-step__chips"
+    aria-label="Onboarding steps overview"
+  >
+    <mat-chip>
+      <mat-icon matChipAvatar>kitchen</mat-icon>
+      <!-- i18n: @@onboarding.start.chip.fridge -->
+      {{ strings.chips.fridge }}
+    </mat-chip>
+    <mat-chip>
+      <mat-icon matChipAvatar>restaurant</mat-icon>
+      <!-- i18n: @@onboarding.start.chip.utensils -->
+      {{ strings.chips.utensils }}
+    </mat-chip>
+    <mat-chip>
+      <mat-icon matChipAvatar>group</mat-icon>
+      <!-- i18n: @@onboarding.start.chip.people -->
+      {{ strings.chips.people }}
+    </mat-chip>
+    <mat-chip>
+      <mat-icon matChipAvatar>no_food</mat-icon>
+      <!-- i18n: @@onboarding.start.chip.restrictions -->
+      {{ strings.chips.restrictions }}
+    </mat-chip>
+  </mat-chip-set>
+
+  <p class="start-step__hint">
+    <!-- i18n: @@onboarding.start.hint -->
+    {{ strings.hint }}
+  </p>
+</div>

@@ -7,31 +7,12 @@ import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
 
 import { ACTION_LABELS } from '../../onboarding-strings';
-import {
-  ONBOARDING_TRPC,
-  OnboardingStore,
-  type OnboardingTrpcClient,
-} from '../../store/onboarding.store';
+import { buildTrpcMock } from '../../testing/build-trpc-mock';
+import { ONBOARDING_TRPC, OnboardingStore } from '../../store/onboarding.store';
 import { OnboardingStepperComponent } from './onboarding-stepper.component';
 
-const buildTrpc = (): OnboardingTrpcClient => ({
-  onboarding: {
-    commit: { mutate: vi.fn().mockResolvedValue({ onboardingDone: true }) },
-    current: {
-      query: vi.fn().mockResolvedValue({
-        adultsCount: 1,
-        childrenCount: 0,
-        preferredCategoryIds: [],
-        preferredAreaIds: [],
-        utensilIds: [],
-        dietaryRestrictionIds: [],
-      }),
-    },
-  },
-});
-
 const setup = async () => {
-  const trpc = buildTrpc();
+  const trpc = buildTrpcMock();
   const authStore = createMockAuthStore({ authReady: true });
 
   await TestBed.configureTestingModule({
@@ -64,6 +45,22 @@ describe('OnboardingStepperComponent', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     TestBed.resetTestingModule();
+  });
+
+  describe('step content', () => {
+    it('mounts all six step components', async () => {
+      const { el } = await setup();
+      // Vertical stepper renders all step bodies — every step component
+      // is present in the DOM regardless of which one is active.
+      expect(el.querySelector('kookio-onboarding-start-step')).toBeTruthy();
+      expect(el.querySelector('kookio-onboarding-fridge-step')).toBeTruthy();
+      expect(el.querySelector('kookio-onboarding-utensils-step')).toBeTruthy();
+      expect(el.querySelector('kookio-onboarding-people-step')).toBeTruthy();
+      expect(
+        el.querySelector('kookio-onboarding-restrictions-step'),
+      ).toBeTruthy();
+      expect(el.querySelector('kookio-onboarding-done-step')).toBeTruthy();
+    });
   });
 
   describe('first step', () => {

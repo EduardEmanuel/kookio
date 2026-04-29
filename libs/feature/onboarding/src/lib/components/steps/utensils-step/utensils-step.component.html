@@ -1,0 +1,47 @@
+<div class="utensils-step">
+  <h2 class="utensils-step__heading">
+    <!-- i18n: @@onboarding.utensils.heading -->
+    {{ strings.heading }}
+  </h2>
+  <p class="utensils-step__subtitle">
+    <!-- i18n: @@onboarding.utensils.subtitle -->
+    {{ strings.subtitle }}
+  </p>
+
+  @if (utensils(); as items) {
+    @if (items.length === 0) {
+      <p class="utensils-step__empty">
+        <!-- i18n: @@onboarding.utensils.empty -->
+        {{ strings.empty }}
+      </p>
+    } @else {
+      @for (group of grouped(); track group.key) {
+        <section class="utensils-step__group">
+          <h3 class="utensils-step__category">{{ group.label }}</h3>
+          <mat-chip-listbox
+            multiple
+            [attr.aria-label]="strings.ariaPrefix + group.label"
+          >
+            @for (u of group.items; track u.id) {
+              <mat-chip-option
+                [selected]="isSelected(u.id)"
+                (click)="onToggle(u.id)"
+              >
+                @if (u.emoji) {
+                  <span class="utensils-step__emoji" aria-hidden="true">
+                    {{ u.emoji }}
+                  </span>
+                }
+                {{ u.name }}
+              </mat-chip-option>
+            }
+          </mat-chip-listbox>
+        </section>
+      }
+    }
+  } @else {
+    <div class="utensils-step__loading">
+      <mat-progress-spinner mode="indeterminate" diameter="32" />
+    </div>
+  }
+</div>

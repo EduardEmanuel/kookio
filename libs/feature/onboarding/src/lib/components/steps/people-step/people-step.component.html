@@ -1,0 +1,90 @@
+<div class="people-step">
+  <h2 class="people-step__heading">
+    <!-- i18n: @@onboarding.people.heading -->
+    {{ strings.heading }}
+  </h2>
+  <p class="people-step__subtitle">
+    <!-- i18n: @@onboarding.people.subtitle -->
+    {{ strings.subtitle }}
+  </p>
+
+  <div class="people-step__counters">
+    <div class="people-step__counter">
+      <span class="people-step__emoji" aria-hidden="true">👨</span>
+      <h3 class="people-step__counter-label">
+        <!-- i18n: @@onboarding.people.adults -->
+        {{ strings.adults }}
+      </h3>
+      <div class="people-step__controls">
+        <button
+          mat-icon-button
+          type="button"
+          [attr.aria-label]="strings.decreaseAdults"
+          [disabled]="store.adultsCount() <= 1"
+          (click)="decreaseAdults()"
+        >
+          <mat-icon>remove</mat-icon>
+        </button>
+        <span
+          class="people-step__count"
+          aria-live="polite"
+          [attr.aria-label]="strings.adults + ': ' + store.adultsCount()"
+        >
+          {{ store.adultsCount() }}
+        </span>
+        <button
+          mat-icon-button
+          type="button"
+          [attr.aria-label]="strings.increaseAdults"
+          [disabled]="store.adultsCount() >= 20"
+          (click)="increaseAdults()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="people-step__counter">
+      <span class="people-step__emoji" aria-hidden="true">👶</span>
+      <h3 class="people-step__counter-label">
+        <!-- i18n: @@onboarding.people.children -->
+        {{ strings.children }}
+      </h3>
+      <div class="people-step__controls">
+        <button
+          mat-icon-button
+          type="button"
+          [attr.aria-label]="strings.decreaseChildren"
+          [disabled]="store.childrenCount() <= 0"
+          (click)="decreaseChildren()"
+        >
+          <mat-icon>remove</mat-icon>
+        </button>
+        <span
+          class="people-step__count"
+          aria-live="polite"
+          [attr.aria-label]="strings.children + ': ' + store.childrenCount()"
+        >
+          {{ store.childrenCount() }}
+        </span>
+        <button
+          mat-icon-button
+          type="button"
+          [attr.aria-label]="strings.increaseChildren"
+          [disabled]="store.childrenCount() >= 20"
+          (click)="increaseChildren()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="people-step__notice" role="note">
+    <mat-icon>info_outline</mat-icon>
+    <p>
+      <!-- i18n: @@onboarding.people.notice -->
+      {{ strings.notice }}
+    </p>
+  </div>
+</div>

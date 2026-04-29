@@ -16,6 +16,11 @@ import {
 const flush = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 const setup = (trpcOverrides?: Partial<OnboardingTrpcClient['onboarding']>) => {
+  // Defaults are kept as standalone mocks so the `commit` / `current` aliases
+  // returned to the test always point at the *default* spy, even when the
+  // caller swaps in an override via `trpcOverrides`. This lets a test
+  // assert e.g. `expect(current).not.toHaveBeenCalled()` after providing a
+  // distinct mock for `current.query`.
   const commit = vi.fn().mockResolvedValue({ onboardingDone: true });
   const current = vi.fn().mockResolvedValue({
     adultsCount: 1,
@@ -30,6 +35,12 @@ const setup = (trpcOverrides?: Partial<OnboardingTrpcClient['onboarding']>) => {
     onboarding: {
       commit: { mutate: commit, ...trpcOverrides?.commit },
       current: { query: current, ...trpcOverrides?.current },
+    },
+    onboardingCatalogs: {
+      dietaryRestrictions: { query: vi.fn().mockResolvedValue([]) },
+      utensils: { query: vi.fn().mockResolvedValue([]) },
+      mealCategories: { query: vi.fn().mockResolvedValue([]) },
+      mealAreas: { query: vi.fn().mockResolvedValue([]) },
     },
   };
 

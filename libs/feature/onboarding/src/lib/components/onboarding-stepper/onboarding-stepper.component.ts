@@ -12,12 +12,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 
-import {
-  ACTION_LABELS,
-  STEP_LABELS,
-  STEP_PLACEHOLDERS,
-} from '../../onboarding-strings';
+import { ACTION_LABELS, STEP_LABELS } from '../../onboarding-strings';
 import { OnboardingStore } from '../../store/onboarding.store';
+import { DoneStepComponent } from '../steps/done-step/done-step.component';
+import { FridgeStepComponent } from '../steps/fridge-step/fridge-step.component';
+import { PeopleStepComponent } from '../steps/people-step/people-step.component';
+import { RestrictionsStepComponent } from '../steps/restrictions-step/restrictions-step.component';
+import { StartStepComponent } from '../steps/start-step/start-step.component';
+import { UtensilsStepComponent } from '../steps/utensils-step/utensils-step.component';
 
 /** First and last steps cannot be skipped. */
 const FIRST_SKIPPABLE_STEP = 1;
@@ -33,6 +35,12 @@ const LAST_SKIPPABLE_STEP = 4;
     MatIconModule,
     MatProgressSpinnerModule,
     MatStepperModule,
+    DoneStepComponent,
+    FridgeStepComponent,
+    PeopleStepComponent,
+    RestrictionsStepComponent,
+    StartStepComponent,
+    UtensilsStepComponent,
   ],
   templateUrl: './onboarding-stepper.component.html',
   styleUrl: './onboarding-stepper.component.scss',
@@ -40,7 +48,6 @@ const LAST_SKIPPABLE_STEP = 4;
 export class OnboardingStepperComponent {
   protected readonly store = inject(OnboardingStore);
   protected readonly stepLabels = STEP_LABELS;
-  protected readonly stepPlaceholders = STEP_PLACEHOLDERS;
   protected readonly actions = ACTION_LABELS;
 
   protected readonly canSkip = computed(() => {
