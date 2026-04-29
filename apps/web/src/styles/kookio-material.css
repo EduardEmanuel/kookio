@@ -5,9 +5,23 @@
  *    color of each component, relying on opacity (8%/12%) to keep them
  *    distinguishable. On a warm orange/brown palette this fails perceptually —
  *    the tinted overlay reads as the same hue family as the foreground.
- *    Switching state-layer to `surface-container-highest` (M3 elevation tier
- *    above surface) gives every interactive component a "lifted" hover that
- *    reads as a lighter neutral in light mode and a lighter brown in dark mode.
+ *
+ *    Two strategies, depending on whether the component has a colored
+ *    background or sits on the page surface:
+ *
+ *    a. Transparent-background components (text/outlined buttons, icon-button,
+ *       list-item, menu, option, expansion header, chips) → state-layer is
+ *       `surface-container-highest` (M3 elevation tier above surface). Produces
+ *       a "lifted" hover that reads as a lighter neutral in light mode and a
+ *       lighter brown in dark mode.
+ *
+ *    b. Colored-background components (filled button) → a lighter overlay
+ *       would desaturate the primary color and reduce contrast with the label
+ *       (especially white text on warm primary in light mode). State-layer is
+ *       `on-surface` instead — auto-inverts across themes (near-black in
+ *       light, near-white in dark), producing a "press down" hover that
+ *       darkens warm-primary in light mode and lightens peach-primary in dark
+ *       mode. Both directions strengthen label contrast against the container.
  *
  * 2. Icon-button centering: Material 20 sets `display: inline-block` on
  *    `.mat-mdc-icon-button` and relies on baseline + line-height for vertical
@@ -43,6 +57,7 @@
   --mat-button-outlined-state-layer-color: var(
     --mat-sys-surface-container-highest
   );
+  --mat-button-filled-state-layer-color: var(--mat-sys-on-surface);
   --mat-expansion-header-hover-state-layer-color: var(
     --mat-sys-surface-container-highest
   );
