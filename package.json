@@ -23,6 +23,8 @@
     "seed:prisma-client": "npm run with:env -- --env=development nx seed prisma-client",
     "studio:prisma-client": "npm run with:env -- --env=development nx studio prisma-client",
     "kookio-icons-filled:web": "nx kookio-icons-filled web",
+    "build:icons": "tsx scripts/build-material-symbols-icons.ts",
+    "build:icons:check": "tsx scripts/build-material-symbols-icons.ts --check",
     "eslint:fix": "eslint . --fix",
     "lint:all:fix": "nx run-many -t lint --fix",
     "test:all": "nx run-many -t test",
