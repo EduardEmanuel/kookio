@@ -38,6 +38,39 @@ const ICON_PATTERNS: readonly RegExp[] = [
   /\bicon="([a-z][a-z0-9_]*)"/g,
 ];
 
+// Icons that Angular Material renders from its own templates (inside
+// node_modules, which the scan excludes). Included unconditionally so
+// the subset font carries the glyphs when these components are used.
+//
+//   - create / done / warning  — mat-step-header state indicators
+//   - close                    — mat-snackbar, mat-chip remove, mat-dialog close
+//   - check                    — mat-checkbox / mat-radio indicators
+//   - chevron_left / chevron_right — mat-datepicker, mat-tab
+//   - arrow_drop_down          — mat-select trigger
+//   - arrow_upward / arrow_downward — mat-sort
+//   - expand_less / expand_more — mat-expansion-panel, mat-select
+//   - clear                    — mat-form-field clear button
+//   - error                    — mat-form-field error
+//
+// Re-evaluate this list when Angular Material is upgraded to a major
+// version; remove entries that are no longer rendered, add any new
+// ones.
+const MATERIAL_INTERNAL_ICONS: readonly string[] = [
+  'arrow_downward',
+  'arrow_drop_down',
+  'arrow_upward',
+  'check',
+  'chevron_left',
+  'chevron_right',
+  'clear',
+  'close',
+  'create',
+  'done',
+  'expand_less',
+  'expand_more',
+  'warning',
+];
+
 const GOOGLE_FONTS_CSS_BASE = 'https://fonts.googleapis.com/css2';
 const FAMILY_PARAM =
   'Material Symbols Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200';
@@ -78,7 +111,7 @@ const scanFile = async (file: string): Promise<Set<string>> => {
 const scanCodebase = async (): Promise<Set<string>> => {
   const fileLists = await Promise.all(SCAN_ROOTS.map(walk));
   const allFiles = fileLists.flat();
-  const all = new Set<string>();
+  const all = new Set<string>(MATERIAL_INTERNAL_ICONS);
   for (const file of allFiles) {
     const fromFile = await scanFile(file);
     for (const icon of fromFile) all.add(icon);
