@@ -24,9 +24,11 @@
           >
             <span class="restrictions-step__row-content">
               @if (r.emoji) {
-                <span class="restrictions-step__emoji" aria-hidden="true">
-                  {{ r.emoji }}
-                </span>
+                <kookio-emoji
+                  class="restrictions-step__emoji"
+                  [char]="r.emoji"
+                  [size]="24"
+                />
               }
               <span class="restrictions-step__text">
                 <strong>{{ r.label }}</strong>

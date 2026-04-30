@@ -9,6 +9,8 @@ import { from } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import { KookioEmojiComponent } from '@kookio/shared-ui';
+
 import {
   UTENSIL_CATEGORY_LABELS,
   UTENSIL_CATEGORY_ORDER,
@@ -33,7 +35,7 @@ const OTHER_KEY = '__other__';
 @Component({
   selector: 'kookio-onboarding-utensils-step',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatChipsModule, MatProgressSpinnerModule],
+  imports: [MatChipsModule, MatProgressSpinnerModule, KookioEmojiComponent],
   templateUrl: './utensils-step.component.html',
   styleUrl: './utensils-step.component.scss',
 })

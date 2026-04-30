@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
 
-import { KookioIconComponent } from '@kookio/shared-ui';
+import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 import type { MaterialSymbolName } from '@kookio/shared-utility';
 
 import { DONE_STRINGS } from '../../../onboarding-strings';
@@ -22,7 +22,7 @@ interface SummaryChip {
 @Component({
   selector: 'kookio-onboarding-done-step',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatChipsModule, KookioIconComponent],
+  imports: [MatChipsModule, KookioEmojiComponent, KookioIconComponent],
   templateUrl: './done-step.component.html',
   styleUrl: './done-step.component.scss',
 })

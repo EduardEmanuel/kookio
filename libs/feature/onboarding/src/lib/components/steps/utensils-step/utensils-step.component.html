@@ -28,9 +28,11 @@
                 (click)="onToggle(u.id)"
               >
                 @if (u.emoji) {
-                  <span class="utensils-step__emoji" aria-hidden="true">
-                    {{ u.emoji }}
-                  </span>
+                  <kookio-emoji
+                    class="utensils-step__emoji"
+                    [char]="u.emoji"
+                    [size]="16"
+                  />
                 }
                 {{ u.name }}
               </mat-chip-option>

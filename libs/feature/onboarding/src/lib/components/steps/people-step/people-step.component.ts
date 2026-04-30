@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
-import { KookioIconComponent } from '@kookio/shared-ui';
+import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 
 import { PEOPLE_STRINGS } from '../../../onboarding-strings';
 import { OnboardingStore } from '../../../store/onboarding.store';
@@ -9,7 +9,7 @@ import { OnboardingStore } from '../../../store/onboarding.store';
 @Component({
   selector: 'kookio-onboarding-people-step',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, KookioIconComponent],
+  imports: [MatButtonModule, KookioEmojiComponent, KookioIconComponent],
   templateUrl: './people-step.component.html',
   styleUrl: './people-step.component.scss',
 })

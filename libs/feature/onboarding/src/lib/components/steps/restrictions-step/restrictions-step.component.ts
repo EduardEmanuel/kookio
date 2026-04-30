@@ -4,6 +4,8 @@ import { from } from 'rxjs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import { KookioEmojiComponent } from '@kookio/shared-ui';
+
 import { RESTRICTIONS_STRINGS } from '../../../onboarding-strings';
 import {
   ONBOARDING_TRPC,
@@ -13,7 +15,7 @@ import {
 @Component({
   selector: 'kookio-onboarding-restrictions-step',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCheckboxModule, MatProgressSpinnerModule],
+  imports: [MatCheckboxModule, MatProgressSpinnerModule, KookioEmojiComponent],
   templateUrl: './restrictions-step.component.html',
   styleUrl: './restrictions-step.component.scss',
 })
