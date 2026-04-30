@@ -16,4 +16,5 @@ export const URLS = {
   ACCOUNT: '/account',
   ADMIN: '/admin',
   FORBIDDEN: '/403',
+  LEGAL_ATTRIBUTIONS: '/legal/attributions',
 } as const;

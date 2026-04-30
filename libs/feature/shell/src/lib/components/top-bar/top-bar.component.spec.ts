@@ -64,6 +64,25 @@ describe('TopBarComponent', () => {
     });
   });
 
+  describe('user menu items', () => {
+    it('exposes an Attributions link when authenticated', async () => {
+      const { fixture } = await setup(mockUser);
+
+      const accountBtn = fixture.nativeElement.querySelector(
+        'button[aria-label="Account"]',
+      ) as HTMLButtonElement;
+      accountBtn.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const link = document.querySelector(
+        'a[mat-menu-item][href="/legal/attributions"]',
+      );
+      expect(link).toBeTruthy();
+      expect(link?.textContent).toContain('Attributions');
+    });
+  });
+
   describe('behaviour', () => {
     it('calls logout() when sign-out button is clicked', async () => {
       const { fixture, store } = await setup(mockUser);
