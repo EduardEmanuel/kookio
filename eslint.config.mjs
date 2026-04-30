@@ -88,4 +88,30 @@ export default [
       ],
     },
   },
+  // Force every component to render icons through KookioIconComponent.
+  // Banning MatIconModule / MatIcon is equivalent to banning <mat-icon>
+  // in templates: a standalone component cannot render the element
+  // without one of these in its imports array. MatIconRegistry stays
+  // available — it's needed in app.config.ts to set the default font
+  // set class. Only the wrapper itself is allowed to import the
+  // banned symbols directly.
+  {
+    files: ['**/*.{ts,tsx}'],
+    ignores: ['libs/shared/ui/src/lib/components/icon/icon.component.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@angular/material/icon',
+              importNames: ['MatIconModule', 'MatIcon'],
+              message:
+                'Use <kookio-icon name="..." /> from @kookio/shared-ui instead. Only icon.component.ts may import these directly. MatIconRegistry is allowed.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
