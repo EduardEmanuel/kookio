@@ -82,6 +82,11 @@ export default defineConfig(({ mode }) => {
                 'cache-control': 'public, max-age=31536000, immutable',
               },
             },
+            '/icons/twemoji/**': {
+              headers: {
+                'cache-control': 'public, max-age=31536000, immutable',
+              },
+            },
             '/**': { headers: { 'cache-control': 'no-cache' } },
           },
           serveStatic: true,

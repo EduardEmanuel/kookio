@@ -1,0 +1,14 @@
+// The host needs a real box (inline-block + middle alignment) so it slots
+// into running text and into Material chip/list slots without collapsing or
+// shifting the baseline. The inner <img> inherits the `size` input via
+// width/height attributes.
+:host {
+  display: inline-block;
+  vertical-align: middle;
+  user-select: none;
+  line-height: 1;
+}
+
+.kookio-emoji__img {
+  display: block;
+}
