@@ -36,6 +36,9 @@ jobs:
       - uses: ./.github/actions/nx-basehead
         id: nx
 
+      - name: Icon manifest check
+        run: npm run build:icons:check
+
       - name: Format check (affected)
         run: npx nx format:check --base=${{ steps.nx.outputs.base }} --head=${{ steps.nx.outputs.head }}
 

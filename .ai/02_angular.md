@@ -55,6 +55,15 @@ Angular v20+
 - Use Material theming system for colors and typography — avoid hardcoded values
 - Follow Material Design accessibility guidelines alongside WCAG AA
 
+## Icons
+
+- Render icons via `<kookio-icon name="..." />` from `@kookio/shared-ui` — do NOT use `<mat-icon>` directly. The wrapper delegates to `<mat-icon>` internally but constrains the `name` input to `MaterialSymbolName` (a union derived from the auto-generated manifest), so unknown ligatures fail at compile time instead of rendering as literal text in a subsetted font that does not contain them.
+- Use the `[filled]` input to flip the FILL axis on the variable font for state changes (e.g. active route in nav). Do not toggle `mat-icon--filled` manually.
+- Material's content-projection markers — `matChipAvatar`, `matListItemIcon`, `mat-card-avatar`, `iconPositionEnd` — are attribute selectors and apply directly to `<kookio-icon>` host. Do not duplicate them on the inner `<mat-icon>`.
+- Icon names live as data on typed fields (`icon: MaterialSymbolName` on `TabItem`, `NavItem`, etc.) so the constraint propagates from config arrays through to the template.
+- After adding or removing an icon usage anywhere in the codebase, run `npm run build:icons` to regenerate `libs/shared/utility/src/lib/material-symbols-icons.ts` and the subsetted woff2 at `apps/web/public/fonts/material-symbols/`. Commit both. CI runs `npm run build:icons:check` and fails the PR on drift.
+- Browse available ligatures at [fonts.google.com/icons](https://fonts.google.com/icons) (Style: Outlined). The variable axes available are `FILL`, `wght`, `GRAD`, `opsz`.
+
 ## Accessibility
 
 - All components MUST pass AXE checks
