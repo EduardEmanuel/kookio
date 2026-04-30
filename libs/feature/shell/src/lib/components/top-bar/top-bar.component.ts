@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthStore } from '@kookio/feature-auth';
+import { KookioIconComponent } from '@kookio/shared-ui';
 
 @Component({
   selector: 'kookio-top-bar',
@@ -13,9 +13,9 @@ import { AuthStore } from '@kookio/feature-auth';
   imports: [
     RouterLink,
     MatButtonModule,
-    MatIconModule,
     MatMenuModule,
     MatTooltipModule,
+    KookioIconComponent,
   ],
   templateUrl: './top-bar.component.html',
   styleUrl: './top-bar.component.scss',

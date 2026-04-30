@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { from } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
+
+import { KookioIconComponent } from '@kookio/shared-ui';
 
 import { FRIDGE_STRINGS } from '../../../onboarding-strings';
 import {
@@ -17,9 +18,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatChipsModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatTabsModule,
+    KookioIconComponent,
   ],
   templateUrl: './fridge-step.component.html',
   styleUrl: './fridge-step.component.scss',

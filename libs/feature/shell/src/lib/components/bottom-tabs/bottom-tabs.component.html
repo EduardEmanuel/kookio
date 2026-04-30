@@ -11,9 +11,7 @@
         class="bottom-tabs__item"
         [attr.aria-label]="tab.label"
       >
-        <mat-icon [class.mat-icon--filled]="rla.isActive">{{
-          tab.icon
-        }}</mat-icon>
+        <kookio-icon [name]="tab.icon" [filled]="rla.isActive" />
         <span class="bottom-tabs__label">{{ tab.label }}</span>
       </a>
     }

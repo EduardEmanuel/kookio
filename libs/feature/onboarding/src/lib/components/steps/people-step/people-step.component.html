@@ -23,7 +23,7 @@
           [disabled]="store.adultsCount() <= 1"
           (click)="decreaseAdults()"
         >
-          <mat-icon>remove</mat-icon>
+          <kookio-icon name="remove" />
         </button>
         <span
           class="people-step__count"
@@ -39,7 +39,7 @@
           [disabled]="store.adultsCount() >= 20"
           (click)="increaseAdults()"
         >
-          <mat-icon>add</mat-icon>
+          <kookio-icon name="add" />
         </button>
       </div>
     </div>
@@ -58,7 +58,7 @@
           [disabled]="store.childrenCount() <= 0"
           (click)="decreaseChildren()"
         >
-          <mat-icon>remove</mat-icon>
+          <kookio-icon name="remove" />
         </button>
         <span
           class="people-step__count"
@@ -74,14 +74,14 @@
           [disabled]="store.childrenCount() >= 20"
           (click)="increaseChildren()"
         >
-          <mat-icon>add</mat-icon>
+          <kookio-icon name="add" />
         </button>
       </div>
     </div>
   </div>
 
   <div class="people-step__notice" role="note">
-    <mat-icon>info</mat-icon>
+    <kookio-icon name="info" />
     <p>
       <!-- i18n: @@onboarding.people.notice -->
       {{ strings.notice }}

@@ -7,11 +7,11 @@ import {
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { filter, map, startWith } from 'rxjs';
 
 import { AuthStore } from '@kookio/feature-auth';
+import { KookioIconComponent } from '@kookio/shared-ui';
 
 import { BreakpointService } from '../../services/breakpoint.service';
 
@@ -27,7 +27,7 @@ const HIDDEN_ROUTES = [
 @Component({
   selector: 'kookio-cook-now-fab',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [RouterLink, MatButtonModule, MatTooltipModule, KookioIconComponent],
   templateUrl: './cook-now-fab.component.html',
   styleUrl: './cook-now-fab.component.scss',
 })

@@ -12,8 +12,8 @@ import {
 } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatIconModule } from '@angular/material/icon';
 
+import { KookioIconComponent } from '@kookio/shared-ui';
 import { URLS } from '@kookio/shared-utility';
 
 import { isOnAuthRoute } from '../../utils/auth-routes';
@@ -23,7 +23,7 @@ import type { TabItem } from '../../models';
 @Component({
   selector: 'kookio-bottom-tabs',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, MatIconModule],
+  imports: [RouterLink, RouterLinkActive, KookioIconComponent],
   templateUrl: './bottom-tabs.component.html',
   styleUrl: './bottom-tabs.component.scss',
 })

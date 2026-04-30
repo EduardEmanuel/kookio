@@ -12,10 +12,10 @@ import {
 } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 
 import { AuthStore } from '@kookio/feature-auth';
+import { KookioIconComponent } from '@kookio/shared-ui';
 import { URLS } from '@kookio/shared-utility';
 
 import { isOnAuthRoute } from '../../utils/auth-routes';
@@ -50,7 +50,7 @@ const NAV_ITEMS: readonly NavItem[] = [
 @Component({
   selector: 'kookio-sidenav-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, MatIconModule, MatListModule],
+  imports: [RouterLink, RouterLinkActive, MatListModule, KookioIconComponent],
   templateUrl: './sidenav-menu.component.html',
   styleUrl: './sidenav-menu.component.scss',
 })

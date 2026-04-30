@@ -8,9 +8,10 @@ import { type StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
+
+import { KookioIconComponent } from '@kookio/shared-ui';
 
 import { ACTION_LABELS, STEP_LABELS } from '../../onboarding-strings';
 import { OnboardingStore } from '../../store/onboarding.store';
@@ -32,9 +33,9 @@ const LAST_SKIPPABLE_STEP = 4;
     MatButtonModule,
     MatCardModule,
     MatDividerModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatStepperModule,
+    KookioIconComponent,
     DoneStepComponent,
     FridgeStepComponent,
     PeopleStepComponent,

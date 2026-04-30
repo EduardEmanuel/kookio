@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { from } from 'rxjs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { RESTRICTIONS_STRINGS } from '../../../onboarding-strings';
@@ -14,7 +13,7 @@ import {
 @Component({
   selector: 'kookio-onboarding-restrictions-step',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCheckboxModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [MatCheckboxModule, MatProgressSpinnerModule],
   templateUrl: './restrictions-step.component.html',
   styleUrl: './restrictions-step.component.scss',
 })

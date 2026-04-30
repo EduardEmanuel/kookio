@@ -7,7 +7,6 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { from } from 'rxjs';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import {
@@ -34,7 +33,7 @@ const OTHER_KEY = '__other__';
 @Component({
   selector: 'kookio-onboarding-utensils-step',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatChipsModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [MatChipsModule, MatProgressSpinnerModule],
   templateUrl: './utensils-step.component.html',
   styleUrl: './utensils-step.component.scss',
 })

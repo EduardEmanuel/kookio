@@ -1,7 +1,13 @@
 <section class="page-stub">
   <mat-card class="page-stub__card" appearance="outlined">
     <mat-card-header class="page-stub__header">
-      <mat-icon mat-card-avatar class="page-stub__icon">{{ icon() }}</mat-icon>
+      @if (icon(); as iconName) {
+        <kookio-icon
+          mat-card-avatar
+          [name]="iconName"
+          class="page-stub__icon"
+        />
+      }
       <mat-card-title class="page-stub__title">{{ title() }}</mat-card-title>
       @if (subtitle()) {
         <mat-card-subtitle class="page-stub__subtitle">{{

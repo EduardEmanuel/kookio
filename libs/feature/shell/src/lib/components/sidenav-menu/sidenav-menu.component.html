@@ -11,9 +11,11 @@
             item.route === '/' ? { exact: true } : { exact: false }
           "
         >
-          <mat-icon matListItemIcon [class.mat-icon--filled]="rla.isActive">{{
-            item.icon
-          }}</mat-icon>
+          <kookio-icon
+            matListItemIcon
+            [name]="item.icon"
+            [filled]="rla.isActive"
+          />
           <span matListItemTitle>{{ item.label }}</span>
         </a>
       }

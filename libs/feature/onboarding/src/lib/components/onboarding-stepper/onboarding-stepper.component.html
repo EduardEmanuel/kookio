@@ -8,7 +8,7 @@
     <mat-card-actions class="onboarding-shell__footer" align="end">
       @if (store.canGoPrev() && !store.isLastStep()) {
         <button mat-button type="button" (click)="onPrev()">
-          <mat-icon>arrow_back</mat-icon>
+          <kookio-icon name="arrow_back" />
           <!-- i18n: @@onboarding.action.back -->
           <span>{{ actions.back }}</span>
         </button>
@@ -35,7 +35,7 @@
         >
           <!-- i18n: @@onboarding.action.start -->
           <span>{{ actions.start }}</span>
-          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          <kookio-icon iconPositionEnd name="arrow_forward" />
         </button>
       } @else if (store.isLastStep()) {
         <button
@@ -50,7 +50,7 @@
           } @else {
             <!-- i18n: @@onboarding.action.submit -->
             <span>{{ actions.submit }}</span>
-            <mat-icon iconPositionEnd>restaurant</mat-icon>
+            <kookio-icon iconPositionEnd name="restaurant" />
           }
         </button>
       } @else {
@@ -62,7 +62,7 @@
         >
           <!-- i18n: @@onboarding.action.continue -->
           <span>{{ actions.continue }}</span>
-          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          <kookio-icon iconPositionEnd name="arrow_forward" />
         </button>
       }
     </mat-card-actions>
