@@ -16,7 +16,7 @@ export const routeMeta: RouteMeta = {
   imports: [RouterLink, MatButtonModule, PageStubComponent],
   template: `
     <kookio-page-stub
-      icon="error_outline"
+      icon="error"
       title="Page not found"
       subtitle="404"
       placeholder="The page you are looking for does not exist or has been moved."

@@ -77,6 +77,11 @@ export default defineConfig(({ mode }) => {
                 'cache-control': 'public, max-age=31536000, immutable',
               },
             },
+            '/fonts/**': {
+              headers: {
+                'cache-control': 'public, max-age=31536000, immutable',
+              },
+            },
             '/**': { headers: { 'cache-control': 'no-cache' } },
           },
           serveStatic: true,

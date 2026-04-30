@@ -1,5 +1,7 @@
 import {
   ApplicationConfig,
+  inject,
+  provideAppInitializer,
   provideZoneChangeDetection,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
@@ -12,6 +14,7 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material/icon';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 
 import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
@@ -34,6 +37,11 @@ export const appConfig: ApplicationConfig = {
     ),
     provideTrpcClient(),
     provideNgxSkeletonLoader(),
+    provideAppInitializer(() => {
+      inject(MatIconRegistry).setDefaultFontSetClass(
+        'material-symbols-outlined',
+      );
+    }),
     { provide: APP_TRPC, useExisting: TrpcClientApp },
     { provide: AUTH_TRPC, useExisting: TrpcClientApp },
     { provide: ONBOARDING_TRPC, useExisting: TrpcClientApp },
