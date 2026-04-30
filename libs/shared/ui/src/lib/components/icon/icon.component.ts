@@ -8,6 +8,7 @@ import type { MaterialSymbolName } from '@kookio/shared-utility';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatIconModule],
   templateUrl: './icon.component.html',
+  styleUrl: './icon.component.scss',
 })
 export class KookioIconComponent {
   readonly name = input.required<MaterialSymbolName>();

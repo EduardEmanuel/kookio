@@ -1,0 +1,22 @@
+// The wrapper mirrors <mat-icon>'s box exactly so it slots into every
+// Material container as a drop-in for the bare element:
+//   - inline-block + explicit 24×24 + line-height: 1: same dimensions as
+//     mat-icon, with no inline-leading drift that would shift the icon
+//     vertically inside flex containers (the cause of cook-now-fab and
+//     icon-button misalignment when using intrinsic sizing).
+//   - font-size: 24px: lets the inner mat-icon inherit the right size
+//     without depending on parent context.
+//   - vertical-align: middle: aligns with adjacent inline text in
+//     non-flex contexts (e.g. inline help notices), matching mat-icon's
+//     own default.
+// The host having a real box (rather than display: contents) is also
+// what lets `.mdc-list-item__start { z-index: 1 }` keep the sidenav
+// icon above the state-layer ::before overlay on hover.
+:host {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  line-height: 1;
+  vertical-align: middle;
+}
