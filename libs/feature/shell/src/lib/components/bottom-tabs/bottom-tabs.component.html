@@ -4,13 +4,16 @@
       <a
         [routerLink]="tab.route"
         routerLinkActive="bottom-tabs__item--active"
+        #rla="routerLinkActive"
         [routerLinkActiveOptions]="
           tab.route === '/' ? { exact: true } : { exact: false }
         "
         class="bottom-tabs__item"
         [attr.aria-label]="tab.label"
       >
-        <mat-icon>{{ tab.icon }}</mat-icon>
+        <mat-icon [class.mat-icon--filled]="rla.isActive">{{
+          tab.icon
+        }}</mat-icon>
         <span class="bottom-tabs__label">{{ tab.label }}</span>
       </a>
     }

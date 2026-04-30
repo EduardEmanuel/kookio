@@ -6,11 +6,14 @@
           mat-list-item
           [routerLink]="item.route"
           routerLinkActive="mdc-list-item--activated"
+          #rla="routerLinkActive"
           [routerLinkActiveOptions]="
             item.route === '/' ? { exact: true } : { exact: false }
           "
         >
-          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <mat-icon matListItemIcon [class.mat-icon--filled]="rla.isActive">{{
+            item.icon
+          }}</mat-icon>
           <span matListItemTitle>{{ item.label }}</span>
         </a>
       }
