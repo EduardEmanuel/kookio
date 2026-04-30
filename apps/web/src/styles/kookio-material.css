@@ -15,13 +15,19 @@
  *       a "lifted" hover that reads as a lighter neutral in light mode and a
  *       lighter brown in dark mode.
  *
- *    b. Colored-background components (filled button) → a lighter overlay
- *       would desaturate the primary color and reduce contrast with the label
- *       (especially white text on warm primary in light mode). State-layer is
- *       `on-surface` instead — auto-inverts across themes (near-black in
- *       light, near-white in dark), producing a "press down" hover that
- *       darkens warm-primary in light mode and lightens peach-primary in dark
- *       mode. Both directions strengthen label contrast against the container.
+ *    b. Colored-background components (filled button, FAB, mini-FAB,
+ *       extended FAB, selected chip) → a lighter overlay would desaturate
+ *       the container color and reduce contrast with the label (especially
+ *       white text on warm primary in light mode). The default state-layer
+ *       for FABs is `on-primary-container` and for selected chips is
+ *       `on-secondary-container` — in both cases the same token as the
+ *       component's *foreground*, so at pressed opacity the overlay
+ *       collapses onto the icon/label and the content vanishes. State-layer
+ *       is set to `on-surface` instead — auto-inverts across themes
+ *       (near-black in light, near-white in dark), producing a "press down"
+ *       hover that darkens the container in light mode and lightens it in
+ *       dark mode. Both directions strengthen label contrast against the
+ *       container.
  *
  * 2. Icon-button centering: Material 20 sets `display: inline-block` on
  *    `.mat-mdc-icon-button` and relies on baseline + line-height for vertical
@@ -31,6 +37,26 @@
  *    `inline-flex` with center alignment makes the icon-state-layer alignment
  *    glyph-independent. Specificity is doubled (`.x.x`) to beat Material's
  *    runtime-injected component styles without `!important`.
+ *
+ * 3. Checkbox border + checkmark tones: M3 defaults the unselected border to
+ *    `on-surface` — the same token used for body text. On a warm palette this
+ *    gives the casing the same visual weight as the label next to it,
+ *    flattening the visual hierarchy. The strokes are moved to neutral M3
+ *    outline tones so the box stays readable across all interaction states
+ *    without competing with the label or with the state-layer overlay behind:
+ *      - idle unselected:        `outline` — mid-neutral, distinct on the
+ *                                light surface.
+ *      - hover/focus unselected: `outline-variant` — lighter neutral that
+ *                                stays visible against the tinted state-layer
+ *                                without doubling its weight.
+ *      - selected pressed:       `outline-variant` — subtle border that does
+ *                                not compete with the primary fill behind it.
+ *    The checkmark + indeterminate mixedmark default to `on-primary`, which
+ *    can wash out against the warm primary fill; they are pinned to
+ *    `surface-container-lowest` for a constant, near-white tick.
+ *    State-layers for the checkbox itself are intentionally left at Material's
+ *    defaults — the border-tone strategy above is enough to keep the box
+ *    readable at hover/focus/pressed without further overrides.
  */
 
 :root {
@@ -58,6 +84,8 @@
     --mat-sys-surface-container-highest
   );
   --mat-button-filled-state-layer-color: var(--mat-sys-on-surface);
+  --mat-fab-state-layer-color: var(--mat-sys-on-surface);
+  --mat-fab-small-state-layer-color: var(--mat-sys-on-surface);
   --mat-expansion-header-hover-state-layer-color: var(
     --mat-sys-surface-container-highest
   );
@@ -66,12 +94,53 @@
   );
   --mat-chip-hover-state-layer-color: var(--mat-sys-surface-container-highest);
   --mat-chip-focus-state-layer-color: var(--mat-sys-surface-container-highest);
+  --mat-chip-selected-hover-state-layer-color: var(--mat-sys-on-surface);
+  --mat-chip-selected-focus-state-layer-color: var(--mat-sys-on-surface);
+  --mat-checkbox-unselected-icon-color: var(--mat-sys-outline);
+  --mat-checkbox-unselected-hover-icon-color: var(--mat-sys-outline-variant);
+  --mat-checkbox-unselected-focus-icon-color: var(--mat-sys-outline-variant);
+  --mat-checkbox-selected-pressed-icon-color: var(--mat-sys-outline-variant);
+  --mat-checkbox-selected-checkmark-color: var(
+    --mat-sys-surface-container-lowest
+  );
 }
 
 .mat-mdc-icon-button.mat-mdc-icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/*
+ * Non-icon buttons (text/filled/raised/outlined) and extended FAB:
+ *   - Pill shape via `--radius-full` for the M3 Expressive look.
+ *   - `inline-flex` + `align-items: center` on the host so the internal
+ *     `.mdc-button__label` and any sibling `<mat-icon>` (positioned by
+ *     `iconPositionEnd` etc.) lay out on the same vertical axis.
+ *   - `inline-flex` on the nested `.mdc-button__label` so the text inside
+ *     it stops being laid out as inline content — where glyphs sit on
+ *     the text baseline and read visibly above the button's geometric
+ *     mid-line — and snaps onto the host's center alignment instead.
+ *
+ * Regular FAB and mini-FAB are intentionally excluded — they are already
+ * fully circular by construction (square aspect ratio + Material's
+ * default rounding). Icon-buttons are handled above. Specificity is
+ * doubled to beat Material's default container-shape tokens without
+ * `!important`. State-layer and ripple inherit the host's border-radius
+ * automatically.
+ */
+.mat-mdc-button.mat-mdc-button,
+.mat-mdc-unelevated-button.mat-mdc-unelevated-button,
+.mat-mdc-raised-button.mat-mdc-raised-button,
+.mat-mdc-outlined-button.mat-mdc-outlined-button,
+.mat-mdc-extended-fab.mat-mdc-extended-fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  & .mdc-button__label {
+    display: inline-flex;
+  }
 }
 
 /*

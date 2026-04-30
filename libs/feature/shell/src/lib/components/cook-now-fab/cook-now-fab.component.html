@@ -4,7 +4,7 @@
     [extended]="showLabel()"
     routerLink="/dashboard"
     class="cook-now-fab"
-    [matTooltip]="label"
+    [matTooltip]="showLabel() ? null : label"
     matTooltipPosition="left"
     [attr.aria-label]="label"
   >
