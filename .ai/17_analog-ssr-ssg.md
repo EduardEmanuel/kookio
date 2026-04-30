@@ -286,3 +286,34 @@ const secret = process.env['MY_SECRET'];
 - Fix: set `NODE_OPTIONS=--max-old-space-size=6144` on the build step in CI
 - This is the correct fix, not a workaround — Rollup's AST construction is inherently
   memory-intensive for these package sizes and cannot be avoided via config
+
+## Static assets in `public/` — URL-safe filenames
+
+Files served from `apps/web/public/` are exposed at `/<path>` by both
+Vite's dev server and the Nitro static handler in production. The
+URL → filesystem mapping does **not** percent-decode reserved
+characters before file lookup — a request for `/fonts/foo%5Bx%5D.woff2`
+is searched on disk literally as `foo%5Bx%5D.woff2`, not `foo[x].woff2`,
+misses the file, and falls through to the SPA `index.html` fallback.
+
+The browser then receives `<!DOCTYPE html>...` for what it asked to be
+a binary asset. Symptoms vary by asset type:
+
+- **Fonts** — `OTS parsing error: invalid sfntVersion: 1008813135`
+  (hex `0x3C21444F` = ASCII `<!DO`).
+- **Images** — broken image icon, dev-tools shows `text/html` content-type
+  and an HTML body.
+- **Any binary** — fetch succeeds with 200, but the content is HTML.
+
+**Rule**: never use URL-reserved characters in filenames placed under
+`apps/web/public/`. Avoid `[ ] ( ) , ; & # ? = +` and spaces. Stick to
+`A-Z a-z 0-9 - _ .`. Rename third-party assets that ship with reserved
+chars before committing them — e.g. Google's variable-font filename
+`MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].woff2` becomes
+`MaterialSymbolsOutlined-variable.woff2`. The `@font-face` declaration
+or `<img src>` carries any semantic context the original filename had.
+
+**How to recognise**: if a static asset request returns
+`Content-Type: text/html` and a body that starts with `<!DOCTYPE`, the
+filesystem lookup missed. Check the URL for percent-encoded characters
+and rename the file to ASCII-safe.
