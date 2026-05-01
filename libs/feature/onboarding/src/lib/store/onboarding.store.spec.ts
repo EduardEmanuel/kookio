@@ -239,7 +239,7 @@ describe('OnboardingStore', () => {
       vi.useRealTimers();
     });
 
-    it('on success: clears submitting, refreshes session, navigates to /dashboard', async () => {
+    it('on success: clears submitting, marks onboarding done, navigates to /dashboard', async () => {
       vi.useRealTimers();
       const { store, authStore, navSpy, commit } = setup();
 
@@ -258,7 +258,8 @@ describe('OnboardingStore', () => {
       });
       expect(store.isSubmitting()).toBe(false);
       expect(store.submitError()).toBeNull();
-      expect(authStore.fetchSession).toHaveBeenCalledOnce();
+      expect(authStore.markOnboardingDone).toHaveBeenCalledOnce();
+      expect(authStore.fetchSession).not.toHaveBeenCalled();
       expect(navSpy).toHaveBeenCalledWith('/dashboard');
     });
 
@@ -273,7 +274,7 @@ describe('OnboardingStore', () => {
 
       expect(store.isSubmitting()).toBe(false);
       expect(store.submitError()).toBe('boom');
-      expect(authStore.fetchSession).not.toHaveBeenCalled();
+      expect(authStore.markOnboardingDone).not.toHaveBeenCalled();
       expect(navSpy).not.toHaveBeenCalled();
     });
   });

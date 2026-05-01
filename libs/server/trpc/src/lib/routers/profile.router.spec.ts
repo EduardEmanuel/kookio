@@ -7,7 +7,15 @@ import type { Context } from '../context';
 import { appRouter } from './index';
 
 type PrismaMock = {
-  userProfile: { upsert: ReturnType<typeof vi.fn> };
+  userProfile: {
+    upsert: ReturnType<typeof vi.fn>;
+    findUnique?: ReturnType<typeof vi.fn>;
+  };
+  pantryItem?: { count: ReturnType<typeof vi.fn> };
+  userUtensil?: { count: ReturnType<typeof vi.fn> };
+  userDietaryRestriction?: { count: ReturnType<typeof vi.fn> };
+  userPreferredCategory?: { count: ReturnType<typeof vi.fn> };
+  userPreferredArea?: { count: ReturnType<typeof vi.fn> };
 };
 
 const makeSession = (overrides: Partial<AuthSession> = {}): AuthSession => ({
@@ -55,7 +63,145 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+type CountsOverrides = {
+  profileRow?: { id: string } | null;
+  pantry?: number;
+  utensil?: number;
+  dietary?: number;
+  preferredCategory?: number;
+  preferredArea?: number;
+  failingModel?:
+    | 'userProfile'
+    | 'pantryItem'
+    | 'userUtensil'
+    | 'userDietaryRestriction'
+    | 'userPreferredCategory'
+    | 'userPreferredArea';
+};
+
+const makeCountsPrismaMock = (overrides: CountsOverrides = {}): PrismaMock => {
+  const profileRow =
+    overrides.profileRow === undefined
+      ? { id: 'profile-uuid' }
+      : overrides.profileRow;
+
+  const failing = (model: NonNullable<CountsOverrides['failingModel']>) =>
+    overrides.failingModel === model;
+
+  const countSpy = (
+    value: number,
+    model: NonNullable<CountsOverrides['failingModel']>,
+  ) =>
+    vi.fn(() =>
+      failing(model)
+        ? Promise.reject(new Error('db down'))
+        : Promise.resolve(value),
+    );
+
+  return {
+    userProfile: {
+      upsert: vi.fn(),
+      findUnique: vi.fn(() =>
+        failing('userProfile')
+          ? Promise.reject(new Error('db down'))
+          : Promise.resolve(profileRow),
+      ),
+    },
+    pantryItem: { count: countSpy(overrides.pantry ?? 0, 'pantryItem') },
+    userUtensil: { count: countSpy(overrides.utensil ?? 0, 'userUtensil') },
+    userDietaryRestriction: {
+      count: countSpy(overrides.dietary ?? 0, 'userDietaryRestriction'),
+    },
+    userPreferredCategory: {
+      count: countSpy(
+        overrides.preferredCategory ?? 0,
+        'userPreferredCategory',
+      ),
+    },
+    userPreferredArea: {
+      count: countSpy(overrides.preferredArea ?? 0, 'userPreferredArea'),
+    },
+  };
+};
+
 describe('profile router', () => {
+  describe('counts', () => {
+    it('returns the five counts populated from prisma', async () => {
+      const prismaMock = makeCountsPrismaMock({
+        profileRow: { id: 'profile-uuid' },
+        pantry: 7,
+        utensil: 3,
+        dietary: 2,
+        preferredCategory: 4,
+        preferredArea: 1,
+      });
+      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
+
+      const result = await caller.profile.counts();
+
+      expect(result).toEqual({
+        pantryCount: 7,
+        utensilCount: 3,
+        dietaryCount: 2,
+        preferredCategoryCount: 4,
+        preferredAreaCount: 1,
+      });
+      expect(prismaMock.userProfile.findUnique).toHaveBeenCalledWith({
+        where: { userId: 'user-123' },
+        select: { id: true },
+      });
+      expect(prismaMock.userUtensil!.count).toHaveBeenCalledWith({
+        where: { userId: 'profile-uuid' },
+      });
+      expect(prismaMock.userDietaryRestriction!.count).toHaveBeenCalledWith({
+        where: { userId: 'profile-uuid' },
+      });
+      expect(prismaMock.pantryItem!.count).toHaveBeenCalledWith({
+        where: { userId: 'user-123' },
+      });
+    });
+
+    it('returns zeros for utensils and dietary when no UserProfile row exists', async () => {
+      const prismaMock = makeCountsPrismaMock({
+        profileRow: null,
+        pantry: 5,
+        preferredCategory: 2,
+      });
+      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
+
+      const result = await caller.profile.counts();
+
+      expect(result).toEqual({
+        pantryCount: 5,
+        utensilCount: 0,
+        dietaryCount: 0,
+        preferredCategoryCount: 2,
+        preferredAreaCount: 0,
+      });
+      expect(prismaMock.userUtensil!.count).not.toHaveBeenCalled();
+      expect(prismaMock.userDietaryRestriction!.count).not.toHaveBeenCalled();
+    });
+
+    it('rejects calls without a session as UNAUTHORIZED', async () => {
+      const prismaMock = makeCountsPrismaMock();
+      const caller = appRouter.createCaller(makeCtx(null, prismaMock));
+
+      await expect(caller.profile.counts()).rejects.toMatchObject({
+        code: 'UNAUTHORIZED',
+      });
+      expect(prismaMock.userProfile.findUnique).not.toHaveBeenCalled();
+    });
+
+    it('translates Prisma failures to INTERNAL_SERVER_ERROR', async () => {
+      const prismaMock = makeCountsPrismaMock({ failingModel: 'pantryItem' });
+      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
+
+      await expect(caller.profile.counts()).rejects.toMatchObject({
+        code: 'INTERNAL_SERVER_ERROR',
+      });
+    });
+  });
+
   describe('completeOnboarding', () => {
     it('upserts a profile and returns the canonical shape', async () => {
       const prismaMock = makePrismaMock(baseRow);

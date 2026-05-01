@@ -47,6 +47,14 @@ export const FIREBASE_OPTIONS = new InjectionToken<FirebaseOptions>(
   'FIREBASE_OPTIONS',
 );
 
+export interface ProfileCounts {
+  pantryCount: number;
+  utensilCount: number;
+  dietaryCount: number;
+  preferredCategoryCount: number;
+  preferredAreaCount: number;
+}
+
 /** Minimal tRPC surface needed by AuthStore. */
 export interface AuthTrpcClient {
   auth: {
@@ -57,6 +65,9 @@ export interface AuthTrpcClient {
         firebaseUid: string;
       }): Promise<AuthSession>;
     };
+  };
+  profile: {
+    counts: { query(): Promise<ProfileCounts> };
   };
 }
 
@@ -73,6 +84,15 @@ type AuthState = {
   logoutError: string | null;
   loading: boolean;
   authReady: boolean;
+
+  // Aggregate counts populated after login (when onboardingDone) and after
+  // any mutation that affects pantry/utensils/dietary/preferences. Drives
+  // `hasProfileSignals` — see CONVENTION below.
+  pantryCount: number;
+  utensilCount: number;
+  dietaryCount: number;
+  preferredCategoryCount: number;
+  preferredAreaCount: number;
 };
 
 const initialState: AuthState = {
@@ -84,6 +104,20 @@ const initialState: AuthState = {
   logoutError: null,
   loading: false,
   authReady: false,
+
+  pantryCount: 0,
+  utensilCount: 0,
+  dietaryCount: 0,
+  preferredCategoryCount: 0,
+  preferredAreaCount: 0,
+};
+
+const ZERO_COUNTS: ProfileCounts = {
+  pantryCount: 0,
+  utensilCount: 0,
+  dietaryCount: 0,
+  preferredCategoryCount: 0,
+  preferredAreaCount: 0,
 };
 
 // Module-level Auth reference for non-DI access (tRPC fetch wrapper, token checks).
@@ -106,19 +140,96 @@ const resolveAuth = (options: FirebaseOptions): Auth | null => {
   return _resolvedAuth;
 };
 
+/**
+ * Convention: any mutation that affects pantry items, utensils, dietary
+ * restrictions, or preferred categories/areas MUST call
+ * `authStore.loadCounts()` in its success handler. The store keeps these
+ * counters in-memory only — without an explicit refresh, `hasProfileSignals`
+ * will lag behind reality. (Considered a global cache invalidation effect;
+ * rejected for week 3 in favour of the explicit, debuggable convention.)
+ */
 export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withComputed(({ currentUser, session }) => ({
-    isAuthenticated: computed(() => !!currentUser()),
-    onboardingDone: computed(() => session()?.onboardingDone ?? false),
-  })),
+  withComputed(
+    ({
+      currentUser,
+      session,
+      pantryCount,
+      utensilCount,
+      dietaryCount,
+      preferredCategoryCount,
+      preferredAreaCount,
+    }) => ({
+      isAuthenticated: computed(() => !!currentUser()),
+      onboardingDone: computed(() => session()?.onboardingDone ?? false),
+
+      /**
+       * True when the user has any profile-shaped data — pantry items,
+       * utensils, dietary restrictions, or preferred categories/areas.
+       * Used by surfaces like `/recipes` (empty-state CTA) and `/account`
+       * (re-onboarding affordance).
+       */
+      hasProfileSignals: computed(
+        () =>
+          pantryCount() > 0 ||
+          utensilCount() > 0 ||
+          dietaryCount() > 0 ||
+          preferredCategoryCount() > 0 ||
+          preferredAreaCount() > 0,
+      ),
+    }),
+  ),
   withMethods((store) => {
     const platformId = inject(PLATFORM_ID);
     const auth = isPlatformBrowser(platformId)
       ? resolveAuth(inject(FIREBASE_OPTIONS))
       : null;
     const trpc = inject(AUTH_TRPC, { optional: true });
+
+    /**
+     * Fetches aggregate profile counts and patches them into state.
+     * Errors are swallowed (warning logged) — counters degrade gracefully
+     * to whatever was already there, and the next trigger may succeed.
+     */
+    const loadCounts = rxMethod<void>(
+      pipe(
+        switchMap(() => {
+          if (!trpc) return EMPTY;
+          return from(trpc.profile.counts.query()).pipe(
+            tap((counts) => patchState(store, counts)),
+            catchError((err) => {
+              log.warn({ err }, 'profile.counts failed');
+              return EMPTY;
+            }),
+          );
+        }),
+      ),
+    );
+
+    /**
+     * Refreshes the AuthSession from the server. When the freshly returned
+     * session has `onboardingDone: true`, also triggers `loadCounts()` so
+     * `hasProfileSignals` reflects server state without waiting for the
+     * next mutation.
+     */
+    const fetchSession = rxMethod<void>(
+      pipe(
+        switchMap(() => {
+          if (!trpc) return EMPTY;
+          return from(trpc.auth.me.query()).pipe(
+            tap((session) => {
+              patchState(store, { session });
+              if (session.onboardingDone) loadCounts();
+            }),
+            catchError((err) => {
+              log.warn({ err }, 'auth.me failed');
+              return EMPTY;
+            }),
+          );
+        }),
+      ),
+    );
 
     return {
       ready$: (): Observable<void> => {
@@ -132,20 +243,31 @@ export const AuthStore = signalStore(
         });
       },
 
-      fetchSession: rxMethod<void>(
-        pipe(
-          switchMap(() => {
-            if (!trpc) return EMPTY;
-            return from(trpc.auth.me.query()).pipe(
-              tap((session) => patchState(store, { session })),
-              catchError((err) => {
-                log.warn({ err }, 'auth.me failed');
-                return EMPTY;
-              }),
-            );
-          }),
-        ),
-      ),
+      fetchSession,
+      loadCounts,
+
+      /**
+       * Sync flip of `session.onboardingDone` to true plus `loadCounts()`.
+       * Called by `OnboardingStore.submit()` after a successful commit so
+       * the UI reacts immediately, without a round-trip to `auth.me`.
+       */
+      markOnboardingDone: (): void => {
+        const session = store.session();
+        if (session && !session.onboardingDone) {
+          patchState(store, {
+            session: { ...session, onboardingDone: true },
+          });
+        }
+        loadCounts();
+      },
+
+      /**
+       * Resets all five counters back to zero. Called from `logout()` so a
+       * subsequent login cannot read stale values from the previous user.
+       */
+      resetCounts: (): void => {
+        patchState(store, ZERO_COUNTS);
+      },
 
       provisionUser: rxMethod<{ email: string; firebaseUid: string }>(
         pipe(
@@ -229,6 +351,7 @@ export const AuthStore = signalStore(
                   loading: false,
                   idToken: null,
                   session: null,
+                  ...ZERO_COUNTS,
                 }),
               ),
               catchError((err: { message?: string }) => {

@@ -229,8 +229,9 @@ export const OnboardingStore = signalStore(
       ),
 
       /**
-       * Commits all selections, then refreshes the AuthStore session so the
-       * `onboardingDone` computed flips to `true` (driven by `session()`).
+       * Commits all selections, then flips `session.onboardingDone` to true
+       * locally and refreshes profile counts via `markOnboardingDone()` so
+       * `hasProfileSignals` reflects the new selections immediately.
        * On success navigates to the dashboard.
        */
       submit: rxMethod<void>(
@@ -251,7 +252,7 @@ export const OnboardingStore = signalStore(
             ).pipe(
               tap(() => {
                 patchState(store, { isSubmitting: false });
-                authStore.fetchSession();
+                authStore.markOnboardingDone();
                 void router.navigateByUrl(URLS.DASHBOARD);
               }),
               catchError((err: { message?: string }) => {
