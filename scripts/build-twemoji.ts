@@ -34,10 +34,13 @@ const TS_PATTERNS: readonly RegExp[] = [
   /<kookio-emoji[^>]*\bchar="([^"]+)"/g,
 ];
 
-// JSON: catalog seed data uses double-quoted "emoji" keys with double-quoted
-// values. Picks up MealCategory.emoji from `seed-data/catalog.json` and any
-// future emoji-bearing seed files.
-const JSON_PATTERNS: readonly RegExp[] = [/"emoji":\s*"([^"]+)"/g];
+// JSON: catalog seed data uses double-quoted "emoji" / "flag" keys with
+// double-quoted values. Picks up MealCategory.emoji and MealArea.flag from
+// `seed-data/catalog.json` and any future emoji-bearing seed files.
+const JSON_PATTERNS: readonly RegExp[] = [
+  /"emoji":\s*"([^"]+)"/g,
+  /"flag":\s*"([^"]+)"/g,
+];
 
 // HTML: any Extended_Pictographic sequence (with optional VS16 and ZWJ chains)
 // is a real on-screen emoji, plus the same kookio-emoji attribute pattern for

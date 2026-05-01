@@ -84,9 +84,11 @@
                       (click)="toggleArea(area.id)"
                     >
                       @if (area.flag) {
-                        <span class="fridge-step__flag" aria-hidden="true">
-                          {{ area.flag }}
-                        </span>
+                        <kookio-emoji
+                          class="fridge-step__flag"
+                          [char]="area.flag"
+                          [size]="16"
+                        />
                       }
                       {{ area.name }}
                     </mat-chip-option>

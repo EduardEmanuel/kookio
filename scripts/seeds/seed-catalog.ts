@@ -65,7 +65,7 @@ const seedAreas = async (areas: MealAreaSeedRow[]): Promise<void> => {
     await prisma.mealArea.upsert({
       where: { externalId: area.externalId },
       create: { externalId: area.externalId, name: area.name, flag: area.flag },
-      update: { name: area.name },
+      update: { name: area.name, flag: area.flag },
     } as never);
     upserted++;
   }
