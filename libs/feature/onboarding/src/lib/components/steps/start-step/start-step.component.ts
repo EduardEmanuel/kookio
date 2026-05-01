@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
 
-import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
+import { KookioEmojiComponent } from '@kookio/shared-ui';
 
 import { START_STRINGS } from '../../../onboarding-strings';
 
 @Component({
   selector: 'kookio-onboarding-start-step',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatChipsModule, KookioEmojiComponent, KookioIconComponent],
+  imports: [MatChipsModule, KookioEmojiComponent],
   templateUrl: './start-step.component.html',
   styleUrl: './start-step.component.scss',
 })

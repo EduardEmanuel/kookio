@@ -12,7 +12,7 @@
   <mat-chip-set class="done-step__summary" aria-label="Onboarding summary">
     @for (chip of chips(); track chip.key) {
       <mat-chip [class.done-step__chip--warn]="chip.emphasis === 'warn'">
-        <kookio-icon matChipAvatar [name]="chip.icon" />
+        <kookio-emoji matChipAvatar [char]="chip.emoji" />
         {{ chip.label }}
       </mat-chip>
     }

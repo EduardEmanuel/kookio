@@ -6,15 +6,14 @@ import {
 } from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
 
-import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
-import type { MaterialSymbolName } from '@kookio/shared-utility';
+import { KookioEmojiComponent } from '@kookio/shared-ui';
 
 import { DONE_STRINGS } from '../../../onboarding-strings';
 import { OnboardingStore } from '../../../store/onboarding.store';
 
 interface SummaryChip {
   key: string;
-  icon: MaterialSymbolName;
+  emoji: string;
   label: string;
   emphasis?: 'warn';
 }
@@ -22,7 +21,7 @@ interface SummaryChip {
 @Component({
   selector: 'kookio-onboarding-done-step',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatChipsModule, KookioEmojiComponent, KookioIconComponent],
+  imports: [MatChipsModule, KookioEmojiComponent],
   templateUrl: './done-step.component.html',
   styleUrl: './done-step.component.scss',
 })
@@ -34,7 +33,7 @@ export class DoneStepComponent {
     const result: SummaryChip[] = [
       {
         key: 'people',
-        icon: 'group',
+        emoji: '👥',
         label: this.strings.summary.people(
           this.store.adultsCount(),
           this.store.childrenCount(),
@@ -46,7 +45,7 @@ export class DoneStepComponent {
     if (cats > 0) {
       result.push({
         key: 'categories',
-        icon: 'menu_book',
+        emoji: '📚',
         label: this.strings.summary.categories(cats),
       });
     }
@@ -55,7 +54,7 @@ export class DoneStepComponent {
     if (areas > 0) {
       result.push({
         key: 'areas',
-        icon: 'public',
+        emoji: '🌍',
         label: this.strings.summary.areas(areas),
       });
     }
@@ -64,7 +63,7 @@ export class DoneStepComponent {
     if (utensils > 0) {
       result.push({
         key: 'utensils',
-        icon: 'restaurant',
+        emoji: '🍽️',
         label: this.strings.summary.utensils(utensils),
       });
     }
@@ -73,7 +72,7 @@ export class DoneStepComponent {
     if (restrictions > 0) {
       result.push({
         key: 'restrictions',
-        icon: 'no_food',
+        emoji: '⚠️',
         label: this.strings.summary.restrictions(restrictions),
         emphasis: 'warn',
       });

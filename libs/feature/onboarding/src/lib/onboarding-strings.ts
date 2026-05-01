@@ -34,7 +34,7 @@ export const START_STRINGS = {
   subtitle:
     "Let's get to know you. In a few quick steps you'll be ready to cook without food waste.",
   chips: {
-    fridge: 'Fridge',
+    pantry: 'Pantry contents',
     utensils: 'Utensils',
     people: 'People',
     restrictions: 'Restrictions',

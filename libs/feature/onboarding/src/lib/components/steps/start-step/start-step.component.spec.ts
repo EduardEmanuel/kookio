@@ -32,7 +32,7 @@ describe('StartStepComponent', () => {
   it('renders all four overview chips', async () => {
     const { el } = await setup();
     const text = el.textContent ?? '';
-    expect(text).toContain(START_STRINGS.chips.fridge);
+    expect(text).toContain(START_STRINGS.chips.pantry);
     expect(text).toContain(START_STRINGS.chips.utensils);
     expect(text).toContain(START_STRINGS.chips.people);
     expect(text).toContain(START_STRINGS.chips.restrictions);
