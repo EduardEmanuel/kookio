@@ -17,8 +17,8 @@ import { buildTrpcMock } from '../../../testing/build-trpc-mock';
 import { FridgeStepComponent } from './fridge-step.component';
 
 const sampleCategories: MealCategoryRow[] = [
-  { id: 'c1', name: 'Beef', imageUrl: null, description: null },
-  { id: 'c2', name: 'Chicken', imageUrl: null, description: null },
+  { id: 'c1', name: 'Beef', emoji: '🐄', imageUrl: null, description: null },
+  { id: 'c2', name: 'Chicken', emoji: '🐔', imageUrl: null, description: null },
 ];
 
 const sampleAreas: MealAreaRow[] = [

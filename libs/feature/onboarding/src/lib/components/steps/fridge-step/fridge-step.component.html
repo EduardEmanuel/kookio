@@ -45,6 +45,13 @@
                       [selected]="isCategorySelected(cat.id)"
                       (click)="toggleCategory(cat.id)"
                     >
+                      @if (cat.emoji) {
+                        <kookio-emoji
+                          class="fridge-step__emoji"
+                          [char]="cat.emoji"
+                          [size]="16"
+                        />
+                      }
                       {{ cat.name }}
                     </mat-chip-option>
                   }

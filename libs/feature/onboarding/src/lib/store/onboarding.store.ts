@@ -49,6 +49,7 @@ export interface UtensilRow {
 export interface MealCategoryRow {
   id: string;
   name: string;
+  emoji: string | null;
   imageUrl: string | null;
   description: string | null;
 }

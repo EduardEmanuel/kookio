@@ -16,7 +16,7 @@ const SCAN_ROOTS = [
   path.join(REPO_ROOT, 'libs'),
 ];
 
-const SCAN_EXTENSIONS = new Set(['.html', '.ts']);
+const SCAN_EXTENSIONS = new Set(['.html', '.ts', '.json']);
 
 const EXCLUDE_PATTERNS: readonly RegExp[] = [
   /\.spec\.ts$/,
@@ -33,6 +33,11 @@ const TS_PATTERNS: readonly RegExp[] = [
   /\bemoji:\s*'([^']+)'/g,
   /<kookio-emoji[^>]*\bchar="([^"]+)"/g,
 ];
+
+// JSON: catalog seed data uses double-quoted "emoji" keys with double-quoted
+// values. Picks up MealCategory.emoji from `seed-data/catalog.json` and any
+// future emoji-bearing seed files.
+const JSON_PATTERNS: readonly RegExp[] = [/"emoji":\s*"([^"]+)"/g];
 
 // HTML: any Extended_Pictographic sequence (with optional VS16 and ZWJ chains)
 // is a real on-screen emoji, plus the same kookio-emoji attribute pattern for
@@ -93,11 +98,15 @@ const collectMatches = (
 const scanFile = async (file: string): Promise<Set<string>> => {
   const content = await fs.readFile(file, 'utf8');
   const found = new Set<string>();
-  const isHtml = path.extname(file) === '.html';
+  const ext = path.extname(file);
 
-  if (isHtml) {
+  if (ext === '.html') {
     collectMatches(content, HTML_PICTOGRAPHIC, found);
     collectMatches(content, HTML_KOOKIO_EMOJI, found);
+  } else if (ext === '.json') {
+    for (const pattern of JSON_PATTERNS) {
+      collectMatches(content, pattern, found);
+    }
   } else {
     for (const pattern of TS_PATTERNS) {
       collectMatches(content, pattern, found);

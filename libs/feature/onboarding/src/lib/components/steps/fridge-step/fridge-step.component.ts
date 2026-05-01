@@ -5,7 +5,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 
-import { KookioIconComponent } from '@kookio/shared-ui';
+import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 
 import { FRIDGE_STRINGS } from '../../../onboarding-strings';
 import {
@@ -20,6 +20,7 @@ import {
     MatChipsModule,
     MatProgressSpinnerModule,
     MatTabsModule,
+    KookioEmojiComponent,
     KookioIconComponent,
   ],
   templateUrl: './fridge-step.component.html',

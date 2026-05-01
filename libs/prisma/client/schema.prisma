@@ -310,6 +310,7 @@ model MealCategory {
   externalId String @unique
 
   name        String
+  emoji       String?
   imageUrl    String?
   description String?
 

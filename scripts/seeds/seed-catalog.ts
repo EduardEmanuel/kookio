@@ -39,11 +39,13 @@ const seedCategories = async (
       create: {
         externalId: cat.externalId,
         name: cat.name,
+        emoji: cat.emoji,
         imageUrl: cat.imageUrl,
         description: cat.description,
       },
       update: {
         name: cat.name,
+        emoji: cat.emoji,
         imageUrl: cat.imageUrl,
         description: cat.description,
       },
