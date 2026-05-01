@@ -10,7 +10,10 @@
 
   <div class="people-step__counters">
     <div class="people-step__counter">
-      <kookio-emoji class="people-step__emoji" char="👨" [size]="40" />
+      <div class="people-step__emojis">
+        <kookio-emoji char="👨" [size]="40" />
+        <kookio-emoji char="👩" [size]="40" />
+      </div>
       <h3 class="people-step__counter-label">
         <!-- i18n: @@onboarding.people.adults -->
         {{ strings.adults }}
@@ -45,7 +48,10 @@
     </div>
 
     <div class="people-step__counter">
-      <kookio-emoji class="people-step__emoji" char="👶" [size]="40" />
+      <div class="people-step__emojis">
+        <kookio-emoji char="👦" [size]="40" />
+        <kookio-emoji char="👧" [size]="40" />
+      </div>
       <h3 class="people-step__counter-label">
         <!-- i18n: @@onboarding.people.children -->
         {{ strings.children }}

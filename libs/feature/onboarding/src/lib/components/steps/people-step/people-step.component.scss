@@ -40,6 +40,12 @@
     background: var(--md-sys-color-surface-container-low);
   }
 
+  &__emojis {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
   &__counter-label {
     margin: 0;
     font: var(--md-sys-typescale-title-medium-font);
