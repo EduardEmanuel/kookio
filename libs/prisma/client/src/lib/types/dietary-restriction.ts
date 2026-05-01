@@ -11,3 +11,14 @@ export const DietaryRestrictionMockSchema = DietaryRestrictionModelSchema.pick({
 export type DietaryRestrictionMock = z.output<
   typeof DietaryRestrictionMockSchema
 >;
+
+/**
+ * Client-side row shape served by the onboardingCatalogs.dietaryRestrictions
+ * tRPC query. Identical shape to DietaryRestrictionMock today; kept as a
+ * separate name to express that one is fixture data and the other is a
+ * server response.
+ */
+export const DietaryRestrictionRowSchema = DietaryRestrictionMockSchema;
+export type DietaryRestrictionRow = z.output<
+  typeof DietaryRestrictionRowSchema
+>;

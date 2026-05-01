@@ -15,10 +15,21 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { AuthStore } from '@kookio/feature-auth';
 import { noopLogger } from '@kookio/core-logging';
 import type {
+  DietaryRestrictionRow,
+  MealAreaRow,
+  MealCategoryRow,
   OnboardingCommitInput,
   OnboardingCurrent,
+  UtensilRow,
 } from '@kookio/prisma-client';
 import { URLS } from '@kookio/shared-utility';
+
+// Re-exported so existing consumers (the feature-onboarding barrel and step
+// component specs) keep their import paths. The canonical home for these row
+// shapes is `@kookio/prisma-client/types/<model>.ts`, derived from the
+// generated `<Model>ModelSchema` via `.pick()` — see the pure-schemas rule
+// in CLAUDE.md / pinned memory.
+export type { DietaryRestrictionRow, MealAreaRow, MealCategoryRow, UtensilRow };
 
 const log = noopLogger;
 
@@ -28,37 +39,6 @@ const MIN_ADULTS = 1;
 const MAX_ADULTS = 20;
 const MIN_CHILDREN = 0;
 const MAX_CHILDREN = 20;
-
-/** Catalog row shapes — only the fields the onboarding UI consumes. */
-export interface DietaryRestrictionRow {
-  id: string;
-  slug: string;
-  label: string;
-  emoji: string | null;
-  description: string | null;
-}
-
-export interface UtensilRow {
-  id: string;
-  slug: string;
-  name: string;
-  emoji: string | null;
-  category: string | null;
-}
-
-export interface MealCategoryRow {
-  id: string;
-  name: string;
-  emoji: string | null;
-  imageUrl: string | null;
-  description: string | null;
-}
-
-export interface MealAreaRow {
-  id: string;
-  name: string;
-  flag: string | null;
-}
 
 /** Minimal tRPC surface required by OnboardingStore and step components. */
 export interface OnboardingTrpcClient {
