@@ -1,0 +1,50 @@
+@if (items().length === 0 && !isLoading() && !hasError()) {
+  <div class="recipes-feed__empty">
+    <kookio-icon name="restaurant_menu" />
+    <p class="recipes-feed__empty-text">No recipes available yet.</p>
+  </div>
+} @else if (items().length === 0 && hasError()) {
+  <div class="recipes-feed__empty">
+    <kookio-icon name="error" />
+    <p class="recipes-feed__empty-text">Could not load recipes.</p>
+    <button type="button" class="recipes-feed__retry" (click)="onRetry()">
+      Retry
+    </button>
+  </div>
+} @else {
+  <cdk-virtual-scroll-viewport
+    class="recipes-feed__viewport"
+    [itemSize]="itemSize"
+    (scrolledIndexChange)="onScrolledIndexChange($event)"
+  >
+    <div
+      *cdkVirtualFor="
+        let recipe of items();
+        trackBy: trackById;
+        templateCacheSize: 0
+      "
+      class="recipes-feed__item"
+    >
+      <kookio-recipe-card [recipe]="recipe" />
+    </div>
+
+    @if (isLoading()) {
+      <div class="recipes-feed__loading" aria-live="polite">
+        <mat-spinner diameter="32" />
+      </div>
+    }
+
+    @if (hasError() && items().length > 0) {
+      <div class="recipes-feed__retry-row">
+        <p>Could not load more recipes.</p>
+        <button type="button" class="recipes-feed__retry" (click)="onRetry()">
+          Retry
+        </button>
+      </div>
+    }
+
+    @if (!isLoading() && !hasError() && !hasMore() && items().length > 0) {
+      <p class="recipes-feed__end">— You've seen them all —</p>
+    }
+  </cdk-virtual-scroll-viewport>
+}

@@ -1,8 +1,17 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
 import type { RouteMeta } from '@analogjs/router';
 
-import { URLS } from '@kookio/shared-utility';
+import { RecipesFeedComponent } from '@kookio/feature-recipes';
 
 export const routeMeta: RouteMeta = {
-  redirectTo: URLS.RECIPES,
-  pathMatch: 'full',
+  title: 'Kookio',
 };
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'kookio-home-page',
+  imports: [RecipesFeedComponent],
+  template: `<kookio-recipes-feed />`,
+})
+export default class HomePage {}

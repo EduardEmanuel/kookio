@@ -1,0 +1,83 @@
+:host {
+  display: block;
+  height: 100%;
+  min-height: 400px;
+}
+
+.recipes-feed {
+  &__viewport {
+    display: block;
+    height: 100%;
+    min-height: 400px;
+    width: 100%;
+  }
+
+  &__item {
+    padding: var(--space-md, 16px);
+    box-sizing: border-box;
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-md, 16px);
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md, 16px);
+    padding: var(--space-2xl, 48px) var(--space-md, 16px);
+    color: var(--color-on-surface-variant, currentColor);
+
+    kookio-icon {
+      font-size: 48px;
+    }
+  }
+
+  &__empty-text {
+    margin: 0;
+  }
+
+  &__end {
+    text-align: center;
+    margin: 0;
+    padding: var(--space-lg, 24px) var(--space-md, 16px);
+    color: var(--color-on-surface-variant, currentColor);
+    font-size: 0.875rem;
+  }
+
+  &__retry-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm, 8px);
+    padding: var(--space-md, 16px);
+    color: var(--color-on-surface-variant, currentColor);
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &__retry {
+    background: transparent;
+    border: 1px solid var(--color-outline, currentColor);
+    border-radius: var(--radius-md, 8px);
+    padding: var(--space-xs, 4px) var(--space-md, 16px);
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+
+    &:hover {
+      background: var(--color-surface-variant, transparent);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary, currentColor);
+      outline-offset: 2px;
+    }
+  }
+}

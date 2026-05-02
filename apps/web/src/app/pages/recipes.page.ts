@@ -11,7 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import type { RouteMeta } from '@analogjs/router';
 
 import { AuthStore } from '@kookio/feature-auth';
-import { PageStubComponent } from '@kookio/feature-shell';
+import { RecipesFeedComponent } from '@kookio/feature-recipes';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 import { URLS } from '@kookio/shared-utility';
 
@@ -26,7 +26,7 @@ export const routeMeta: RouteMeta = {
     RouterLink,
     MatButtonModule,
     MatCardModule,
-    PageStubComponent,
+    RecipesFeedComponent,
     KookioEmojiComponent,
     KookioIconComponent,
   ],
@@ -41,7 +41,7 @@ export default class RecipesPage {
    * Show the onboarding CTA only for authenticated users who haven't yet
    * populated any profile signals (no pantry items, utensils, dietary
    * restrictions, or preferred categories/areas). Anonymous visitors and
-   * fully-set-up users see the catalog stub instead.
+   * fully-set-up users see the recipes feed instead.
    */
   protected readonly showOnboardingCta = computed(
     () =>

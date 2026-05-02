@@ -30,9 +30,10 @@ test.describe('Register flow', () => {
     await page.fill('[name="confirm"]', TEST_PASSWORD);
     await page.click('[type="submit"]');
 
-    // 3. Verify redirect to home (which now resolves to /recipes)
-    await page.waitForURL('/recipes');
-    expect(new URL(page.url()).pathname).toBe('/recipes');
+    // 3. Verify redirect to home (URLS.HOME = '/'), which now renders the
+    //    recipes feed directly instead of redirecting to /recipes.
+    await page.waitForURL((url) => url.pathname === '/');
+    expect(new URL(page.url()).pathname).toBe('/');
 
     // 4. Verify user exists in DB via tRPC auth.me
     const { idToken } = await firebaseSignIn(email, TEST_PASSWORD);

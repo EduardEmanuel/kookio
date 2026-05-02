@@ -5,6 +5,8 @@ import { provideRouter } from '@angular/router';
 
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
+import { RECIPES_TRPC } from '@kookio/feature-recipes';
+import { buildRecipesTrpcMock } from '@kookio/feature-recipes/testing';
 
 import RecipesPage from './recipes.page';
 
@@ -24,6 +26,12 @@ const setup = async (stage: Stage) => {
       provideZonelessChangeDetection(),
       provideRouter([]),
       { provide: AuthStore, useValue: authStore },
+      {
+        provide: RECIPES_TRPC,
+        useValue: buildRecipesTrpcMock({
+          feed: { items: [], nextCursor: null },
+        }),
+      },
     ],
   }).compileComponents();
 
@@ -40,10 +48,10 @@ describe('RecipesPage', () => {
     TestBed.resetTestingModule();
   });
 
-  it('shows the catalog stub for anonymous visitors', async () => {
+  it('shows the recipes feed for anonymous visitors', async () => {
     const { el } = await setup('anonymous');
 
-    expect(el.querySelector('kookio-page-stub')).toBeTruthy();
+    expect(el.querySelector('kookio-recipes-feed')).toBeTruthy();
     expect(el.querySelector('.recipes-empty')).toBeNull();
   });
 
@@ -51,7 +59,7 @@ describe('RecipesPage', () => {
     const { el } = await setup('auth-no-signals');
 
     expect(el.querySelector('.recipes-empty')).toBeTruthy();
-    expect(el.querySelector('kookio-page-stub')).toBeNull();
+    expect(el.querySelector('kookio-recipes-feed')).toBeNull();
 
     const cta = el.querySelector('a.recipes-empty__cta') as HTMLAnchorElement;
     expect(cta).toBeTruthy();
@@ -59,10 +67,10 @@ describe('RecipesPage', () => {
     expect(cta.textContent).toContain('Start onboarding');
   });
 
-  it('shows the catalog stub once the user has any profile signals', async () => {
+  it('shows the recipes feed once the user has any profile signals', async () => {
     const { el } = await setup('auth-with-signals');
 
-    expect(el.querySelector('kookio-page-stub')).toBeTruthy();
+    expect(el.querySelector('kookio-recipes-feed')).toBeTruthy();
     expect(el.querySelector('.recipes-empty')).toBeNull();
   });
 });

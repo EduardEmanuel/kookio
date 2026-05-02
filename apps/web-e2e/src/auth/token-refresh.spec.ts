@@ -18,16 +18,17 @@ const submitLoginForm = async (
   await page.click('[type="submit"]');
 };
 
-/** Submit the login form and wait for the redirect to land on /recipes. */
+/** Submit the login form and wait for the redirect to land on /. */
 const loginViaUi = async (
   page: PwPage,
   email: string,
   password: string,
 ): Promise<void> => {
   await submitLoginForm(page, email, password);
-  // Redirect is driven by login.page.ts effect: only fires when session() is set,
-  // which happens after auth.me succeeds. URLS.HOME ('/') redirects to /recipes.
-  await page.waitForURL('/recipes', { timeout: 45_000 });
+  // Redirect is driven by login.page.ts effect: only fires when session() is
+  // set, which happens after auth.me succeeds. URLS.HOME ('/') now renders
+  // the recipes feed directly.
+  await page.waitForURL((url) => url.pathname === '/', { timeout: 45_000 });
 };
 
 // ─── Bearer token absent before login ────────────────────────────────────────

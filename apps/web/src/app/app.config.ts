@@ -21,6 +21,7 @@ import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
 
 import { AUTH_TRPC, FIREBASE_OPTIONS } from '@kookio/feature-auth';
 import { ONBOARDING_TRPC } from '@kookio/feature-onboarding';
+import { RECIPES_TRPC } from '@kookio/feature-recipes';
 import { APP_TRPC } from '@kookio/feature-shell';
 
 import { provideTrpcClient, TrpcClientApp } from '../trpc-client';
@@ -45,6 +46,7 @@ export const appConfig: ApplicationConfig = {
     { provide: APP_TRPC, useExisting: TrpcClientApp },
     { provide: AUTH_TRPC, useExisting: TrpcClientApp },
     { provide: ONBOARDING_TRPC, useExisting: TrpcClientApp },
+    { provide: RECIPES_TRPC, useExisting: TrpcClientApp },
     {
       provide: FIREBASE_OPTIONS,
       useValue: {

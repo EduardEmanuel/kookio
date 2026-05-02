@@ -25,6 +25,10 @@
       "@kookio/feature-onboarding/testing": [
         "libs/feature/onboarding/src/testing.ts"
       ],
+      "@kookio/feature-recipes": ["libs/feature/recipes/src/index.ts"],
+      "@kookio/feature-recipes/testing": [
+        "libs/feature/recipes/src/testing.ts"
+      ],
       "@kookio/feature-shell": ["libs/feature/shell/src/index.ts"],
       "@kookio/prisma-client": ["libs/prisma/client/src/index.ts"],
       "@kookio/prisma-client/*": ["libs/prisma/client/src/*"],

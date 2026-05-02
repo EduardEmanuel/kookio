@@ -125,7 +125,10 @@ export const test = base.extend<AuthFixtures>({
     await page.fill('[name="email"]', testUser.email);
     await page.fill('[name="password"]', testUser.password);
     await page.click('[type="submit"]');
-    await page.waitForURL('/recipes');
+    // Login lands on URLS.HOME ('/'), which now renders the recipes feed
+    // directly. Match the pathname strictly so a non-redirected response on
+    // /login does not pass the wait by accident.
+    await page.waitForURL((url) => url.pathname === '/');
     await use(page);
   },
 });

@@ -1,0 +1,59 @@
+<a
+  class="recipe-card"
+  [routerLink]="recipeUrl()"
+  [attr.aria-label]="'View recipe ' + recipe().title"
+>
+  <mat-card class="recipe-card__card" appearance="outlined">
+    @if (recipe().imageUrl; as img) {
+      <img
+        mat-card-image
+        class="recipe-card__image"
+        [src]="img"
+        [alt]="recipe().title"
+        loading="lazy"
+      />
+    }
+
+    <mat-card-content class="recipe-card__content">
+      <h3 class="recipe-card__title">{{ recipe().title }}</h3>
+
+      @if (recipe().category || recipe().area) {
+        <div class="recipe-card__meta">
+          @if (recipe().category; as cat) {
+            <mat-chip class="recipe-card__chip" disableRipple>
+              @if (cat.emoji) {
+                <kookio-emoji [char]="cat.emoji" [size]="16" />
+              }
+              {{ cat.name }}
+            </mat-chip>
+          }
+          @if (recipe().area; as area) {
+            <mat-chip class="recipe-card__chip" disableRipple>
+              @if (area.flag) {
+                <kookio-emoji [char]="area.flag" [size]="16" />
+              }
+              {{ area.name }}
+            </mat-chip>
+          }
+        </div>
+      }
+
+      @if (totalMinutes() || recipe().servings) {
+        <div class="recipe-card__times">
+          @if (totalMinutes(); as t) {
+            <span class="recipe-card__time">
+              <kookio-icon name="schedule" />
+              {{ t }} min
+            </span>
+          }
+          @if (recipe().servings; as s) {
+            <span class="recipe-card__time">
+              <kookio-icon name="group" />
+              {{ s }}
+            </span>
+          }
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</a>
