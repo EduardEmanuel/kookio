@@ -149,6 +149,9 @@ export default [
       ...angular.configs.templateRecommended
         .map((c) => c.rules)
         .reduce((acc, r) => ({ ...acc, ...(r ?? {}) }), {}),
+      ...angular.configs.templateAccessibility
+        .map((c) => c.rules)
+        .reduce((acc, r) => ({ ...acc, ...(r ?? {}) }), {}),
       '@kookio/no-legacy-mat-button': 'error',
     },
   },
