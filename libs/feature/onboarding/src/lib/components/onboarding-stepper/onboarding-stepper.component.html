@@ -5,6 +5,52 @@
 -->
 <div class="onboarding-shell">
   <mat-card class="onboarding-shell__card" appearance="outlined">
+    <mat-stepper
+      class="onboarding-shell__stepper"
+      orientation="vertical"
+      [linear]="false"
+      [selectedIndex]="store.currentStep()"
+      (selectionChange)="onStepperSelectionChange($event)"
+    >
+      <mat-step [label]="stepLabels[0]">
+        <div class="onboarding-shell__body">
+          <kookio-onboarding-start-step />
+        </div>
+      </mat-step>
+
+      <mat-step [label]="stepLabels[1]">
+        <div class="onboarding-shell__body">
+          <kookio-onboarding-fridge-step />
+        </div>
+      </mat-step>
+
+      <mat-step [label]="stepLabels[2]">
+        <div class="onboarding-shell__body">
+          <kookio-onboarding-utensils-step />
+        </div>
+      </mat-step>
+
+      <mat-step [label]="stepLabels[3]">
+        <div class="onboarding-shell__body">
+          <kookio-onboarding-people-step />
+        </div>
+      </mat-step>
+
+      <mat-step [label]="stepLabels[4]">
+        <div class="onboarding-shell__body">
+          <kookio-onboarding-restrictions-step />
+        </div>
+      </mat-step>
+
+      <mat-step [label]="stepLabels[5]">
+        <div class="onboarding-shell__body">
+          <kookio-onboarding-done-step />
+        </div>
+      </mat-step>
+    </mat-stepper>
+
+    <mat-divider />
+
     <mat-card-actions class="onboarding-shell__footer" align="end">
       @if (store.canGoPrev() && !store.isLastStep()) {
         <button mat-button type="button" (click)="onPrev()">
@@ -73,51 +119,5 @@
         {{ error }}
       </p>
     }
-
-    <mat-divider />
-
-    <mat-stepper
-      class="onboarding-shell__stepper"
-      orientation="vertical"
-      [linear]="false"
-      [selectedIndex]="store.currentStep()"
-      (selectionChange)="onStepperSelectionChange($event)"
-    >
-      <mat-step [label]="stepLabels[0]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-start-step />
-        </div>
-      </mat-step>
-
-      <mat-step [label]="stepLabels[1]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-fridge-step />
-        </div>
-      </mat-step>
-
-      <mat-step [label]="stepLabels[2]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-utensils-step />
-        </div>
-      </mat-step>
-
-      <mat-step [label]="stepLabels[3]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-people-step />
-        </div>
-      </mat-step>
-
-      <mat-step [label]="stepLabels[4]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-restrictions-step />
-        </div>
-      </mat-step>
-
-      <mat-step [label]="stepLabels[5]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-done-step />
-        </div>
-      </mat-step>
-    </mat-stepper>
   </mat-card>
 </div>
