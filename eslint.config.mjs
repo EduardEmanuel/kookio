@@ -3,10 +3,14 @@ import nx from '@nx/eslint-plugin';
 import preferArrow from 'eslint-plugin-prefer-arrow';
 
 import noLegacyMatButton from './tools/lint/no-legacy-mat-button.mjs';
+import noUnknownEmojiChar from './tools/lint/no-unknown-emoji-char.mjs';
+import noUnknownIconName from './tools/lint/no-unknown-icon-name.mjs';
 
 const kookioPlugin = {
   rules: {
     'no-legacy-mat-button': noLegacyMatButton,
+    'no-unknown-icon-name': noUnknownIconName,
+    'no-unknown-emoji-char': noUnknownEmojiChar,
   },
 };
 
@@ -153,6 +157,8 @@ export default [
         .map((c) => c.rules)
         .reduce((acc, r) => ({ ...acc, ...(r ?? {}) }), {}),
       '@kookio/no-legacy-mat-button': 'error',
+      '@kookio/no-unknown-icon-name': 'error',
+      '@kookio/no-unknown-emoji-char': 'error',
     },
   },
 ];
