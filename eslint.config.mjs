@@ -1,5 +1,14 @@
+import angular from 'angular-eslint';
 import nx from '@nx/eslint-plugin';
 import preferArrow from 'eslint-plugin-prefer-arrow';
+
+import noLegacyMatButton from './tools/lint/no-legacy-mat-button.mjs';
+
+const kookioPlugin = {
+  rules: {
+    'no-legacy-mat-button': noLegacyMatButton,
+  },
+};
 
 export default [
   ...nx.configs['flat/base'],
@@ -112,6 +121,35 @@ export default [
           ],
         },
       ],
+    },
+  },
+  // Angular TypeScript files: enable @angular-eslint recommended rules and
+  // run inline templates through the angular-template parser/processor so
+  // template-targeted rules apply to `template:` blocks too.
+  {
+    files: ['**/*.ts'],
+    plugins: { '@angular-eslint': angular.tsPlugin },
+    processor: angular.processInlineTemplates,
+    rules: {
+      ...angular.configs.tsRecommended
+        .map((c) => c.rules)
+        .reduce((acc, r) => ({ ...acc, ...(r ?? {}) }), {}),
+    },
+  },
+  // Angular HTML templates: parser + recommended template rules + the local
+  // ban on legacy mat-*-button selectors.
+  {
+    files: ['**/*.html'],
+    languageOptions: { parser: angular.templateParser },
+    plugins: {
+      '@angular-eslint/template': angular.templatePlugin,
+      '@kookio': kookioPlugin,
+    },
+    rules: {
+      ...angular.configs.templateRecommended
+        .map((c) => c.rules)
+        .reduce((acc, r) => ({ ...acc, ...(r ?? {}) }), {}),
+      '@kookio/no-legacy-mat-button': 'error',
     },
   },
 ];
