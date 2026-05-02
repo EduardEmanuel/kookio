@@ -166,6 +166,33 @@ git push origin feat/my-feature
 - Never force-push to branches others are reviewing
 - Never rewrite history on `main`
 
+## Responding to CI Failures
+
+When CI fails, the error message usually contains the fix verbatim. Read it carefully before reaching for hypotheses about the underlying cause.
+
+### Lockfile desync (`npm ci`)
+
+When CI fails on `npm ci` with messages like `Missing: <pkg> from lock file` or `package.json and package-lock.json are out of sync`, the fix is the three lines npm itself prints:
+
+```bash
+npm install
+git add package-lock.json   # plus package.json if it actually changed
+git commit -m "chore(deps): refresh lockfile"
+git push
+```
+
+CI then re-runs `npm ci` against the synced lock and passes.
+
+**Why it works:** `npm ci` validates that the lockfile is a deterministic snapshot of what package.json declares. Any local edit to package.json (adding a dep, bumping a version) requires regenerating the lock. `npm install` is the only command that does that.
+
+**Anti-patterns to avoid:**
+
+- Investigating cross-platform peer-dep divergence between local npm and the CI runner's npm.
+- Trying `--package-lock-only`, `--include=peer`, `--legacy-peer-deps` flag permutations to "preserve" entries that npm prunes on regeneration.
+- Proposing to switch the CI action from `npm ci` to `npm install` — `npm ci` is the right command for CI, it just needs a synced lockfile.
+
+All of the above solve a problem that is not the actual problem. The npm error message ends with the literal sentence `Please update your lock file with npm install before continuing.` — treat that as the entire diagnostic procedure.
+
 ## AI-Assisted Development
 
 This project is developed with the help of AI coding assistants (Claude, ChatGPT, Gemini, GitHub Copilot, or similar tools).
