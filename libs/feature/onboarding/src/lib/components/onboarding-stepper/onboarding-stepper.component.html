@@ -53,7 +53,7 @@
 
     <mat-card-actions class="onboarding-shell__footer" align="end">
       @if (store.canGoPrev() && !store.isLastStep()) {
-        <button mat-button type="button" (click)="onPrev()">
+        <button matButton type="button" (click)="onPrev()">
           <kookio-icon name="arrow_back" />
           <!-- i18n: @@onboarding.action.back -->
           <span>{{ actions.back }}</span>
@@ -63,7 +63,7 @@
       @if (canSkip()) {
         <button
           class="onboarding-shell__skip"
-          mat-button
+          matButton
           type="button"
           (click)="onSkip()"
         >
@@ -73,20 +73,14 @@
       }
 
       @if (store.isFirstStep()) {
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
-          (click)="onNext()"
-        >
+        <button matButton="filled" type="button" (click)="onNext()">
           <!-- i18n: @@onboarding.action.start -->
           <span>{{ actions.start }}</span>
           <kookio-icon iconPositionEnd name="arrow_forward" />
         </button>
       } @else if (store.isLastStep()) {
         <button
-          mat-flat-button
-          color="primary"
+          matButton="filled"
           type="button"
           [disabled]="store.isSubmitting()"
           (click)="onSubmit()"
@@ -100,12 +94,7 @@
           }
         </button>
       } @else {
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
-          (click)="onNext()"
-        >
+        <button matButton="filled" type="button" (click)="onNext()">
           <!-- i18n: @@onboarding.action.continue -->
           <span>{{ actions.continue }}</span>
           <kookio-icon iconPositionEnd name="arrow_forward" />

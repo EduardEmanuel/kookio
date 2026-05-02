@@ -60,12 +60,12 @@
 
   <div class="topbar__spacer"></div>
 
-  <button mat-icon-button matTooltip="Search recipes" aria-label="Search">
+  <button matIconButton matTooltip="Search recipes" aria-label="Search">
     <kookio-icon name="search" />
   </button>
 
   @if (user()) {
-    <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="Account">
+    <button matIconButton [matMenuTriggerFor]="userMenu" aria-label="Account">
       <kookio-icon name="account_circle" />
     </button>
     <mat-menu #userMenu>
@@ -83,6 +83,6 @@
       </button>
     </mat-menu>
   } @else {
-    <a mat-flat-button routerLink="/login">Login</a>
+    <a matButton="filled" routerLink="/login">Login</a>
   }
 </header>

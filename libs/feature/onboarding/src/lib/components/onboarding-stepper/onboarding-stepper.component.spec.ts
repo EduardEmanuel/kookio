@@ -120,7 +120,7 @@ describe('OnboardingStepperComponent', () => {
       await fixture.whenStable();
 
       const submit = el.querySelector(
-        '.onboarding-shell__footer button[mat-flat-button]',
+        '.onboarding-shell__footer button.mat-mdc-unelevated-button',
       ) as HTMLButtonElement | null;
       expect(submit).toBeTruthy();
 

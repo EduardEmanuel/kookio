@@ -23,7 +23,7 @@ export const routeMeta: RouteMeta = {
       route="/404"
     />
     <div class="flex justify-center mt-4 pb-8">
-      <a mat-flat-button color="primary" routerLink="/">Go home</a>
+      <a matButton="filled" routerLink="/">Go home</a>
     </div>
   `,
 })

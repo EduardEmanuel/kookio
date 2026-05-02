@@ -20,7 +20,7 @@
       </h3>
       <div class="people-step__controls">
         <button
-          mat-icon-button
+          matIconButton
           type="button"
           [attr.aria-label]="strings.decreaseAdults"
           [disabled]="store.adultsCount() <= 1"
@@ -36,7 +36,7 @@
           {{ store.adultsCount() }}
         </span>
         <button
-          mat-icon-button
+          matIconButton
           type="button"
           [attr.aria-label]="strings.increaseAdults"
           [disabled]="store.adultsCount() >= 20"
@@ -58,7 +58,7 @@
       </h3>
       <div class="people-step__controls">
         <button
-          mat-icon-button
+          matIconButton
           type="button"
           [attr.aria-label]="strings.decreaseChildren"
           [disabled]="store.childrenCount() <= 0"
@@ -74,7 +74,7 @@
           {{ store.childrenCount() }}
         </span>
         <button
-          mat-icon-button
+          matIconButton
           type="button"
           [attr.aria-label]="strings.increaseChildren"
           [disabled]="store.childrenCount() >= 20"
