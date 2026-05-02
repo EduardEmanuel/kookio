@@ -40,9 +40,9 @@ describe('BottomTabsComponent', () => {
       expect(el.querySelector('nav.bottom-tabs')).toBeTruthy();
     });
 
-    it('renders 4 tab items', async () => {
+    it('renders 5 tab items', async () => {
       const { el } = await setup();
-      expect(el.querySelectorAll('.bottom-tabs__item').length).toBe(4);
+      expect(el.querySelectorAll('.bottom-tabs__item').length).toBe(5);
     });
 
     it('renders tab labels', async () => {
@@ -51,7 +51,9 @@ describe('BottomTabsComponent', () => {
         (l) => l.textContent?.trim(),
       );
       expect(labels).toContain('Home');
+      expect(labels).toContain('Recipes');
       expect(labels).toContain('Pantry');
+      expect(labels).toContain('Plan');
       expect(labels).toContain('Account');
     });
   });

@@ -32,6 +32,7 @@ export class BottomTabsComponent {
 
   readonly tabs: readonly TabItem[] = [
     { label: 'Home', icon: 'home', route: URLS.HOME },
+    { label: 'Recipes', icon: 'restaurant_menu', route: URLS.RECIPES },
     { label: 'Pantry', icon: 'kitchen', route: URLS.PANTRY },
     { label: 'Plan', icon: 'calendar_today', route: URLS.MEAL_PLAN },
     { label: 'Account', icon: 'person', route: URLS.ACCOUNT },

@@ -1,0 +1,29 @@
+@if (showOnboardingCta()) {
+<div class="recipes-empty">
+  <mat-card>
+    <mat-card-content class="recipes-empty__card">
+      <kookio-emoji char="👋" [size]="64" />
+      <h2 class="recipes-empty__title">Welcome to Kookio</h2>
+      <p class="recipes-empty__hint">
+        Tell us about your kitchen and tastes so we can match recipes to what
+        you actually have on hand.
+      </p>
+      <a
+        mat-flat-button
+        class="recipes-empty__cta"
+        [routerLink]="onboardingRoute"
+      >
+        Start onboarding
+        <kookio-icon name="arrow_forward" iconPositionEnd />
+      </a>
+    </mat-card-content>
+  </mat-card>
+</div>
+} @else {
+<kookio-page-stub
+  icon="restaurant_menu"
+  title="Recipes"
+  subtitle="Browse and discover recipes"
+  route="/recipes"
+/>
+}
