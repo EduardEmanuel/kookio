@@ -48,6 +48,7 @@ export interface MockAuthStore {
   fetchSession: ReturnType<typeof vi.fn>;
   loadCounts: ReturnType<typeof vi.fn>;
   markOnboardingDone: ReturnType<typeof vi.fn>;
+  markOnboardingReset: ReturnType<typeof vi.fn>;
   resetCounts: ReturnType<typeof vi.fn>;
   provisionUser: ReturnType<typeof vi.fn>;
   login: ReturnType<typeof vi.fn>;
@@ -97,6 +98,7 @@ export const createMockAuthStore = (
     fetchSession: vi.fn(),
     loadCounts: vi.fn(),
     markOnboardingDone: vi.fn(),
+    markOnboardingReset: vi.fn(),
     resetCounts: vi.fn(),
     provisionUser: vi.fn(),
     login: vi.fn(),

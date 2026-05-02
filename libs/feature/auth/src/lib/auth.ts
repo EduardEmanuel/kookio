@@ -262,6 +262,24 @@ export const AuthStore = signalStore(
       },
 
       /**
+       * Sync flip of `session.onboardingDone` back to false. Called by the
+       * /account "Restart onboarding" button after a successful
+       * `onboarding.reset` mutation, so `onboardingGuard` lets the user back
+       * onto /onboarding without a round-trip to `auth.me`.
+       *
+       * Counts are NOT reset: `onboarding.reset` preserves all M:N selections
+       * server-side, so the in-memory counters still reflect DB state.
+       */
+      markOnboardingReset: (): void => {
+        const session = store.session();
+        if (session && session.onboardingDone) {
+          patchState(store, {
+            session: { ...session, onboardingDone: false },
+          });
+        }
+      },
+
+      /**
        * Resets all five counters back to zero. Called from `logout()` so a
        * subsequent login cannot read stale values from the previous user.
        */
