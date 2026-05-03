@@ -23,6 +23,20 @@ Angular v20+
 - Keep components small and focused on a single responsibility
 - Always use external templates (`templateUrl`) and styles (`styleUrl`) — never inline `template` or `styles` in `@Component`
 - Use `NgOptimizedImage` for all static images (does not work for inline base64)
+- Define class members that are pure helpers (formatters, predicates, anything stateless used from the template) as arrow-function fields, not as class methods. ESLint's `prefer-arrow/prefer-arrow-functions` enforces this and `--fix` does not auto-rewrite the form because changing method → field can alter `this` binding semantics. The fix has to be written by hand:
+
+  ```typescript
+  // ❌ method syntax — fails the prefer-arrow lint rule
+  protected formatUnit(unit: MeasureUnit | null): string {
+    return unit ? (LABEL[unit] ?? '') : '';
+  }
+
+  // ✅ arrow field — preferred
+  protected readonly formatUnit = (unit: MeasureUnit | null): string =>
+    unit ? (LABEL[unit] ?? '') : '';
+  ```
+
+  Lifecycle hooks (`ngOnInit`, `ngOnDestroy` etc.) and constructors stay as methods — the rule is scoped to plain helpers.
 
 ## State Management
 
