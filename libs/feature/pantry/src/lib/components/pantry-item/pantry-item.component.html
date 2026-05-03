@@ -1,0 +1,47 @@
+<div class="pantry-item" [class]="'pantry-item--' + status()">
+  <div class="pantry-item__indicator" aria-hidden="true"></div>
+
+  @if (item().ingredient.imageUrl; as imageUrl) {
+    <img
+      class="pantry-item__image"
+      [src]="imageUrl"
+      [alt]="item().ingredient.name"
+    />
+  } @else {
+    <div class="pantry-item__placeholder" aria-hidden="true">
+      <kookio-icon name="restaurant" />
+    </div>
+  }
+
+  <div class="pantry-item__main">
+    <h3 class="pantry-item__name">{{ item().ingredient.name }}</h3>
+    <p class="pantry-item__qty">
+      {{ item().quantity }}
+      @if (unitLabel()) {
+        <span class="pantry-item__unit">{{ unitLabel() }}</span>
+      }
+    </p>
+    @if (expirationLabel(); as label) {
+      <small class="pantry-item__expiry">{{ label }}</small>
+    }
+  </div>
+
+  <div class="pantry-item__actions">
+    <button
+      matIconButton
+      type="button"
+      [attr.aria-label]="'Edit ' + item().ingredient.name"
+      (click)="onEdit()"
+    >
+      <kookio-icon name="edit" />
+    </button>
+    <button
+      matIconButton
+      type="button"
+      [attr.aria-label]="'Remove ' + item().ingredient.name"
+      (click)="onRemove()"
+    >
+      <kookio-icon name="delete" />
+    </button>
+  </div>
+</div>
