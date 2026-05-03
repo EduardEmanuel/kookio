@@ -6,6 +6,7 @@ export * from './meal-category';
 export * from './meal-plan';
 export * from './meal-plan-slot';
 export * from './onboarding';
+export * from './pantry-item';
 export * from './recipe';
 export * from './recipe-collection';
 export * from './recipe-ingredient';

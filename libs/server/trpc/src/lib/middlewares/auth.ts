@@ -1,7 +1,7 @@
 import type { Role } from '@kookio/prisma-client';
 import { logger } from '@kookio/server-logger';
 
-import { middleware, TRPCError } from '../trpc';
+import { middleware, procedure, TRPCError } from '../trpc';
 
 export const requireAuth = middleware(({ ctx, next }) => {
   if (!ctx.session) {
@@ -42,5 +42,9 @@ export const requireOnboarding = middleware(({ ctx, next }) => {
   return next({ ctx: { ...ctx, session: ctx.session } });
 });
 
-export const protectedProcedure = requireAuth;
-export const roleProcedure = (roles: Role[]) => requireAnyRole(roles);
+// Procedure builders. Routers should import these instead of composing
+// `procedure.use(requireAuth)` inline. See `.ai/11_trpc.md` for the convention.
+export const protectedProcedure = procedure.use(requireAuth);
+export const onboardedProcedure = protectedProcedure.use(requireOnboarding);
+export const roleProcedure = (roles: Role[]) =>
+  protectedProcedure.use(requireAnyRole(roles));
