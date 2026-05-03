@@ -210,6 +210,51 @@ function createMockUser(overrides?: Partial<User>): User {
 }
 ```
 
+## Fixtures with Prisma-derived shapes
+
+When a fixture targets a type derived from a Prisma model (`RecipeDetail`,
+`UserSession`, anything built from `RecipeModelSchema.pick(...)` etc.), use the
+generated zod enums to populate enum fields — never hardcoded string literals.
+
+The `prisma-zod-generator` exposes every enum as a `z.enum([...])` schema,
+re-exported through the public barrel `@kookio/prisma-client`. Read the literal
+values via `.enum`:
+
+```typescript
+// ✅ correct — enum value comes from the generator
+import { IngredientCategorySchema, MeasureUnitSchema, RecipeStatusSchema, type RecipeDetail } from '@kookio/prisma-client';
+
+const Unit = MeasureUnitSchema.enum;
+const IngCategory = IngredientCategorySchema.enum;
+const Status = RecipeStatusSchema.enum;
+
+const mockRecipe = (overrides: Partial<RecipeDetail> = {}): RecipeDetail => ({
+  // ...
+  status: Status.PUBLIC,
+  ingredients: [
+    {
+      // ...
+      unit: Unit.G,
+      ingredient: { /* ... */ category: IngCategory.GRAINS },
+    },
+  ],
+  ...overrides,
+});
+
+// ❌ avoid — hardcoded string literal
+const mockBad: RecipeDetail = {
+  // ...
+  status: 'PUBLIC',
+  ingredients: [{ /* ... */ unit: 'G', ingredient: { category: 'GRAINS' } }],
+};
+```
+
+**Why:** if the schema renames or adds an enum value (`GRAINS` → `CEREALS`,
+new `MeasureUnit.JAR`, etc.), specs that reference the generated enum fail at
+typecheck on the exact line that needs updating. Hardcoded string literals
+silently satisfy `z.infer` until the value is removed entirely, and partial
+renames across many fixture files are easy to miss in review.
+
 ## General Rules
 
 - Each test must be independent — no shared mutable state between tests
