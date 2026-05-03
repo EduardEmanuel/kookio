@@ -14,6 +14,7 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 
@@ -37,6 +38,7 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([requestContextInterceptor]),
     ),
     provideTrpcClient(),
+    provideNativeDateAdapter(),
     provideNgxSkeletonLoader(),
     provideAppInitializer(() => {
       inject(MatIconRegistry).setDefaultFontSetClass(
