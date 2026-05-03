@@ -1,6 +1,6 @@
 # Angular Guidelines
 
-> **Status: Active (partial)** — Signals, OnPush, `inject()`, native control flow, Material/CDK conventions, and the "no explicit `standalone: true`" rule are followed across the codebase. One documented rule is still routinely deviated from in `apps/web/src/app/pages/`: every page uses inline `template:` rather than `templateUrl`. Bring code in line with the doc — or update the doc — before treating it as the source of truth.
+> **Status: Active** — Signals, OnPush, `inject()`, native control flow, Material/CDK conventions, and the "no explicit `standalone: true`" rule are followed across the codebase. The inline-`template:` carve-out for negligible templates (see "Components" below) matches what `apps/web/src/app/pages/` already does for thin route stubs.
 
 ## Version
 
@@ -21,7 +21,14 @@ Angular v20+
 - Use `input()` and `output()` functions instead of decorators
 - Use `computed()` for derived state
 - Keep components small and focused on a single responsibility
-- Always use external templates (`templateUrl`) and styles (`styleUrl`) — never inline `template` or `styles` in `@Component`
+- Default to external templates (`templateUrl`) and styles (`styleUrl`). Inline `template:` / `styles:` is reserved for **negligible** cases — a template that boils down to a single child-component invocation with a handful of attribute bindings, or a thin host wrapper of ~10 lines or fewer with no styling concerns of its own. Extract to a sibling `.html` (and `.scss`) file as soon as **any** of these appear:
+  - native control flow (`@if`, `@for`, `@switch`)
+  - multiple sibling DOM blocks that carry their own classes / styles
+  - the template (or styles block) grows past a screenful
+  - the same template starts to be edited frequently in isolation from the class
+
+  The route stubs under `apps/web/src/app/pages/` that wrap a single `<kookio-page-stub />` are the canonical negligible case. An actual UI surface — `pantry.page.html`, a feature card, anything with layout of its own — is not. When in doubt, extract: the cost of an extra file is small and the diff for a future template change stays scoped.
+
 - Use `NgOptimizedImage` for all static images (does not work for inline base64)
 - Define class members that are pure helpers (formatters, predicates, anything stateless used from the template) as arrow-function fields, not as class methods. ESLint's `prefer-arrow/prefer-arrow-functions` enforces this and `--fix` does not auto-rewrite the form because changing method → field can alter `this` binding semantics. The fix has to be written by hand:
 
