@@ -1,3 +1,4 @@
+export * from './lib/components/pantry-form/pantry-form.component';
 export * from './lib/components/pantry-item/pantry-item.component';
 export * from './lib/pantry-trpc';
 export * from './lib/store/pantry.store';
