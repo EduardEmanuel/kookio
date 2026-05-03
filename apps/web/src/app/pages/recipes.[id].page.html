@@ -1,0 +1,165 @@
+@if (recipe(); as r) {
+<article class="recipe-detail">
+  <header class="recipe-detail__header">
+    @if (r.imageUrl) {
+    <img
+      class="recipe-detail__hero"
+      [src]="r.imageUrl"
+      [alt]="r.title"
+      loading="eager"
+      decoding="async"
+    />
+    }
+
+    <h1 class="recipe-detail__title">{{ r.title }}</h1>
+
+    @if (r.description) {
+    <p class="recipe-detail__description">{{ r.description }}</p>
+    } @if (r.category || r.area || r.tags.length) {
+    <div class="recipe-detail__meta">
+      @if (r.category; as cat) {
+      <mat-chip class="recipe-detail__chip" disableRipple>
+        @if (cat.emoji) {
+        <kookio-emoji [char]="cat.emoji" [size]="16" />
+        } {{ cat.name }}
+      </mat-chip>
+      } @if (r.area; as area) {
+      <mat-chip class="recipe-detail__chip" disableRipple>
+        @if (area.flag) {
+        <kookio-emoji [char]="area.flag" [size]="16" />
+        } {{ area.name }}
+      </mat-chip>
+      } @for (t of r.tags; track t.tag) {
+      <mat-chip class="recipe-detail__chip" disableRipple>
+        {{ t.tag }}
+      </mat-chip>
+      }
+    </div>
+    } @if (r.prepTimeMinutes || r.cookTimeMinutes || r.servings) {
+    <dl class="recipe-detail__stats">
+      @if (r.prepTimeMinutes; as p) {
+      <div>
+        <dt>
+          <kookio-icon name="schedule" />
+          <span>Prep</span>
+        </dt>
+        <dd>{{ p }} min</dd>
+      </div>
+      } @if (r.cookTimeMinutes; as c) {
+      <div>
+        <dt>
+          <kookio-icon name="local_fire_department" />
+          <span>Cook</span>
+        </dt>
+        <dd>{{ c }} min</dd>
+      </div>
+      } @if (r.servings; as s) {
+      <div>
+        <dt>
+          <kookio-icon name="group" />
+          <span>Servings</span>
+        </dt>
+        <dd>{{ s }}</dd>
+      </div>
+      }
+    </dl>
+    } @if (canCook()) {
+    <a
+      matButton="filled"
+      class="recipe-detail__cook-cta"
+      [routerLink]="['/cook', r.id]"
+    >
+      <kookio-icon name="restaurant" />
+      Cook now
+    </a>
+    }
+  </header>
+
+  <mat-divider />
+
+  <section class="recipe-detail__section">
+    <h2>
+      <kookio-icon name="list" />
+      Ingredients
+    </h2>
+    @if (r.ingredients.length) {
+    <ul class="recipe-detail__ingredients">
+      @for (item of r.ingredients; track item.id) {
+      <li class="recipe-detail__ingredient">
+        @if (item.quantity != null || item.unit) {
+        <span class="recipe-detail__qty">
+          {{ formatQuantity(item.quantity) }} {{ formatUnit(item.unit) }}
+        </span>
+        }
+        <span class="recipe-detail__ingredient-name">
+          {{ item.ingredient.name }}
+        </span>
+        @if (item.notes) {
+        <small class="recipe-detail__ingredient-notes">
+          — {{ item.notes }}
+        </small>
+        }
+      </li>
+      }
+    </ul>
+    } @else {
+    <p class="recipe-detail__empty">No ingredients listed.</p>
+    }
+  </section>
+
+  <mat-divider />
+
+  <section class="recipe-detail__section">
+    <h2>
+      <kookio-icon name="menu_book" />
+      Steps
+    </h2>
+    @if (instructionSteps().length) {
+    <ol class="recipe-detail__instructions">
+      @for (step of instructionSteps(); track $index) {
+      <li class="recipe-detail__step">
+        <span class="recipe-detail__step-num">{{ $index + 1 }}</span>
+        <p>{{ step }}</p>
+      </li>
+      }
+    </ol>
+    } @else {
+    <p class="recipe-detail__empty">No instructions provided.</p>
+    }
+  </section>
+
+  @if (r.youtubeUrl || r.sourceUrl) {
+  <mat-divider />
+
+  <section class="recipe-detail__section">
+    <h2>
+      <kookio-icon name="link" />
+      Source
+    </h2>
+    <div class="recipe-detail__sources">
+      @if (r.youtubeUrl; as yt) {
+      <a
+        matButton="outlined"
+        [href]="yt"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <kookio-icon name="play_circle" />
+        Watch on YouTube
+      </a>
+      } @if (r.sourceUrl; as src) {
+      <a
+        matButton="outlined"
+        [href]="src"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <kookio-icon name="open_in_new" />
+        Original source
+      </a>
+      }
+    </div>
+  </section>
+  }
+</article>
+}
