@@ -86,7 +86,7 @@
     <ul class="recipe-detail__ingredients">
       @for (item of r.ingredients; track item.id) {
       <li class="recipe-detail__ingredient">
-        @if (item.quantity != null || item.unit) {
+        @if (item.quantity || item.unit) {
         <span class="recipe-detail__qty">
           {{ formatQuantity(item.quantity) }} {{ formatUnit(item.unit) }}
         </span>
