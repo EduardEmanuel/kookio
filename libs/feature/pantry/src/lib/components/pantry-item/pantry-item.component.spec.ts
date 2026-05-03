@@ -28,7 +28,7 @@ const baseItem: PantryItemWithIngredient = {
     id: 'ing-1',
     name: 'Tomato',
     imageUrl: null,
-    category: Category.VEGETABLES,
+    category: Category.PRODUCE,
   },
 };
 

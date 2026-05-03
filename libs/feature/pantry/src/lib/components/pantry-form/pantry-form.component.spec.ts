@@ -24,7 +24,7 @@ const buildIngredient = (
   id: overrides.id ?? 'ing-1',
   name: overrides.name ?? 'Tomato',
   imageUrl: overrides.imageUrl ?? null,
-  category: overrides.category ?? Category.VEGETABLES,
+  category: overrides.category ?? Category.PRODUCE,
 });
 
 const setup = async (options?: {

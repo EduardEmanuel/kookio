@@ -1,0 +1,68 @@
+<section class="pantry-page">
+  <header class="pantry-page__header">
+    <h1 class="pantry-page__title">My Pantry</h1>
+    @if (store.totalCount() > 0) {
+    <button matButton="filled" type="button" (click)="onAdd()">
+      <kookio-icon name="add" />
+      Add ingredient
+    </button>
+    }
+  </header>
+
+  @if (store.isLoading() && store.totalCount() === 0) {
+  <div class="pantry-page__loading">
+    <mat-spinner diameter="32" />
+  </div>
+  } @else if (store.totalCount() === 0) {
+  <div class="pantry-page__empty">
+    <kookio-emoji char="🥕" alt="" [size]="64" />
+    <h2 class="pantry-page__empty-title">Your pantry is empty</h2>
+    <p class="pantry-page__empty-text">
+      Add ingredients you have at home so Kookio can suggest recipes that
+      actually fit what is in your kitchen.
+    </p>
+    <button matButton="filled" type="button" (click)="onAdd()">
+      <kookio-icon name="add" />
+      Add your first ingredient
+    </button>
+  </div>
+  } @else { @if (store.expiredItems().length > 0) {
+  <section
+    class="pantry-page__section pantry-page__section--expired"
+    aria-labelledby="pantry-expired-heading"
+  >
+    <h2
+      id="pantry-expired-heading"
+      class="pantry-page__section-title pantry-page__section-title--alert"
+    >
+      <kookio-icon name="warning" />
+      Expired ({{ store.expiredItems().length }})
+    </h2>
+    <div class="pantry-page__list">
+      @for (item of store.expiredItems(); track item.id) {
+      <kookio-pantry-item
+        [item]="item"
+        (edit)="onEdit($event)"
+        (remove)="onRemove($event)"
+      />
+      }
+    </div>
+  </section>
+  }
+
+  <section class="pantry-page__section" aria-labelledby="pantry-all-heading">
+    <h2 id="pantry-all-heading" class="pantry-page__section-title">
+      All items ({{ store.totalCount() }})
+    </h2>
+    <div class="pantry-page__list">
+      @for (item of store.items(); track item.id) {
+      <kookio-pantry-item
+        [item]="item"
+        (edit)="onEdit($event)"
+        (remove)="onRemove($event)"
+      />
+      }
+    </div>
+  </section>
+  }
+</section>

@@ -33,7 +33,7 @@ const buildItem = (
     id: overrides.ingredientCatalogId ?? 'ing-1',
     name: 'Tomato',
     imageUrl: null,
-    category: Category.VEGETABLES,
+    category: Category.PRODUCE,
   },
 });
 
