@@ -110,8 +110,9 @@ There is intentionally **no** `repositories/` folder, **no** `src/dtos/` folder,
   (`P2034`, `P2036`, `40001`, "restart transaction"). Reads are not retried.
 - Inject `prisma` via the tRPC context (`ctx.prisma`) — never import it
   directly in tRPC routers. Seed scripts and other server-side scripts
-  may import it from `@kookio/prisma-client` since they run outside the
-  request lifecycle.
+  import it from the **`@kookio/prisma-client/server`** sub-path (the
+  root barrel is browser-safe and does not re-export the instance — see
+  "Browser-safe imports" under Zod Integration for the rationale).
 
 ### Extensions
 
@@ -463,7 +464,8 @@ never reaching into the generator output:
 
 ```typescript
 // scripts/seeds/seed-catalog.ts
-import { prisma, type IngredientCatalogSeedRow, type MealAreaSeedRow, type MealCategorySeedRow } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
+import type { IngredientCatalogSeedRow, MealAreaSeedRow, MealCategorySeedRow } from '@kookio/prisma-client';
 ```
 
 ### Composite primary keys
@@ -526,7 +528,7 @@ generator — the project doesn't have one and won't get one. The minimum steps:
    tRPC router. Wrap multi-step writes in `ctx.prisma.$transaction(async tx =>
 ...)`. Do not introduce a wrapper class.
 
-## General Rules
+## Conventions
 
 - **Do not introduce a repository layer**, a `src/dtos/` folder, or a CRUD
   scaffold generator. tRPC routers are the business-logic layer; `ctx.prisma`
