@@ -18,6 +18,7 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -99,6 +100,11 @@ const ALL_UNITS = MeasureUnitSchema.options as readonly MeasureUnit[];
     MatInputModule,
     MatSelectModule,
   ],
+  // Date adapter is scoped to this component instead of the app root so
+  // `@angular/material/core` does not bloat the SSR module graph for every
+  // unrelated route — cold-start of `/login` regressed past Playwright's 30s
+  // timeout when the adapter was provided app-wide.
+  providers: [provideNativeDateAdapter()],
   templateUrl: './pantry-form.component.html',
   styleUrl: './pantry-form.component.scss',
 })

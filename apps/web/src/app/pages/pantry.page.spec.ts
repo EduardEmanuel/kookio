@@ -8,7 +8,10 @@ import { of } from 'rxjs';
 
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
-import { PANTRY_TRPC, type PantryTrpcClient } from '@kookio/feature-pantry';
+import {
+  PANTRY_TRPC,
+  type PantryTrpcClient,
+} from '@kookio/feature-pantry/trpc';
 import {
   IngredientCategorySchema,
   MeasureUnitSchema,
