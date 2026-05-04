@@ -87,6 +87,70 @@ Angular v20+
 - Angular Material renders `<mat-icon>` from its own templates inside `node_modules` (stepper state indicators, datepicker chevrons, snackbar/dialog close, expansion toggles, sort arrows, form-field clear, etc.). Those usages bypass the codebase scanner. The build script keeps a hardcoded `MATERIAL_INTERNAL_ICONS` list (in `scripts/build-material-symbols-icons.ts`) that is unioned with the auto-scanned set before subsetting. Re-evaluate this list when Angular Material is upgraded to a major version — remove names no longer rendered, add any new ones.
 - **When modifying `KookioIconComponent` (or adding similar wrappers around Material primitives)**: the wrapper's `:host` must replicate the wrapped element's box model exactly — same `display`, explicit dimensions, `line-height`, `vertical-align`, and `font-size`. `display: contents` looks elegant but breaks every CSS rule that needs the wrapper to participate in the box tree (`z-index`, `position`, slot-dimension constraints, margins set by Material on the slot class). Plain `inline-block` without explicit dimensions also breaks layout because of inline-leading drift inside flex containers. The wrapper has to be a drop-in substitute, byte-for-byte at the box level, because Material assumes the original element's metrics in dozens of slots (icon-button, FAB, list-item, chip avatar, card avatar, stepper, etc.).
 
+## Emoji
+
+Native emoji are not allowed in rendered HTML. Self-hosted Twemoji SVGs
+(`jdecked/twemoji` v15.1.0) ship under `apps/web/public/icons/twemoji/`
+with `LICENSE-CC-BY-4.0` + `ATTRIBUTION.md` next to them. The runtime
+surface is `<kookio-emoji>` from `@kookio/shared-ui`; the codebase-sync
+gate is `npm run build:twemoji:check`; visible attribution lives at
+`/legal/attributions` (linked from the topbar user menu).
+
+- Render emoji via `<kookio-emoji char="…" />` — do NOT put native
+  pictographs in templates. Skin-tone modifiers and ZWJ joiners (👨🏽,
+  👨‍👩‍👧, etc.) are handled automatically by the codepoint mapper.
+- After adding or removing an emoji anywhere in the codebase, run
+  `npm run build:twemoji` to fetch new SVGs and prune orphans. CI runs
+  `npm run build:twemoji:check` and fails the PR on drift.
+- The `alt` input is **optional with empty default**. 100% of current
+  usage is decorative (emoji sit next to a label that already carries
+  the meaning). Pass a non-empty `alt` only when the emoji is the sole
+  meaning carrier for screen readers — and audit every callsite before
+  promoting `alt` to required. Required-alt would force `alt=""` noise
+  on every decorative usage.
+- Data-driven emoji (category icons, area flags, dietary-restriction
+  glyphs) live as **DB columns**, not client-side `Record<string, string>`
+  mappings. `MealArea.flag`, `DietaryRestriction.emoji`,
+  `MealCategory.emoji` are populated from `seed-data/catalog.json`. When
+  adding a new data-driven surface, mirror this pattern (column → seed →
+  server → client) and update the seed script's `update` path **as well
+  as** `create` so re-seeds refresh existing rows. The `build:twemoji`
+  scanner already matches `"emoji"` and `"flag"` JSON keys; add a new
+  pattern only for a third semantically-different key.
+- Topbar user menu carries the link to `/legal/attributions`. Adding a
+  new licensed asset (font, library with attribution requirements) →
+  add an entry to `ATTRIBUTIONS` in `legal.attributions.page.ts` and
+  update its spec. Mark `required: true` only if the license **explicitly**
+  requires visible attribution (CC BY-style). Apache 2.0 and SIL OFL do
+  not require visible attribution at runtime — they are listed as
+  courtesy.
+- Cache headers on `/icons/twemoji/**` are `immutable` in both
+  `vercel.json` (production) and `apps/web/vite.config.ts`
+  `nitro.routeRules` (dev/SSR parity).
+
+**Why Twemoji over native emoji**: on Windows, the native emoji font
+does not include regional-indicator ligatures, so `🇫🇷` renders as the
+literal letters "FR". Self-hosted Twemoji guarantees consistent rendering
+across all platforms — treat any flag-emoji surface as **requiring** the
+wrapper for the same reason.
+
+**Why CC BY 4.0 over CC BY-SA (OpenMoji)**: the share-alike clause on
+OpenMoji would attach to the whole UI as a derivative work. Twemoji's
+CC BY 4.0 only requires visible attribution. Do not "upgrade" to OpenMoji
+without a licensing review.
+
+**Why `<kookio-emoji>` for chip avatars but `<kookio-icon>` for nav and
+FAB**: chip avatars are decorative summary tokens — emoji suit them
+better (warmer, culturally grounded). Nav, FAB, and stepper buttons are
+functional surfaces and benefit from the monochrome icon look. The split
+is intentional: same concepts (Pantry, Cuisine, etc.) render differently
+in chip vs nav contexts. Don't unify them.
+
+**User-generated content** with arbitrary emoji is **not** supported —
+only emoji we ship can be rendered. For a future UGC surface, either
+ship the full Twemoji set or revisit the architecture (e.g. use native
+emoji on UGC and Twemoji on app-controlled surfaces).
+
 ## Accessibility
 
 - All components MUST pass AXE checks

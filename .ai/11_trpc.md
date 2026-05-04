@@ -199,6 +199,48 @@ export default class UsersPage {
 - Use `injectLoad()` for server-side data fetching instead of tRPC queries
   when data is needed at page load time (SSR/SSG)
 
+### `authAwareFetch` — custom fetch wrapper, with SSR caveat
+
+`apps/web/src/trpc-client.ts` registers a custom `authAwareFetch` for the
+tRPC client instead of relying on `@analogjs/trpc`'s built-in fetch. The
+wrapper adds two behaviours the library does not expose:
+
+1. Proactive Firebase ID-token refresh when it expires in under 5 minutes.
+2. Automatic retry on a `401` response with a freshly minted token.
+
+By replacing the fetch entirely we also took ownership of one piece of
+plumbing the library handles internally: **resolving relative URLs in the
+SSR context**. Node has no implicit base URL for `fetch('/api/...')`, so
+the library's internal `customFetch` rewrites them to absolute. That
+helper is **not exported**, so composition (`authAwareFetch` →
+`customFetch` → `fetch`) is not possible — `authAwareFetch` has its own
+`resolveUrl`:
+
+```typescript
+const resolveUrl = (url: string): string => {
+  if (typeof window !== 'undefined') return url; // browser: no-op
+  const host = process.env['NITRO_HOST'] ?? 'localhost';
+  const port = process.env['NITRO_PORT'] ?? '4205';
+  return /^https?:/.test(url) ? url : `http://${host}:${port}${url}`;
+};
+```
+
+**Why:** without `resolveUrl`, every server-side tRPC call (loader,
+SSR-rendered page, any `injectLoad`) would throw `TypeError: Failed to
+parse URL` at the first hit.
+
+**How to apply:**
+
+- Do not refactor `authAwareFetch` to delegate to `@analogjs/trpc`'s
+  fetch — `customFetch` is still not exported as of the version pinned
+  in `package.json`. The day it lands as a public export, replace the
+  body of `authAwareFetch` with a wrapper around it and delete
+  `resolveUrl`. Until then, watch for `@analogjs/trpc` upgrades that
+  change SSR URL handling and mirror the change in `resolveUrl`.
+- If you change the dev Nitro port, update the `NITRO_PORT` fallback
+  alongside the `vite.config.ts` change — the wrapper has no way to
+  introspect the dev-server's actual port.
+
 ## Error Handling
 
 - Always throw `TRPCError` with the appropriate code — never throw raw errors:

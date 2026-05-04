@@ -1,6 +1,6 @@
 # SCSS Guidelines
 
-> **Status: Active (partial)** — partials, BEM, Material theming, and the utility-first methodology are in use under `apps/web/src/styles/` and `libs/shared/ui/src/styles/`. Deviation: the global entry is `apps/web/src/styles.css` (CSS, not SCSS) due to a known NX + sass-embedded + Vite `?direct` bug — see `feedback_scss-global-styles.md` in memory. Do not migrate the entry to `.scss`.
+> **Status: Active (partial)** — partials, BEM, Material theming, and the utility-first methodology are in use under `apps/web/src/styles/` and `libs/shared/ui/src/styles/`. Load-bearing constraint codified below: the global entry is `apps/web/src/styles.css` (CSS, not SCSS) and design tokens load via `<link>` from a pre-built CSS file. Both are workarounds for the same `nxViteTsPaths()` Sass-importer bug.
 
 ## Architecture
 
@@ -15,6 +15,66 @@
   └── styles.scss ← entry point — imports all partials
 - Prefix all partials with `_` so they are not compiled independently
 - Import shared partials via `@use` — do NOT use `@import` (deprecated)
+
+### Global styles entry must stay `.css`, not `.scss`
+
+The global styles entry file (`apps/web/src/styles.css`) **cannot use
+`@use` or `@import` Sass directives**. Component SCSS files
+(`*.component.scss`, Angular `styleUrl`) are unaffected — this constraint
+applies only to the entry file loaded from `index.html`.
+
+**Why:** `nxViteTsPaths()` registers a custom Sass importer that
+intercepts every import in `.scss` files. In Vite's `?direct` mode (used
+by AnalogJS for HMR/SSR), that importer returns `[object Promise]`
+instead of an `AbsoluteURL`, surfacing as
+`[sass] Error: The importer must return an absolute URL, was "%5Bobject%20Promise%5D"`.
+Setting `api: 'legacy'` or `silenceDeprecations` in
+`css.preprocessorOptions` does **not** fix it — the `?direct` code path
+ignores those options.
+
+**How to apply:**
+
+- Keep the global entry as `.css`. `@import 'tailwindcss'` works in `.css`
+  via the `@tailwindcss/vite` plugin without involving Sass.
+- Load design tokens via a separate `<link rel="stylesheet" href="…">` in
+  `index.html`, not via `@use` from the entry. See "Design Tokens
+  Architecture" below.
+- If a future Vite/NX upgrade makes Sass-in-entry work again, leave a
+  test commit for one cycle before flipping the convention — the bug
+  reproduces silently at runtime, not at build.
+
+## Design Tokens Architecture
+
+Material 3 design tokens (orange/warm palette) are authored as SCSS-syntax
+files but shipped as a **single concatenated CSS file** loaded by
+`<link>`, never imported via `@use`.
+
+**Source of truth**: `libs/shared/ui/src/styles/` — 8 files (despite the
+`.scss` extension, they use only pure-CSS syntax to side-step the Sass
+importer bug). Load order:
+
+1. `_tokens.scss` — semantic aliases (`--color-primary`, `--space-*`,
+   `--radius-*`, food-domain tokens like `--color-expiry-*`)
+2. `_m3-light.scss` — base light theme + the `--mat-sys-*` bridge that
+   feeds Angular Material 20's design-token API
+3. `_m3-dark.scss` — `@media (prefers-color-scheme: dark)`
+4. `_m3-light-mc.scss` / `_m3-light-hc.scss` — light + medium / forced
+   contrast
+5. `_m3-dark-mc.scss` / `_m3-dark-hc.scss` — dark + medium / high
+   contrast
+
+**App entry**: `apps/web/src/styles/kookio-tokens.css` — concatenated
+output of the eight source files, loaded via `<link>` in `index.html`.
+
+**To update tokens**: edit the SCSS source under `libs/shared/ui/src/styles/`,
+then run `npx nx run ui:build-tokens` to regenerate the concatenated CSS.
+Commit both the source change and the generated file.
+
+**Angular Material bridge**: each color file sets `--mat-sys-*` variables
+that point at the corresponding `--md-sys-color-*` variables. Angular
+Material 20 reads `--mat-sys-*`, so it picks up the Kookio palette
+automatically — never override Material colors directly with `var(--md-…)`
+selectors in component SCSS, set them through the token files instead.
 
 ## Methodology: Utility-first
 

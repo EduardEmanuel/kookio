@@ -166,6 +166,35 @@ git push origin feat/my-feature
 - Never force-push to branches others are reviewing
 - Never rewrite history on `main`
 
+### Multi-file commits need a raised Node heap
+
+The lint-staged pre-commit hook runs `nx format:write --files=…` on every
+staged source file. Past roughly five files in one commit, that step
+exceeds Node's default ~2 GB heap and is killed with `SIGKILL`; lint-staged
+then reverts the working tree to the pre-stash state and the commit
+silently fails to land.
+
+**Workaround** — raise the heap explicitly for the commit:
+
+```bash
+NODE_OPTIONS="--max-old-space-size=4096" git commit -m "..."
+```
+
+`4096` MB covers typical multi-file commits. The 6144 MB value
+documented for the production Nitro bundle pass is stronger than needed
+here — start at 4096 and only escalate if it still dies.
+
+**Why:** `nx format:write` spins up the full Nx daemon plus Prettier and
+holds the project's transitive AST + plugin loader graph in memory.
+Identical root cause to the documented Nitro OOM, just a different
+trigger surface (pre-commit instead of CI build).
+
+**How to apply:** any commit that touches more than a handful of files
+(realistically: ≥ 5) should be prefixed with the
+`NODE_OPTIONS="--max-old-space-size=4096"` env var. Single-file commits
+are fine on the default heap. **Never** reach for `--no-verify` to bypass
+the hook — that loses the lint/format guarantees the project relies on.
+
 ## Responding to CI Failures
 
 When CI fails, the error message usually contains the fix verbatim. Read it carefully before reaching for hypotheses about the underlying cause.
