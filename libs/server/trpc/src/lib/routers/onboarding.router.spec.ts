@@ -232,7 +232,12 @@ describe('onboarding router', () => {
       expect(prismaMock.$transaction).not.toHaveBeenCalled();
     });
 
-    it('rejects non-uuid IDs via Zod', async () => {
+    it('rejects empty-string IDs via Zod', async () => {
+      // Catalog IDs are intentionally not constrained to UUID format because
+      // seed fixtures use semantic IDs (`utensil_chef_knife`, `dr_vegan`).
+      // The schema floor is `z.string().min(1)` — anything stricter would
+      // reject valid seeded data. Empty strings stay rejected since they
+      // cannot point at a real DB row.
       const prismaMock = makePrismaMock();
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
 
@@ -240,7 +245,7 @@ describe('onboarding router', () => {
         caller.onboarding.commit({
           adultsCount: 1,
           childrenCount: 0,
-          preferredCategoryIds: ['not-a-uuid'],
+          preferredCategoryIds: [''],
         }),
       ).rejects.toBeInstanceOf(TRPCError);
       expect(prismaMock.$transaction).not.toHaveBeenCalled();
