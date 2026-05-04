@@ -4,6 +4,7 @@ import {
   IngredientSearchResultSchema,
   MeasureUnitSchema,
   PantryItemWithIngredientSchema,
+  UuidIdSchema,
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
 
@@ -16,21 +17,21 @@ const SEARCH_DEFAULT_LIMIT = 20;
 const SEARCH_MAX_LIMIT = 50;
 
 const AddInputSchema = z.object({
-  ingredientCatalogId: z.string().uuid(),
+  ingredientCatalogId: UuidIdSchema,
   quantity: z.number().positive(),
   unit: MeasureUnitSchema,
   expiresAt: z.string().datetime().nullable().optional(),
 });
 
 const UpdateInputSchema = z.object({
-  id: z.string().uuid(),
+  id: UuidIdSchema,
   quantity: z.number().positive().optional(),
   unit: MeasureUnitSchema.optional(),
   expiresAt: z.string().datetime().nullable().optional(),
 });
 
 const RemoveInputSchema = z.object({
-  id: z.string().uuid(),
+  id: UuidIdSchema,
 });
 
 const SearchIngredientsInputSchema = z.object({
@@ -193,7 +194,7 @@ export const pantry = router({
    */
   remove: onboardedProcedure
     .input(RemoveInputSchema)
-    .output(z.object({ id: z.string().uuid() }))
+    .output(z.object({ id: UuidIdSchema }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session!.uid;
 

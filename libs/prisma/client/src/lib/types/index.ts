@@ -1,5 +1,6 @@
 export * from './cooking-session';
 export * from './dietary-restriction';
+export * from './ids';
 export * from './ingredient-catalog';
 export * from './meal-area';
 export * from './meal-category';

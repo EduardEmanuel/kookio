@@ -3,6 +3,7 @@ import z from 'zod';
 import {
   RecipeDetailSchema,
   RecipeFeedPageSchema,
+  UuidIdSchema,
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
 
@@ -14,7 +15,7 @@ const FEED_DEFAULT_LIMIT = 20;
 const FEED_MAX_LIMIT = 50;
 
 const FeedInputSchema = z.object({
-  cursor: z.string().uuid().optional(),
+  cursor: UuidIdSchema.optional(),
   limit: z
     .number()
     .int()
@@ -23,12 +24,12 @@ const FeedInputSchema = z.object({
     .default(FEED_DEFAULT_LIMIT),
   // Reserved for future filters (week 5). Kept in the contract so adding them
   // later does not break the client signature.
-  categoryId: z.string().uuid().optional(),
-  areaId: z.string().uuid().optional(),
+  categoryId: UuidIdSchema.optional(),
+  areaId: UuidIdSchema.optional(),
 });
 
 const ByIdInputSchema = z.object({
-  id: z.string().uuid(),
+  id: UuidIdSchema,
 });
 
 const FEED_RECIPE_SELECT = {
