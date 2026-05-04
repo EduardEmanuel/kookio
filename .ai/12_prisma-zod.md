@@ -1,6 +1,6 @@
 # Prisma + Zod Guidelines
 
-> **Status: Active.** Prisma v6 + CockroachDB schema lives at `libs/prisma/client/schema.prisma`, migrations at `libs/prisma/client/migrations/`, seed scripts at `scripts/seeds/`, seed data at `libs/prisma/client/seed-data/`. `prisma-zod-generator` is wired up; per-model zod overrides live in `libs/prisma/client/src/lib/prisma-zod-overrides/`. Per-model derived types (e.g. `*SeedRow` shapes) live in `libs/prisma/client/src/lib/types/{model}.ts`, derived from generated schemas via `.pick()` / `.omit()` / `.extend()` and `z.output<typeof X>` — **never hand-written interfaces that duplicate the Prisma shape**. tRPC routers consume `ctx.prisma.*` directly; retry-on-conflict for CockroachDB is implemented once as a Prisma client extension in [prisma-client.ts](../libs/prisma/client/src/lib/prisma-client.ts) and applied globally to every mutation.
+> **Status: Active.** Prisma v6 + CockroachDB schema lives at `libs/prisma/client/schema.prisma`, migrations at `libs/prisma/client/migrations/`, seed scripts at `scripts/seeds/`, seed data at `libs/prisma/client/seed-data/`. `prisma-zod-generator` is wired up; per-model zod overrides live in `libs/prisma/client/src/lib/prisma-zod-overrides/`. Per-model derived types (e.g. `*SeedRow` shapes) live in `libs/prisma/client/src/lib/types/{model}.ts`, derived from generated schemas via `.pick()` / `.omit()` / `.extend()` and `z.output<typeof X>` — **never hand-written interfaces that duplicate the Prisma shape**. Shared ID schemas (`SemanticIdSchema`, `UuidIdSchema`) live in `libs/prisma/client/src/lib/types/ids.ts`. The Prisma client instance + retry / pagination helpers are isolated behind the `@kookio/prisma-client/server` sub-path; the root barrel is browser-safe (types + zod schemas only) and ESLint blocks `/server` imports from front-end globs. tRPC routers consume `ctx.prisma.*` directly; retry-on-conflict for CockroachDB is implemented once as a Prisma client extension in [prisma-client.ts](../libs/prisma/client/src/lib/prisma-client.ts) and applied globally to every mutation.
 >
 > **Deliberately rejected — do not reintroduce.** A repository layer (`libs/prisma/client/src/lib/repositories/{model}/`), a `src/dtos/` folder mirroring CRUD operations (`CreateOneXDTO`, `FindManyXResultDTO`, etc.), and a `scripts/generate-prisma-zod-repositories.mjs` scaffold generator have all been considered and rejected. **Rationale baked in here so future readers don't have to dig:** Prisma Client is already a type-safe DB abstraction; tRPC is already the business-logic / transport layer. A repository class wrapping `prisma.<model>.<op>()` adds boilerplate without isolation benefit, mirrors a Java/Spring-style architecture that doesn't fit AnalogJS + tRPC + Prisma, and would force every consumer (routers, seeds, scripts) through a redundant indirection. If you find yourself wanting one, the right move is almost always: (a) put the logic in a tRPC procedure with `ctx.prisma`, (b) put a multi-step write inside an interactive transaction (`ctx.prisma.$transaction(async tx => ...)`) — not a separate class.
 
@@ -321,6 +321,109 @@ const UpdateProfileSchema = UserUpdateInputSchema.pick({
 - Do NOT duplicate Prisma model shapes manually in Zod — always derive from generated schemas
 - Use generated schemas as the single source of truth for data shapes across
   tRPC procedures, API route validation, and form validation
+
+### Browser-safe imports
+
+The root barrel `@kookio/prisma-client` is **browser-safe by construction**:
+it exposes types + zod schemas only. The Prisma client instance and
+`Prisma.defineExtension` (which throws on hydration in the browser) live
+behind the `@kookio/prisma-client/server` sub-path.
+
+Rules for any code that ships to the browser (pages, components, stores,
+guards — anything in `apps/web/src/app/**`, `libs/feature/**`,
+`libs/shared/ui/**`, `libs/core/security/**`):
+
+- Import **types only** from the root barrel: `import type { ... }`. Even
+  if a name happens to be a type-only export today, the bare `import { X }`
+  form keeps the source as a side-effect import and evaluates the entire
+  barrel.
+- Never reach for `@kookio/prisma-client/server`. ESLint enforces this with
+  a glob-scoped `no-restricted-imports` rule.
+- For **runtime enum values** in UI code (e.g. building a `mat-select`
+  option list), do **not** import the generated zod enum (`MeasureUnitSchema`,
+  `IngredientCategorySchema`, …). Hardcode the array locally with a
+  `satisfies readonly EnumType[]` assertion plus an exhaustive
+  `Record<EnumType, X>` map next to it — the record's exhaustiveness check
+  fails compilation if the schema enum gains/renames a value, which is the
+  safety net that makes the duplication tolerable.
+
+```typescript
+// libs/feature/pantry/src/lib/utils/measure-unit-label.ts
+import type { MeasureUnit } from '@kookio/prisma-client';
+
+export const MEASURE_UNITS = ['G', 'KG', 'ML', 'L', 'TSP', 'TBSP' /* ... */] as const satisfies readonly MeasureUnit[];
+
+// Exhaustive record — schema rename breaks compilation here:
+export const MEASURE_UNIT_LABEL: Record<MeasureUnit, string> = {
+  G: 'g',
+  KG: 'kg',
+  ML: 'ml' /* ... every key required */,
+};
+```
+
+**Smoke test if the rule slipped past lint** (Playwright with `pageerror`
+listener):
+
+```js
+// node ./probe.mjs
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newContext().then((c) => c.newPage());
+page.on('pageerror', (e) => console.log('PAGE-ERROR:', e.message));
+page.on('console', (m) => m.type() === 'error' && console.log('ERR:', m.text()));
+await page.goto('http://localhost:4200/<route>', { waitUntil: 'commit' });
+await page.waitForTimeout(15_000);
+console.log('final url:', page.url());
+await browser.close();
+```
+
+Anything mentioning `Prisma.defineExtension` or `Failed to fetch dynamically
+imported module` in the output points at this exact failure mode.
+
+### Validation strictness mirrors data reality
+
+A Zod schema stricter than the data is a latent bug. Validation is a
+**faithful representation of the real contract**, not a wishlist.
+
+Before adding `.uuid()`, `.email()`, `.url()`, or any other format
+constraint to a schema, ask: do **all** real data sources — production,
+seed fixtures, E2E factories, legacy imports — satisfy the constraint?
+If the seed does not, real-world data almost certainly will not either.
+
+Floor the schema at what the database itself permits, and rely on the
+existence check at write-time for the actual integrity boundary. Format
+validation does not stop SQL injection (parameterised queries do), and it
+does not stop unauthorised access (auth + ownership checks do); it stops
+typos, and only when the data is honest about being typo-shaped.
+
+Concrete pattern — the `Utensil` and `DietaryRestriction` catalog tables
+are seeded with semantic IDs (`utensil_chef_knife`, `dr_vegan`) for
+grep-able dev/E2E logs. Every other catalog gets Prisma's runtime
+`@default(uuid())`. Onboarding's commit input therefore picks per field:
+
+```typescript
+// libs/prisma/client/src/lib/types/onboarding.ts
+import { SemanticIdSchema, UuidIdSchema } from './ids';
+
+export const OnboardingCommitInputSchema = z.object({
+  // … counts …
+  preferredCategoryIds: z.array(UuidIdSchema).default([]), // MealCategory.id  → UUID
+  preferredAreaIds: z.array(UuidIdSchema).default([]), // MealArea.id      → UUID
+  utensilIds: z.array(SemanticIdSchema).default([]), // Utensil.id       → semantic
+  dietaryRestrictionIds: z.array(SemanticIdSchema).default([]), // DietaryRestriction.id → semantic
+});
+```
+
+Use the named schemas from `libs/prisma/client/src/lib/types/ids.ts`
+instead of inline `z.string().uuid()` / `z.string().min(1)`. The named
+import documents intent — a reader of the router can tell at a glance
+whether an endpoint will reject a non-UUID payload, without having to
+trace the field back to its source table.
+
+Decision rule: pick by **how the ID is produced**, not what conceptual
+bucket the table is in. If a fixture or factory writes the ID by hand
+with letters in it, use `SemanticIdSchema`. If only Prisma writes the ID,
+use `UuidIdSchema`. When in doubt, look at the seed for that table.
 
 ## Type derivation
 
