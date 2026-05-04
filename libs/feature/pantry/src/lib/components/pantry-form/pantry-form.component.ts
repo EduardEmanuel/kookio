@@ -34,14 +34,16 @@ import {
   switchMap,
 } from 'rxjs';
 
-import {
-  type IngredientSearchResult,
-  type MeasureUnit,
-  MeasureUnitSchema,
+import type {
+  IngredientSearchResult,
+  MeasureUnit,
 } from '@kookio/prisma-client';
 
 import { PANTRY_TRPC } from '../../pantry-trpc';
-import { MEASURE_UNIT_LABEL } from '../../utils/measure-unit-label';
+import {
+  MEASURE_UNIT_LABEL,
+  MEASURE_UNITS,
+} from '../../utils/measure-unit-label';
 
 const SEARCH_DEBOUNCE_MS = 300;
 const SEARCH_MIN_LENGTH = 2;
@@ -80,14 +82,7 @@ const isIngredient = (value: unknown): value is IngredientSearchResult =>
 const requiresSelection: ValidatorFn = (ctrl) =>
   isIngredient(ctrl.value) ? null : { unselected: true };
 
-/**
- * Final-functionality TODO: the catalog enum exposes 18 units. The pantry only
- * really needs the measurable subset; the recipe-only labels (`TO_TASTE`,
- * `TO_SERVE`, `GARNISH`, `OTHER`) are kept here pending the menu/shopping-list
- * UX decision in week 6 — drop them then if they never make sense for a stored
- * pantry quantity.
- */
-const ALL_UNITS = MeasureUnitSchema.options as readonly MeasureUnit[];
+const ALL_UNITS: readonly MeasureUnit[] = MEASURE_UNITS;
 
 @Component({
   selector: 'kookio-pantry-form',
