@@ -24,6 +24,16 @@ export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: './src' }),
   globalSetup: require.resolve('./global-setup'),
   globalTeardown: require.resolve('./global-teardown'),
+  /**
+   * 60s test timeout (Playwright default is 30s). The first browser worker
+   * pays for Vite dev SSR cold-start of any route global-setup did not yet
+   * fully warm — once a chunk is first compiled, subsequent loads are sub-
+   * second, but the initial hydration of the auth-guarded routes (`/login`,
+   * `/register`, `/pantry`) routinely sits in the 25-35s range. 60s gives
+   * those tests headroom without masking real regressions: when warm-up has
+   * settled, every test still completes in well under 30s.
+   */
+  timeout: 60_000,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
