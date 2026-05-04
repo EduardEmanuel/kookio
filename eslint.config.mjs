@@ -127,6 +127,45 @@ export default [
       ],
     },
   },
+  // Frontend code is forbidden from importing the server-only Prisma surface.
+  // The root barrel `@kookio/prisma-client` is browser-safe (types + zod
+  // schemas only); `/server` re-exports the Prisma instance whose
+  // `defineExtension` throws on hydration. NX `enforce-module-boundaries`
+  // works at project level, so it cannot tell apart a frontend lib's import
+  // of `/server` from the root — this glob-scoped rule handles the sub-path.
+  //
+  // ESLint flat config replaces `no-restricted-imports` rather than merging,
+  // so the MatIcon ban from the block above is replicated here verbatim
+  // (with `KookioIconComponent` itself ignored, same as the upstream block).
+  {
+    files: [
+      'apps/web/src/app/**/*.{ts,tsx}',
+      'libs/feature/**/*.{ts,tsx}',
+      'libs/shared/ui/**/*.{ts,tsx}',
+      'libs/core/security/**/*.{ts,tsx}',
+    ],
+    ignores: ['libs/shared/ui/src/lib/components/icon/icon.component.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@kookio/prisma-client/server',
+              message:
+                'Server-only Prisma surface — frontend code must use `@kookio/prisma-client` (types + zod schemas) and route data access through tRPC.',
+            },
+            {
+              name: '@angular/material/icon',
+              importNames: ['MatIconModule', 'MatIcon'],
+              message:
+                'Use <kookio-icon name="..." /> from @kookio/shared-ui instead. Only icon.component.ts may import these directly. MatIconRegistry is allowed.',
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Angular TypeScript files: enable @angular-eslint recommended rules and
   // run inline templates through the angular-template parser/processor so
   // template-targeted rules apply to `template:` blocks too.

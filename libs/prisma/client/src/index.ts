@@ -1,4 +1,8 @@
-export * from './lib/prisma-client';
+// `lib/prisma-client.ts` is intentionally NOT re-exported here. The Prisma
+// client instance + retry helpers live behind `@kookio/prisma-client/server`
+// so a runtime import of the root barrel from the browser cannot drag in
+// `Prisma.defineExtension` (which throws on hydration). This barrel is
+// browser-safe by construction: types + zod schemas only.
 export * from './prisma-zod-generator/schemas/index';
 // !! -- Named re-exports shadow the wildcard above — keep this order -- !!
 export {

@@ -1,4 +1,5 @@
-import { prisma, type UtensilMock } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
+import type { UtensilMock } from '@kookio/prisma-client';
 
 import { logger } from './seed-helpers';
 

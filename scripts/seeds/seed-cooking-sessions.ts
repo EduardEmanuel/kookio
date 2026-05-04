@@ -1,4 +1,4 @@
-import { prisma } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
 import {
   createMockCookingSession,
   resetCookingSessionCounter,

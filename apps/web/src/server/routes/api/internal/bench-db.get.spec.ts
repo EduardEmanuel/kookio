@@ -59,7 +59,7 @@ vi.mock('h3', () => {
 
   return { getHeader, setHeader, getQuery, eventHandler, createError };
 });
-vi.mock('@kookio/prisma-client', () => ({ prisma: prismaMock }));
+vi.mock('@kookio/prisma-client/server', () => ({ prisma: prismaMock }));
 vi.mock('@server/infra/redis', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@server/infra/redis')>();
   return {

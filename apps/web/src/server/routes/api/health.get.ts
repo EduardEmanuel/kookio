@@ -1,6 +1,6 @@
 import { defineEventHandler } from 'h3';
 
-import { prisma } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
 
 export default defineEventHandler(async () => {
   let db: 'ok' | 'down' = 'down';

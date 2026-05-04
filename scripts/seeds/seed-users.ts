@@ -1,9 +1,5 @@
-import {
-  prisma,
-  RoleSchema,
-  type Role,
-  type UserSeeded,
-} from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
+import { RoleSchema, type Role, type UserSeeded } from '@kookio/prisma-client';
 import { getAdminAuth } from '@kookio/server-auth';
 
 import { logger } from './seed-helpers';

@@ -1,5 +1,6 @@
 // context.ts
-import { prisma, type AuthSession } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
+import type { AuthSession } from '@kookio/prisma-client';
 
 export type Context = {
   token?: string;

@@ -1,4 +1,5 @@
-import { prisma, type UserMock } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
+import type { UserMock } from '@kookio/prisma-client';
 import { createMockUserProfile } from '@kookio/shared-mock';
 
 import { logger } from './seed-helpers';

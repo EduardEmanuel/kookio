@@ -1,8 +1,5 @@
-import {
-  prisma,
-  MealSlotTypeSchema,
-  type MealPlanMock,
-} from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
+import { MealSlotTypeSchema, type MealPlanMock } from '@kookio/prisma-client';
 import {
   createMockMealPlanSlot,
   resetMealPlanCounter,

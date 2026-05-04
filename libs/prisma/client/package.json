@@ -9,6 +9,10 @@
     ".": {
       "types": "./src/index.d.ts",
       "default": "./src/index.cjs"
+    },
+    "./server": {
+      "types": "./src/server.d.ts",
+      "default": "./src/server.cjs"
     }
   },
   "sideEffects": false,

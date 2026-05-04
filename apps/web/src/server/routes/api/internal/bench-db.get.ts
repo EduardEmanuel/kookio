@@ -1,6 +1,6 @@
 import { eventHandler, getHeader, getQuery, createError } from 'h3';
 
-import { prisma } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
 
 import { h3ApplyRateLimit } from '../../../infra/rate-limit';
 import { getRedis } from '../../../infra/redis';

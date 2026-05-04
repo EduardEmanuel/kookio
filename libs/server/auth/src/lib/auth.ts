@@ -1,7 +1,8 @@
 import { cert, getApp, getApps, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 
-import { prisma, type AuthSession } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
+import type { AuthSession } from '@kookio/prisma-client';
 import { createAudit, createLogger } from '@kookio/server-logger';
 
 const log = createLogger('trpc', { service: 'server-auth' });

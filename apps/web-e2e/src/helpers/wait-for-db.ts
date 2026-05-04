@@ -1,4 +1,4 @@
-import { prisma } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
 import { logger } from '@kookio/server-logger';
 
 export const waitForDbReady = async (tries = 6, baseDelayMs = 300) => {

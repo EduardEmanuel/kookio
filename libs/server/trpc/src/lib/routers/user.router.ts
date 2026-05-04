@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 
+import { paginate } from '@kookio/prisma-client/server';
 import {
-  paginate,
   UserCreateManySchema,
   UserCreateOneSchema,
   UserDeleteManySchema,

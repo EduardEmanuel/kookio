@@ -4,11 +4,11 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-import {
-  prisma,
-  type IngredientCatalogSeedRow,
-  type MealAreaSeedRow,
-  type MealCategorySeedRow,
+import { prisma } from '@kookio/prisma-client/server';
+import type {
+  IngredientCatalogSeedRow,
+  MealAreaSeedRow,
+  MealCategorySeedRow,
 } from '@kookio/prisma-client';
 
 import { logger } from './seed-helpers';

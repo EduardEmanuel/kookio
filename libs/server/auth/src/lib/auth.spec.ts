@@ -14,7 +14,7 @@ vi.mock('firebase-admin/auth', () => ({
   getAuth: () => ({ verifyIdToken }),
 }));
 
-vi.mock('@kookio/prisma-client', () => ({
+vi.mock('@kookio/prisma-client/server', () => ({
   prisma: {
     user: {
       findUnique: (...args: unknown[]) => findUnique(...args),

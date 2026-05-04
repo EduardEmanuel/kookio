@@ -1,5 +1,5 @@
 // Central seed orchestrator: admin → catalog → recipes → Tier 2 → Tier 3
-import { prisma } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
 import {
   devDietaryRestrictions,
   devMealPlans,

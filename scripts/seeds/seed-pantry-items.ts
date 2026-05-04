@@ -1,4 +1,5 @@
-import { prisma, MeasureUnitSchema } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
+import { MeasureUnitSchema } from '@kookio/prisma-client';
 
 import { logger } from './seed-helpers';
 

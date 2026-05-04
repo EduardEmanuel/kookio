@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 
-import { prisma } from '@kookio/prisma-client';
+import { prisma } from '@kookio/prisma-client/server';
 import { TRPC_PATH, TRPC_TRANSFORMER } from '@kookio/server-trpc/configs';
 import type { AppRouter } from '@kookio/server-trpc/types';
 

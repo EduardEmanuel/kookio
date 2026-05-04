@@ -1,7 +1,7 @@
 const prismaMock = vi.hoisted(() => ({ $queryRaw: vi.fn() }));
 
 vi.mock('h3', () => ({ defineEventHandler: (fn: any) => fn }));
-vi.mock('@kookio/prisma-client', () => ({ prisma: prismaMock }));
+vi.mock('@kookio/prisma-client/server', () => ({ prisma: prismaMock }));
 
 import handler from './health.get';
 
