@@ -62,6 +62,28 @@ export const RecipeFeedPageSchema = z.object({
 });
 export type RecipeFeedPage = z.output<typeof RecipeFeedPageSchema>;
 
+export const RecipeMatchLevelSchema = z.enum(['A', 'B', 'C']);
+export type RecipeMatchLevel = z.output<typeof RecipeMatchLevelSchema>;
+
+const RecipeMatchInfoSchema = z.object({
+  missingCount: z.number().int().min(0),
+  totalIngredients: z.number().int().min(0),
+  missingNames: z.array(z.string()),
+});
+export type RecipeMatchInfo = z.output<typeof RecipeMatchInfoSchema>;
+
+export const RecipeMatchItemSchema = RecipeFeedItemSchema.extend({
+  matchInfo: RecipeMatchInfoSchema,
+});
+export type RecipeMatchItem = z.output<typeof RecipeMatchItemSchema>;
+
+export const RecipeMatchPageSchema = z.object({
+  items: z.array(RecipeMatchItemSchema),
+  nextCursor: z.string().nullable(),
+  partialScan: z.boolean(),
+});
+export type RecipeMatchPage = z.output<typeof RecipeMatchPageSchema>;
+
 const RecipeDetailIngredientCatalogSchema = IngredientCatalogModelSchema.pick({
   id: true,
   name: true,

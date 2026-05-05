@@ -3,16 +3,35 @@ import z from 'zod';
 import {
   RecipeDetailSchema,
   RecipeFeedPageSchema,
+  RecipeMatchLevelSchema,
+  RecipeMatchPageSchema,
   UuidIdSchema,
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
 
-import { procedure, router, TRPCError } from '../trpc';
+import { onboardedProcedure } from '../../middlewares/auth';
+import { procedure, router, TRPCError } from '../../trpc';
+import { fetchAllRecipesPage, scanForMatches } from './recipes.match';
+import { buildPantryMap } from './recipes.match.helpers';
 
 const log = createLogger('trpc', { router: 'recipes' });
 
 const FEED_DEFAULT_LIMIT = 20;
 const FEED_MAX_LIMIT = 50;
+
+const MATCH_DEFAULT_LIMIT = 20;
+const MATCH_MAX_LIMIT = 50;
+
+const MatchInputSchema = z.object({
+  level: RecipeMatchLevelSchema,
+  cursor: UuidIdSchema.optional(),
+  limit: z
+    .number()
+    .int()
+    .min(1)
+    .max(MATCH_MAX_LIMIT)
+    .default(MATCH_DEFAULT_LIMIT),
+});
 
 const FeedInputSchema = z.object({
   cursor: UuidIdSchema.optional(),
@@ -138,5 +157,57 @@ export const recipes = router({
       }
 
       return recipe;
+    }),
+
+  /**
+   * Onboarded — progressive A/B/C match against the caller's pantry.
+   *  - A: every non-staple ingredient is already in the pantry.
+   *  - B: 1 to 3 ingredients are missing — the "almost there" bucket.
+   *  - C: every PUBLIC recipe, identical pagination shape to feed but with
+   *       enriched matchInfo for the UI.
+   *
+   * Levels A and B use a budgeted scan (`scanForMatches`) because the level
+   * filter is post-DB; level C bypasses the loop and runs a single query for
+   * efficiency. See `recipes.match.ts` for cursor + budget semantics.
+   */
+  match: onboardedProcedure
+    .input(MatchInputSchema)
+    .output(RecipeMatchPageSchema)
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.session!.uid;
+
+      try {
+        const pantryRows = await ctx.prisma.pantryItem.findMany({
+          where: { userId },
+          select: { ingredientCatalogId: true, quantity: true, unit: true },
+        });
+        const pantryMap = buildPantryMap(pantryRows);
+
+        if (input.level === 'C') {
+          return await fetchAllRecipesPage({
+            prisma: ctx.prisma,
+            pantryMap,
+            input: { cursor: input.cursor, limit: input.limit },
+          });
+        }
+
+        return await scanForMatches({
+          prisma: ctx.prisma,
+          pantryMap,
+          userId,
+          input: {
+            level: input.level,
+            cursor: input.cursor,
+            limit: input.limit,
+          },
+        });
+      } catch (err) {
+        log.error({ err, userId, input }, 'recipes.match failed');
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to match recipes against pantry',
+          cause: err,
+        });
+      }
     }),
 });
