@@ -23,6 +23,11 @@
   --color-expiry-soon: var(--md-sys-color-primary);
   --color-expiry-expired: var(--md-sys-color-error);
 
+  /* Food domain — recipe match level */
+  --color-match-complete: var(--md-sys-color-tertiary);
+  --color-match-almost: var(--md-sys-color-primary);
+  --color-match-browse: var(--md-sys-color-outline-variant);
+
   /* Spacing */
   --space-2xs: 2px;
   --space-xs: 4px;

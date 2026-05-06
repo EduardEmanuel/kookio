@@ -1,8 +1,12 @@
 @if (items().length === 0 && !isLoading() && !hasError()) {
-  <div class="recipes-feed__empty">
-    <kookio-icon name="restaurant_menu" />
-    <p class="recipes-feed__empty-text">No recipes available yet.</p>
-  </div>
+  @if (emptyTemplate(); as tpl) {
+    <ng-container *ngTemplateOutlet="tpl" />
+  } @else {
+    <div class="recipes-feed__empty">
+      <kookio-icon name="restaurant_menu" />
+      <p class="recipes-feed__empty-text">No recipes available yet.</p>
+    </div>
+  }
 } @else if (items().length === 0 && hasError()) {
   <div class="recipes-feed__empty">
     <kookio-icon name="error" />
@@ -25,7 +29,15 @@
       "
       class="recipes-feed__item"
     >
-      <kookio-recipe-card [recipe]="recipe" />
+      @if (itemTemplate(); as tpl) {
+        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: recipe }" />
+      } @else {
+        <!-- Default render path is reached only when itemTemplate is unset,
+             which by the component's contract means the source produces
+             RecipeFeedItem. The cast suppresses the generic-narrowing
+             warning the template compiler raises when TItem is unknown. -->
+        <kookio-recipe-card [recipe]="$any(recipe)" />
+      }
     </div>
 
     @if (isLoading()) {

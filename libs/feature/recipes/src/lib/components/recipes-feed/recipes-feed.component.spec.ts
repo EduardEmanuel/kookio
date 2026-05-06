@@ -1,13 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import {
+  Component,
+  provideZonelessChangeDetection,
+  signal,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 
 import type { RecipeFeedItem, RecipeFeedPage } from '@kookio/prisma-client';
 
 import { buildRecipesTrpcMock } from '../../testing/build-trpc-mock';
 import { RECIPES_TRPC } from '../../recipes-trpc';
-import { RecipesFeedComponent } from './recipes-feed.component';
+import { type FeedPage, RecipesFeedComponent } from './recipes-feed.component';
 
 const makeRecipe = (id: string, title = `Recipe ${id}`): RecipeFeedItem => ({
   id,
@@ -293,6 +298,180 @@ describe('RecipesFeedComponent', () => {
       expect(queryMock).toHaveBeenCalledTimes(2);
       expect(c.items().length).toBe(1);
       expect(c.hasError()).toBe(false);
+    });
+  });
+
+  describe('custom source', () => {
+    it('invokes the source function and skips the default tRPC query', async () => {
+      const customSource = vi
+        .fn()
+        .mockReturnValue(of(makePage(['a', 'b']) as FeedPage<RecipeFeedItem>));
+      const trpc = buildRecipesTrpcMock({ feed: makePage([], null) });
+
+      await TestBed.configureTestingModule({
+        imports: [RecipesFeedComponent],
+        providers: [
+          provideZonelessChangeDetection(),
+          provideRouter([]),
+          { provide: RECIPES_TRPC, useValue: trpc },
+        ],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(RecipesFeedComponent);
+      fixture.componentRef.setInput('source', customSource);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      await flush();
+      fixture.detectChanges();
+
+      expect(customSource).toHaveBeenCalledTimes(1);
+      expect(customSource).toHaveBeenCalledWith(null, expect.any(Number));
+      expect(trpc.recipes.feed.query).not.toHaveBeenCalled();
+
+      const c = fixture.componentInstance as unknown as {
+        items: () => RecipeFeedItem[];
+      };
+      expect(c.items().map((i) => i.id)).toEqual(['a', 'b']);
+    });
+  });
+
+  describe('resetKey', () => {
+    it('clears items and refetches when the key changes', async () => {
+      // First page (initial fetch) and a different page after the reset.
+      const customSource = vi
+        .fn<
+          (
+            cursor: string | null,
+            limit: number,
+          ) => ReturnType<typeof of<FeedPage<RecipeFeedItem>>>
+        >()
+        .mockReturnValueOnce(of(makePage(['1', '2'], null)))
+        .mockReturnValueOnce(of(makePage(['9'], null)));
+
+      await TestBed.configureTestingModule({
+        imports: [RecipesFeedComponent],
+        providers: [
+          provideZonelessChangeDetection(),
+          provideRouter([]),
+          {
+            provide: RECIPES_TRPC,
+            useValue: buildRecipesTrpcMock({ feed: makePage([], null) }),
+          },
+        ],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(RecipesFeedComponent);
+      fixture.componentRef.setInput('source', customSource);
+      fixture.componentRef.setInput('resetKey', 'A');
+      fixture.detectChanges();
+      await fixture.whenStable();
+      await flush();
+      fixture.detectChanges();
+
+      const c = fixture.componentInstance as unknown as {
+        items: () => RecipeFeedItem[];
+      };
+      expect(c.items().map((i) => i.id)).toEqual(['1', '2']);
+      expect(customSource).toHaveBeenCalledTimes(1);
+
+      // Change resetKey — effect must clear and refetch.
+      fixture.componentRef.setInput('resetKey', 'B');
+      fixture.detectChanges();
+      await fixture.whenStable();
+      await flush();
+      fixture.detectChanges();
+
+      expect(customSource).toHaveBeenCalledTimes(2);
+      // Items are replaced (not appended) on reset.
+      expect(c.items().map((i) => i.id)).toEqual(['9']);
+    });
+  });
+
+  describe('custom templates', () => {
+    @Component({
+      imports: [RecipesFeedComponent],
+      template: `
+        <kookio-recipes-feed [emptyTemplate]="emptyTpl" />
+        <ng-template #emptyTpl>
+          <div data-testid="custom-empty">CUSTOM-EMPTY</div>
+        </ng-template>
+      `,
+    })
+    class HostWithEmptyTpl {}
+
+    @Component({
+      imports: [RecipesFeedComponent],
+      template: `
+        <kookio-recipes-feed
+          [source]="src"
+          [itemTemplate]="itemTpl"
+          [resetKey]="key()"
+        />
+        <ng-template #itemTpl let-it>
+          <div data-testid="custom-item">CUSTOM-{{ it.id }}</div>
+        </ng-template>
+      `,
+    })
+    class HostWithItemTpl {
+      protected readonly key = signal(0);
+      protected readonly src = (): ReturnType<
+        typeof of<FeedPage<RecipeFeedItem>>
+      > => of(makePage(['x', 'y'], null));
+    }
+
+    it('renders emptyTemplate when items are empty and no error', async () => {
+      await TestBed.configureTestingModule({
+        imports: [HostWithEmptyTpl],
+        providers: [
+          provideZonelessChangeDetection(),
+          provideRouter([]),
+          {
+            provide: RECIPES_TRPC,
+            useValue: buildRecipesTrpcMock({ feed: makePage([], null) }),
+          },
+        ],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(HostWithEmptyTpl);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      await flush();
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('[data-testid="custom-empty"]')).toBeTruthy();
+      // Default empty content must not render alongside the custom one.
+      expect(el.textContent).not.toContain('No recipes available yet');
+    });
+
+    it('renders itemTemplate for each item instead of the default card', async () => {
+      await TestBed.configureTestingModule({
+        imports: [HostWithItemTpl],
+        providers: [
+          provideZonelessChangeDetection(),
+          provideRouter([]),
+          {
+            provide: RECIPES_TRPC,
+            useValue: buildRecipesTrpcMock({ feed: makePage([], null) }),
+          },
+        ],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(HostWithItemTpl);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      await flush();
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      // Virtual scroll renders only the items inside the visible viewport
+      // (commonly just one in jsdom, where the viewport has no real height),
+      // so the assertion targets the template choice rather than the count.
+      const firstCustomItem = el.querySelector('[data-testid="custom-item"]');
+      expect(firstCustomItem).toBeTruthy();
+      expect(firstCustomItem?.textContent?.trim()).toMatch(/^CUSTOM-/);
+      // Default card must not appear when itemTemplate is provided.
+      expect(el.querySelector('kookio-recipe-card')).toBeNull();
     });
   });
 });
