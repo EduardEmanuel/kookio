@@ -1,6 +1,10 @@
 import { InjectionToken } from '@angular/core';
 
-import type { RecipeFeedPage } from '@kookio/prisma-client';
+import type {
+  RecipeFeedPage,
+  RecipeMatchLevel,
+  RecipeMatchPage,
+} from '@kookio/prisma-client';
 
 /**
  * Input shape for `recipes.feed`. Mirrors the server contract (cursor + limit
@@ -14,11 +18,24 @@ export interface RecipesFeedInput {
   areaId?: string;
 }
 
-/** Minimal tRPC surface required by the feed UI. */
+/**
+ * Input shape for `recipes.match`. Mirrors the server contract: level is
+ * required, cursor + limit follow the same pagination convention as feed.
+ */
+export interface RecipesMatchInput {
+  level: RecipeMatchLevel;
+  cursor?: string;
+  limit?: number;
+}
+
+/** Minimal tRPC surface required by the recipes UI. */
 export interface RecipesTrpcClient {
   recipes: {
     feed: {
       query(input?: RecipesFeedInput): Promise<RecipeFeedPage>;
+    };
+    match: {
+      query(input: RecipesMatchInput): Promise<RecipeMatchPage>;
     };
   };
 }

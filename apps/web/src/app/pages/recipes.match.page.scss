@@ -1,0 +1,63 @@
+.match-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-md);
+
+  @media (min-width: 768px) {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+  }
+
+  &__title {
+    margin: 0 0 var(--space-md);
+    font-family: var(--font-display);
+    color: var(--color-on-surface);
+  }
+
+  &__levels {
+    display: inline-flex;
+    flex-wrap: wrap;
+    margin-bottom: var(--space-md);
+  }
+
+  &__hint {
+    margin: 0;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 0.95rem;
+  }
+
+  // Lets the cursor-paginated feed grow to fill the remaining viewport so
+  // virtual scrolling has a real height to bind to.
+  &__feed {
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  &__empty-text {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  &__empty-hint {
+    margin: 0;
+    color: var(--md-sys-color-on-surface-variant);
+    max-width: 32ch;
+  }
+}

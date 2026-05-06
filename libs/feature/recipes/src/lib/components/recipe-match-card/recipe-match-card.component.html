@@ -1,0 +1,75 @@
+<a
+  class="match-card"
+  [class.match-card--complete]="isComplete()"
+  [class.match-card--almost]="isAlmost()"
+  [class.match-card--browse]="isBrowse()"
+  [routerLink]="recipeUrl()"
+  [attr.aria-label]="ariaLabel()"
+>
+  <mat-card class="match-card__card" appearance="outlined">
+    @if (item().imageUrl; as img) {
+      <img
+        mat-card-image
+        class="match-card__image"
+        [src]="img"
+        [alt]="item().title"
+        loading="lazy"
+      />
+    }
+
+    @if (isComplete() || isAlmost()) {
+      <div class="match-card__badge" aria-hidden="true">
+        @if (isComplete()) {
+          <kookio-icon name="check_circle" [size]="16" />
+          <span>Ready to cook</span>
+        } @else {
+          <kookio-icon name="warning" [size]="16" />
+          <span>Missing {{ item().matchInfo.missingCount }}</span>
+        }
+      </div>
+    }
+
+    <mat-card-content class="match-card__content">
+      <h3 class="match-card__title">{{ item().title }}</h3>
+
+      @if (!isComplete() && item().matchInfo.missingNames.length > 0) {
+        <p class="match-card__missing">Missing: {{ formattedMissing() }}</p>
+      }
+
+      @if (item().category || item().area) {
+        <div class="match-card__meta">
+          @if (item().category; as cat) {
+            <mat-chip class="match-card__chip" disableRipple>
+              @if (cat.emoji) {
+                <kookio-emoji [char]="cat.emoji" [size]="16" />
+              }
+              {{ cat.name }}
+            </mat-chip>
+          }
+          @if (item().area; as area) {
+            <mat-chip class="match-card__chip" disableRipple>
+              @if (area.flag) {
+                <kookio-emoji [char]="area.flag" [size]="16" />
+              }
+              {{ area.name }}
+            </mat-chip>
+          }
+        </div>
+      }
+    </mat-card-content>
+
+    @if (isComplete()) {
+      <mat-card-actions class="match-card__actions">
+        <button
+          matButton="filled"
+          type="button"
+          (click)="onCookNow($event)"
+          aria-label="Cook this recipe now"
+        >
+          <kookio-icon name="restaurant" />
+          Cook now
+        </button>
+      </mat-card-actions>
+    }
+  </mat-card>
+</a>

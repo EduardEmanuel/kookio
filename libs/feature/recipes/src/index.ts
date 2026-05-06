@@ -1,4 +1,5 @@
 export { RecipeCardComponent } from './lib/components/recipe-card/recipe-card.component';
+export { RecipeMatchCardComponent } from './lib/components/recipe-match-card/recipe-match-card.component';
 export {
   RecipesFeedComponent,
   type FeedPage,
@@ -7,5 +8,6 @@ export {
 export {
   RECIPES_TRPC,
   type RecipesFeedInput,
+  type RecipesMatchInput,
   type RecipesTrpcClient,
 } from './lib/recipes-trpc';

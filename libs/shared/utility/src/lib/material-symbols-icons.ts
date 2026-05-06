@@ -22,6 +22,7 @@ export const MATERIAL_SYMBOLS_ICONS = [
   'bookmark',
   'calendar_today',
   'check',
+  'check_circle',
   'chevron_left',
   'chevron_right',
   'clear',
