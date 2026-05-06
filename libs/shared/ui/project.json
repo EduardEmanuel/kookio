@@ -33,9 +33,6 @@
         "commands": [
           {
             "command": "cat libs/shared/ui/src/styles/_tokens.scss libs/shared/ui/src/styles/_m3-light.scss libs/shared/ui/src/styles/_m3-dark.scss libs/shared/ui/src/styles/_m3-light-mc.scss libs/shared/ui/src/styles/_m3-light-hc.scss libs/shared/ui/src/styles/_m3-dark-mc.scss libs/shared/ui/src/styles/_m3-dark-hc.scss > apps/web/src/styles/kookio-tokens.css"
-          },
-          {
-            "command": "cat libs/shared/ui/src/styles/_material-overrides.scss > apps/web/src/styles/kookio-material.css"
           }
         ]
       }
