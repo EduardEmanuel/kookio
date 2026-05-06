@@ -1,25 +1,10 @@
-import {
-  MeasureUnitSchema,
-  type MeasureUnit,
-  type RecipeFeedItem,
-  type RecipeMatchInfo,
-  type RecipeMatchLevel,
+import type {
+  MeasureUnit,
+  RecipeFeedItem,
+  RecipeMatchInfo,
+  RecipeMatchLevel,
 } from '@kookio/prisma-client';
-
-const Unit = MeasureUnitSchema.enum;
-
-/**
- * Recipe-ingredient units that bypass the pantry check. These cover kitchen
- * staples (sare, piper, garnish) that users are assumed to have on hand;
- * counting them as "missing" would knock real candidates out of the A bucket
- * for trivial reasons.
- */
-export const NEGLIGIBLE_UNITS: ReadonlySet<MeasureUnit> = new Set([
-  Unit.TO_TASTE,
-  Unit.TO_SERVE,
-  Unit.GARNISH,
-  Unit.PINCH,
-]);
+import { NEGLIGIBLE_MEASURE_UNITS } from '@kookio/shared-utility';
 
 const MAX_MISSING_NAMES = 3;
 
@@ -67,7 +52,7 @@ export const enrichWithMatchInfo = (
   let missingCount = 0;
 
   for (const ri of recipe.ingredients) {
-    if (ri.unit !== null && NEGLIGIBLE_UNITS.has(ri.unit)) continue;
+    if (ri.unit !== null && NEGLIGIBLE_MEASURE_UNITS.has(ri.unit)) continue;
     if (pantryMap.has(ri.ingredient.id)) continue;
 
     missingCount += 1;

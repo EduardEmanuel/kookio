@@ -326,33 +326,36 @@ const UpdateProfileSchema = UserUpdateInputSchema.pick({
 ### Browser-safe imports
 
 The root barrel `@kookio/prisma-client` is **browser-safe by construction**:
-it exposes types + zod schemas only. The Prisma client instance and
-`Prisma.defineExtension` (which throws on hydration in the browser) live
-behind the `@kookio/prisma-client/server` sub-path.
+it exposes types + zod schemas only. The Prisma client instance lives behind
+the `@kookio/prisma-client/server` sub-path, and ESLint blocks frontend libs
+from importing it.
 
 Rules for any code that ships to the browser (pages, components, stores,
 guards — anything in `apps/web/src/app/**`, `libs/feature/**`,
 `libs/shared/ui/**`, `libs/core/security/**`):
 
-- Import **types only** from the root barrel: `import type { ... }`. Even
-  if a name happens to be a type-only export today, the bare `import { X }`
-  form keeps the source as a side-effect import and evaluates the entire
-  barrel.
+- Use `import type { ... }` for type-only imports — types erase at compile
+  time, runtime imports don't. A bare `import { X }` for a name that happens
+  to be a type today drags the source module into the build for nothing.
 - Never reach for `@kookio/prisma-client/server`. ESLint enforces this with
   a glob-scoped `no-restricted-imports` rule.
-- For **runtime enum values** in UI code (e.g. building a `mat-select`
-  option list), do **not** import the generated zod enum (`MeasureUnitSchema`,
-  `IngredientCategorySchema`, …). Hardcode the array locally with a
-  `satisfies readonly EnumType[]` assertion plus an exhaustive
-  `Record<EnumType, X>` map next to it — the record's exhaustiveness check
-  fails compilation if the schema enum gains/renames a value, which is the
-  safety net that makes the duplication tolerable.
+- For **runtime enum values** in UI code (e.g. a `mat-select` option list),
+  use the generated zod schema's `.options` for the array. The schema is
+  the source of truth, so the array cannot drift. Centralise the import in
+  a shared module (`@kookio/shared-utility`, a feature-domain util) so the
+  `@kookio/prisma-client` runtime dependency stays at one well-known import
+  site rather than spreading across every component file.
+- Pair the array with an exhaustive `Record<EnumType, X>` for any labels,
+  policies, or per-value config. The record's exhaustiveness check is the
+  schema-change canary — if a value is added or renamed, the record fails
+  compilation until updated.
 
 ```typescript
-// libs/feature/pantry/src/lib/utils/measure-unit-label.ts
-import type { MeasureUnit } from '@kookio/prisma-client';
+// libs/shared/utility/src/lib/labeling/measure-unit-labels.ts
+import { MeasureUnitSchema, type MeasureUnit } from '@kookio/prisma-client';
 
-export const MEASURE_UNITS = ['G', 'KG', 'ML', 'L', 'TSP', 'TBSP' /* ... */] as const satisfies readonly MeasureUnit[];
+// Pinned to the schema — cannot drift.
+export const MEASURE_UNITS = MeasureUnitSchema.options;
 
 // Exhaustive record — schema rename breaks compilation here:
 export const MEASURE_UNIT_LABEL: Record<MeasureUnit, string> = {
@@ -362,24 +365,15 @@ export const MEASURE_UNIT_LABEL: Record<MeasureUnit, string> = {
 };
 ```
 
-**Smoke test if the rule slipped past lint** (Playwright with `pageerror`
-listener):
-
-```js
-// node ./probe.mjs
-import { chromium } from 'playwright';
-const browser = await chromium.launch();
-const page = await browser.newContext().then((c) => c.newPage());
-page.on('pageerror', (e) => console.log('PAGE-ERROR:', e.message));
-page.on('console', (m) => m.type() === 'error' && console.log('ERR:', m.text()));
-await page.goto('http://localhost:4200/<route>', { waitUntil: 'commit' });
-await page.waitForTimeout(15_000);
-console.log('final url:', page.url());
-await browser.close();
-```
-
-Anything mentioning `Prisma.defineExtension` or `Failed to fetch dynamically
-imported module` in the output points at this exact failure mode.
+**Why not hardcode the array** (the rule we used to apply): the original
+concern was that `import { MeasureUnitSchema }` from `@kookio/prisma-client`
+would drag the Prisma client into the browser bundle and crash on hydration
+via `Prisma.defineExtension`. The `/server` sub-path split eliminated that
+failure mode structurally — the root barrel does not re-export the client
+instance, ESLint blocks the `/server` path from frontend code, and the
+remaining cost (one zod schema definition's worth of module evaluation) is
+small enough that paying it once in a shared util is preferable to a
+hand-maintained duplicate of the schema's enum values.
 
 ### Validation strictness mirrors data reality
 

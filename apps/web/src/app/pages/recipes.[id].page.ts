@@ -16,8 +16,8 @@ import { map } from 'rxjs';
 import { injectLoad, type RouteMeta } from '@analogjs/router';
 
 import { AuthStore } from '@kookio/feature-auth';
-import type { MeasureUnit } from '@kookio/prisma-client';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
+import { formatMeasureUnit } from '@kookio/shared-utility';
 
 import type { load } from './recipes.[id].server';
 
@@ -26,27 +26,6 @@ export const routeMeta: RouteMeta = {
   // title once the loader data is in. Keeps the tab title sensible if the
   // component fails to bootstrap.
   title: 'Recipe — Kookio',
-};
-
-const MEASURE_UNIT_LABEL: Record<MeasureUnit, string> = {
-  G: 'g',
-  KG: 'kg',
-  ML: 'ml',
-  L: 'l',
-  TSP: 'tsp',
-  TBSP: 'tbsp',
-  CUP: 'cup',
-  OZ: 'oz',
-  LB: 'lb',
-  PIECE: '',
-  SLICE: 'slice',
-  CLOVE: 'clove',
-  BUNCH: 'bunch',
-  PINCH: 'pinch',
-  TO_TASTE: 'to taste',
-  TO_SERVE: 'to serve',
-  GARNISH: 'garnish',
-  OTHER: '',
 };
 
 @Component({
@@ -91,8 +70,7 @@ export default class RecipeDetailPage {
     });
   }
 
-  protected readonly formatUnit = (unit: MeasureUnit | null): string =>
-    unit ? (MEASURE_UNIT_LABEL[unit] ?? '') : '';
+  protected readonly formatUnit = formatMeasureUnit;
 
   protected readonly formatQuantity = (qty: number | null): string =>
     qty == null ? '' : String(qty);

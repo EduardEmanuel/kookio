@@ -8,4 +8,3 @@ export * from './lib/components/pantry-form/pantry-form.component';
 export * from './lib/components/pantry-item/pantry-item.component';
 export * from './lib/store/pantry.store';
 export * from './lib/utils/expiration';
-export * from './lib/utils/measure-unit-label';

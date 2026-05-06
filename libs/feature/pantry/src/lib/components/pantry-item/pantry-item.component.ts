@@ -9,8 +9,8 @@ import { MatButtonModule } from '@angular/material/button';
 
 import type { PantryItemWithIngredient } from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
+import { formatMeasureUnit } from '@kookio/shared-utility';
 
-import { formatMeasureUnit } from '../../utils/measure-unit-label';
 import {
   getExpirationLabel,
   getExpirationStatus,

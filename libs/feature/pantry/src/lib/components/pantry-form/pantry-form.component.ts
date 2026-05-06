@@ -38,12 +38,9 @@ import type {
   IngredientSearchResult,
   MeasureUnit,
 } from '@kookio/prisma-client';
+import { MEASURE_UNIT_LABEL, MEASURE_UNITS } from '@kookio/shared-utility';
 
 import { PANTRY_TRPC } from '../../pantry-trpc';
-import {
-  MEASURE_UNIT_LABEL,
-  MEASURE_UNITS,
-} from '../../utils/measure-unit-label';
 
 const SEARCH_DEBOUNCE_MS = 300;
 const SEARCH_MIN_LENGTH = 2;

@@ -23,6 +23,7 @@ import { AUTH_TRPC, FIREBASE_OPTIONS } from '@kookio/feature-auth';
 import { ONBOARDING_TRPC } from '@kookio/feature-onboarding';
 import { PANTRY_TRPC } from '@kookio/feature-pantry/trpc';
 import { RECIPES_TRPC } from '@kookio/feature-recipes';
+import { COOKING_SESSION_TRPC } from '@kookio/feature-recipes/cooking-trpc';
 import { APP_TRPC } from '@kookio/feature-shell';
 
 import { provideTrpcClient, TrpcClientApp } from '../trpc-client';
@@ -49,6 +50,7 @@ export const appConfig: ApplicationConfig = {
     { provide: ONBOARDING_TRPC, useExisting: TrpcClientApp },
     { provide: PANTRY_TRPC, useExisting: TrpcClientApp },
     { provide: RECIPES_TRPC, useExisting: TrpcClientApp },
+    { provide: COOKING_SESSION_TRPC, useExisting: TrpcClientApp },
     {
       provide: FIREBASE_OPTIONS,
       useValue: {
