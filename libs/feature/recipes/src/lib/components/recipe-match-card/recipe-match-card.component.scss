@@ -47,6 +47,15 @@
     font-size: 0.85rem;
     font-weight: 600;
     line-height: 1.2;
+
+    // Shrink the wrapper from its default 24px to match the badge's
+    // typography. The wrapper exposes its own host metrics, so overriding
+    // them from the parent is the supported way to scale the icon.
+    kookio-icon {
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
+    }
   }
 
   &--complete &__badge {

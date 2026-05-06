@@ -20,10 +20,10 @@
     @if (isComplete() || isAlmost()) {
       <div class="match-card__badge" aria-hidden="true">
         @if (isComplete()) {
-          <kookio-icon name="check_circle" [size]="16" />
+          <kookio-icon name="check_circle" />
           <span>Ready to cook</span>
         } @else {
-          <kookio-icon name="warning" [size]="16" />
+          <kookio-icon name="warning" />
           <span>Missing {{ item().matchInfo.missingCount }}</span>
         }
       </div>
