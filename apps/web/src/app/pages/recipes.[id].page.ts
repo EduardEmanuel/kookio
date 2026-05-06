@@ -17,7 +17,7 @@ import { injectLoad, type RouteMeta } from '@analogjs/router';
 
 import { AuthStore } from '@kookio/feature-auth';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
-import { formatMeasureUnit } from '@kookio/shared-utility';
+import { formatMeasureUnit } from '@kookio/shared-utility/measure-units';
 
 import type { load } from './recipes.[id].server';
 

@@ -38,7 +38,10 @@ import type {
   IngredientSearchResult,
   MeasureUnit,
 } from '@kookio/prisma-client';
-import { MEASURE_UNIT_LABEL, MEASURE_UNITS } from '@kookio/shared-utility';
+import {
+  MEASURE_UNIT_LABEL,
+  MEASURE_UNITS,
+} from '@kookio/shared-utility/measure-units';
 
 import { PANTRY_TRPC } from '../../pantry-trpc';
 

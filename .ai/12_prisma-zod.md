@@ -342,9 +342,17 @@ guards — anything in `apps/web/src/app/**`, `libs/feature/**`,
 - For **runtime enum values** in UI code (e.g. a `mat-select` option list),
   use the generated zod schema's `.options` for the array. The schema is
   the source of truth, so the array cannot drift. Centralise the import in
-  a shared module (`@kookio/shared-utility`, a feature-domain util) so the
-  `@kookio/prisma-client` runtime dependency stays at one well-known import
-  site rather than spreading across every component file.
+  a single shared module (e.g. `libs/shared/utility/src/lib/labeling/measure-unit-labels.ts`)
+  so the `@kookio/prisma-client` runtime dependency stays at one well-known
+  import site rather than spreading across every component file.
+- **Do NOT expose that module through a wildcard barrel**
+  (`export * from './lib/labeling/measure-unit-labels'`). Wildcard re-exports
+  evaluate the source eagerly under Vite SSR dev, and the prisma-zod-generator
+  output (~2000 wildcard-re-exported schema files) walks slowly enough that
+  a barrel-exposed runtime schema import shows up as a route cold-start tax
+  on every page that imports anything from the barrel — even pages that do
+  not need the enum. Instead, register a sub-path alias and have the handful
+  of consumers that need the labels import from it explicitly.
 - Pair the array with an exhaustive `Record<EnumType, X>` for any labels,
   policies, or per-value config. The record's exhaustiveness check is the
   schema-change canary — if a value is added or renamed, the record fails
@@ -365,15 +373,42 @@ export const MEASURE_UNIT_LABEL: Record<MeasureUnit, string> = {
 };
 ```
 
+```jsonc
+// tsconfig.base.json — sub-path alias
+"@kookio/shared-utility/measure-units": [
+  "libs/shared/utility/src/lib/labeling/measure-unit-labels.ts"
+]
+```
+
+```typescript
+// callers — explicit sub-path import
+import { MEASURE_UNITS } from '@kookio/shared-utility/measure-units';
+```
+
+```typescript
+// libs/shared/utility/src/index.ts — keep `measure-unit-labels` OUT of the
+// wildcard barrel; only the labelers / urls / icon manifest go through the
+// barrel.
+export * from './lib/labeling/ingredient-labelers';
+export * from './lib/labeling/user-labelers';
+export * from './lib/material-symbols-icons';
+export * from './lib/urls';
+```
+
 **Why not hardcode the array** (the rule we used to apply): the original
 concern was that `import { MeasureUnitSchema }` from `@kookio/prisma-client`
 would drag the Prisma client into the browser bundle and crash on hydration
 via `Prisma.defineExtension`. The `/server` sub-path split eliminated that
 failure mode structurally — the root barrel does not re-export the client
 instance, ESLint blocks the `/server` path from frontend code, and the
-remaining cost (one zod schema definition's worth of module evaluation) is
-small enough that paying it once in a shared util is preferable to a
-hand-maintained duplicate of the schema's enum values.
+remaining cost is bounded by sub-pathing the consuming module so only the
+routes that need the enum data pay for it.
+
+**How this interacts with the wildcard-barrel rule above:** the
+`@kookio/shared-utility` barrel is wildcard-style for convenience (URLs,
+icon manifest, labelers — all pure-data leaves). The moment a leaf imports
+a runtime zod schema, the barrel inherits the schema graph's evaluation
+cost. Sub-pathing the leaf out of the barrel keeps the barrel cheap.
 
 ### Validation strictness mirrors data reality
 

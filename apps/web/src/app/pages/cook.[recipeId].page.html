@@ -1,0 +1,95 @@
+@let r = recipe();
+
+<div class="cook-page">
+  @if (phase() === 'setup') {
+  <section class="cook-setup">
+    <h1 class="cook-setup__title">{{ r.title }}</h1>
+    <p class="cook-setup__subtitle">How many servings?</p>
+
+    <mat-button-toggle-group
+      class="cook-setup__servings"
+      [value]="servings()"
+      (change)="setServings($event.value)"
+      aria-label="Servings"
+    >
+      @for (n of servingOptions; track n) {
+      <mat-button-toggle [value]="n">{{ n }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+
+    <p class="cook-setup__base">
+      Recipe is written for {{ recipeServings() }} servings.
+    </p>
+
+    <button
+      matButton="filled"
+      type="button"
+      class="cook-setup__cta"
+      [disabled]="isStarting()"
+      (click)="onStart()"
+    >
+      @if (isStarting()) {
+      <mat-spinner diameter="20" />
+      Starting… } @else {
+      <kookio-icon name="play_circle" />
+      Start cooking }
+    </button>
+  </section>
+  } @else {
+  <section class="cook-steps">
+    <header class="cook-steps__header">
+      <h1 class="cook-steps__title">{{ r.title }}</h1>
+      <p class="cook-steps__progress">
+        Step {{ currentStep() + 1 }} of {{ steps().length }}
+      </p>
+    </header>
+
+    <mat-stepper
+      class="cook-steps__stepper"
+      [selectedIndex]="currentStep()"
+      [linear]="false"
+      orientation="horizontal"
+    >
+      @for (step of steps(); track $index) {
+      <mat-step [label]="'Step ' + ($index + 1)" />
+      }
+    </mat-stepper>
+
+    <article class="cook-steps__current" [attr.aria-live]="'polite'">
+      <p class="cook-steps__text">{{ steps()[currentStep()] }}</p>
+    </article>
+
+    <footer class="cook-steps__footer">
+      <button
+        matButton="outlined"
+        type="button"
+        [disabled]="!canPrev()"
+        (click)="prevStep()"
+      >
+        <kookio-icon name="arrow_back" />
+        Previous
+      </button>
+
+      @if (canNext()) {
+      <button matButton="filled" type="button" (click)="nextStep()">
+        Next
+        <kookio-icon name="arrow_forward" />
+      </button>
+      } @else {
+      <button
+        matButton="filled"
+        type="button"
+        [disabled]="isCompleting()"
+        (click)="onFinish()"
+      >
+        @if (isCompleting()) {
+        <mat-spinner diameter="20" />
+        Saving… } @else {
+        <kookio-icon name="check" />
+        Done — confirm ingredients }
+      </button>
+      }
+    </footer>
+  </section>
+  }
+</div>

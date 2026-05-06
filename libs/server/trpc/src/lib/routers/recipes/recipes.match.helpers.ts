@@ -4,7 +4,7 @@ import type {
   RecipeMatchInfo,
   RecipeMatchLevel,
 } from '@kookio/prisma-client';
-import { NEGLIGIBLE_MEASURE_UNITS } from '@kookio/shared-utility';
+import { NEGLIGIBLE_MEASURE_UNITS } from '@kookio/shared-utility/measure-units';
 
 const MAX_MISSING_NAMES = 3;
 

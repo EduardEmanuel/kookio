@@ -33,6 +33,9 @@
       "@kookio/feature-recipes/cooking-trpc": [
         "libs/feature/recipes/src/lib/cooking-trpc.ts"
       ],
+      "@kookio/feature-recipes/ingredient-confirm-dialog": [
+        "libs/feature/recipes/src/lib/components/ingredient-confirm-dialog/ingredient-confirm-dialog.component.ts"
+      ],
       "@kookio/feature-recipes/testing": [
         "libs/feature/recipes/src/testing.ts"
       ],
@@ -47,6 +50,9 @@
       "@kookio/shared-mock": ["libs/shared/mock/src/index.ts"],
       "@kookio/shared-ui": ["libs/shared/ui/src/index.ts"],
       "@kookio/shared-utility": ["libs/shared/utility/src/index.ts"],
+      "@kookio/shared-utility/measure-units": [
+        "libs/shared/utility/src/lib/labeling/measure-unit-labels.ts"
+      ],
       "@server/*": ["apps/web/src/server/*"]
     }
   },

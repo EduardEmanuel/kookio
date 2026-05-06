@@ -1,0 +1,45 @@
+.dialog {
+  &__hint {
+    color: var(--mat-sys-on-surface-variant);
+    margin: 0 0 var(--space-md);
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    background: var(--mat-sys-surface-container-low);
+
+    &--disabled {
+      opacity: 0.65;
+    }
+  }
+
+  &__check {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__name {
+    font-weight: 500;
+  }
+
+  &__warn {
+    margin-left: 0.4rem;
+    color: var(--mat-sys-error);
+  }
+
+  &__qty {
+    flex: 0 0 130px;
+  }
+}

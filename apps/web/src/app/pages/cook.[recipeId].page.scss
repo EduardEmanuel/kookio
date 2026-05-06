@@ -1,0 +1,85 @@
+.cook-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-md);
+
+  @media (min-width: 768px) {
+    padding: var(--space-xl) var(--space-md);
+  }
+}
+
+.cook-setup {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-md);
+  padding: var(--space-2xl) 0;
+  text-align: center;
+
+  &__title {
+    font-family: var(--font-display);
+    margin: 0;
+  }
+
+  &__subtitle {
+    color: var(--mat-sys-on-surface-variant);
+    margin: 0;
+  }
+
+  &__servings {
+    margin-top: var(--space-sm);
+  }
+
+  &__base {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 0.9rem;
+    margin: 0 0 var(--space-md);
+  }
+
+  &__cta {
+    min-width: 220px;
+  }
+}
+
+.cook-steps {
+  display: grid;
+  gap: var(--space-lg);
+
+  &__header {
+    text-align: center;
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    margin: 0 0 var(--space-2xs);
+  }
+
+  &__progress {
+    color: var(--mat-sys-on-surface-variant);
+    margin: 0;
+  }
+
+  &__stepper {
+    background: transparent;
+  }
+
+  &__current {
+    background: var(--mat-sys-surface-container-low);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    min-height: 160px;
+    display: grid;
+    place-items: center;
+  }
+
+  &__text {
+    margin: 0;
+    line-height: 1.6;
+    font-size: 1.05rem;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+}
