@@ -28,6 +28,22 @@
     color: var(--md-sys-color-on-surface-variant);
   }
 
+  &__name {
+    width: 100%;
+    max-width: 360px;
+    // The parent `.start-step` uses `text-align: center` for the heading and
+    // chips, which propagates into Material's form-field internals (input
+    // text, label, hint) and breaks the M3 outline notch alignment. Reset
+    // to left here so the input renders with the standard M3 layout.
+    text-align: left;
+    // mat-form-field with appearance="outline" reserves a subscript area
+    // for hints/errors below the input. The parent flex's `gap` only counts
+    // from the form-field's bounding box, so without this margin the chip
+    // row collides with the hint line. The value matches the subscript
+    // height that Angular Material reserves at typescale body-small.
+    margin-bottom: var(--space-sm);
+  }
+
   &__chips {
     justify-content: center;
   }
