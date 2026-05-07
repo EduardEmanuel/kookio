@@ -18,8 +18,8 @@ import {
   type PantryDialogData,
   type PantryDialogResult,
   PantryItemComponent,
-  PantryStore,
 } from '@kookio/feature-pantry';
+import { PantryStore } from '@kookio/feature-pantry/store';
 import type { PantryItemWithIngredient } from '@kookio/prisma-client';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 

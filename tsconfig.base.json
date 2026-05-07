@@ -26,6 +26,12 @@
         "libs/feature/onboarding/src/testing.ts"
       ],
       "@kookio/feature-pantry": ["libs/feature/pantry/src/index.ts"],
+      "@kookio/feature-pantry/expiration": [
+        "libs/feature/pantry/src/lib/utils/expiration.ts"
+      ],
+      "@kookio/feature-pantry/store": [
+        "libs/feature/pantry/src/lib/store/pantry.store.ts"
+      ],
       "@kookio/feature-pantry/trpc": [
         "libs/feature/pantry/src/lib/pantry-trpc.ts"
       ],
