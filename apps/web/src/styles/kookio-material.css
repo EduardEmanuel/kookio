@@ -84,6 +84,7 @@
     --mat-sys-surface-container-highest
   );
   --mat-button-filled-state-layer-color: var(--mat-sys-on-surface);
+  --mat-button-tonal-state-layer-color: var(--mat-sys-on-surface);
   --mat-fab-state-layer-color: var(--mat-sys-on-surface);
   --mat-fab-small-state-layer-color: var(--mat-sys-on-surface);
   --mat-expansion-header-hover-state-layer-color: var(
@@ -96,6 +97,23 @@
   --mat-chip-focus-state-layer-color: var(--mat-sys-surface-container-highest);
   --mat-chip-selected-hover-state-layer-color: var(--mat-sys-on-surface);
   --mat-chip-selected-focus-state-layer-color: var(--mat-sys-on-surface);
+  /*
+   * Button-toggle hover/focus states. Same split as chips:
+   *   - Unselected segment has a transparent background (text on surface) —
+   *     `surface-container-highest` lifts it without colliding with the icon
+   *     and label tones.
+   *   - Selected segment has a `secondary-container` background — `on-surface`
+   *     darkens it in light mode / lightens in dark mode, so the press cue
+   *     reads against the warm container without flattening the label.
+   * Without these overrides the hover state-layer collapses onto the same
+   * tone as the icon/label and the segment renders as a near-black slab.
+   */
+  --mat-standard-button-toggle-state-layer-color: var(
+    --mat-sys-surface-container-highest
+  );
+  --mat-standard-button-toggle-selected-state-layer-color: var(
+    --mat-sys-on-surface
+  );
   --mat-checkbox-unselected-icon-color: var(--mat-sys-outline);
   --mat-checkbox-unselected-hover-icon-color: var(--mat-sys-outline-variant);
   --mat-checkbox-unselected-focus-icon-color: var(--mat-sys-outline-variant);
@@ -133,6 +151,7 @@
 .mat-mdc-unelevated-button.mat-mdc-unelevated-button,
 .mat-mdc-raised-button.mat-mdc-raised-button,
 .mat-mdc-outlined-button.mat-mdc-outlined-button,
+.mat-tonal-button.mat-tonal-button,
 .mat-mdc-extended-fab.mat-mdc-extended-fab {
   display: inline-flex;
   align-items: center;

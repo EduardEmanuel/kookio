@@ -76,6 +76,39 @@ Angular v20+
 - Use Material theming system for colors and typography — avoid hardcoded values
 - Follow Material Design accessibility guidelines alongside WCAG AA
 
+### `[matButton]` variant class naming is not uniform
+
+Material 20's unified `[matButton]` directive maps each appearance value to
+a host class that downstream CSS rules target. The mapping is **not
+consistent** — four out of five variants get a `mat-mdc-*` prefix, but
+`tonal` does not:
+
+| `[matButton]` value | Host class                                                 |
+| ------------------- | ---------------------------------------------------------- |
+| `text` (default)    | `.mat-mdc-button`                                          |
+| `filled`            | `.mat-mdc-unelevated-button` (+ `.mdc-button--unelevated`) |
+| `elevated`          | `.mat-mdc-raised-button` (+ `.mdc-button--raised`)         |
+| `outlined`          | `.mat-mdc-outlined-button` (+ `.mdc-button--outlined`)     |
+| `tonal`             | **`.mat-tonal-button`** — no `mdc` prefix                  |
+
+**Why this matters:** any global override that targets every button
+variant by selector list (`apps/web/src/styles/kookio-material.css` does
+this for pill shape and state-layer color) will silently skip tonal
+buttons unless `.mat-tonal-button` is in the selector list. The skip is
+visually subtle — the button still renders, it just keeps Material's
+default corner radius and default state-layer overlay. On a warm-orange
+palette the latter collapses the icon and label into the same tone as
+the hover overlay, so the button looks empty when hovered.
+
+**How to apply:** when writing a global rule that should apply to every
+`[matButton]` variant, include `.mat-tonal-button` alongside the four
+`.mat-mdc-*` selectors. The same applies to `--mat-button-tonal-*`
+state-layer tokens — they are separate from `--mat-button-filled-*` and
+need their own override line. Verify the source mapping at
+`node_modules/@angular/material/fesm2022/button.mjs` if Material is
+upgraded to a major version, since these class names live in the
+runtime-generated host class list rather than in a public API surface.
+
 ## Icons
 
 - Render icons via `<kookio-icon name="..." />` from `@kookio/shared-ui` — do NOT use `<mat-icon>` directly. The wrapper delegates to `<mat-icon>` internally but constrains the `name` input to `MaterialSymbolName` (a union derived from the auto-generated manifest), so unknown ligatures fail at compile time instead of rendering as literal text in a subsetted font that does not contain them. ESLint enforces this by banning `MatIconModule` and `MatIcon` imports anywhere except the wrapper component itself; `MatIconRegistry` remains available for global font-set configuration.
