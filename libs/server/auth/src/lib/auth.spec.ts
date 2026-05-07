@@ -34,6 +34,7 @@ vi.mock('@kookio/server-logger', () => ({
 const dbUser = {
   id: 'uid-1',
   email: 'alice@example.com',
+  name: null,
   roles: ['USER'],
   amr: ['password'],
 };
@@ -115,13 +116,21 @@ describe('toSession', () => {
       expect(result).toEqual({
         uid: 'uid-1',
         email: 'alice@example.com',
+        name: null,
         roles: ['USER'],
         amr: ['password'],
         onboardingDone: false,
       });
       expect(findUnique).toHaveBeenCalledWith({
         where: { email: 'alice@example.com' },
-        include: { profile: { select: { onboardingDone: true } } },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          roles: true,
+          amr: true,
+          profile: { select: { onboardingDone: true } },
+        },
       });
     });
   });

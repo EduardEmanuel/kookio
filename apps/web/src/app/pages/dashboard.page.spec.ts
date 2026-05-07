@@ -7,6 +7,7 @@ import type { User } from 'firebase/auth';
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
 import { PantryStore } from '@kookio/feature-pantry/store';
+import type { AuthSession } from '@kookio/prisma-client';
 
 import DashboardPage from './dashboard.page';
 
@@ -16,8 +17,28 @@ const stubPantryStore = {
   load: vi.fn(),
 };
 
-const setup = async (currentUser: Partial<User> | null) => {
-  const authStore = createMockAuthStore({ currentUser, authReady: true });
+const makeSession = (name: string | null): AuthSession => ({
+  uid: 'user-123',
+  email: 'user@example.com',
+  name,
+  roles: [],
+  amr: ['password'],
+  onboardingDone: true,
+});
+
+const setup = async (
+  opts: {
+    currentUser?: Partial<User> | null;
+    sessionName?: string | null;
+  } = {},
+) => {
+  const session =
+    opts.sessionName !== undefined ? makeSession(opts.sessionName) : null;
+  const authStore = createMockAuthStore({
+    currentUser: opts.currentUser ?? null,
+    session,
+    authReady: true,
+  });
 
   await TestBed.configureTestingModule({
     imports: [DashboardPage],
@@ -41,26 +62,29 @@ describe('DashboardPage', () => {
     TestBed.resetTestingModule();
   });
 
-  it('greets by displayName when set', async () => {
-    const el = await setup({
-      displayName: 'Ana Maria',
-      email: 'ana@example.com',
-    });
+  it('greets by session.name when present (set in onboarding/account)', async () => {
+    const el = await setup({ sessionName: 'Ana Maria' });
     expect(el.textContent ?? '').toContain('Hi, Ana');
   });
 
-  it('falls back to the email local-part when displayName is missing', async () => {
-    const el = await setup({ displayName: null, email: 'eduard@example.com' });
-    expect(el.textContent ?? '').toContain('Hi, eduard');
+  it('falls back to Firebase displayName when session.name is null', async () => {
+    const el = await setup({
+      sessionName: null,
+      currentUser: { displayName: 'Eduard Emanuel', email: 'edu@example.com' },
+    });
+    expect(el.textContent ?? '').toContain('Hi, Eduard');
   });
 
-  it('falls back to "cook" when both displayName and email are missing', async () => {
-    const el = await setup({ displayName: null, email: null });
+  it('falls back to "cook" when neither session.name nor displayName are set', async () => {
+    const el = await setup({
+      sessionName: null,
+      currentUser: { displayName: null, email: 'whatever@example.com' },
+    });
     expect(el.textContent ?? '').toContain('Hi, cook');
   });
 
   it('mounts all four widgets', async () => {
-    const el = await setup({ displayName: 'Ana', email: 'ana@example.com' });
+    const el = await setup({ sessionName: 'Ana' });
 
     expect(el.querySelector('kookio-quick-actions-widget')).not.toBeNull();
     expect(el.querySelector('kookio-expiring-soon-widget')).not.toBeNull();

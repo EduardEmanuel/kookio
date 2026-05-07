@@ -11,6 +11,25 @@
     </p>
   </div>
 
+  <mat-form-field class="start-step__name" appearance="outline">
+    <mat-label>{{ strings.nameLabel }}</mat-label>
+    <input
+      matInput
+      type="text"
+      autocomplete="given-name"
+      maxlength="50"
+      [formControl]="nameControl"
+      [placeholder]="strings.namePlaceholder"
+    />
+    <mat-hint>{{ strings.nameHint }}</mat-hint>
+    @if (nameControl.touched && nameControl.hasError('required')) {
+      <mat-error>{{ strings.nameRequired }}</mat-error>
+    }
+    @if (nameControl.hasError('maxlength')) {
+      <mat-error>{{ strings.nameMaxLength }}</mat-error>
+    }
+  </mat-form-field>
+
   <mat-chip-set
     class="start-step__chips"
     aria-label="Onboarding steps overview"

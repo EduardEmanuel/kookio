@@ -66,6 +66,9 @@ interface OnboardingState {
   /** Stepper position. Range: [0, TOTAL_STEPS - 1]. */
   currentStep: number;
 
+  /** Display name collected on the start step; required to submit. */
+  name: string;
+
   /**
    * Selection sets are kept as Set<string> for O(1) toggle.
    * Each toggle replaces the reference (`new Set(prev)`) so signal computeds
@@ -85,6 +88,7 @@ interface OnboardingState {
 
 const initialState: OnboardingState = {
   currentStep: 0,
+  name: '',
   preferredCategoryIds: new Set<string>(),
   preferredAreaIds: new Set<string>(),
   utensilIds: new Set<string>(),
@@ -126,6 +130,12 @@ export const OnboardingStore = signalStore(
     isFirstStep: computed(() => store.currentStep() === 0),
     isLastStep: computed(() => store.currentStep() === LAST_STEP),
     totalSteps: computed(() => TOTAL_STEPS),
+
+    /** True when the trimmed name passes the same min(1).max(50) gate as the server. */
+    nameIsValid: computed(() => {
+      const trimmed = store.name().trim();
+      return trimmed.length > 0 && trimmed.length <= 50;
+    }),
 
     hasAnySelection: computed(
       () =>
@@ -184,6 +194,10 @@ export const OnboardingStore = signalStore(
         });
       },
 
+      setName: (name: string): void => {
+        patchState(store, { name });
+      },
+
       setAdultsCount: (n: number): void => {
         patchState(store, {
           adultsCount: clamp(Math.trunc(n), MIN_ADULTS, MAX_ADULTS),
@@ -211,6 +225,7 @@ export const OnboardingStore = signalStore(
             from(trpc.onboarding.current.query()).pipe(
               tap((data) =>
                 patchState(store, {
+                  name: data.name ?? '',
                   adultsCount: data.adultsCount,
                   childrenCount: data.childrenCount,
                   preferredCategoryIds: new Set(data.preferredCategoryIds),
@@ -242,6 +257,7 @@ export const OnboardingStore = signalStore(
           switchMap(() =>
             from(
               trpc.onboarding.commit.mutate({
+                name: store.name(),
                 adultsCount: store.adultsCount(),
                 childrenCount: store.childrenCount(),
                 preferredCategoryIds: [...store.preferredCategoryIds()],

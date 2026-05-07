@@ -52,6 +52,7 @@ export const MATERIAL_SYMBOLS_ICONS = [
   'remove',
   'restaurant',
   'restaurant_menu',
+  'save',
   'schedule',
   'search',
   'shopping_cart',

@@ -7,6 +7,10 @@ import type { Context } from '../context';
 import { appRouter } from './index';
 
 type TxMock = {
+  user: {
+    update: ReturnType<typeof vi.fn>;
+    findUnique: ReturnType<typeof vi.fn>;
+  };
   userProfile: {
     upsert: ReturnType<typeof vi.fn>;
     findUnique: ReturnType<typeof vi.fn>;
@@ -49,6 +53,7 @@ const DIET_A = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 const makeSession = (overrides: Partial<AuthSession> = {}): AuthSession => ({
   uid: USER_ID,
   email: 'user@example.com',
+  name: null,
   roles: [],
   amr: ['password'],
   onboardingDone: false,
@@ -56,6 +61,10 @@ const makeSession = (overrides: Partial<AuthSession> = {}): AuthSession => ({
 });
 
 const makeTxMock = (): TxMock => ({
+  user: {
+    update: vi.fn(() => Promise.resolve({ id: USER_ID, name: 'Ana' })),
+    findUnique: vi.fn(() => Promise.resolve({ name: null })),
+  },
   userProfile: {
     upsert: vi.fn(() =>
       Promise.resolve({
@@ -120,6 +129,7 @@ describe('onboarding router', () => {
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
 
       const result = await caller.onboarding.commit({
+        name: 'Ana',
         adultsCount: 2,
         childrenCount: 1,
         preferredCategoryIds: [CAT_A, CAT_B],
@@ -190,6 +200,7 @@ describe('onboarding router', () => {
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
 
       const result = await caller.onboarding.commit({
+        name: 'Ana',
         adultsCount: 1,
         childrenCount: 0,
       });
@@ -212,6 +223,7 @@ describe('onboarding router', () => {
 
       await expect(
         caller.onboarding.commit({
+          name: 'Ana',
           adultsCount: 1,
           childrenCount: 0,
         }),
@@ -225,6 +237,7 @@ describe('onboarding router', () => {
 
       await expect(
         caller.onboarding.commit({
+          name: 'Ana',
           adultsCount: 0,
           childrenCount: 0,
         }),
@@ -243,6 +256,7 @@ describe('onboarding router', () => {
 
       await expect(
         caller.onboarding.commit({
+          name: 'Ana',
           adultsCount: 1,
           childrenCount: 0,
           preferredCategoryIds: [''],
@@ -260,6 +274,7 @@ describe('onboarding router', () => {
 
       await expect(
         caller.onboarding.commit({
+          name: 'Ana',
           adultsCount: 1,
           childrenCount: 0,
         }),
@@ -307,6 +322,7 @@ describe('onboarding router', () => {
   describe('current', () => {
     it('returns existing selections and counts when profile is set up', async () => {
       const tx = makeTxMock();
+      tx.user.findUnique.mockResolvedValue({ name: 'Ana' });
       tx.userProfile.findUnique.mockResolvedValue({
         id: PROFILE_ID,
         adultsCount: 3,
@@ -351,6 +367,7 @@ describe('onboarding router', () => {
       });
 
       expect(result).toEqual({
+        name: 'Ana',
         adultsCount: 3,
         childrenCount: 2,
         preferredCategoryIds: ['cat-a', 'cat-b'],
@@ -362,6 +379,7 @@ describe('onboarding router', () => {
 
     it('returns sensible defaults when no profile exists yet', async () => {
       const tx = makeTxMock();
+      tx.user.findUnique.mockResolvedValue(null);
       tx.userProfile.findUnique.mockResolvedValue(null);
       const prismaMock = makePrismaMock(tx);
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
@@ -373,6 +391,7 @@ describe('onboarding router', () => {
       expect(tx.userDietaryRestriction.findMany).not.toHaveBeenCalled();
 
       expect(result).toEqual({
+        name: null,
         adultsCount: 1,
         childrenCount: 0,
         preferredCategoryIds: [],

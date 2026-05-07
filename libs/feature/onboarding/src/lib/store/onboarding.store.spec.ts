@@ -23,6 +23,7 @@ const setup = (trpcOverrides?: Partial<OnboardingTrpcClient['onboarding']>) => {
   // distinct mock for `current.query`.
   const commit = vi.fn().mockResolvedValue({ onboardingDone: true });
   const current = vi.fn().mockResolvedValue({
+    name: null,
     adultsCount: 1,
     childrenCount: 0,
     preferredCategoryIds: [],
@@ -196,6 +197,7 @@ describe('OnboardingStore', () => {
       const { store, current } = setup({
         current: {
           query: vi.fn().mockResolvedValue({
+            name: 'Ana',
             adultsCount: 3,
             childrenCount: 2,
             preferredCategoryIds: ['c-1', 'c-2'],
@@ -209,6 +211,7 @@ describe('OnboardingStore', () => {
       store.loadCurrent();
       await flush();
 
+      expect(store.name()).toBe('Ana');
       expect(store.adultsCount()).toBe(3);
       expect(store.childrenCount()).toBe(2);
       expect([...store.preferredCategoryIds()]).toEqual(['c-1', 'c-2']);
@@ -243,12 +246,14 @@ describe('OnboardingStore', () => {
       vi.useRealTimers();
       const { store, authStore, navSpy, commit } = setup();
 
+      store.setName('Ana');
       store.toggleUtensil('u-1');
       store.setAdultsCount(2);
       store.submit();
       await flush();
 
       expect(commit).toHaveBeenCalledWith({
+        name: 'Ana',
         adultsCount: 2,
         childrenCount: 0,
         preferredCategoryIds: [],

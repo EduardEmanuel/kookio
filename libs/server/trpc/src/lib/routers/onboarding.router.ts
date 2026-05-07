@@ -34,6 +34,11 @@ export const onboarding = router({
 
       try {
         await ctx.prisma.$transaction(async (tx) => {
+          await tx.user.update({
+            where: { id: userId },
+            data: { name: input.name },
+          });
+
           const profile = await tx.userProfile.upsert({
             where: { userId },
             create: {
@@ -151,10 +156,16 @@ export const onboarding = router({
       const userId = ctx.session!.uid;
 
       try {
-        const profile = await ctx.prisma.userProfile.findUnique({
-          where: { userId },
-          select: { id: true, adultsCount: true, childrenCount: true },
-        });
+        const [user, profile] = await Promise.all([
+          ctx.prisma.user.findUnique({
+            where: { id: userId },
+            select: { name: true },
+          }),
+          ctx.prisma.userProfile.findUnique({
+            where: { userId },
+            select: { id: true, adultsCount: true, childrenCount: true },
+          }),
+        ]);
 
         const profileId = profile?.id;
 
@@ -183,6 +194,7 @@ export const onboarding = router({
           ]);
 
         return {
+          name: user?.name ?? null,
           adultsCount: profile?.adultsCount ?? 1,
           childrenCount: profile?.childrenCount ?? 0,
           preferredCategoryIds: prefCategories.map((p) => p.mealCategoryId),

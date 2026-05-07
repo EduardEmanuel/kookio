@@ -73,6 +73,23 @@ describe('OnboardingStepperComponent', () => {
       expect(texts.some((t) => t.includes(ACTION_LABELS.back))).toBe(false);
       expect(texts.some((t) => t.includes(ACTION_LABELS.skip))).toBe(false);
     });
+
+    it('disables the start button until a name is set', async () => {
+      const { fixture, el, store } = await setup();
+
+      const startButton = Array.from(el.querySelectorAll('button')).find((b) =>
+        (b.textContent ?? '').includes(ACTION_LABELS.start),
+      ) as HTMLButtonElement | undefined;
+
+      expect(startButton).toBeDefined();
+      expect(startButton?.disabled).toBe(true);
+
+      store.setName('Ana');
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(startButton?.disabled).toBe(false);
+    });
   });
 
   describe('intermediate steps (1..4)', () => {

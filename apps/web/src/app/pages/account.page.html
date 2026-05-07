@@ -1,0 +1,81 @@
+<section class="account">
+  <header class="account__header">
+    <h1 class="account__title">Account</h1>
+    <p class="account__email">
+      Signed in as <strong>{{ authStore.currentUser()?.email }}</strong>
+    </p>
+  </header>
+
+  <section class="account__section">
+    <h2 class="account__heading">Your profile</h2>
+    <p class="account__hint">This is the name we'll use to greet you.</p>
+
+    <form
+      [formGroup]="profileForm"
+      (ngSubmit)="onSaveName()"
+      class="account__form"
+    >
+      <mat-form-field class="account__field" appearance="outline">
+        <mat-label>Your name</mat-label>
+        <input
+          matInput
+          type="text"
+          autocomplete="name"
+          maxlength="50"
+          formControlName="name"
+        />
+        @if ( profileForm.controls.name.touched &&
+        profileForm.controls.name.hasError('required') ) {
+        <mat-error>Please enter your name</mat-error>
+        } @if (profileForm.controls.name.hasError('maxlength')) {
+        <mat-error>Max 50 characters</mat-error>
+        }
+      </mat-form-field>
+
+      <button
+        matButton="filled"
+        type="submit"
+        [disabled]="profileForm.invalid || isSavingName()"
+      >
+        @if (isSavingName()) {
+        <mat-spinner diameter="20" />
+        } @else {
+        <kookio-icon name="save" />
+        <span>Save</span>
+        }
+      </button>
+    </form>
+  </section>
+
+  <section class="account__section">
+    <h2 class="account__heading">Your preferences</h2>
+    <p class="account__hint">
+      Want different recommendations? Restart onboarding — your existing
+      selections will be pre-filled so you can adjust just the parts you care
+      about.
+    </p>
+
+    <button
+      [matButton]="authStore.hasProfileSignals() ? 'outlined' : 'filled'"
+      type="button"
+      (click)="onRestart()"
+      [disabled]="isResetting()"
+      [attr.aria-busy]="isResetting() || null"
+      [attr.aria-label]="isResetting() ? 'Restarting onboarding' : null"
+    >
+      @if (isResetting()) {
+      <mat-spinner diameter="20" />
+      } @else {
+      <kookio-icon name="refresh" />
+      <span>Restart onboarding</span>
+      }
+    </button>
+  </section>
+
+  <section class="account__section">
+    <button matButton="outlined" type="button" (click)="authStore.logout()">
+      <kookio-icon name="logout" />
+      <span>Sign out</span>
+    </button>
+  </section>
+</section>

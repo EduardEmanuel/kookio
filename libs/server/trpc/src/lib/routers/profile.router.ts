@@ -1,5 +1,6 @@
 import z from 'zod';
 
+import { DisplayNameSchema } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
 
 import { procedure, router, TRPCError } from '../trpc';
@@ -10,6 +11,14 @@ const log = createLogger('trpc', { router: 'profile' });
 const CompleteOnboardingInputSchema = z.object({
   adultsCount: z.number().int().min(1).max(20),
   childrenCount: z.number().int().min(0).max(20),
+});
+
+const UpdateNameInputSchema = z.object({
+  name: DisplayNameSchema,
+});
+
+const UpdateNameOutputSchema = z.object({
+  name: z.string(),
 });
 
 const ProfileSchema = z.object({
@@ -128,6 +137,35 @@ export const profile = router({
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to save onboarding state',
+          cause: err,
+        });
+      }
+    }),
+
+  /**
+   * Protected — updates the current user's display name. Used by the account
+   * page form. Validates via the same `DisplayNameSchema` as onboarding.
+   */
+  updateName: procedure
+    .use(requireAuth)
+    .input(UpdateNameInputSchema)
+    .output(UpdateNameOutputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session!.uid;
+
+      try {
+        const updated = await ctx.prisma.user.update({
+          where: { id: userId },
+          data: { name: input.name },
+          select: { name: true },
+        });
+
+        return { name: updated.name ?? input.name };
+      } catch (err) {
+        log.error({ err, userId }, 'profile.updateName failed');
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to save name',
           cause: err,
         });
       }

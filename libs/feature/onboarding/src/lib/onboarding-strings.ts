@@ -33,6 +33,11 @@ export const START_STRINGS = {
   heading: 'Welcome to Kookio!',
   subtitle:
     "Let's get to know you. In a few quick steps you'll be ready to cook without food waste.",
+  nameLabel: 'How should we call you?',
+  namePlaceholder: 'Your name',
+  nameHint: "We'll use it to greet you on the dashboard.",
+  nameRequired: 'Please enter your name',
+  nameMaxLength: 'Max 50 characters',
   chips: {
     pantry: 'Pantry contents',
     utensils: 'Utensils',

@@ -23,6 +23,7 @@ export const buildTrpcMock = (
     commit: { mutate: vi.fn().mockResolvedValue({ onboardingDone: true }) },
     current: {
       query: vi.fn().mockResolvedValue({
+        name: null,
         adultsCount: 1,
         childrenCount: 0,
         preferredCategoryIds: [],

@@ -41,11 +41,17 @@ export default class DashboardPage {
   private readonly authStore = inject(AuthStore);
 
   protected readonly userName = computed<string>(() => {
+    // Prefer the user-provided name (set in onboarding / account page).
+    // Fallback chain handles users who registered before the field existed
+    // and users on identity providers that do not surface displayName.
+    const fromSession = this.authStore.session()?.name?.split(' ')[0]?.trim();
+    if (fromSession) return fromSession;
+
     const user = this.authStore.currentUser();
     const display = user?.displayName?.split(' ')[0]?.trim();
     if (display) return display;
-    const local = user?.email?.split('@')[0]?.trim();
-    return local && local.length > 0 ? local : 'cook';
+
+    return 'cook';
   });
 
   // `new Date()` is read once at first computed evaluation. The greeting

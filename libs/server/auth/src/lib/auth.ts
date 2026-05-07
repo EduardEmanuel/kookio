@@ -60,7 +60,14 @@ export const toSession = async (
   const findUserWithProfile = () =>
     prisma.user.findUnique({
       where: { email },
-      include: { profile: { select: { onboardingDone: true } } },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        roles: true,
+        amr: true,
+        profile: { select: { onboardingDone: true } },
+      },
     });
 
   let user: Awaited<ReturnType<typeof findUserWithProfile>>;
@@ -80,6 +87,7 @@ export const toSession = async (
   return {
     uid: user.id,
     email: user.email,
+    name: user.name ?? null,
     roles: user.roles,
     amr: user.amr,
     onboardingDone: user.profile?.onboardingDone ?? false,

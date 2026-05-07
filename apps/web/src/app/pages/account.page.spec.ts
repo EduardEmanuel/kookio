@@ -24,8 +24,10 @@ import { TrpcClientApp } from '../../trpc-client';
 
 interface SetupOptions {
   email?: string | null;
+  sessionName?: string | null;
   hasProfileSignals?: boolean;
   resetMutation?: () => Promise<{ onboardingDone: boolean }>;
+  updateNameMutation?: (input: { name: string }) => Promise<{ name: string }>;
 }
 
 interface SetupResult {
@@ -33,14 +35,26 @@ interface SetupResult {
   el: HTMLElement;
   authStore: MockAuthStore;
   resetMutate: Mock;
+  updateNameMutate: Mock;
   navigateByUrl: MockInstance<Router['navigateByUrl']>;
   snackBarOpen: Mock;
 }
 
 const setup = async (opts: SetupOptions = {}): Promise<SetupResult> => {
   const email = opts.email === undefined ? 'user@example.com' : opts.email;
+  const sessionName = opts.sessionName ?? null;
   const authStore = createMockAuthStore({
     currentUser: email ? { email } : null,
+    session: email
+      ? {
+          uid: 'u-1',
+          email,
+          name: sessionName,
+          roles: [],
+          amr: ['password'],
+          onboardingDone: true,
+        }
+      : null,
     isAuthenticated: !!email,
     hasProfileSignals: opts.hasProfileSignals ?? false,
   });
@@ -48,7 +62,14 @@ const setup = async (opts: SetupOptions = {}): Promise<SetupResult> => {
   const resetMutate = vi.fn(
     opts.resetMutation ?? (() => Promise.resolve({ onboardingDone: false })),
   );
-  const trpcStub = { onboarding: { reset: { mutate: resetMutate } } };
+  const updateNameMutate = vi.fn(
+    opts.updateNameMutation ??
+      (({ name }: { name: string }) => Promise.resolve({ name })),
+  );
+  const trpcStub = {
+    onboarding: { reset: { mutate: resetMutate } },
+    profile: { updateName: { mutate: updateNameMutate } },
+  };
 
   const snackBarOpen = vi.fn();
   const snackBarStub = { open: snackBarOpen };
@@ -78,17 +99,32 @@ const setup = async (opts: SetupOptions = {}): Promise<SetupResult> => {
     el: fixture.nativeElement as HTMLElement,
     authStore,
     resetMutate,
+    updateNameMutate,
     navigateByUrl,
     snackBarOpen,
   };
 };
 
-const restartButton = (el: HTMLElement): HTMLButtonElement => {
-  const btn = el.querySelector<HTMLButtonElement>(
-    'section.account__section button',
+const findButtonByText = (el: HTMLElement, text: string): HTMLButtonElement => {
+  const btn = Array.from(el.querySelectorAll('button')).find((b) =>
+    (b.textContent ?? '').includes(text),
   );
-  if (!btn) throw new Error('Restart onboarding button not found');
-  return btn;
+  if (!btn) throw new Error(`Button containing "${text}" not found`);
+  return btn as HTMLButtonElement;
+};
+
+const restartButton = (el: HTMLElement): HTMLButtonElement =>
+  findButtonByText(el, 'Restart onboarding');
+
+const saveNameButton = (el: HTMLElement): HTMLButtonElement =>
+  findButtonByText(el, 'Save');
+
+const nameInput = (el: HTMLElement): HTMLInputElement => {
+  const input = el.querySelector<HTMLInputElement>(
+    'input[formcontrolname="name"]',
+  );
+  if (!input) throw new Error('Name input not found');
+  return input;
 };
 
 describe('AccountPage', () => {
@@ -189,6 +225,68 @@ describe('AccountPage', () => {
       );
       expect(authStore.markOnboardingReset).not.toHaveBeenCalled();
       expect(navigateByUrl).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Save name — flow', () => {
+    it('pre-fills the input from session.name', async () => {
+      const { el } = await setup({ sessionName: 'Ana' });
+
+      expect(nameInput(el).value).toBe('Ana');
+    });
+
+    it('submits trimmed value, refetches the session, shows a snackbar', async () => {
+      const { el, fixture, authStore, updateNameMutate, snackBarOpen } =
+        await setup({ sessionName: '' });
+
+      const input = nameInput(el);
+      input.value = '  Ana Maria  ';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      saveNameButton(el).click();
+      await fixture.whenStable();
+
+      expect(updateNameMutate).toHaveBeenCalledTimes(1);
+      expect(updateNameMutate.mock.calls[0]?.[0]).toEqual({
+        name: 'Ana Maria',
+      });
+      expect(authStore.fetchSession).toHaveBeenCalledTimes(1);
+      expect(snackBarOpen.mock.calls[0]?.[0]).toContain('Saved.');
+    });
+
+    it('does NOT call the mutation when the input is empty', async () => {
+      const { el, fixture, updateNameMutate } = await setup({
+        sessionName: '',
+      });
+
+      saveNameButton(el).click();
+      await fixture.whenStable();
+
+      expect(updateNameMutate).not.toHaveBeenCalled();
+    });
+
+    it('shows a snackbar and does NOT refetch the session when the mutation rejects', async () => {
+      const { el, fixture, authStore, snackBarOpen } = await setup({
+        sessionName: '',
+        updateNameMutation: () => Promise.reject(new Error('boom')),
+      });
+
+      const input = nameInput(el);
+      input.value = 'Ana';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      saveNameButton(el).click();
+      await fixture.whenStable();
+
+      expect(snackBarOpen).toHaveBeenCalledTimes(1);
+      expect(snackBarOpen.mock.calls[0]?.[0]).toContain(
+        'Could not save your name',
+      );
+      expect(authStore.fetchSession).not.toHaveBeenCalled();
     });
   });
 });

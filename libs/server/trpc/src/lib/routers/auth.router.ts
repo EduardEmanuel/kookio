@@ -19,6 +19,7 @@ const RegisterInputSchema = z.object({
 const SessionSchema = z.object({
   uid: z.string(),
   email: z.string(),
+  name: z.string().nullable(),
   roles: z.array(z.nativeEnum(role)),
   amr: z.array(z.string()),
   onboardingDone: z.boolean(),
@@ -47,6 +48,7 @@ export const auth = router({
           return {
             uid: existing.id,
             email: existing.email,
+            name: existing.name ?? null,
             roles: existing.roles as Role[],
             amr: existing.amr,
             onboardingDone: existing.profile?.onboardingDone ?? false,
@@ -67,6 +69,7 @@ export const auth = router({
         return {
           uid: created.id,
           email: created.email,
+          name: created.name ?? null,
           roles: created.roles as Role[],
           amr: created.amr,
           onboardingDone: false,
@@ -93,6 +96,7 @@ export const auth = router({
       return {
         uid: s.uid,
         email: s.email,
+        name: s.name,
         roles: s.roles,
         amr: s.amr,
         onboardingDone: s.onboardingDone,

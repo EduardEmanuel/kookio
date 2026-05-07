@@ -14,6 +14,8 @@ export type AuditEvent =
 export type AuthSession = {
   uid: UserId;
   email: string;
+  /** User-provided display name; null until set during onboarding. */
+  name: string | null;
   roles: Role[];
   amr: string[];
   onboardingDone: boolean;

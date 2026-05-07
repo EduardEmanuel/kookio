@@ -73,7 +73,12 @@
       }
 
       @if (store.isFirstStep()) {
-        <button matButton="filled" type="button" (click)="onNext()">
+        <button
+          matButton="filled"
+          type="button"
+          [disabled]="!store.nameIsValid()"
+          (click)="onNext()"
+        >
           <!-- i18n: @@onboarding.action.start -->
           <span>{{ actions.start }}</span>
           <kookio-icon iconPositionEnd name="arrow_forward" />
