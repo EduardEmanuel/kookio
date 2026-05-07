@@ -166,6 +166,46 @@ git push origin feat/my-feature
 - Never force-push to branches others are reviewing
 - Never rewrite history on `main`
 
+### Investigate before deleting "dead" files
+
+Disk state is a snapshot, not history. A file at zero bytes on disk is
+not proof that the contents are obsolete — it can be the residue of a
+recent script that overwrote a real file (a build target chained on a
+missing source, a failed migration, a botched generator). The same
+applies to files that look like build artefacts: they may have started
+as generated output but become hand-edited sources of truth later in
+the project's life.
+
+**Before deleting any file that looks dead, run:**
+
+```bash
+git log -p -- <file>
+```
+
+That surfaces every change ever made to the file. If the most recent
+content is substantial and hand-edited (not a generator emission), the
+file is probably not dead — the empty disk state has a different cause,
+and that cause is what needs fixing.
+
+**Why:** `apps/web/src/styles/kookio-material.css` was assumed dead
+because it was 0 bytes on disk and its `_material-overrides.scss`
+source had been removed deliberately in an earlier commit. The file
+actually carried 158 lines of hand-edited Material overrides for the
+warm orange palette (state-layer colors, icon-button centering,
+checkbox tones), edited directly as the new source of truth after the
+SCSS source was removed. The empty disk state came from a stray
+`nx run ui:build-tokens` run whose dead second `cat` command
+overwrote the real content with zero bytes. Acting on the disk state
+alone destroyed working code and required a recovery commit.
+
+**How to apply:** any time you are about to delete a file, an asset
+folder, a generated output, or a build-target, run `git log -p -- <file>`
+first and read the most recent diff. If the content is substantial
+and hand-edited rather than a generator emission, stop and ask the
+maintainer what role the file plays in the pipeline before removing
+it. Outputs can become hand-edited sources of truth — a pipeline
+step disappearing does not automatically mean its output should too.
+
 ### Multi-file commits need a raised Node heap
 
 The lint-staged pre-commit hook runs `nx format:write --files=…` on every
