@@ -1,25 +1,58 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import type { RouteMeta } from '@analogjs/router';
 
-import { authGuard, onboardingGuard } from '@kookio/feature-auth';
-import { PageStubComponent } from '@kookio/feature-shell';
+import { AuthStore, authGuard, onboardingGuard } from '@kookio/feature-auth';
+import {
+  ExpiringSoonWidgetComponent,
+  MealPlanTodayWidgetComponent,
+  QuickActionsWidgetComponent,
+  ShoppingCountWidgetComponent,
+} from '@kookio/feature-dashboard';
 
 export const routeMeta: RouteMeta = {
   canActivate: [authGuard, onboardingGuard],
   title: 'Dashboard — Kookio',
 };
 
+const greetingFor = (hour: number): string => {
+  if (hour < 12) return "What's for breakfast today?";
+  if (hour < 17) return 'Time for a delicious lunch?';
+  return 'Dinner inspiration?';
+};
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'kookio-dashboard-page',
-  imports: [PageStubComponent],
-  template: `
-    <kookio-page-stub
-      icon="dashboard"
-      title="Dashboard"
-      subtitle="Your personalized overview"
-      route="/dashboard"
-    />
-  `,
+  imports: [
+    ExpiringSoonWidgetComponent,
+    MealPlanTodayWidgetComponent,
+    QuickActionsWidgetComponent,
+    ShoppingCountWidgetComponent,
+  ],
+  templateUrl: './dashboard.page.html',
+  styleUrl: './dashboard.page.scss',
 })
-export default class DashboardPage {}
+export default class DashboardPage {
+  private readonly authStore = inject(AuthStore);
+
+  protected readonly userName = computed<string>(() => {
+    const user = this.authStore.currentUser();
+    const display = user?.displayName?.split(' ')[0]?.trim();
+    if (display) return display;
+    const local = user?.email?.split('@')[0]?.trim();
+    return local && local.length > 0 ? local : 'cook';
+  });
+
+  // `new Date()` is read once at first computed evaluation. The greeting
+  // uses Vercel-region time on SSR; consistency across SSR/CSR is preferred
+  // over hour-of-day accuracy — re-evaluating with a tracked clock signal
+  // would force re-renders on every minute for a cosmetic line.
+  protected readonly greeting = computed<string>(() =>
+    greetingFor(new Date().getHours()),
+  );
+}

@@ -1,0 +1,19 @@
+<mat-card class="mpt" appearance="outlined">
+  <mat-card-content class="mpt__content">
+    <h2 class="mpt__title">
+      <kookio-icon name="calendar_today" />
+      <span>Today's plan</span>
+    </h2>
+
+    <div class="mpt__placeholder">
+      <kookio-emoji char="📅" [size]="40" />
+      <p class="mpt__headline">No meal plan yet</p>
+      <small class="mpt__hint">Coming soon — plan your week.</small>
+    </div>
+
+    <button [matButton]="'text'" type="button" disabled class="mpt__cta">
+      <span>Plan your week</span>
+      <kookio-icon name="arrow_forward" />
+    </button>
+  </mat-card-content>
+</mat-card>

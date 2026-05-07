@@ -1,0 +1,36 @@
+<mat-card class="exp" appearance="outlined">
+  <mat-card-content class="exp__content">
+    <h2 class="exp__title">
+      <kookio-icon name="warning" />
+      <span>Expiring soon</span>
+    </h2>
+
+    @if (store.isLoading() && topItems().length === 0) {
+    <div class="exp__loading">
+      <mat-spinner diameter="24" />
+    </div>
+    } @else if (topItems().length === 0) {
+    <div class="exp__empty">
+      <kookio-emoji char="✨" [size]="40" />
+      <p>Nothing expiring soon. Pantry is healthy.</p>
+    </div>
+    } @else {
+    <ul class="exp__list">
+      @for (item of topItems(); track item.id) {
+      <li
+        class="exp__item"
+        [class.exp__item--expired]="isExpired(item.expiresAt)"
+      >
+        <span class="exp__name">{{ item.ingredient.name }}</span>
+        <span class="exp__when">{{ getLabel(item.expiresAt) }}</span>
+      </li>
+      }
+    </ul>
+
+    <a [matButton]="'text'" routerLink="/pantry" class="exp__more">
+      <span>View all in pantry</span>
+      <kookio-icon name="arrow_forward" />
+    </a>
+    }
+  </mat-card-content>
+</mat-card>

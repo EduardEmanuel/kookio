@@ -21,6 +21,7 @@
       "@kookio/core-security": ["libs/core/security/src/index.ts"],
       "@kookio/feature-auth": ["libs/feature/auth/src/index.ts"],
       "@kookio/feature-auth/testing": ["libs/feature/auth/src/testing.ts"],
+      "@kookio/feature-dashboard": ["libs/feature/dashboard/src/index.ts"],
       "@kookio/feature-onboarding": ["libs/feature/onboarding/src/index.ts"],
       "@kookio/feature-onboarding/testing": [
         "libs/feature/onboarding/src/testing.ts"

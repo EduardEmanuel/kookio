@@ -19,6 +19,7 @@ export const MATERIAL_SYMBOLS_ICONS = [
   'arrow_drop_down',
   'arrow_forward',
   'arrow_upward',
+  'bolt',
   'bookmark',
   'calendar_today',
   'check',
@@ -54,7 +55,6 @@ export const MATERIAL_SYMBOLS_ICONS = [
   'schedule',
   'search',
   'shopping_cart',
-  'soup_kitchen',
   'warning',
 ] as const;
 

@@ -1,0 +1,39 @@
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-md);
+
+  @media (min-width: 768px) {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  &__header {
+    margin-bottom: var(--space-xl);
+  }
+
+  &__heading {
+    font-family: var(--font-brand, inherit);
+    margin: 0 0 var(--space-xs);
+  }
+
+  &__subtitle {
+    margin: 0;
+    color: var(--color-text-disabled);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &__widget--actions {
+    @media (min-width: 768px) {
+      grid-column: span 2;
+    }
+  }
+}
