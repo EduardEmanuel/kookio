@@ -122,6 +122,72 @@
 <div [class.hidden]="!isVisible()" class="flex flex-col gap-2"></div>
 ```
 
+### Preflight `border: 0 solid` collides with Material MDC components
+
+Tailwind v4's preflight applies a global reset that promotes the
+default `border-style` from `none` (CSS spec default) to `solid` on
+every element:
+
+```css
+/* Tailwind v4 preflight — applied site-wide */
+*,
+::after,
+::before,
+::backdrop,
+::file-selector-button {
+  border: 0 solid;
+}
+```
+
+The `0 solid` shorthand sets `border-width: 0; border-style: solid;`.
+Width is 0 so nothing renders **unless** a later rule sets a width on
+one of the four sides. That is the trap: Material's MDC-derived
+components routinely set `border-width: 1px` as a four-sided shorthand,
+then rely on the CSS default `border-style: none` to keep the unwanted
+sides invisible. With Tailwind's preflight active, that fallback is
+gone and 1px-wide opaque borders render where Material assumed there
+would be none.
+
+Concrete instance: outlined `mat-form-field`. Material's
+`.mat-mdc-notch-piece` has:
+
+```css
+.mat-mdc-notch-piece {
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+}
+.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
+  border-color: var(--mat-sys-outline);
+  border-width: var(--mat-form-field-outlined-outline-width, 1px);
+}
+```
+
+The second rule's `border-width: 1px` shorthand expands to all four
+sides. The LTR notch override only resets `border-left` (to a
+transparent 1px placeholder) — it relies on the implicit
+`border-right-style: none` to keep the right side invisible. Tailwind
+flips that to `solid`, and the form-field renders a visible vertical
+divider running down the middle of the outline.
+
+**How to apply:**
+
+- The fix lives in `apps/web/src/styles/kookio-material.css` as an
+  explicit `border-right-style: none` on the LTR notch (and a
+  symmetric `border-left-style: none` for RTL). Same selector
+  specificity Material itself uses (the doubled-class
+  `.mat-mdc-form-field.mat-mdc-form-field`).
+- When you encounter a similar "phantom border" on any other Material
+  MDC component (likely candidates: `mat-divider`, the table cell
+  borders, chip outlines), the diagnostic is the same: inspect the
+  computed `border-*-style`. If the offending side is `solid` because
+  of the Tailwind preflight cascade, add a one-line
+  `border-*-style: none` reset alongside the existing notch rule, with
+  a comment pointing back here.
+- **Do not** disable the Tailwind preflight globally — Tailwind's
+  `box-sizing: border-box` and margin/padding resets are load-bearing
+  for the rest of the project. The fix is targeted resets on the
+  affected Material slots, not a wholesale opt-out.
+
 ## Usage in Angular Templates
 
 ### Prefer Static Classes

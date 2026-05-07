@@ -29,6 +29,12 @@
   }
 
   &__name {
+    // Material sets `mat-mdc-form-field` to `display: inline-flex`, which
+    // sizes the host by its widest child (the 180px-basis infix) regardless
+    // of `width: 100%`. Forcing `display: block` makes the host respect the
+    // explicit width so the inner notched-outline + infix expand to the
+    // full 360px instead of looking split into two cells.
+    display: block;
     width: 100%;
     max-width: 360px;
     // The parent `.start-step` uses `text-align: center` for the heading and

@@ -4,4 +4,16 @@ html,
 body {
   display: block;
   height: 100%;
+  /*
+   * The project ships M3 tokens via `kookio-tokens.css` (CSS-only path,
+   * not the Sass `mat.theme()` mixin — see CLAUDE.md for the
+   * `nxViteTsPaths` Sass importer constraint). Without the Sass mixin
+   * there is no rule that wires `--mat-sys-on-surface` onto the document
+   * root, so default text falls back to UA black against the dark
+   * surface. These two declarations are the equivalent of what the
+   * `mat-app-background` core mixin would inject — kept here in the
+   * global CSS entry so every page inherits theme-correct colors.
+   */
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
 }

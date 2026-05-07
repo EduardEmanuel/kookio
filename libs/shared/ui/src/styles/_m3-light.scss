@@ -86,4 +86,50 @@
   --mat-sys-surface-container-highest: var(
     --md-sys-color-surface-container-highest
   );
+
+  /*
+   * M3 corner-shape tokens. Material 20 components reference these as the
+   * fallback in `var(--*-container-shape, var(--mat-sys-corner-*))`. When
+   * the project defines neither side of that chain, components fall back
+   * to invalid CSS — `max(12px, var(--mat-sys-corner-extra-small))`
+   * collapses to `max(12px,)` which is invalid, so the form-field's
+   * `__leading` slot ends up at 1px instead of ≥12px and the outline reads
+   * as a "split into two cells" layout. Aliasing to the project's
+   * `--radius-*` tokens keeps a single source of truth for radii.
+   */
+  --mat-sys-corner-none: 0;
+  --mat-sys-corner-extra-small: var(--radius-xs);
+  --mat-sys-corner-small: var(--radius-sm);
+  --mat-sys-corner-medium: var(--radius-md);
+  --mat-sys-corner-large: var(--radius-lg);
+  --mat-sys-corner-extra-large: var(--radius-xl);
+  --mat-sys-corner-full: var(--radius-full);
+
+  /*
+   * M3 state-layer opacities are constants per the M3 spec; pinning them
+   * here so individual component overrides (chip, button-toggle, etc.)
+   * inherit a sensible baseline instead of resolving to empty.
+   */
+  --mat-sys-hover-state-layer-opacity: 0.08;
+  --mat-sys-focus-state-layer-opacity: 0.1;
+  --mat-sys-pressed-state-layer-opacity: 0.1;
+  --mat-sys-dragged-state-layer-opacity: 0.16;
+
+  /*
+   * M3 typescale `font:` shorthand tokens. Onboarding step SCSS files
+   * consume these via `font: var(--md-sys-typescale-*-font)`. Without
+   * these declarations the shorthand resolves to empty and headings fall
+   * back to UA default (Times-like serif at 16px), making the welcome
+   * step look unstyled. Headlines map to `--font-display` (Fredoka — the
+   * brand font) and titles/body map to `--font-sans` (Inter), matching
+   * the typography intent in the rest of the codebase. Sizes follow the
+   * M3 spec defaults; widen this bridge as more typescale tokens get
+   * referenced.
+   */
+  --md-sys-typescale-headline-small-font: 400 1.5rem / 2rem var(--font-display);
+  --md-sys-typescale-headline-medium-font: 400 1.75rem / 2.25rem
+    var(--font-display);
+  --md-sys-typescale-title-small-font: 500 0.875rem / 1.25rem var(--font-sans);
+  --md-sys-typescale-title-medium-font: 500 1rem / 1.5rem var(--font-sans);
+  --md-sys-typescale-body-small-font: 400 0.75rem / 1rem var(--font-sans);
 }

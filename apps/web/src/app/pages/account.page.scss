@@ -51,6 +51,11 @@
   }
 
   &__field {
+    // mat-form-field is `display: inline-flex` from Material, which sizes the
+    // host by its widest child (180px infix basis). `display: block` makes
+    // the host respect `width: 100%` so the outline notch + infix expand to
+    // the full max-width instead of leaving an empty trailing cell.
+    display: block;
     width: 100%;
     max-width: 360px;
   }

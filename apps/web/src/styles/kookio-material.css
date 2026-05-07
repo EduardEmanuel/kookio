@@ -98,22 +98,23 @@
   --mat-chip-selected-hover-state-layer-color: var(--mat-sys-on-surface);
   --mat-chip-selected-focus-state-layer-color: var(--mat-sys-on-surface);
   /*
-   * Button-toggle hover/focus states. Same split as chips:
-   *   - Unselected segment has a transparent background (text on surface) —
-   *     `surface-container-highest` lifts it without colliding with the icon
-   *     and label tones.
-   *   - Selected segment has a `secondary-container` background — `on-surface`
-   *     darkens it in light mode / lightens in dark mode, so the press cue
-   *     reads against the warm container without flattening the label.
-   * Without these overrides the hover state-layer collapses onto the same
-   * tone as the icon/label and the segment renders as a near-black slab.
+   * Pill shape on the button-toggle group + first/last segment. Material
+   * wires `--mat-button-toggle-shape` into both the outer
+   * `.mat-button-toggle-group-appearance-standard` border-radius AND the
+   * `::before` rounding on the first/last `.mat-button-toggle-button`
+   * (verified in `button-toggle.mjs`), so a single token override flips
+   * the whole segmented bar into a pill.
+   *
+   * State-layer color and hover/focus opacities are deliberately NOT
+   * overridden here — Material's defaults already chain through
+   * `var(--mat-button-toggle-*, var(--mat-sys-*))` to the project's
+   * `--mat-sys-on-surface` / `--mat-sys-*-state-layer-opacity`, which are
+   * defined in `_m3-light.scss` (concatenated into `kookio-tokens.css`).
+   * Token names use the `--mat-button-toggle-*` prefix — NOT
+   * `--mat-standard-button-toggle-*` which some component docs suggest;
+   * verified against `node_modules/@angular/material/fesm2022/button-toggle.mjs`.
    */
-  --mat-standard-button-toggle-state-layer-color: var(
-    --mat-sys-surface-container-highest
-  );
-  --mat-standard-button-toggle-selected-state-layer-color: var(
-    --mat-sys-on-surface
-  );
+  --mat-button-toggle-shape: var(--radius-full);
   --mat-checkbox-unselected-icon-color: var(--mat-sys-outline);
   --mat-checkbox-unselected-hover-icon-color: var(--mat-sys-outline-variant);
   --mat-checkbox-unselected-focus-icon-color: var(--mat-sys-outline-variant);
@@ -127,6 +128,32 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/*
+ * Form-field outlined-notch / Tailwind preflight interaction.
+ *
+ * Material's `.mat-mdc-notch-piece` sets `border-width: 1px` as shorthand
+ * (all four sides), then the LTR notch rule overrides only `border-left`
+ * to transparent — relying on the CSS default `border-style: none` for
+ * the right side to stay invisible. Tailwind v4's preflight adds
+ * `*, ::after, ::before { border: 0 solid; }` globally, which promotes
+ * every element's border-style from `none` to `solid`. With Material's
+ * 1px width plus Tailwind's solid style, the notch's right side renders
+ * as a visible interior divider running down the middle of the
+ * outlined form-field. Symmetric fix in RTL.
+ *
+ * The doubled-class selector (`.mat-mdc-form-field` repeated) matches
+ * the specificity Material itself uses for its LTR/RTL rules, so this
+ * override sits at the same level rather than relying on cascade order.
+ */
+.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {
+  border-right-style: none;
+}
+
+[dir='rtl'] .mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {
+  border-right-style: solid;
+  border-left-style: none;
 }
 
 /*

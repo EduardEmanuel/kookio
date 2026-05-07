@@ -14,6 +14,7 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatIconRegistry } from '@angular/material/icon';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 
@@ -32,6 +33,13 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
+    // Material 20's outlined `mat-form-field` measures its label to compute
+    // the notch width; without an animations provider that measurement runs
+    // before the floating label has its final layout, so the notch ends up
+    // wider than the label and the field looks split into two cells. The
+    // `Async` variant lazily loads the animations module so the cost stays
+    // off the SSR critical path.
+    provideAnimationsAsync(),
     provideFileRouter(),
     provideClientHydration(withEventReplay()),
     provideHttpClient(
