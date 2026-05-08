@@ -18,15 +18,15 @@
     }
 
     @if (isComplete() || isAlmost()) {
-      <div class="match-card__badge" aria-hidden="true">
+      <mat-chip class="match-card__badge" aria-hidden="true" disableRipple>
         @if (isComplete()) {
           <kookio-icon name="check_circle" />
-          <span>Ready to cook</span>
+          Ready to cook
         } @else {
           <kookio-icon name="warning" />
-          <span>Missing {{ item().matchInfo.missingCount }}</span>
+          Missing {{ item().matchInfo.missingCount }}
         }
-      </div>
+      </mat-chip>
     }
 
     <mat-card-content class="match-card__content">

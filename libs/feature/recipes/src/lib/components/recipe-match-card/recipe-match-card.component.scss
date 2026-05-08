@@ -39,32 +39,21 @@
     position: absolute;
     top: var(--space-sm);
     right: var(--space-sm);
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2xs);
-    padding: var(--space-2xs) var(--space-sm);
-    border-radius: var(--radius-full);
-    font-size: 0.85rem;
-    font-weight: 600;
-    line-height: 1.2;
-
-    // Shrink the wrapper from its default 24px to match the badge's
-    // typography. The wrapper exposes its own host metrics, so overriding
-    // them from the parent is the supported way to scale the icon.
-    kookio-icon {
-      width: 16px;
-      height: 16px;
-      font-size: 16px;
-    }
+    // Decorative overlay (aria-hidden); clicks and hover pass through to
+    // the parent anchor so the badge inherits the card's pointer cursor
+    // and routerLink navigation.
+    pointer-events: none;
   }
 
   &--complete &__badge {
-    background: var(--md-sys-color-tertiary);
-    color: var(--md-sys-color-on-tertiary);
+    --mat-chip-elevated-container-color: var(--md-sys-color-tertiary);
+    --mat-chip-label-text-color: var(--md-sys-color-on-tertiary);
+    --mat-chip-with-icon-icon-color: var(--md-sys-color-on-tertiary);
   }
   &--almost &__badge {
-    background: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
+    --mat-chip-elevated-container-color: var(--md-sys-color-primary);
+    --mat-chip-label-text-color: var(--md-sys-color-on-primary);
+    --mat-chip-with-icon-icon-color: var(--md-sys-color-on-primary);
   }
 
   &__content {
