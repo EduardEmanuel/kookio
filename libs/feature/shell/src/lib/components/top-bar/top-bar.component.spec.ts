@@ -56,12 +56,6 @@ describe('TopBarComponent', () => {
         icons.some((i) => i.textContent?.trim() === 'account_circle'),
       ).toBe(true);
     });
-
-    it('shows search button always', async () => {
-      const { el } = await setup(null);
-      const icons = Array.from(el.querySelectorAll('mat-icon'));
-      expect(icons.some((i) => i.textContent?.trim() === 'search')).toBe(true);
-    });
   });
 
   describe('user menu items', () => {

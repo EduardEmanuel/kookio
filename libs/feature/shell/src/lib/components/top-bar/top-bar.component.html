@@ -60,10 +60,6 @@
 
   <div class="topbar__spacer"></div>
 
-  <button matIconButton matTooltip="Search recipes" aria-label="Search">
-    <kookio-icon name="search" />
-  </button>
-
   @if (user()) {
     <button matIconButton [matMenuTriggerFor]="userMenu" aria-label="Account">
       <kookio-icon name="account_circle" />
