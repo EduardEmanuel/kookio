@@ -26,6 +26,5 @@ export {
   UserProfileFindManyResultSchema,
   UserUtensilFindManyResultSchema,
   UtensilFindManyResultSchema,
-  WebAuthnCredentialFindManyResultSchema,
 } from './lib/prisma-zod-overrides/index';
 export * from './lib/types/index';

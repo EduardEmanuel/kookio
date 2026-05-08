@@ -24,8 +24,6 @@ export const featureGuard = (
   };
 };
 
-export const guardWebAuthn = (redirectTo = '/'): CanMatchFn =>
-  featureGuard('webauthn', redirectTo);
 export const guardPwa = (redirectTo = '/'): CanMatchFn =>
   featureGuard('pwa', redirectTo);
 export const guardIonicShell = (redirectTo = '/'): CanMatchFn =>

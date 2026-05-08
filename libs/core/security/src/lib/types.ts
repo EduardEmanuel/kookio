@@ -5,7 +5,6 @@ export enum ErrorCode {
 }
 
 export type ServerFeatures = {
-  webauthn: boolean;
   pwa: boolean;
   ionicShell: boolean;
 };

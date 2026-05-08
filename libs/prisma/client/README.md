@@ -147,15 +147,14 @@ The script that creates the three databases + roles from scratch lives in
 **Offline PDF**: [`../../../Kookio_DB_Diagram.pdf`](../../../Kookio_DB_Diagram.pdf)
 **DBML source**: [`../../../kookio.dbml`](../../../kookio.dbml)
 
-The schema contains **21 models** grouped into five functional domains:
+The schema contains **20 models** grouped into five functional domains:
 
 ### 1. Authentication & Identity
 
-| Model                | Purpose                                                       |
-| -------------------- | ------------------------------------------------------------- |
-| `User`               | Core account — email, name, roles, soft-delete, disabled flag |
-| `WebAuthnCredential` | Passkey credentials for passwordless auth                     |
-| `UserProfile`        | Per-user preferences: household size, onboarding status       |
+| Model         | Purpose                                                       |
+| ------------- | ------------------------------------------------------------- |
+| `User`        | Core account — email, name, roles, soft-delete, disabled flag |
+| `UserProfile` | Per-user preferences: household size, onboarding status       |
 
 ### 2. User preferences
 

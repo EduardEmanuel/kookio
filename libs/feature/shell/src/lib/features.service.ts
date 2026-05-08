@@ -30,7 +30,6 @@ export class FeaturesService {
   readonly error = signal<string | null>(null);
 
   readonly pwaEnabled = computed(() => !!this.features()?.pwa);
-  readonly webauthnEnabled = computed(() => !!this.features()?.webauthn);
   readonly ionicShellEnabled = computed(() => !!this.features()?.ionicShell);
 
   refresh = async (): Promise<void> => {

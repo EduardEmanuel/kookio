@@ -18,4 +18,3 @@ export { UserPreferredCategoryFindManyResultSchema } from './user-preferred-cate
 export { UserProfileFindManyResultSchema } from './user-profile';
 export { UserUtensilFindManyResultSchema } from './user-utensil';
 export { UtensilFindManyResultSchema } from './utensil';
-export { WebAuthnCredentialFindManyResultSchema } from './web-authn-credential';

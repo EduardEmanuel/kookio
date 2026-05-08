@@ -113,7 +113,7 @@ model User {
   roles Role[] @default([])
 
   /// Authentication Methods References — OIDC AMR claim (RFC 8176).
-  /// Stored as a String array (e.g. ["password", "webauthn"]) following the
+  /// Stored as a String array (e.g. ["password"]) following the
   /// OIDC specification, which defines AMR as a JSON array of strings.
   /// Deliberate denormalization: extracting into a junction table would add
   /// join overhead with no query benefit, as AMR values are always read and
@@ -131,9 +131,6 @@ model User {
 
   /// Last update timestamp (server-side).
   updatedAt DateTime @updatedAt
-
-  /// Linked WebAuthn credentials.
-  credentials WebAuthnCredential[]
 
   /// User profile & onboarding preferences.
   profile UserProfile?
@@ -160,61 +157,6 @@ model User {
   preferredAreas UserPreferredArea[]
 
   @@index([email], map: "idx_user_email")
-}
-
-/// FIDO/WebAuthn credential bound to a user.
-/// Names intentionally mirror WebAuthn/server libraries to minimize glue-code.
-model WebAuthnCredential {
-  /// Primary key (UUID v4).
-  id String @id @default(uuid())
-
-  /// FK to User.
-  userId String
-
-  /// Raw credential ID (binary). Base64url <-> bytes at I/O boundaries.
-  credentialId Bytes
-
-  /// Public key in COSE/DER bytes.
-  publicKey Bytes
-
-  /// Signature counter from authenticator (aka signCount).
-  counter Int @default(0)
-
-  /// Authenticator transports ("internal","usb","ble","nfc").
-  transports String[] @default([])
-
-  /// Authenticator Attestation GUID (model-level), if available.
-  aaguid String? @db.Uuid
-
-  /// Attestation format ("packed","fido-u2f","apple","tpm","none",...).
-  attestationFmt String?
-
-  /// Eligible for backup per FIDO spec.
-  backupEligible Boolean @default(false)
-
-  /// Currently backed up (multi-device capable).
-  backupState Boolean @default(false)
-
-  /// Optional friendly device type ("singleDevice" | "multiDevice").
-  deviceType String?
-
-  /// Last successful authentication timestamp for this credential.
-  lastUsedAt DateTime?
-
-  /// Vendor/UA quirks or future flags.
-  meta Json?
-
-  /// Creation timestamp (server-side).
-  createdAt DateTime @default(now())
-
-  /// Last update timestamp (server-side).
-  updatedAt DateTime @updatedAt
-
-  /// Relation to owning user.
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, credentialId], map: "uq_webauthn_user_cred")
-  @@index([userId], map: "idx_webauthn_user")
 }
 
 // ─────────────────────────────────────────────
