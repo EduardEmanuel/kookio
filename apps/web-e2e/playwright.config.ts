@@ -47,6 +47,14 @@ export default defineConfig({
     reuseExistingServer: true,
     timeout: 180_000,
     cwd: workspaceRoot,
+    // Vite SSR cold-start forces Angular (~1.5 MB) and Material (~714 kB)
+    // into the AST during route compilation, which exhausts Node's default
+    // ~2 GB heap and kills the dev server before any test can connect (the
+    // OOM lands around 2043 MB during the initial mark-compact). Doubling
+    // the heap leaves headroom for parallel-route compilation under load.
+    env: {
+      NODE_OPTIONS: '--max-old-space-size=4096',
+    },
   },
   projects: [
     {
