@@ -6,7 +6,6 @@ import { onboardingCatalogs } from './onboarding-catalogs.router';
 import { pantry } from './pantry.router';
 import { profile } from './profile.router';
 import { recipes } from './recipes/recipes.router';
-import { user } from './user.router';
 
 export const appRouter = router({
   auth,
@@ -16,5 +15,4 @@ export const appRouter = router({
   pantry,
   profile,
   recipes,
-  user,
 });
