@@ -39,6 +39,17 @@ export const formatMeasureUnit = (unit: MeasureUnit | null): string =>
   unit ? (MEASURE_UNIT_LABEL[unit] ?? '') : '';
 
 /**
+ * Friendly labels for the unit dropdown. Spreads `MEASURE_UNIT_LABEL` and
+ * fills in PIECE and OTHER (which are intentionally blank for inline use)
+ * so every option in the select renders a non-empty label.
+ */
+export const MEASURE_UNIT_DROPDOWN_LABEL: Record<MeasureUnit, string> = {
+  ...MEASURE_UNIT_LABEL,
+  PIECE: 'piece',
+  OTHER: 'other',
+};
+
+/**
  * Recipe-ingredient units treated as kitchen staples (salt, pepper, garnish):
  * skipped by the pantry-coverage check on the match endpoint and unchecked by
  * default in the cook-flow ingredient confirmation dialog. Single source of

@@ -3,7 +3,11 @@
   class="pantry-form"
   (ngSubmit)="$event.preventDefault()"
 >
-  <mat-form-field appearance="outline" class="pantry-form__field">
+  <mat-form-field
+    appearance="outline"
+    subscriptSizing="dynamic"
+    class="pantry-form__field"
+  >
     <mat-label>Ingredient</mat-label>
     <input
       matInput
@@ -32,6 +36,7 @@
   <div class="pantry-form__row">
     <mat-form-field
       appearance="outline"
+      subscriptSizing="dynamic"
       class="pantry-form__field pantry-form__field--qty"
     >
       <mat-label>Quantity</mat-label>
@@ -44,29 +49,36 @@
         inputmode="decimal"
       />
       @if (form.controls.quantity.touched && form.controls.quantity.invalid) {
-        <mat-error>Enter a positive amount.</mat-error>
+        <mat-error>Must be positive.</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field
       appearance="outline"
+      subscriptSizing="dynamic"
       class="pantry-form__field pantry-form__field--unit"
     >
       <mat-label>Unit</mat-label>
       <mat-select formControlName="unit">
+        <mat-select-trigger>
+          {{
+            form.controls.unit.value
+              ? unitDropdownLabels[form.controls.unit.value]
+              : ''
+          }}
+        </mat-select-trigger>
         @for (u of units; track u) {
-          <mat-option [value]="u">
-            {{ u }}
-            @if (unitLabels[u]) {
-              <span class="pantry-form__unit-hint">— {{ unitLabels[u] }}</span>
-            }
-          </mat-option>
+          <mat-option [value]="u">{{ unitDropdownLabels[u] }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
   </div>
 
-  <mat-form-field appearance="outline" class="pantry-form__field">
+  <mat-form-field
+    appearance="outline"
+    subscriptSizing="dynamic"
+    class="pantry-form__field"
+  >
     <mat-label>Expiry date (optional)</mat-label>
     <input matInput [matDatepicker]="picker" formControlName="expiresAt" />
     <mat-datepicker-toggle matIconSuffix [for]="picker" />

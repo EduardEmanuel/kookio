@@ -150,11 +150,12 @@ describe('PantryFormComponent', () => {
       expect(search).toHaveBeenCalledWith({ query: 'tom', limit: 20 });
     });
 
-    it('skips searches shorter than two characters', async () => {
-      const { component, search } = await setup();
+    it('triggers a search on a single character', async () => {
+      const tomato = buildIngredient();
+      const { component, search } = await setup({ searchResults: [tomato] });
       component['form'].controls.ingredient.setValue('t');
       vi.advanceTimersByTime(500);
-      expect(search).not.toHaveBeenCalled();
+      expect(search).toHaveBeenCalledWith({ query: 't', limit: 20 });
     });
   });
 

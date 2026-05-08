@@ -39,14 +39,13 @@ import type {
   MeasureUnit,
 } from '@kookio/prisma-client';
 import {
-  MEASURE_UNIT_LABEL,
+  MEASURE_UNIT_DROPDOWN_LABEL,
   MEASURE_UNITS,
 } from '@kookio/shared-utility/measure-units';
 
 import { PANTRY_TRPC } from '../../pantry-trpc';
 
 const SEARCH_DEBOUNCE_MS = 300;
-const SEARCH_MIN_LENGTH = 2;
 const SEARCH_LIMIT = 20;
 
 export type PantryFormMode = 'add' | 'edit';
@@ -115,7 +114,7 @@ export class PantryFormComponent {
   private readonly trpc = inject(PANTRY_TRPC);
 
   protected readonly units = ALL_UNITS;
-  protected readonly unitLabels = MEASURE_UNIT_LABEL;
+  protected readonly unitDropdownLabels = MEASURE_UNIT_DROPDOWN_LABEL;
 
   protected readonly form = new FormGroup({
     ingredient: new FormControl<IngredientSearchResult | string | null>(null, [
@@ -142,7 +141,7 @@ export class PantryFormComponent {
       debounceTime(SEARCH_DEBOUNCE_MS),
       map((v) => (typeof v === 'string' ? v.trim() : '')),
       distinctUntilChanged(),
-      filter((q): q is string => q.length >= SEARCH_MIN_LENGTH),
+      filter((q) => q.length > 0),
       switchMap((query) =>
         from(
           this.trpc.pantry.searchIngredients.query({

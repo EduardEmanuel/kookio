@@ -1,7 +1,13 @@
 .pantry-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
+
+  // Material's dialog content sets padding-top: 0 when a title is present,
+  // which crowds the first outlined-field's floating label under the dialog
+  // headline. Restoring breathing room locally keeps the form self-contained
+  // without overriding the dialog token.
+  padding-top: var(--space-md);
 
   &__field {
     width: 100%;
@@ -9,7 +15,7 @@
 
   &__row {
     display: flex;
-    gap: var(--space-sm);
+    gap: var(--space-md);
   }
 
   &__field--qty {
@@ -18,10 +24,5 @@
 
   &__field--unit {
     flex: 1 1 0;
-  }
-
-  &__unit-hint {
-    color: var(--md-sys-color-on-surface-variant);
-    margin-left: var(--space-2xs);
   }
 }

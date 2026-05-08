@@ -72,7 +72,7 @@ export default class PantryPage {
       PantryDialogData,
       PantryDialogResult
     >(PantryDialogComponent, {
-      width: '500px',
+      width: 'var(--shell-content-max-width)',
       data: { mode: 'add' },
       autoFocus: 'first-tabbable',
     });
@@ -87,7 +87,7 @@ export default class PantryPage {
       PantryDialogData,
       PantryDialogResult
     >(PantryDialogComponent, {
-      width: '500px',
+      width: 'var(--shell-content-max-width)',
       data: { mode: 'edit', item },
       autoFocus: 'first-tabbable',
     });
