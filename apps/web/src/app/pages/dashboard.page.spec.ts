@@ -83,10 +83,9 @@ describe('DashboardPage', () => {
     expect(el.textContent ?? '').toContain('Hi, cook');
   });
 
-  it('mounts all four widgets', async () => {
+  it('mounts all three widgets', async () => {
     const el = await setup({ sessionName: 'Ana' });
 
-    expect(el.querySelector('kookio-quick-actions-widget')).not.toBeNull();
     expect(el.querySelector('kookio-expiring-soon-widget')).not.toBeNull();
     expect(el.querySelector('kookio-meal-plan-today-widget')).not.toBeNull();
     expect(el.querySelector('kookio-shopping-count-widget')).not.toBeNull();

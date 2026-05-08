@@ -10,7 +10,6 @@ import { AuthStore, authGuard, onboardingGuard } from '@kookio/feature-auth';
 import {
   ExpiringSoonWidgetComponent,
   MealPlanTodayWidgetComponent,
-  QuickActionsWidgetComponent,
   ShoppingCountWidgetComponent,
 } from '@kookio/feature-dashboard';
 
@@ -31,7 +30,6 @@ const greetingFor = (hour: number): string => {
   imports: [
     ExpiringSoonWidgetComponent,
     MealPlanTodayWidgetComponent,
-    QuickActionsWidgetComponent,
     ShoppingCountWidgetComponent,
   ],
   templateUrl: './dashboard.page.html',
