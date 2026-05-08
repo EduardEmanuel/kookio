@@ -10,24 +10,10 @@
 
   &__card {
     position: relative;
-    border-left: 4px solid transparent;
     overflow: hidden;
     height: 100%;
     display: flex;
     flex-direction: column;
-  }
-
-  // Border-left color encodes the match state. Tokens are aliased through
-  // _tokens.scss so the underlying palette can shift without touching this
-  // component.
-  &--complete &__card {
-    border-left-color: var(--color-match-complete);
-  }
-  &--almost &__card {
-    border-left-color: var(--color-match-almost);
-  }
-  &--browse &__card {
-    border-left-color: var(--color-match-browse);
   }
 
   &__image {
@@ -45,15 +31,16 @@
     pointer-events: none;
   }
 
-  &--complete &__badge {
-    --mat-chip-elevated-container-color: var(--md-sys-color-tertiary);
-    --mat-chip-label-text-color: var(--md-sys-color-on-tertiary);
-    --mat-chip-with-icon-icon-color: var(--md-sys-color-on-tertiary);
+  &__badge--complete {
+    --mat-chip-elevated-container-color: var(--mat-sys-tertiary);
+    --mat-chip-label-text-color: var(--mat-sys-on-tertiary);
+    --mat-chip-with-icon-icon-color: var(--mat-sys-on-tertiary);
   }
-  &--almost &__badge {
-    --mat-chip-elevated-container-color: var(--md-sys-color-primary);
-    --mat-chip-label-text-color: var(--md-sys-color-on-primary);
-    --mat-chip-with-icon-icon-color: var(--md-sys-color-on-primary);
+
+  &__badge--almost {
+    --mat-chip-elevated-container-color: var(--mat-sys-primary);
+    --mat-chip-label-text-color: var(--mat-sys-on-primary);
+    --mat-chip-with-icon-icon-color: var(--mat-sys-on-primary);
   }
 
   &__content {
@@ -83,6 +70,19 @@
     gap: var(--space-2xs);
   }
 
+  &__times {
+    display: flex;
+    gap: var(--space-md);
+    color: var(--color-on-surface-variant);
+    font-size: 0.875rem;
+  }
+
+  &__time {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
   &__actions {
     padding: var(--space-sm) var(--space-md);
   }
@@ -101,7 +101,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
+    outline: 2px solid var(--mat-sys-primary);
     outline-offset: 2px;
   }
 }

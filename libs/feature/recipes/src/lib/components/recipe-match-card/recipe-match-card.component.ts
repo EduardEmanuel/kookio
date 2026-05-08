@@ -47,9 +47,12 @@ export class RecipeMatchCardComponent {
     const m = this.item().matchInfo.missingCount;
     return m >= 1 && m <= ALMOST_MAX_MISSING;
   });
-  protected readonly isBrowse = computed(
-    () => this.item().matchInfo.missingCount > ALMOST_MAX_MISSING,
-  );
+
+  protected readonly totalMinutes = computed(() => {
+    const i = this.item();
+    const total = (i.prepTimeMinutes ?? 0) + (i.cookTimeMinutes ?? 0);
+    return total > 0 ? total : null;
+  });
 
   /** "tomato, basil" if every missing ingredient is named, or
    * "tomato, basil +2 more" when the server returned a truncated list. */

@@ -53,12 +53,8 @@ describe('RecipeMatchCardComponent', () => {
   });
 
   describe('complete (missingCount === 0)', () => {
-    it('marks the card complete and renders the Ready-to-cook badge', async () => {
+    it('renders the Ready-to-cook badge on a complete match', async () => {
       const { el } = await setup(baseItem());
-
-      expect(el.querySelector('.match-card--complete')).toBeTruthy();
-      expect(el.querySelector('.match-card--almost')).toBeNull();
-      expect(el.querySelector('.match-card--browse')).toBeNull();
 
       const badge = el.querySelector('.match-card__badge');
       expect(badge).toBeTruthy();
@@ -102,7 +98,7 @@ describe('RecipeMatchCardComponent', () => {
   });
 
   describe('almost (1..3 missing)', () => {
-    it('marks the card almost and renders the Missing-N badge', async () => {
+    it('renders the Missing-N badge on an almost match', async () => {
       const { el } = await setup(
         baseItem({
           matchInfo: {
@@ -113,7 +109,6 @@ describe('RecipeMatchCardComponent', () => {
         }),
       );
 
-      expect(el.querySelector('.match-card--almost')).toBeTruthy();
       const badge = el.querySelector('.match-card__badge');
       expect(badge?.textContent).toContain('Missing 2');
     });
@@ -162,7 +157,7 @@ describe('RecipeMatchCardComponent', () => {
   });
 
   describe('browse (>3 missing)', () => {
-    it('marks the card browse and omits the badge', async () => {
+    it('omits the badge on a browse-level match', async () => {
       const { el } = await setup(
         baseItem({
           matchInfo: {
@@ -172,7 +167,6 @@ describe('RecipeMatchCardComponent', () => {
           },
         }),
       );
-      expect(el.querySelector('.match-card--browse')).toBeTruthy();
       expect(el.querySelector('.match-card__badge')).toBeNull();
     });
 

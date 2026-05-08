@@ -1,0 +1,19 @@
+.home-page {
+  max-width: var(--shell-content-max-width);
+  margin: 0 auto;
+  padding: var(--space-md);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: 768px) {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  // The recipes-feed component requires explicit flex sizing on its host so
+  // the inner CDK virtual scroll viewport has a concrete height to bind to.
+  &__feed {
+    flex: 1;
+    min-height: 0;
+  }
+}

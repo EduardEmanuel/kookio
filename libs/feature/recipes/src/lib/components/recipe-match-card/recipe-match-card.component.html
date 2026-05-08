@@ -1,8 +1,5 @@
 <a
   class="match-card"
-  [class.match-card--complete]="isComplete()"
-  [class.match-card--almost]="isAlmost()"
-  [class.match-card--browse]="isBrowse()"
   [routerLink]="recipeUrl()"
   [attr.aria-label]="ariaLabel()"
 >
@@ -18,7 +15,13 @@
     }
 
     @if (isComplete() || isAlmost()) {
-      <mat-chip class="match-card__badge" aria-hidden="true" disableRipple>
+      <mat-chip
+        class="match-card__badge"
+        [class.match-card__badge--complete]="isComplete()"
+        [class.match-card__badge--almost]="isAlmost()"
+        aria-hidden="true"
+        disableRipple
+      >
         @if (isComplete()) {
           <kookio-icon name="check_circle" />
           Ready to cook
@@ -53,6 +56,23 @@
               }
               {{ area.name }}
             </mat-chip>
+          }
+        </div>
+      }
+
+      @if (totalMinutes() || item().servings) {
+        <div class="match-card__times">
+          @if (totalMinutes(); as t) {
+            <span class="match-card__time">
+              <kookio-icon name="schedule" />
+              {{ t }} min
+            </span>
+          }
+          @if (item().servings; as s) {
+            <span class="match-card__time">
+              <kookio-icon name="group" />
+              {{ s }}
+            </span>
           }
         </div>
       }

@@ -12,6 +12,7 @@ export const routeMeta: RouteMeta = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'kookio-home-page',
   imports: [RecipesFeedComponent],
-  template: `<kookio-recipes-feed />`,
+  templateUrl: './(home).page.html',
+  styleUrl: './(home).page.scss',
 })
 export default class HomePage {}
