@@ -6,7 +6,7 @@ import { createAudit, createLogger } from '@kookio/server-logger';
 const role = RoleSchema.Values;
 
 import { procedure, router, TRPCError } from '../trpc';
-import { requireAuth } from '../middlewares/auth';
+import { protectedProcedure } from '../middlewares/auth';
 
 const log = createLogger('trpc', { router: 'auth' });
 const audit = createAudit({ router: 'auth' });
@@ -88,18 +88,15 @@ export const auth = router({
    * Protected — returns the current session (uid, email, roles, amr).
    * Used by the client after login/register to populate AuthStore.
    */
-  me: procedure
-    .use(requireAuth)
-    .output(SessionSchema)
-    .query(({ ctx }) => {
-      const s = ctx.session!;
-      return {
-        uid: s.uid,
-        email: s.email,
-        name: s.name,
-        roles: s.roles,
-        amr: s.amr,
-        onboardingDone: s.onboardingDone,
-      };
-    }),
+  me: protectedProcedure.output(SessionSchema).query(({ ctx }) => {
+    const s = ctx.session!;
+    return {
+      uid: s.uid,
+      email: s.email,
+      name: s.name,
+      roles: s.roles,
+      amr: s.amr,
+      onboardingDone: s.onboardingDone,
+    };
+  }),
 });

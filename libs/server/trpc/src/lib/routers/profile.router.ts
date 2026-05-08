@@ -3,8 +3,8 @@ import z from 'zod';
 import { DisplayNameSchema } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
 
-import { procedure, router, TRPCError } from '../trpc';
-import { requireAuth } from '../middlewares/auth';
+import { router, TRPCError } from '../trpc';
+import { protectedProcedure } from '../middlewares/auth';
 
 const log = createLogger('trpc', { router: 'profile' });
 
@@ -46,8 +46,7 @@ export const profile = router({
    * `userUtensil` and `userDietaryRestriction` are keyed by `UserProfile.id`,
    * not `User.id` — same JOIN pattern as `onboarding.current`.
    */
-  counts: procedure
-    .use(requireAuth)
+  counts: protectedProcedure
     .output(ProfileCountsSchema)
     .query(async ({ ctx }) => {
       const userId = ctx.session!.uid;
@@ -100,8 +99,7 @@ export const profile = router({
    * Protected — finalizes onboarding for the current user.
    * Creates the UserProfile row if missing, otherwise updates it.
    */
-  completeOnboarding: procedure
-    .use(requireAuth)
+  completeOnboarding: protectedProcedure
     .input(CompleteOnboardingInputSchema)
     .output(ProfileSchema)
     .mutation(async ({ ctx, input }) => {
@@ -146,8 +144,7 @@ export const profile = router({
    * Protected — updates the current user's display name. Used by the account
    * page form. Validates via the same `DisplayNameSchema` as onboarding.
    */
-  updateName: procedure
-    .use(requireAuth)
+  updateName: protectedProcedure
     .input(UpdateNameInputSchema)
     .output(UpdateNameOutputSchema)
     .mutation(async ({ ctx, input }) => {
@@ -177,8 +174,7 @@ export const profile = router({
    * Defensive upsert: creates a minimal profile if it does not yet exist,
    * which keeps the endpoint idempotent for users who never onboarded.
    */
-  resetOnboarding: procedure
-    .use(requireAuth)
+  resetOnboarding: protectedProcedure
     .output(ProfileSchema)
     .mutation(async ({ ctx }) => {
       const userId = ctx.session!.uid;

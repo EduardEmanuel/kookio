@@ -1,14 +1,19 @@
 import { createLogger } from '@kookio/server-logger';
 
-import { procedure, router, TRPCError } from '../trpc';
-import { requireAuth } from '../middlewares/auth';
+import { router, TRPCError } from '../trpc';
+import { protectedProcedure } from '../middlewares/auth';
 
 const log = createLogger('trpc', { router: 'onboardingCatalogs' });
 
 // TODO(post-w3): wrap each query with cacheGetOrSet against Redis — these
 // catalogs are static and currently hit Postgres on every onboarding step.
+//
+// NOTE: this router intentionally uses `protectedProcedure` (not
+// `onboardedProcedure`). The catalogs are fetched DURING onboarding to
+// populate the stepper's selection lists; gating them on `onboardingDone`
+// would make the very screens that complete onboarding unable to load.
 export const onboardingCatalogs = router({
-  dietaryRestrictions: procedure.use(requireAuth).query(async ({ ctx }) => {
+  dietaryRestrictions: protectedProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.dietaryRestriction.findMany({
         orderBy: { label: 'asc' },
@@ -23,7 +28,7 @@ export const onboardingCatalogs = router({
     }
   }),
 
-  utensils: procedure.use(requireAuth).query(async ({ ctx }) => {
+  utensils: protectedProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.utensil.findMany({
         orderBy: [{ category: 'asc' }, { name: 'asc' }],
@@ -38,7 +43,7 @@ export const onboardingCatalogs = router({
     }
   }),
 
-  mealCategories: procedure.use(requireAuth).query(async ({ ctx }) => {
+  mealCategories: protectedProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.mealCategory.findMany({
         orderBy: { name: 'asc' },
@@ -53,7 +58,7 @@ export const onboardingCatalogs = router({
     }
   }),
 
-  mealAreas: procedure.use(requireAuth).query(async ({ ctx }) => {
+  mealAreas: protectedProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.mealArea.findMany({
         orderBy: { name: 'asc' },

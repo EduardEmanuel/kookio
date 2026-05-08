@@ -80,6 +80,41 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 });
 ```
 
+### Procedure builder convention
+
+The project ships four procedure builders. Routers MUST import the right
+builder rather than composing `procedure.use(<middleware>)` inline at the
+call site — same auth guarantee, but a single grep tells a reviewer at a
+glance which endpoints are public, authenticated, onboarded, or role-gated.
+
+| Builder                                   | Use case                                                                                                                                                                                                                           |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `publicProcedure` (alias for `procedure`) | Genuinely public surface — content discovery, public registration step (`auth.register`), unauthenticated reads (`recipes.feed`, `recipes.byId`).                                                                                  |
+| `protectedProcedure`                      | Auth required, but pre-onboarding access is intentional — `auth.me`, `profile.*`, `onboarding.*`, `onboarding-catalogs.*`.                                                                                                         |
+| `onboardedProcedure`                      | Auth + `onboardingDone === true`. Use for any router that touches data which only starts to exist after onboarding (`pantry.*`, `cookingSession.*`, `recipes.match`, future `mealPlan.*`, `shoppingList.*`, `recipeCollection.*`). |
+| `roleProcedure([...roles])`               | Auth + at least one of the listed roles. Reserve for admin / staff endpoints.                                                                                                                                                      |
+
+**Decision rule**: if the endpoint reads or writes user-scoped data that
+the schema only allows after onboarding (PantryItem, CookingSession,
+MealPlan, …), it MUST use `onboardedProcedure`.
+
+**Two carve-outs from that rule** — these stay on `protectedProcedure`
+even though the user is authenticated:
+
+- `onboarding.*` and `onboarding-catalogs.*` are called _during_ the
+  onboarding flow itself. Gating them on `onboardingDone` would deadlock
+  the user — they cannot finish onboarding without already having
+  finished it. Annotate the router with an inline `NOTE` comment so the
+  reason survives future audits.
+- `profile.counts` is called pre-onboarding too (it powers
+  `AuthStore.hasProfileSignals`, which loads on every login). It returns
+  zeros for users without a profile row — a valid response, not an error
+  state.
+
+When you add a new authenticated router, default to `onboardedProcedure`
+and only fall back to `protectedProcedure` if you can articulate a
+specific reason a non-onboarded user must be able to call it.
+
 ### Root Router
 
 - Merge all sub-routers in `root.ts`:
@@ -262,8 +297,12 @@ throw new TRPCError({
 ## General Rules
 
 - Export `AppRouter` type only — never expose server implementation to the client
-- Use `protectedProcedure` for all authenticated operations —
-  never check auth manually inside procedure handlers
+- Use the right procedure builder for the auth surface — `protectedProcedure`,
+  `onboardedProcedure`, or `roleProcedure([...])` from
+  `libs/server/trpc/src/lib/middlewares/auth.ts`. Never compose
+  `procedure.use(<middleware>)` inline in a router, and never check auth
+  manually inside a procedure handler. See "Procedure builder convention"
+  above for the decision matrix.
 - Keep procedure handlers thin — delegate business logic to services
 - Never use tRPC for file uploads — use h3 API routes with multipart handling instead
 - Use SuperJSON transformer consistently — never serialize dates or complex

@@ -6,8 +6,8 @@ import {
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
 
-import { procedure, router, TRPCError } from '../trpc';
-import { requireAuth } from '../middlewares/auth';
+import { router, TRPCError } from '../trpc';
+import { protectedProcedure } from '../middlewares/auth';
 
 const log = createLogger('trpc', { router: 'onboarding' });
 
@@ -15,6 +15,13 @@ const OnboardingDoneSchema = z.object({
   onboardingDone: z.boolean(),
 });
 
+/**
+ * NOTE: this router intentionally uses `protectedProcedure` (not
+ * `onboardedProcedure`) because every endpoint here runs DURING the
+ * onboarding flow itself. Gating it with `requireOnboarding` would create
+ * a deadlock — the user can't complete onboarding without already having
+ * completed it.
+ */
 export const onboarding = router({
   /**
    * Protected — finalizes onboarding for the current user.
@@ -25,8 +32,7 @@ export const onboarding = router({
    * (per schema design), while preferred categories and areas are keyed
    * directly on User.id so they survive profile resets.
    */
-  commit: procedure
-    .use(requireAuth)
+  commit: protectedProcedure
     .input(OnboardingCommitInputSchema)
     .output(OnboardingDoneSchema)
     .mutation(async ({ ctx, input }) => {
@@ -120,8 +126,7 @@ export const onboarding = router({
    * adultsCount, childrenCount, or any of the M:N selections.
    * Defensive upsert keeps the endpoint idempotent for users who never onboarded.
    */
-  reset: procedure
-    .use(requireAuth)
+  reset: protectedProcedure
     .output(OnboardingDoneSchema)
     .mutation(async ({ ctx }) => {
       const userId = ctx.session!.uid;
@@ -149,8 +154,7 @@ export const onboarding = router({
    * Returns sensible defaults (1 adult, 0 children, empty arrays) when no
    * profile or selections exist yet.
    */
-  current: procedure
-    .use(requireAuth)
+  current: protectedProcedure
     .output(OnboardingCurrentSchema)
     .query(async ({ ctx }) => {
       const userId = ctx.session!.uid;
