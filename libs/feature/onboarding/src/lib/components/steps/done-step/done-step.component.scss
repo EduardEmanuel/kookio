@@ -12,12 +12,12 @@
 
   &__heading {
     margin: 0;
-    font: var(--md-sys-typescale-headline-medium-font);
+    font: var(--typescale-headline-medium);
   }
 
   &__hint {
     margin: 0;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
   }
 
   &__summary {
@@ -25,12 +25,12 @@
   }
 
   &__chip--warn {
-    background: var(--md-sys-color-error-container);
-    color: var(--md-sys-color-on-error-container);
+    background: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
   }
 
   &__cta {
     margin: 0;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
   }
 }

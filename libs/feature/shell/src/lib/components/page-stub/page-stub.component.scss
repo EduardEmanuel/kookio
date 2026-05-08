@@ -30,7 +30,7 @@
   }
 
   &__subtitle {
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
   }
 
   &__content {
@@ -39,7 +39,7 @@
 
   &__placeholder {
     margin: 0 0 1rem;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
   }
 
   &__route {

@@ -31,14 +31,14 @@
   }
 
   &__skip {
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
     margin-right: auto;
   }
 
   &__error {
     margin: 0;
     padding: var(--space-md);
-    color: var(--md-sys-color-error);
+    color: var(--mat-sys-error);
     text-align: center;
   }
 }

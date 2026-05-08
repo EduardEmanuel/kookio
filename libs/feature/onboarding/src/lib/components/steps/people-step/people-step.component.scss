@@ -10,12 +10,12 @@
 
   &__heading {
     margin: 0;
-    font: var(--md-sys-typescale-headline-small-font);
+    font: var(--typescale-headline-small);
   }
 
   &__subtitle {
     margin: 0;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
   }
 
   &__counters {
@@ -37,7 +37,7 @@
     flex: 1;
     padding: var(--space-md);
     border-radius: var(--radius-md);
-    background: var(--md-sys-color-surface-container-low);
+    background: var(--mat-sys-surface-container-low);
   }
 
   &__emojis {
@@ -48,7 +48,7 @@
 
   &__counter-label {
     margin: 0;
-    font: var(--md-sys-typescale-title-medium-font);
+    font: var(--typescale-title-medium);
   }
 
   &__controls {
@@ -60,7 +60,7 @@
   &__count {
     min-width: 2.5rem;
     text-align: center;
-    font: var(--md-sys-typescale-headline-medium-font);
+    font: var(--typescale-headline-medium);
     font-variant-numeric: tabular-nums;
   }
 
@@ -70,8 +70,8 @@
     gap: var(--space-sm);
     padding: var(--space-md);
     border-radius: var(--radius-md);
-    background: var(--md-sys-color-surface-container);
-    color: var(--md-sys-color-on-surface-variant);
+    background: var(--mat-sys-surface-container);
+    color: var(--mat-sys-on-surface-variant);
 
     p {
       margin: 0;

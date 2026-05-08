@@ -10,12 +10,12 @@
 
   &__heading {
     margin: 0;
-    font: var(--md-sys-typescale-headline-small-font);
+    font: var(--typescale-headline-small);
   }
 
   &__subtitle {
     margin: 0;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
   }
 
   &__tabs {
@@ -29,7 +29,7 @@
     margin-top: var(--space-md);
     padding: var(--space-md);
     border-radius: var(--radius-md);
-    background: var(--md-sys-color-surface-container);
+    background: var(--mat-sys-surface-container);
   }
 
   &__pantry-text {
@@ -43,7 +43,7 @@
   }
 
   &__pantry-hint {
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
   }
 
   &__subtabs {
@@ -69,6 +69,6 @@
     margin: 0;
     padding: var(--space-md);
     text-align: center;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
   }
 }
