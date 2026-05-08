@@ -1,18 +1,18 @@
 @if (!isHidden()) {
   <nav class="bottom-tabs" role="navigation" aria-label="Main menu">
-    @for (tab of tabs; track tab.route) {
+    @for (item of items; track item.route) {
       <a
-        [routerLink]="tab.route"
+        [routerLink]="item.route"
         routerLinkActive="bottom-tabs__item--active"
         #rla="routerLinkActive"
         [routerLinkActiveOptions]="
-          tab.route === '/' ? { exact: true } : { exact: false }
+          item.route === '/' ? { exact: true } : { exact: false }
         "
         class="bottom-tabs__item"
-        [attr.aria-label]="tab.label"
+        [attr.aria-label]="item.label"
       >
-        <kookio-icon [name]="tab.icon" [filled]="rla.isActive" />
-        <span class="bottom-tabs__label">{{ tab.label }}</span>
+        <kookio-icon [name]="item.icon" [filled]="rla.isActive" />
+        <span class="bottom-tabs__label">{{ item.label }}</span>
       </a>
     }
   </nav>

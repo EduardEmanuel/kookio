@@ -1,11 +1,11 @@
 @if (!isHidden()) {
   <nav class="sidenav-menu" role="navigation">
     <mat-nav-list>
-      @for (item of visibleItems(); track item.route) {
+      @for (item of items; track item.route) {
         <a
           mat-list-item
           [routerLink]="item.route"
-          routerLinkActive="mdc-list-item--activated"
+          routerLinkActive="mdc-list-item--activated sidenav-menu__link--active"
           #rla="routerLinkActive"
           [routerLinkActiveOptions]="
             item.route === '/' ? { exact: true } : { exact: false }

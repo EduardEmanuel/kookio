@@ -14,11 +14,9 @@ import { filter, map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 import { KookioIconComponent } from '@kookio/shared-ui';
-import { URLS } from '@kookio/shared-utility';
 
+import { NAV_DESTINATIONS } from '../../models';
 import { isOnAuthRoute } from '../../utils/auth-routes';
-
-import type { TabItem } from '../../models';
 
 @Component({
   selector: 'kookio-bottom-tabs',
@@ -30,13 +28,7 @@ import type { TabItem } from '../../models';
 export class BottomTabsComponent {
   private readonly router = inject(Router);
 
-  readonly tabs: readonly TabItem[] = [
-    { label: 'Home', icon: 'home', route: URLS.HOME },
-    { label: 'Recipes', icon: 'restaurant_menu', route: URLS.RECIPES },
-    { label: 'Pantry', icon: 'kitchen', route: URLS.PANTRY },
-    { label: 'Plan', icon: 'calendar_today', route: URLS.MEAL_PLAN },
-    { label: 'Account', icon: 'person', route: URLS.ACCOUNT },
-  ];
+  protected readonly items = NAV_DESTINATIONS;
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(

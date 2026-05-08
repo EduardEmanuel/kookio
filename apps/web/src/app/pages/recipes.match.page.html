@@ -43,7 +43,7 @@
       @switch (level()) { @case ('A') {
       <p class="match-page__empty-text">No matches yet.</p>
       <p class="match-page__empty-hint">
-        Add more ingredients to your pantry, or try the "Almost there" level.
+        Add more ingredients to your pantry, or try the "Almost" level.
       </p>
       <a matButton="filled" routerLink="/pantry">
         <kookio-icon name="kitchen" />
@@ -52,7 +52,7 @@
       } @case ('B') {
       <p class="match-page__empty-text">Nothing close enough.</p>
       <button matButton="tonal" type="button" (click)="onLevelChange('C')">
-        Browse all recipes
+        Browse all
       </button>
       } @default {
       <p class="match-page__empty-text">No recipes available yet.</p>

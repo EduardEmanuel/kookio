@@ -13,7 +13,7 @@ const routes = [
   { path: '', component: StubPage },
   { path: 'login', component: StubPage },
   { path: 'register', component: StubPage },
-  { path: 'recipes', component: StubPage },
+  { path: 'dashboard', component: StubPage },
 ];
 
 describe('BottomTabsComponent', () => {
@@ -45,16 +45,18 @@ describe('BottomTabsComponent', () => {
       expect(el.querySelectorAll('.bottom-tabs__item').length).toBe(5);
     });
 
-    it('renders tab labels', async () => {
+    it('renders the canonical destinations in order', async () => {
       const { el } = await setup();
       const labels = Array.from(el.querySelectorAll('.bottom-tabs__label')).map(
         (l) => l.textContent?.trim(),
       );
-      expect(labels).toContain('Home');
-      expect(labels).toContain('Recipes');
-      expect(labels).toContain('Pantry');
-      expect(labels).toContain('Plan');
-      expect(labels).toContain('Account');
+      expect(labels).toEqual([
+        'Dashboard',
+        'Saved',
+        'Pantry',
+        'Plan',
+        'Groceries',
+      ]);
     });
   });
 
@@ -79,11 +81,11 @@ describe('BottomTabsComponent', () => {
       expect(el.querySelector('nav.bottom-tabs')).toBeNull();
     });
 
-    it('shows nav when navigating to /recipes', async () => {
+    it('shows nav when navigating to /dashboard', async () => {
       const { fixture, el } = await setup();
       const router = TestBed.inject(Router);
 
-      await router.navigate(['/recipes']);
+      await router.navigate(['/dashboard']);
       fixture.detectChanges();
 
       expect(el.querySelector('nav.bottom-tabs')).toBeTruthy();

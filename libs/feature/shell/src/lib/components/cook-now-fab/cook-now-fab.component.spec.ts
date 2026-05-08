@@ -115,12 +115,12 @@ describe('CookNowFabComponent', () => {
       expect(fab(el)).toBeNull();
     });
 
-    it('hides at /dashboard (the navigation target itself)', async () => {
+    it('hides at /recipes/match (the navigation target itself)', async () => {
       const { fixture, el, router } = await setup({
         user: { uid: 'u1' },
         onboardingDone: true,
       });
-      await router.navigate(['/dashboard']);
+      await router.navigate(['/recipes/match']);
       fixture.detectChanges();
       expect(fab(el)).toBeNull();
     });
@@ -135,12 +135,12 @@ describe('CookNowFabComponent', () => {
       expect(fab(el)).toBeTruthy();
     });
 
-    it('shows at /recipes/match', async () => {
+    it('shows at /dashboard', async () => {
       const { fixture, el, router } = await setup({
         user: { uid: 'u1' },
         onboardingDone: true,
       });
-      await router.navigate(['/recipes/match']);
+      await router.navigate(['/dashboard']);
       fixture.detectChanges();
       expect(fab(el)).toBeTruthy();
     });
@@ -220,13 +220,13 @@ describe('CookNowFabComponent', () => {
       expect(link?.getAttribute('aria-label')).toBe('Cook now');
     });
 
-    it('points to /dashboard', async () => {
+    it('points to /recipes/match', async () => {
       const { el } = await setup({
         user: { uid: 'u1' },
         onboardingDone: true,
       });
       const link = fab(el) as HTMLAnchorElement | null;
-      expect(link?.getAttribute('href')).toBe('/dashboard');
+      expect(link?.getAttribute('href')).toBe('/recipes/match');
     });
   });
 });

@@ -63,7 +63,7 @@ describe('TopBarComponent', () => {
       const { fixture } = await setup(mockUser);
 
       const accountBtn = fixture.nativeElement.querySelector(
-        'button[aria-label="Account"]',
+        'button[aria-label="User menu"]',
       ) as HTMLButtonElement;
       accountBtn.click();
       fixture.detectChanges();
@@ -82,7 +82,7 @@ describe('TopBarComponent', () => {
       const { fixture, store } = await setup(mockUser);
 
       const accountBtn = fixture.nativeElement.querySelector(
-        'button[aria-label="Account"]',
+        'button[aria-label="User menu"]',
       ) as HTMLButtonElement;
       accountBtn.click();
       fixture.detectChanges();

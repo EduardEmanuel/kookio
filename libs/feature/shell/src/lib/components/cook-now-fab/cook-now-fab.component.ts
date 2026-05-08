@@ -19,7 +19,7 @@ const HIDDEN_ROUTES = [
   '/login',
   '/register',
   '/onboarding',
-  '/dashboard',
+  '/recipes/match',
   '/404',
   '/403',
 ];

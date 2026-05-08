@@ -54,9 +54,14 @@
 }
 
 .bottom-tabs__item--active {
-  background-color: var(--mat-sys-secondary-container);
-
+  // Mirrors the sidenav active treatment: drop the pill / container fill,
+  // keep the existing top-edge ::before bar but recolor it to primary, and
+  // bump the label weight so the active tab still reads at a glance.
   &::before {
-    background: var(--mat-sys-on-secondary-container);
+    background: var(--mat-sys-primary);
+  }
+
+  .bottom-tabs__label {
+    font-weight: 600;
   }
 }

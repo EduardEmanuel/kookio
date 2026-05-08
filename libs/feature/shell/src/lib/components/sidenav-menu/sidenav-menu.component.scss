@@ -3,4 +3,25 @@
   height: 100%;
   overflow-y: auto;
   background: var(--color-surface);
+
+  // Replace M3's pill active indicator with a left-edge accent.
+  // Material's selected-state label/icon colors (primary) are kept untouched —
+  // only the container fill is suppressed so we don't double up indicators.
+  --mdc-list-list-item-selected-container-color: transparent;
+  --mdc-list-list-item-focus-container-color: transparent;
+
+  &__link--active {
+    position: relative;
+    font-weight: 600;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--mat-sys-primary);
+    }
+  }
 }

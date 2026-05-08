@@ -61,7 +61,12 @@
   <div class="topbar__spacer"></div>
 
   @if (user()) {
-    <button matIconButton [matMenuTriggerFor]="userMenu" aria-label="Account">
+    <button
+      matIconButton
+      [matMenuTriggerFor]="userMenu"
+      matTooltip="User menu"
+      aria-label="User menu"
+    >
       <kookio-icon name="account_circle" />
     </button>
     <mat-menu #userMenu>
