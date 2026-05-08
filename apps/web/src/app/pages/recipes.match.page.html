@@ -6,19 +6,20 @@
       class="match-page__levels"
       [value]="level()"
       (change)="onLevelChange($event.value)"
+      hideSingleSelectionIndicator
       aria-label="Match level"
     >
       <mat-button-toggle value="A" aria-label="I have everything">
         <kookio-icon name="check_circle" />
-        A
+        Ready
       </mat-button-toggle>
       <mat-button-toggle value="B" aria-label="Almost there">
         <kookio-icon name="warning" />
-        B
+        Almost
       </mat-button-toggle>
       <mat-button-toggle value="C" aria-label="All recipes">
         <kookio-icon name="restaurant_menu" />
-        C
+        All
       </mat-button-toggle>
     </mat-button-toggle-group>
 
