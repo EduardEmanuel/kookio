@@ -40,22 +40,46 @@
   font: var(--mat-sys-body-small);
 }
 
+// Mirror the desktop sidebar's item shape so the picker and the
+// sidebar render recipes identically. Difference: cursor: pointer
+// (tap to select) vs the sidebar's cursor: grab (drag source).
 .sheet__list {
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
 }
 
 .sheet__item {
-  width: 100%;
-  text-align: start;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--mat-sys-surface);
+  border: 1px solid var(--mat-sys-outline-variant);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mat-sys-surface-container);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
 }
 
 .sheet__thumb {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border-radius: 6px;
   background: var(--mat-sys-surface-container);
   color: var(--mat-sys-on-surface-variant);
-  border-radius: 8px;
   overflow: hidden;
 
   img {
@@ -65,7 +89,22 @@
   }
 }
 
-.sheet__meta {
+.sheet__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sheet__recipe-title {
+  font: var(--mat-sys-body-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheet__recipe-meta {
+  font: var(--mat-sys-body-small);
   color: var(--mat-sys-on-surface-variant);
 }
 

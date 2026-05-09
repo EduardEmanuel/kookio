@@ -16,44 +16,50 @@
     <p class="sheet__error" role="alert">{{ msg }}</p>
   }
 
-  <mat-action-list class="sheet__list" aria-label="Recipes">
+  <div class="sheet__list" role="list" aria-label="Recipes">
     @for (recipe of items(); track recipe.id) {
-      <button
-        mat-list-item
-        type="button"
+      <article
         class="sheet__item"
+        role="listitem"
+        tabindex="0"
         (click)="onSelect(recipe)"
+        (keydown.enter)="onSelect(recipe)"
+        (keydown.space)="onSelect(recipe)"
       >
-        <span matListItemAvatar class="sheet__thumb">
+        <span class="sheet__thumb">
           @if (recipe.imageUrl) {
             <img
               [ngSrc]="recipe.imageUrl"
               [alt]="recipe.title"
-              width="48"
-              height="48"
+              width="40"
+              height="40"
             />
           } @else {
             <kookio-icon name="restaurant" />
           }
         </span>
-        <span matListItemTitle>{{ recipe.title }}</span>
-        <span matListItemLine class="sheet__meta">
+        <span class="sheet__text">
+          <span class="sheet__recipe-title">{{ recipe.title }}</span>
           @if (
             recipe.prepTimeMinutes !== null && recipe.cookTimeMinutes !== null
           ) {
-            {{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} min
-          }
-          @if (recipe.area?.name; as areaName) {
-            · {{ areaName }}
+            <span class="sheet__recipe-meta">
+              {{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} min
+              @if (recipe.area?.name; as areaName) {
+                · {{ areaName }}
+              }
+            </span>
+          } @else if (recipe.area?.name; as areaName) {
+            <span class="sheet__recipe-meta">{{ areaName }}</span>
           }
         </span>
-      </button>
+      </article>
     } @empty {
       @if (hasLoadedOnce()) {
         <p class="sheet__empty">No recipes available yet.</p>
       }
     }
-  </mat-action-list>
+  </div>
 
   @if (isLoading()) {
     <div class="sheet__spinner">

@@ -8,7 +8,6 @@ import { NgOptimizedImage } from '@angular/common';
 import { firstValueFrom, from } from 'rxjs';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import type { RecipeFeedItem } from '@kookio/prisma-client';
@@ -41,7 +40,6 @@ const PREFETCH_PIXELS = 200;
   imports: [
     NgOptimizedImage,
     MatButtonModule,
-    MatListModule,
     MatProgressSpinnerModule,
     KookioIconComponent,
   ],
