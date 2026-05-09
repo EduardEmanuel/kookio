@@ -1,0 +1,79 @@
+:host {
+  display: block;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 8px;
+  position: sticky;
+  top: 0;
+  background: var(--mat-sys-surface);
+  z-index: 1;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.sheet__title {
+  margin: 0;
+  font: var(--mat-sys-title-medium);
+}
+
+.sheet__close {
+  margin-right: -8px;
+}
+
+.sheet__error {
+  margin: 12px 16px;
+  color: var(--mat-sys-error);
+  font: var(--mat-sys-body-small);
+}
+
+.sheet__list {
+  padding: 0;
+}
+
+.sheet__item {
+  width: 100%;
+  text-align: start;
+}
+
+.sheet__thumb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface-variant);
+  border-radius: 8px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.sheet__meta {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.sheet__empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.sheet__spinner {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+.sheet__loadmore {
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px 24px;
+}

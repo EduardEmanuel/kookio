@@ -23,6 +23,7 @@ import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
 import { AUTH_TRPC, FIREBASE_OPTIONS } from '@kookio/feature-auth';
 import { ONBOARDING_TRPC } from '@kookio/feature-onboarding';
 import { PANTRY_TRPC } from '@kookio/feature-pantry/trpc';
+import { MEAL_PLAN_TRPC } from '@kookio/feature-plan/trpc';
 import { RECIPES_TRPC } from '@kookio/feature-recipes';
 import { COOKING_SESSION_TRPC } from '@kookio/feature-recipes/cooking-trpc';
 import { APP_TRPC } from '@kookio/feature-shell';
@@ -57,6 +58,7 @@ export const appConfig: ApplicationConfig = {
     { provide: AUTH_TRPC, useExisting: TrpcClientApp },
     { provide: ONBOARDING_TRPC, useExisting: TrpcClientApp },
     { provide: PANTRY_TRPC, useExisting: TrpcClientApp },
+    { provide: MEAL_PLAN_TRPC, useExisting: TrpcClientApp },
     { provide: RECIPES_TRPC, useExisting: TrpcClientApp },
     { provide: COOKING_SESSION_TRPC, useExisting: TrpcClientApp },
     {

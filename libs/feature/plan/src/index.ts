@@ -1,7 +1,13 @@
-// The barrel keeps the store + tRPC token surface. Components live in
-// sub-paths so a consumer that only needs the store (e.g. the dashboard
-// "today's plan" widget) does not drag the planner's Material graph
-// (drag-drop, bottom sheet, tabs) into its route's SSR module graph —
-// same hazard as `feature-pantry` documents at length.
-export * from './lib/meal-plan-trpc';
-export * from './lib/store/plan.store';
+// The barrel exposes the *heavy* surface — `PlanCalendarComponent` pulls
+// MatBottomSheet, MatCard, MatSnackBar and the recipe-picker bundle. The
+// store + tRPC token live behind sub-paths so a lightweight consumer
+// (e.g. a future dashboard widget that only displays today's planned
+// meals) can import them without paying for the calendar's Material
+// graph in its route's SSR module graph. Pattern mirrors
+// `@kookio/feature-pantry`.
+//
+//   - `@kookio/feature-plan/store` → PlanStore + slot helpers
+//   - `@kookio/feature-plan/trpc`  → MEAL_PLAN_TRPC token + types
+export * from './lib/components/plan-calendar/plan-calendar.component';
+export * from './lib/components/recipe-picker-sheet/recipe-picker-sheet.component';
+export * from './lib/plan-can-deactivate.guard';
