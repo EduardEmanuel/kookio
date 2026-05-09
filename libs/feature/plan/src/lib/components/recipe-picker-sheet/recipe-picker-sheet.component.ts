@@ -5,6 +5,7 @@ import {
   signal,
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
+import { firstValueFrom, from } from 'rxjs';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
@@ -63,11 +64,20 @@ export class RecipePickerSheetComponent {
     this.isLoading.set(true);
     this.errorMessage.set(null);
     try {
-      const cursor = this.nextCursor() ?? undefined;
-      const page = await this.trpc.recipes.feed.query({
-        limit: PAGE_SIZE,
-        cursor,
-      });
+      const cursor = this.nextCursor();
+      // `@analogjs/trpc` exposes procedures as Observables, not Promises.
+      // Awaiting the bare call resolves to the Observable itself, leaving
+      // `page.items` undefined — wrapping with `from()` + `firstValueFrom`
+      // works for both Observable and Promise return shapes, mirroring the
+      // pattern in pantry.store/recipes-feed.
+      const page = await firstValueFrom(
+        from(
+          this.trpc.recipes.feed.query({
+            limit: PAGE_SIZE,
+            ...(cursor ? { cursor } : {}),
+          }),
+        ),
+      );
       this.items.update((prev) => [...prev, ...page.items]);
       this.nextCursor.set(page.nextCursor);
       this.hasLoadedOnce.set(true);

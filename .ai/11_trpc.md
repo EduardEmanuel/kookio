@@ -234,6 +234,85 @@ export default class UsersPage {
 - Use `injectLoad()` for server-side data fetching instead of tRPC queries
   when data is needed at page load time (SSR/SSG)
 
+### Procedures return Observables — never `await` a procedure call directly
+
+`@analogjs/trpc`'s `createTrpcClient` wraps every procedure to return an
+**RxJS Observable**, not a `Promise`. The injection-token interfaces in
+this codebase (`PantryTrpcClient`, `RecipesTrpcClient`,
+`MealPlanTrpcClient`, …) all declare `Promise<TOutput>` for ergonomics —
+that is a deliberate type-only fiction so consumers can choose between
+`from(...).pipe(...)` and `await firstValueFrom(...)`. **The runtime
+return value is always an Observable.**
+
+**The trap.** Because `Observable` does not implement `.then`, awaiting
+a bare procedure call resolves to the Observable instance itself,
+_not_ the unwrapped data:
+
+```typescript
+// ❌ subtly wrong — resolves to the Observable, not the page data
+const page = await this.trpc.recipes.feed.query({ limit: 20 });
+this.items.update((prev) => [...prev, ...page.items]);
+//                                    ^^^^^^^^^^^^^ TypeError: page.items is not iterable
+```
+
+`page.items` is `undefined` (Observable instances do not have an
+`items` property), and V8 reports the spread failure as
+`page.items is not iterable`. TypeScript does not catch this because
+the interface said `Promise<RecipeFeedPage>`.
+
+**The fix — pick one.** Both are battle-tested in this repo:
+
+```typescript
+// ✅ stream-style: matches PantryStore, RecipesFeedComponent
+return from(this.trpc.recipes.feed.query({ limit: 20 })).pipe(
+  tap((page) => this.items.update((prev) => [...prev, ...page.items])),
+  catchError(...),
+);
+
+// ✅ imperative-style: when you need a single value inside an async
+//   handler (bottom sheet's `loadPage`, a one-shot button click, etc.)
+const page = await firstValueFrom(
+  from(this.trpc.recipes.feed.query({ limit: 20 })),
+);
+this.items.update((prev) => [...prev, ...page.items]);
+```
+
+The redundant `from(...)` around an already-Observable call is
+deliberate: it makes the snippet robust if `@analogjs/trpc` ever
+switches the return type back to `Promise` (or if you swap
+`MEAL_PLAN_TRPC` for a hand-rolled mock that returns a Promise from a
+spec). `from(observable)` is a no-op; `from(promise)` upgrades. Keep
+the wrapper.
+
+**Why we don't change the interface declarations** to
+`Observable<T>`. Two reasons: (1) the trpc client object's actual TS
+type from `createTrpcClient<AppRouter>` is opaque enough that aligning
+our local interfaces with it would require importing it, undoing the
+isolation that `*_TRPC` injection tokens provide; (2) declaring
+`Promise<T>` keeps the door open for the imperative `await firstValueFrom(...)`
+shape inside async event handlers, which reads more naturally than
+chaining a one-shot `.subscribe(...)`. The lie is small, the warning
+above is the cost of carrying it.
+
+**How to apply.** Whenever you write or review a consumer of any
+`*_TRPC` token:
+
+- If the call participates in an Observable pipeline (`PlanStore.load`,
+  `PantryStore.add`, anything inside `rxMethod(...)`), wrap with
+  `from(...)` and continue with `.pipe(...)`. Never call
+  `.subscribe()` directly inside a component — let `toSignal()` or
+  `rxMethod()` own the subscription.
+- If the call sits inside an `async` event handler and you need a
+  single value, write
+  `await firstValueFrom(from(this.trpc.x.y.query(...)))`. Do **not**
+  drop the `from(...)` even though it looks redundant — see the
+  robustness note above.
+- A bare `await this.trpc.x.y.query(...)` is always wrong. Reject it
+  in review. Errors at runtime as `<expr> is not iterable` (for
+  feeds), `Cannot read properties of undefined` (for getters), or
+  silently writes the Observable instance into a signal (worst case —
+  no error, just dead UI).
+
 ### `authAwareFetch` — custom fetch wrapper, with SSR caveat
 
 `apps/web/src/trpc-client.ts` registers a custom `authAwareFetch` for the

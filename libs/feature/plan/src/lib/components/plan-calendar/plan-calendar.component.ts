@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, from } from 'rxjs';
 import {
   CdkDrag,
   CdkDropList,
@@ -222,11 +222,17 @@ export class PlanCalendarComponent {
     this.sidebarLoading.set(true);
     this.sidebarErrorMessage.set(null);
     try {
-      const cursor = this.sidebarNextCursor() ?? undefined;
-      const page = await this.trpc.recipes.feed.query({
-        limit: SIDEBAR_PAGE_SIZE,
-        cursor,
-      });
+      const cursor = this.sidebarNextCursor();
+      // See note in recipe-picker-sheet: @analogjs/trpc returns Observables;
+      // awaiting bare leaves the resolved value as the Observable instance.
+      const page = await firstValueFrom(
+        from(
+          this.trpc.recipes.feed.query({
+            limit: SIDEBAR_PAGE_SIZE,
+            ...(cursor ? { cursor } : {}),
+          }),
+        ),
+      );
       this.sidebarRecipes.update((prev) => [...prev, ...page.items]);
       this.sidebarNextCursor.set(page.nextCursor);
       this.sidebarHasLoadedOnce.set(true);
