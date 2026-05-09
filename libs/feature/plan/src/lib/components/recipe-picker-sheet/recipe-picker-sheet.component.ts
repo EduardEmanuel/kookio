@@ -47,9 +47,6 @@ const PREFETCH_PIXELS = 200;
   ],
   templateUrl: './recipe-picker-sheet.component.html',
   styleUrl: './recipe-picker-sheet.component.scss',
-  host: {
-    '(scroll)': 'onScroll($event)',
-  },
 })
 export class RecipePickerSheetComponent {
   private readonly trpc = inject(MEAL_PLAN_TRPC);

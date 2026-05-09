@@ -11,51 +11,53 @@
   </button>
 </header>
 
-@if (errorMessage(); as msg) {
-  <p class="sheet__error" role="alert">{{ msg }}</p>
-}
-
-<mat-action-list class="sheet__list" aria-label="Recipes">
-  @for (recipe of items(); track recipe.id) {
-    <button
-      mat-list-item
-      type="button"
-      class="sheet__item"
-      (click)="onSelect(recipe)"
-    >
-      <span matListItemAvatar class="sheet__thumb">
-        @if (recipe.imageUrl) {
-          <img
-            [ngSrc]="recipe.imageUrl"
-            [alt]="recipe.title"
-            width="48"
-            height="48"
-          />
-        } @else {
-          <kookio-icon name="restaurant" />
-        }
-      </span>
-      <span matListItemTitle>{{ recipe.title }}</span>
-      <span matListItemLine class="sheet__meta">
-        @if (
-          recipe.prepTimeMinutes !== null && recipe.cookTimeMinutes !== null
-        ) {
-          {{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} min
-        }
-        @if (recipe.area?.name; as areaName) {
-          · {{ areaName }}
-        }
-      </span>
-    </button>
-  } @empty {
-    @if (hasLoadedOnce()) {
-      <p class="sheet__empty">No recipes available yet.</p>
-    }
+<div class="sheet__scrollable" (scroll)="onScroll($event)">
+  @if (errorMessage(); as msg) {
+    <p class="sheet__error" role="alert">{{ msg }}</p>
   }
-</mat-action-list>
 
-@if (isLoading()) {
-  <div class="sheet__spinner">
-    <mat-spinner diameter="32" />
-  </div>
-}
+  <mat-action-list class="sheet__list" aria-label="Recipes">
+    @for (recipe of items(); track recipe.id) {
+      <button
+        mat-list-item
+        type="button"
+        class="sheet__item"
+        (click)="onSelect(recipe)"
+      >
+        <span matListItemAvatar class="sheet__thumb">
+          @if (recipe.imageUrl) {
+            <img
+              [ngSrc]="recipe.imageUrl"
+              [alt]="recipe.title"
+              width="48"
+              height="48"
+            />
+          } @else {
+            <kookio-icon name="restaurant" />
+          }
+        </span>
+        <span matListItemTitle>{{ recipe.title }}</span>
+        <span matListItemLine class="sheet__meta">
+          @if (
+            recipe.prepTimeMinutes !== null && recipe.cookTimeMinutes !== null
+          ) {
+            {{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} min
+          }
+          @if (recipe.area?.name; as areaName) {
+            · {{ areaName }}
+          }
+        </span>
+      </button>
+    } @empty {
+      @if (hasLoadedOnce()) {
+        <p class="sheet__empty">No recipes available yet.</p>
+      }
+    }
+  </mat-action-list>
+
+  @if (isLoading()) {
+    <div class="sheet__spinner">
+      <mat-spinner diameter="32" />
+    </div>
+  }
+</div>
