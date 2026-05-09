@@ -107,6 +107,23 @@ export const onboarding = router({
               skipDuplicates: true,
             });
           }
+
+          // Initial pantry items the user staged during the fridge step.
+          // skipDuplicates honors PantryItem's @@unique([userId, ingredientCatalogId])
+          // — a same-ingredient duplicate slipping through client-side
+          // validation is silently ignored rather than failing the commit.
+          if (input.pantrySeed.length > 0) {
+            await tx.pantryItem.createMany({
+              data: input.pantrySeed.map((p) => ({
+                userId,
+                ingredientCatalogId: p.ingredientCatalogId,
+                quantity: p.quantity,
+                unit: p.unit,
+                expiresAt: p.expiresAt ? new Date(p.expiresAt) : null,
+              })),
+              skipDuplicates: true,
+            });
+          }
         });
 
         log.info({ uid: userId }, 'onboarding committed');

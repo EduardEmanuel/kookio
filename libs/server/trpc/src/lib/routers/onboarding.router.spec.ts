@@ -35,6 +35,9 @@ type TxMock = {
     createMany: ReturnType<typeof vi.fn>;
     findMany: ReturnType<typeof vi.fn>;
   };
+  pantryItem: {
+    createMany: ReturnType<typeof vi.fn>;
+  };
 };
 
 type PrismaMock = TxMock & {
@@ -96,6 +99,9 @@ const makeTxMock = (): TxMock => ({
     deleteMany: vi.fn(() => Promise.resolve({ count: 0 })),
     createMany: vi.fn(() => Promise.resolve({ count: 0 })),
     findMany: vi.fn(() => Promise.resolve([])),
+  },
+  pantryItem: {
+    createMany: vi.fn(() => Promise.resolve({ count: 0 })),
   },
 });
 
@@ -214,6 +220,58 @@ describe('onboarding router', () => {
       expect(tx.userPreferredCategory.createMany).not.toHaveBeenCalled();
       expect(tx.userPreferredArea.deleteMany).toHaveBeenCalledTimes(1);
       expect(tx.userPreferredArea.createMany).not.toHaveBeenCalled();
+      expect(tx.pantryItem.createMany).not.toHaveBeenCalled();
+      expect(result).toEqual({ onboardingDone: true });
+    });
+
+    it('seeds the pantry when pantrySeed items are passed', async () => {
+      const tx = makeTxMock();
+      const prismaMock = makePrismaMock(tx);
+      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
+
+      const ING_TOMATO = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1';
+      const ING_OLIVE = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2';
+      const expiry = '2026-12-01T00:00:00.000Z';
+
+      const result = await caller.onboarding.commit({
+        name: 'Ana',
+        adultsCount: 1,
+        childrenCount: 0,
+        pantrySeed: [
+          {
+            ingredientCatalogId: ING_TOMATO,
+            quantity: 250,
+            unit: 'G',
+            expiresAt: expiry,
+          },
+          {
+            ingredientCatalogId: ING_OLIVE,
+            quantity: 500,
+            unit: 'ML',
+            expiresAt: null,
+          },
+        ],
+      });
+
+      expect(tx.pantryItem.createMany).toHaveBeenCalledWith({
+        data: [
+          {
+            userId: USER_ID,
+            ingredientCatalogId: ING_TOMATO,
+            quantity: 250,
+            unit: 'G',
+            expiresAt: new Date(expiry),
+          },
+          {
+            userId: USER_ID,
+            ingredientCatalogId: ING_OLIVE,
+            quantity: 500,
+            unit: 'ML',
+            expiresAt: null,
+          },
+        ],
+        skipDuplicates: true,
+      });
       expect(result).toEqual({ onboardingDone: true });
     });
 

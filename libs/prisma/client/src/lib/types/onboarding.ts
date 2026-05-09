@@ -1,5 +1,7 @@
 import z from 'zod';
 
+import { MeasureUnitSchema } from '../../prisma-zod-generator/schemas/index';
+
 import { SemanticIdSchema, UuidIdSchema } from './ids';
 
 /**
@@ -18,6 +20,20 @@ export const DisplayNameSchema = z
   .min(1, 'Please enter your name')
   .max(50, 'Max 50 characters');
 
+/**
+ * Optional starter pantry items the user can stage during onboarding's
+ * fridge step. Created in the same transaction as the profile commit so
+ * the user lands on the home page with their pantry already seeded —
+ * pantry.add is `onboardedProcedure` and would 403 if called pre-commit.
+ */
+export const PantrySeedItemSchema = z.object({
+  ingredientCatalogId: UuidIdSchema,
+  quantity: z.number().positive(),
+  unit: MeasureUnitSchema,
+  expiresAt: z.string().datetime().nullable().default(null),
+});
+export type PantrySeedItem = z.output<typeof PantrySeedItemSchema>;
+
 export const OnboardingCommitInputSchema = z.object({
   name: DisplayNameSchema,
   adultsCount: z.number().int().min(1).max(20),
@@ -26,6 +42,7 @@ export const OnboardingCommitInputSchema = z.object({
   preferredAreaIds: z.array(UuidIdSchema).default([]),
   utensilIds: z.array(SemanticIdSchema).default([]),
   dietaryRestrictionIds: z.array(SemanticIdSchema).default([]),
+  pantrySeed: z.array(PantrySeedItemSchema).default([]),
 });
 export type OnboardingCommitInput = z.input<typeof OnboardingCommitInputSchema>;
 
