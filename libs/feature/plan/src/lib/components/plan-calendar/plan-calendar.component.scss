@@ -1,7 +1,7 @@
 :host {
   display: block;
   padding: 16px;
-  max-width: 960px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
@@ -159,11 +159,258 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
-.plan__desktop-placeholder {
-  margin: 32px auto;
-  max-width: 480px;
+// ─── Desktop layout ─────────────────────────────────────────────────────
+
+.plan__desktop {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.plan__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: var(--mat-sys-surface-container-low);
+  border-radius: 12px;
+  position: sticky;
+  top: 16px;
+  max-height: calc(100vh - 64px);
+}
+
+.plan__sidebar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.plan__sidebar-title {
+  margin: 0;
+  font: var(--mat-sys-title-medium);
+}
+
+.plan__sidebar-hint {
+  margin: 0;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.plan__sidebar-error {
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+  border-radius: 8px;
+  font: var(--mat-sys-body-small);
+}
+
+.plan__sidebar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 80px;
+}
+
+.plan__sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--mat-sys-surface);
+  border: 1px solid var(--mat-sys-outline-variant);
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &:hover {
+    background: var(--mat-sys-surface-container);
+  }
+}
+
+.plan__sidebar-thumb {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface-variant);
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.plan__sidebar-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.plan__sidebar-recipe-title {
+  font: var(--mat-sys-body-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan__sidebar-recipe-meta {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.plan__sidebar-empty {
   text-align: center;
   color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+  margin: 16px 0;
+}
+
+.plan__sidebar-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+}
+
+.plan__sidebar-loadmore {
+  align-self: stretch;
+}
+
+.plan__grid {
+  display: grid;
+  grid-template-columns: minmax(80px, auto) repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  align-items: stretch;
+}
+
+.plan__grid-corner {
+  // Empty top-left header cell.
+}
+
+.plan__grid-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  font: var(--mat-sys-label-small);
+  color: var(--mat-sys-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.plan__grid-daynum {
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.plan__grid-rowlabel {
+  align-self: center;
+  padding-right: 8px;
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+  text-align: end;
+}
+
+.plan__cell {
+  min-height: 96px;
+  border: 1px dashed var(--mat-sys-outline-variant);
+  border-radius: 10px;
+  background: var(--mat-sys-surface);
+  display: flex;
+  align-items: stretch;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
+
+  &.cdk-drop-list-receiving,
+  &.cdk-drop-list-dragging {
+    border-color: var(--mat-sys-primary);
+    background: var(--mat-sys-primary-container);
+  }
+}
+
+.plan__cell--filled {
+  border-style: solid;
+}
+
+.plan__cell-recipe {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--mat-sys-surface-container-low);
+  border-radius: 9px;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.plan__cell-title {
+  flex: 1;
+  font: var(--mat-sys-body-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan__cell-clear {
+  flex: 0 0 auto;
+}
+
+.plan__cell-empty {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+  border-radius: 9px;
+
+  &:hover {
+    background: var(--mat-sys-surface-container);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: -2px;
+  }
+}
+
+// CDK adds .cdk-drag-preview to the floating clone — match the cell-recipe
+// styling so dragging from the sidebar still looks like a slot tile.
+:host ::ng-deep .cdk-drag-preview {
+  padding: 8px 10px;
+  background: var(--mat-sys-surface-container-high);
+  border-radius: 8px;
+  box-shadow: var(--mat-sys-elevation-2);
+  font: var(--mat-sys-body-medium);
+}
+
+:host ::ng-deep .cdk-drag-placeholder {
+  opacity: 0.3;
 }
 
 .plan__actions {

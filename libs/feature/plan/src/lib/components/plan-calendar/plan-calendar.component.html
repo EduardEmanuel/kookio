@@ -83,11 +83,134 @@
       }
     </section>
   } @else {
-    <!-- Desktop drag-and-drop layout lands in a follow-up commit. -->
-    <p class="plan__desktop-placeholder">
-      The desktop view is coming next. Resize your window or open this page on a
-      phone to plan today's meals.
-    </p>
+    <div class="plan__desktop" cdkDropListGroup>
+      <aside class="plan__sidebar" aria-label="Recipes">
+        <header class="plan__sidebar-header">
+          <h2 class="plan__sidebar-title">Recipes</h2>
+          <p class="plan__sidebar-hint">
+            Drag a recipe onto a slot. Drag a slot back here to clear it.
+          </p>
+        </header>
+
+        @if (sidebarErrorMessage(); as msg) {
+          <p class="plan__sidebar-error" role="alert">{{ msg }}</p>
+        }
+
+        <div
+          class="plan__sidebar-list"
+          cdkDropList
+          [cdkDropListEnterPredicate]="sidebarEnterPredicate"
+          (cdkDropListDropped)="onSidebarDrop($event)"
+        >
+          @for (recipe of sidebarRecipes(); track recipe.id) {
+            <article
+              class="plan__sidebar-item"
+              cdkDrag
+              [cdkDragData]="sidebarDragPayload(recipe)"
+            >
+              <span class="plan__sidebar-thumb">
+                @if (recipe.imageUrl) {
+                  <img
+                    [ngSrc]="recipe.imageUrl"
+                    [alt]="recipe.title"
+                    width="40"
+                    height="40"
+                  />
+                } @else {
+                  <kookio-icon name="restaurant" />
+                }
+              </span>
+              <span class="plan__sidebar-text">
+                <span class="plan__sidebar-recipe-title">{{
+                  recipe.title
+                }}</span>
+                @if (
+                  recipe.prepTimeMinutes !== null &&
+                  recipe.cookTimeMinutes !== null
+                ) {
+                  <span class="plan__sidebar-recipe-meta">
+                    {{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} min
+                  </span>
+                }
+              </span>
+            </article>
+          } @empty {
+            @if (sidebarHasLoadedOnce() && !sidebarLoading()) {
+              <p class="plan__sidebar-empty">No recipes available yet.</p>
+            }
+          }
+        </div>
+
+        @if (sidebarLoading()) {
+          <div class="plan__sidebar-spinner">
+            <mat-spinner diameter="24" />
+          </div>
+        }
+        @if (canLoadMoreSidebar()) {
+          <button
+            [matButton]="'text'"
+            type="button"
+            class="plan__sidebar-loadmore"
+            (click)="onLoadMoreSidebar()"
+          >
+            Load more
+          </button>
+        }
+      </aside>
+
+      <div class="plan__grid">
+        <div class="plan__grid-corner" aria-hidden="true"></div>
+        @for (day of days(); track day.date) {
+          <div class="plan__grid-day">
+            <span class="plan__grid-weekday">{{ weekdayShort(day.date) }}</span>
+            <span class="plan__grid-daynum">{{ day.dayOfMonth }}</span>
+          </div>
+        }
+
+        @for (type of editableSlotTypes; track type) {
+          <div class="plan__grid-rowlabel">{{ slotLabels[type] }}</div>
+          @for (day of days(); track day.date) {
+            @let cell = store.slotsByKey().get(slotKey(day.date, type));
+            <div
+              class="plan__cell"
+              [class.plan__cell--filled]="!!cell"
+              cdkDropList
+              (cdkDropListDropped)="onCellDrop(day.date, type, $event)"
+            >
+              @if (cell?.recipe; as recipe) {
+                <article
+                  class="plan__cell-recipe"
+                  cdkDrag
+                  [cdkDragData]="slotDragPayload(day.date, type, recipe)"
+                >
+                  <span class="plan__cell-title">{{ recipe.title }}</span>
+                  <button
+                    [matButton]="'text'"
+                    type="button"
+                    class="plan__cell-clear"
+                    aria-label="Remove from this slot"
+                    (click)="onClearSlot(day.date, type, $event)"
+                  >
+                    <kookio-icon name="close" />
+                  </button>
+                </article>
+              } @else {
+                <button
+                  type="button"
+                  class="plan__cell-empty"
+                  [attr.aria-label]="
+                    'Add ' + slotLabels[type] + ' for ' + weekdayShort(day.date)
+                  "
+                  (click)="onSlotClick(day.date, type)"
+                >
+                  <kookio-icon name="add" />
+                </button>
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
   }
 
   <footer class="plan__actions">
