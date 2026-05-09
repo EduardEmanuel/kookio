@@ -14,6 +14,6 @@ export const NAV_DESTINATIONS: readonly NavItem[] = [
   { label: 'Dashboard', icon: 'dashboard', route: URLS.DASHBOARD },
   { label: 'Saved', icon: 'bookmark', route: URLS.RECIPES_SAVED },
   { label: 'Pantry', icon: 'kitchen', route: URLS.PANTRY },
-  { label: 'Plan', icon: 'calendar_today', route: URLS.MEAL_PLAN },
+  { label: 'Plan', icon: 'calendar_today', route: URLS.PLAN },
   { label: 'Groceries', icon: 'shopping_cart', route: URLS.SHOPPING_LIST },
 ];

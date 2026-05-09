@@ -13,7 +13,7 @@ const ROUTES = [
   '/recipes',
   '/recipes/match',
   '/recipes/saved',
-  '/meal-plan',
+  '/plan',
   '/shopping-list',
   '/403',
   '/404',

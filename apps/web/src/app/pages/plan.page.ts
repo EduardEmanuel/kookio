@@ -6,20 +6,20 @@ import { PageStubComponent } from '@kookio/feature-shell';
 
 export const routeMeta: RouteMeta = {
   canActivate: [authGuard, onboardingGuard],
-  title: 'Meal Plan — Kookio',
+  title: 'Plan — Kookio',
 };
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'kookio-meal-plan-page',
+  selector: 'kookio-plan-page',
   imports: [PageStubComponent],
   template: `
     <kookio-page-stub
       icon="calendar_today"
-      title="Meal Plan"
+      title="Plan"
       subtitle="Plan your weekly meals"
-      route="/meal-plan"
+      route="/plan"
     />
   `,
 })
-export default class MealPlanPage {}
+export default class PlanPage {}

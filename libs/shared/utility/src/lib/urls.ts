@@ -6,7 +6,7 @@ export const URLS = {
   ONBOARDING: '/onboarding',
   DASHBOARD: '/dashboard',
   PANTRY: '/pantry',
-  MEAL_PLAN: '/meal-plan',
+  PLAN: '/plan',
   SHOPPING_LIST: '/shopping-list',
   RECIPES: '/recipes',
   RECIPES_MATCH: '/recipes/match',
