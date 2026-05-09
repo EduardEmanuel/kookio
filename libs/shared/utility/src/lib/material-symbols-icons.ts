@@ -53,6 +53,8 @@ export const MATERIAL_SYMBOLS_ICONS = [
   'save',
   'schedule',
   'shopping_cart',
+  'visibility',
+  'visibility_off',
   'warning',
 ] as const;
 

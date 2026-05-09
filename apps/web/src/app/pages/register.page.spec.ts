@@ -81,14 +81,18 @@ describe('RegisterPage', () => {
   it('calls authStore.register when passwords match', async () => {
     await setup({ authReady: true });
     const instance = fixture.componentInstance as unknown as {
-      email: string;
-      password: string;
-      confirm: string;
+      form: {
+        controls: {
+          email: { setValue: (v: string) => void };
+          password: { setValue: (v: string) => void };
+          confirm: { setValue: (v: string) => void };
+        };
+      };
       onSubmit: () => void;
     };
-    instance.email = 'new@example.com';
-    instance.password = 'pass1234';
-    instance.confirm = 'pass1234';
+    instance.form.controls.email.setValue('new@example.com');
+    instance.form.controls.password.setValue('pass1234');
+    instance.form.controls.confirm.setValue('pass1234');
     instance.onSubmit();
     expect(store.register).toHaveBeenCalledWith({
       email: 'new@example.com',
@@ -96,34 +100,42 @@ describe('RegisterPage', () => {
     });
   });
 
-  it('does not call register and shows mismatch error when passwords differ', async () => {
+  it('does not call register and surfaces a passwordMismatch form error when passwords differ', async () => {
     await setup({ authReady: true });
     const instance = fixture.componentInstance as unknown as {
-      email: string;
-      password: string;
-      confirm: string;
-      passwordMismatch: boolean;
+      form: {
+        controls: {
+          email: { setValue: (v: string) => void };
+          password: { setValue: (v: string) => void };
+          confirm: { setValue: (v: string) => void };
+        };
+        errors: { passwordMismatch?: boolean } | null;
+      };
       onSubmit: () => void;
     };
-    instance.email = 'new@example.com';
-    instance.password = 'pass1234';
-    instance.confirm = 'different';
+    instance.form.controls.email.setValue('new@example.com');
+    instance.form.controls.password.setValue('pass1234');
+    instance.form.controls.confirm.setValue('different');
     instance.onSubmit();
     expect(store.register).not.toHaveBeenCalled();
-    expect(instance.passwordMismatch).toBe(true);
+    expect(instance.form.errors?.passwordMismatch).toBe(true);
   });
 
   it('does not call register when email is empty', async () => {
     await setup({ authReady: true });
     const instance = fixture.componentInstance as unknown as {
-      email: string;
-      password: string;
-      confirm: string;
+      form: {
+        controls: {
+          email: { setValue: (v: string) => void };
+          password: { setValue: (v: string) => void };
+          confirm: { setValue: (v: string) => void };
+        };
+      };
       onSubmit: () => void;
     };
-    instance.email = '';
-    instance.password = 'pass1234';
-    instance.confirm = 'pass1234';
+    instance.form.controls.email.setValue('');
+    instance.form.controls.password.setValue('pass1234');
+    instance.form.controls.confirm.setValue('pass1234');
     instance.onSubmit();
     expect(store.register).not.toHaveBeenCalled();
   });

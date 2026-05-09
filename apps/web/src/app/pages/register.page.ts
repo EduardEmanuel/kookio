@@ -3,96 +3,89 @@ import {
   Component,
   effect,
   inject,
+  signal,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { PageSkeletonComponent } from '../components/page-skeleton/page-skeleton.component';
+import {
+  type AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  type ValidationErrors,
+  Validators,
+} from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
 import type { RouteMeta } from '@analogjs/router';
 
 import { AuthStore, guestGuard } from '@kookio/feature-auth';
 import { URLS } from '@kookio/feature-shell';
+import { KookioIconComponent } from '@kookio/shared-ui';
+
+import { PageSkeletonComponent } from '../components/page-skeleton/page-skeleton.component';
 
 export const routeMeta: RouteMeta = {
   canActivate: [guestGuard],
 };
 
+/**
+ * Form-level validator: surfaces a `passwordMismatch` error on the form
+ * when the two password fields disagree. The template renders the error
+ * inside the confirm field's mat-form-field so it lands where the user
+ * made the mistake.
+ */
+const passwordsMatch = (group: AbstractControl): ValidationErrors | null => {
+  const password = group.get('password')?.value;
+  const confirm = group.get('confirm')?.value;
+  if (!confirm) return null;
+  return password === confirm ? null : { passwordMismatch: true };
+};
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'kookio-register-page',
-  imports: [FormsModule, PageSkeletonComponent],
-  template: `
-    @defer (when authStore.authReady()) {
-      <section class="prose mx-auto p-6 max-w-sm">
-        <h1>Create account</h1>
-
-        @if (authStore.registerError()) {
-          <p class="text-[var(--color-error)]">
-            {{ authStore.registerError() }}
-          </p>
-        }
-
-        @if (passwordMismatch) {
-          <p class="text-[var(--color-error)]">Passwords do not match.</p>
-        }
-
-        <form (ngSubmit)="onSubmit()">
-          <div>
-            <label for="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              [(ngModel)]="email"
-              name="email"
-              required
-              autocomplete="email"
-            />
-          </div>
-          <div>
-            <label for="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              [(ngModel)]="password"
-              name="password"
-              required
-              autocomplete="new-password"
-            />
-          </div>
-          <div>
-            <label for="confirm">Confirm password</label>
-            <input
-              id="confirm"
-              type="password"
-              [(ngModel)]="confirm"
-              name="confirm"
-              required
-              autocomplete="new-password"
-            />
-          </div>
-          <button type="submit" [disabled]="authStore.loading()">
-            {{ authStore.loading() ? 'Creating account…' : 'Create account' }}
-          </button>
-        </form>
-
-        <a [href]="loginUrl">Already have an account? Sign in</a>
-      </section>
-    } @placeholder (minimum 500ms) {
-      <kookio-page-skeleton />
-    }
-  `,
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    KookioIconComponent,
+    PageSkeletonComponent,
+  ],
+  templateUrl: './register.page.html',
+  styleUrl: './register.page.scss',
 })
 export default class RegisterPage {
   protected readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
 
-  protected email = '';
-  protected password = '';
-  protected confirm = '';
-  protected passwordMismatch = false;
   protected readonly loginUrl = URLS.LOGIN;
+  protected readonly showPassword = signal(false);
+  protected readonly showConfirm = signal(false);
+
+  protected readonly form = new FormGroup(
+    {
+      email: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required, Validators.email],
+      }),
+      password: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required, Validators.minLength(6)],
+      }),
+      confirm: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+    },
+    { validators: [passwordsMatch] },
+  );
 
   constructor() {
-    // Step 2: Firebase user created → provision DB record (public endpoint, no token needed)
+    // Step 2: Firebase user created → provision DB record (public endpoint, no token needed).
     effect(() => {
       const firebaseUser = this.authStore.currentUser();
       if (firebaseUser && !this.authStore.session()) {
@@ -103,8 +96,7 @@ export default class RegisterPage {
       }
     });
 
-    // Step 3: DB user provisioned → redirect home
-    // (AppComponent handles fetchSession automatically via idToken effect)
+    // Step 3: DB user provisioned → redirect home.
     effect(() => {
       if (this.authStore.session()) {
         void this.router.navigateByUrl(URLS.HOME);
@@ -112,9 +104,20 @@ export default class RegisterPage {
     });
   }
 
-  protected onSubmit = () => {
-    this.passwordMismatch = this.password !== this.confirm;
-    if (this.passwordMismatch || !this.email || !this.password) return;
-    this.authStore.register({ email: this.email, password: this.password });
+  protected readonly togglePassword = (): void => {
+    this.showPassword.update((v) => !v);
+  };
+
+  protected readonly toggleConfirm = (): void => {
+    this.showConfirm.update((v) => !v);
+  };
+
+  protected readonly onSubmit = (): void => {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const { email, password } = this.form.getRawValue();
+    this.authStore.register({ email, password });
   };
 }

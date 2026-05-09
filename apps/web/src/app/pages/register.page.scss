@@ -1,0 +1,40 @@
+.register-page {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+
+  &__heading {
+    margin: 0;
+    font-family: var(--font-display);
+    color: var(--mat-sys-on-surface);
+  }
+
+  &__error {
+    margin: 0;
+    padding: var(--space-sm) var(--space-md);
+    background: color-mix(
+      in srgb,
+      var(--mat-sys-error) 12%,
+      var(--mat-sys-surface)
+    );
+    color: var(--mat-sys-on-error-container);
+    border-radius: var(--radius-md);
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  &__submit {
+    margin-top: var(--space-sm);
+  }
+
+  &__alt {
+    align-self: center;
+  }
+}

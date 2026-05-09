@@ -86,12 +86,16 @@ describe('LoginPage', () => {
   it('calls authStore.login with email and password on submit', async () => {
     await setup({ authReady: true });
     const instance = fixture.componentInstance as unknown as {
-      email: string;
-      password: string;
+      form: {
+        controls: {
+          email: { setValue: (v: string) => void };
+          password: { setValue: (v: string) => void };
+        };
+      };
       onSubmit: () => void;
     };
-    instance.email = 'user@example.com';
-    instance.password = 'secret123';
+    instance.form.controls.email.setValue('user@example.com');
+    instance.form.controls.password.setValue('secret123');
     instance.onSubmit();
     expect(store.login).toHaveBeenCalledWith({
       email: 'user@example.com',
@@ -102,12 +106,16 @@ describe('LoginPage', () => {
   it('does not call login when email is empty', async () => {
     await setup({ authReady: true });
     const instance = fixture.componentInstance as unknown as {
-      email: string;
-      password: string;
+      form: {
+        controls: {
+          email: { setValue: (v: string) => void };
+          password: { setValue: (v: string) => void };
+        };
+      };
       onSubmit: () => void;
     };
-    instance.email = '';
-    instance.password = 'secret123';
+    instance.form.controls.email.setValue('');
+    instance.form.controls.password.setValue('secret123');
     instance.onSubmit();
     expect(store.login).not.toHaveBeenCalled();
   });

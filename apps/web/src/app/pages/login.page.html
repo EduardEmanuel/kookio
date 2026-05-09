@@ -1,0 +1,79 @@
+@defer (when authStore.authReady()) {
+<section class="login-page">
+  <h1 class="login-page__heading">Sign in</h1>
+
+  @if (authStore.loginError(); as err) {
+  <p class="login-page__error" role="alert">{{ err }}</p>
+  }
+
+  <form class="login-page__form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        type="email"
+        name="email"
+        formControlName="email"
+        autocomplete="email"
+        required
+      />
+      @if ( form.controls.email.touched &&
+      form.controls.email.errors?.['required'] ) {
+      <mat-error>Email is required.</mat-error>
+      } @else if ( form.controls.email.touched &&
+      form.controls.email.errors?.['email'] ) {
+      <mat-error>Enter a valid email address.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        [type]="showPassword() ? 'text' : 'password'"
+        name="password"
+        formControlName="password"
+        autocomplete="current-password"
+        required
+      />
+      <button
+        matIconButton
+        matSuffix
+        type="button"
+        [attr.aria-label]="
+            showPassword() ? 'Hide password' : 'Show password'
+          "
+        (click)="togglePassword()"
+      >
+        @if (showPassword()) {
+        <kookio-icon name="visibility_off" />
+        } @else {
+        <kookio-icon name="visibility" />
+        }
+      </button>
+      @if ( form.controls.password.touched &&
+      form.controls.password.errors?.['required'] ) {
+      <mat-error>Password is required.</mat-error>
+      } @else if ( form.controls.password.touched &&
+      form.controls.password.errors?.['minlength'] ) {
+      <mat-error>Use at least 6 characters.</mat-error>
+      }
+    </mat-form-field>
+
+    <button
+      matButton="filled"
+      type="submit"
+      class="login-page__submit"
+      [disabled]="authStore.loading()"
+    >
+      {{ authStore.loading() ? 'Signing in…' : 'Sign in' }}
+    </button>
+  </form>
+
+  <a matButton [routerLink]="registerUrl" class="login-page__alt">
+    Create an account
+  </a>
+</section>
+} @placeholder (minimum 500ms) {
+<kookio-page-skeleton />
+}
