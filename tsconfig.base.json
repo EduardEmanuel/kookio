@@ -36,6 +36,7 @@
       "@kookio/feature-pantry/trpc": [
         "libs/feature/pantry/src/lib/pantry-trpc.ts"
       ],
+      "@kookio/feature-plan": ["libs/feature/plan/src/index.ts"],
       "@kookio/feature-recipes": ["libs/feature/recipes/src/index.ts"],
       "@kookio/feature-recipes/cooking-trpc": [
         "libs/feature/recipes/src/lib/cooking-trpc.ts"
