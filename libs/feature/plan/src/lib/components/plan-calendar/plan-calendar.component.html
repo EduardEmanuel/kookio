@@ -31,6 +31,7 @@
           cdkDropList
           [cdkDropListEnterPredicate]="sidebarEnterPredicate"
           (cdkDropListDropped)="onSidebarDrop($event)"
+          (scroll)="onSidebarScroll($event)"
         >
           @for (recipe of sidebarRecipes(); track recipe.id) {
             <article
@@ -75,16 +76,6 @@
           <div class="plan__sidebar-spinner">
             <mat-spinner diameter="24" />
           </div>
-        }
-        @if (canLoadMoreSidebar()) {
-          <button
-            [matButton]="'text'"
-            type="button"
-            class="plan__sidebar-loadmore"
-            (click)="onLoadMoreSidebar()"
-          >
-            Load more
-          </button>
         }
       </aside>
     }

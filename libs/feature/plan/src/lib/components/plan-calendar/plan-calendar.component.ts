@@ -67,6 +67,14 @@ type DragPayload =
 const SIDEBAR_PAGE_SIZE = 20;
 
 /**
+ * Trigger the next sidebar page when the scroll position lands within
+ * this many pixels of the bottom. Same heuristic as the bottom-sheet
+ * picker — generous enough to hide network latency, tight enough to
+ * avoid pre-fetching pages the user never scrolls into.
+ */
+const SIDEBAR_PREFETCH_PIXELS = 200;
+
+/**
  * The three slot types the planner exposes today. SNACK exists in the
  * schema (and the server accepts it) but we keep the editor at a tidy
  * 3 cells per day until there's a product reason to surface SNACK.
@@ -153,8 +161,8 @@ export class PlanCalendarComponent {
   protected readonly sidebarHasLoadedOnce = signal(false);
   protected readonly sidebarErrorMessage = signal<string | null>(null);
 
-  protected readonly canLoadMoreSidebar = computed(
-    () => this.sidebarNextCursor() !== null && !this.sidebarLoading(),
+  protected readonly hasMoreSidebar = computed(
+    () => this.sidebarNextCursor() !== null,
   );
 
   /**
@@ -323,8 +331,21 @@ export class PlanCalendarComponent {
     this.store.load();
   };
 
-  protected readonly onLoadMoreSidebar = (): void => {
-    this.loadSidebarPage();
+  /**
+   * Auto-load on scroll near the bottom of the sidebar list. Drag-and-drop
+   * is unaffected because every loaded item stays in the DOM — the
+   * trade-off vs CDK Virtual Scroll is more memory in exchange for not
+   * having items unmount mid-drag (which corrupts the drag preview).
+   */
+  protected readonly onSidebarScroll = (event: Event): void => {
+    if (this.sidebarLoading() || !this.hasMoreSidebar()) return;
+    const el = event.target as HTMLElement;
+    if (
+      el.scrollTop + el.clientHeight >=
+      el.scrollHeight - SIDEBAR_PREFETCH_PIXELS
+    ) {
+      this.loadSidebarPage();
+    }
   };
 
   /** Drop handler for a calendar cell. Uses copy semantics — see DragPayload. */

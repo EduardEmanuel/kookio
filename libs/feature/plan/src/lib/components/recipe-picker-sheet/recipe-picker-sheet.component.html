@@ -59,11 +59,3 @@
     <mat-spinner diameter="32" />
   </div>
 }
-
-@if (!isLoading() && nextCursor() !== null) {
-  <div class="sheet__loadmore">
-    <button [matButton]="'tonal'" type="button" (click)="onLoadMore()">
-      Load more
-    </button>
-  </div>
-}

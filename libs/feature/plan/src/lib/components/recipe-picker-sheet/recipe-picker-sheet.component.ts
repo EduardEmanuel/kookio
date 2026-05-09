@@ -27,6 +27,14 @@ const PAGE_SIZE = 20;
  * Closes itself via `MatBottomSheetRef.dismiss(recipe)`. The opener resolves
  * the returned recipe to a slot mutation in `PlanStore.setSlot`.
  */
+/**
+ * Trigger the next page when the scroll position lands within this many
+ * pixels of the list's bottom. Generous enough to start the request before
+ * the user runs out of items to read; tight enough that a half-loaded
+ * sheet doesn't pre-fetch everything.
+ */
+const PREFETCH_PIXELS = 200;
+
 @Component({
   selector: 'kookio-recipe-picker-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,6 +47,9 @@ const PAGE_SIZE = 20;
   ],
   templateUrl: './recipe-picker-sheet.component.html',
   styleUrl: './recipe-picker-sheet.component.scss',
+  host: {
+    '(scroll)': 'onScroll($event)',
+  },
 })
 export class RecipePickerSheetComponent {
   private readonly trpc = inject(MEAL_PLAN_TRPC);
@@ -104,8 +115,21 @@ export class RecipePickerSheetComponent {
     this.sheetRef.dismiss(null);
   };
 
-  protected readonly onLoadMore = (): void => {
+  /**
+   * Auto-load on scroll near bottom. Replaces the manual "Load more"
+   * button — the `isLoading` / `nextCursor` checks make this idempotent
+   * even though scroll events fire dozens of times per gesture.
+   *
+   * Drag-and-drop is not active inside the picker, so the
+   * virtual-scroll-vs-drag concern (items unmounting mid-drag) doesn't
+   * apply here; auto-load with a stable DOM is the simpler, safer
+   * choice.
+   */
+  protected readonly onScroll = (event: Event): void => {
     if (this.isLoading() || this.nextCursor() === null) return;
-    this.loadPage();
+    const el = event.target as HTMLElement;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - PREFETCH_PIXELS) {
+      this.loadPage();
+    }
   };
 }
