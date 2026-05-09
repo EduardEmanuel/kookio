@@ -126,6 +126,35 @@ describe('PantryFormComponent', () => {
       expect(component.valid()).toBe(false);
       expect(component.value()).toBeNull();
     });
+
+    it('exposes the selected ingredient when the user picks one', async () => {
+      const { component } = await setup();
+      const tomato = buildIngredient();
+      component['form'].controls.ingredient.setValue(tomato);
+      await flush();
+      expect(component.selectedIngredient()).toEqual(tomato);
+    });
+
+    it('returns null for selectedIngredient when no option is picked', async () => {
+      const { component } = await setup();
+      expect(component.selectedIngredient()).toBeNull();
+    });
+
+    it('reset() restores the form to its add-mode defaults', async () => {
+      const { component } = await setup();
+      component['form'].controls.ingredient.setValue(buildIngredient());
+      component['form'].controls.quantity.setValue(500);
+      component['form'].controls.unit.setValue(Unit.G);
+      await flush();
+      expect(component.valid()).toBe(true);
+
+      component.reset();
+      await flush();
+      expect(component.valid()).toBe(false);
+      expect(component['form'].controls.quantity.value).toBe(1);
+      expect(component['form'].controls.unit.value).toBe('PIECE');
+      expect(component.selectedIngredient()).toBeNull();
+    });
   });
 
   describe('search', () => {

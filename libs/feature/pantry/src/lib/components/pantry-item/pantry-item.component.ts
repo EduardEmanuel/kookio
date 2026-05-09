@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
-import type { PantryItemWithIngredient } from '@kookio/prisma-client';
+import type { MeasureUnit } from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
 import { formatMeasureUnit } from '@kookio/shared-utility/measure-units';
 
@@ -15,6 +15,25 @@ import {
   getExpirationLabel,
   getExpirationStatus,
 } from '../../utils/expiration';
+
+/**
+ * Presentational shape consumed by `PantryItemComponent` — a subset of
+ * `PantryItemWithIngredient` covering only the fields the template renders.
+ * Lets non-pantry contexts (e.g. onboarding's staged-ingredients list) pass
+ * a lighter view object without synthesising server-only fields like
+ * `userId` / `addedAt`. `PantryItemWithIngredient` is structurally
+ * compatible, so the existing `/pantry` consumer keeps working unchanged.
+ */
+export interface PantryItemView {
+  id: string;
+  ingredient: {
+    name: string;
+    imageUrl: string | null;
+  };
+  quantity: number;
+  unit: MeasureUnit;
+  expiresAt: Date | null;
+}
 
 @Component({
   selector: 'kookio-pantry-item',
@@ -24,8 +43,8 @@ import {
   styleUrl: './pantry-item.component.scss',
 })
 export class PantryItemComponent {
-  readonly item = input.required<PantryItemWithIngredient>();
-  readonly edit = output<PantryItemWithIngredient>();
+  readonly item = input.required<PantryItemView>();
+  readonly edit = output<string>();
   readonly remove = output<string>();
 
   protected readonly status = computed(() =>
@@ -41,7 +60,7 @@ export class PantryItemComponent {
   );
 
   protected readonly onEdit = (): void => {
-    this.edit.emit(this.item());
+    this.edit.emit(this.item().id);
   };
 
   /**

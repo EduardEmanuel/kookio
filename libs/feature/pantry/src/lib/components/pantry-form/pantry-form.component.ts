@@ -192,6 +192,32 @@ export class PantryFormComponent {
     };
   });
 
+  /**
+   * Full `IngredientSearchResult` of the currently picked option, or `null`
+   * when no option is selected. `value` returns just the catalog id (what
+   * the server mutations need); callers that also need the name/imageUrl
+   * for local rendering — onboarding stages an item view, for example —
+   * read this signal alongside `value`.
+   */
+  readonly selectedIngredient = computed<IngredientSearchResult | null>(() => {
+    const v = this.formValue();
+    return isIngredient(v.ingredient) ? v.ingredient : null;
+  });
+
+  /**
+   * Restores the form to its add-mode defaults so a "stage another
+   * ingredient" flow can clear the inputs without re-instantiating the
+   * component. Matches the FormGroup constructor defaults exactly.
+   */
+  readonly reset = (): void => {
+    this.form.reset({
+      ingredient: null,
+      quantity: 1,
+      unit: 'PIECE',
+      expiresAt: null,
+    });
+  };
+
   constructor() {
     // Pre-fill once when `initial` resolves. We use `effect` rather than
     // `ngOnInit` because the codebase consistently relies on effects in the

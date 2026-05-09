@@ -142,7 +142,7 @@ describe('PantryItemComponent', () => {
   });
 
   describe('actions', () => {
-    it('emits edit with the full item when the edit button is clicked', async () => {
+    it('emits edit with the item id when the edit button is clicked', async () => {
       const { fixture, el } = await setup(baseItem);
       const spy = vi.fn();
       fixture.componentInstance.edit.subscribe(spy);
@@ -152,7 +152,7 @@ describe('PantryItemComponent', () => {
       ) as HTMLButtonElement;
       editBtn.click();
 
-      expect(spy).toHaveBeenCalledWith(baseItem);
+      expect(spy).toHaveBeenCalledWith('pi-1');
     });
 
     it('emits remove with the item id when the user confirms the prompt', async () => {

@@ -20,7 +20,6 @@ import {
   PantryItemComponent,
 } from '@kookio/feature-pantry';
 import { PantryStore } from '@kookio/feature-pantry/store';
-import type { PantryItemWithIngredient } from '@kookio/prisma-client';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 
 export const routeMeta: RouteMeta = {
@@ -81,7 +80,9 @@ export default class PantryPage {
     });
   };
 
-  protected readonly onEdit = (item: PantryItemWithIngredient): void => {
+  protected readonly onEdit = (id: string): void => {
+    const item = this.store.items().find((it) => it.id === id);
+    if (!item) return;
     const ref = this.dialog.open<
       PantryDialogComponent,
       PantryDialogData,
