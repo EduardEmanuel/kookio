@@ -22,28 +22,35 @@
     margin-top: var(--space-sm);
   }
 
-  &__pantry-info {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-sm);
-    margin-top: var(--space-md);
-    padding: var(--space-md);
-    border-radius: var(--radius-md);
-    background: var(--mat-sys-surface-container);
-  }
-
-  &__pantry-text {
+  &__pantry {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
-
-    p {
-      margin: 0;
-    }
+    gap: var(--space-md);
+    padding-top: var(--space-md);
   }
 
-  &__pantry-hint {
+  &__pantry-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__pantry-item {
+    margin: 0;
+  }
+
+  &__pantry-empty-hint {
+    margin: 0;
     color: var(--mat-sys-on-surface-variant);
+    font-size: 0.95rem;
+  }
+
+  &__pantry-actions {
+    display: flex;
+    justify-content: flex-end;
   }
 
   &__subtabs {

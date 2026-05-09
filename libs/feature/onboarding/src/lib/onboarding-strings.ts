@@ -55,9 +55,9 @@ export const FRIDGE_STRINGS = {
     pantry: 'Your ingredients',
     preferences: 'Preferences',
   },
-  pantryNotice:
-    "We'll let you add your ingredients later, in the Pantry section.",
-  pantryHint: "For now, let's focus on what kind of food you love.",
+  pantryEmptyHint:
+    "Add a few ingredients now and we'll suggest recipes you can cook right away. You can always manage your full pantry from the Pantry tab later.",
+  addToFridge: 'Add to fridge',
   subTabs: {
     categories: 'Categories',
     areas: 'Cuisines',

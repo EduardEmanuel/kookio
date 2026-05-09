@@ -192,6 +192,74 @@ describe('OnboardingStore', () => {
     });
   });
 
+  describe('pantry staging', () => {
+    const TOMATO = {
+      id: 'ing-1',
+      ingredient: { name: 'Tomato', imageUrl: null },
+      quantity: 250,
+      unit: 'G' as const,
+      expiresAt: new Date('2026-12-01T00:00:00.000Z'),
+    };
+    const ONION = {
+      id: 'ing-2',
+      ingredient: { name: 'Onion', imageUrl: null },
+      quantity: 3,
+      unit: 'PIECE' as const,
+      expiresAt: null,
+    };
+
+    it('stages an item and exposes it in stagedPantryItems', () => {
+      const { store } = setup();
+      store.stagePantryItem(TOMATO);
+      expect(store.stagedPantryItems()).toEqual([TOMATO]);
+    });
+
+    it('replaces an existing item with the same id (dedup)', () => {
+      const { store } = setup();
+      store.stagePantryItem(TOMATO);
+      const updated = { ...TOMATO, quantity: 500 };
+      store.stagePantryItem(updated);
+      expect(store.stagedPantryItems()).toEqual([updated]);
+    });
+
+    it('removeStagedPantryItem strips by id', () => {
+      const { store } = setup();
+      store.stagePantryItem(TOMATO);
+      store.stagePantryItem(ONION);
+      store.removeStagedPantryItem('ing-1');
+      expect(store.stagedPantryItems().map((it) => it.id)).toEqual(['ing-2']);
+    });
+
+    it('submit() forwards staged items as pantrySeed in ISO format', async () => {
+      vi.useRealTimers();
+      const { store, commit } = setup();
+      store.setName('Ana');
+      store.stagePantryItem(TOMATO);
+      store.stagePantryItem(ONION);
+      store.submit();
+      await flush();
+
+      expect(commit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          pantrySeed: [
+            {
+              ingredientCatalogId: 'ing-1',
+              quantity: 250,
+              unit: 'G',
+              expiresAt: '2026-12-01T00:00:00.000Z',
+            },
+            {
+              ingredientCatalogId: 'ing-2',
+              quantity: 3,
+              unit: 'PIECE',
+              expiresAt: null,
+            },
+          ],
+        }),
+      );
+    });
+  });
+
   describe('loadCurrent', () => {
     it('populates state from the server payload', async () => {
       const { store, current } = setup({
@@ -260,6 +328,7 @@ describe('OnboardingStore', () => {
         preferredAreaIds: [],
         utensilIds: ['u-1'],
         dietaryRestrictionIds: [],
+        pantrySeed: [],
       });
       expect(store.isSubmitting()).toBe(false);
       expect(store.submitError()).toBeNull();

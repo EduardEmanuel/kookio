@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
+import { PANTRY_TRPC } from '@kookio/feature-pantry/trpc';
 
 import { FRIDGE_STRINGS } from '../../../onboarding-strings';
 import {
@@ -42,6 +43,18 @@ const setup = async (
       },
     },
   });
+  // The embedded PantryFormComponent injects PANTRY_TRPC for its
+  // ingredient-search autocomplete; provide a no-op stub so the form
+  // renders without firing real network calls during the spec.
+  const pantryTrpc = {
+    pantry: {
+      list: { query: vi.fn() },
+      add: { mutate: vi.fn() },
+      update: { mutate: vi.fn() },
+      remove: { mutate: vi.fn() },
+      searchIngredients: { query: vi.fn().mockResolvedValue([]) },
+    },
+  };
   const authStore = createMockAuthStore({ authReady: true });
 
   await TestBed.configureTestingModule({
@@ -52,6 +65,7 @@ const setup = async (
       { provide: PLATFORM_ID, useValue: 'server' },
       OnboardingStore,
       { provide: ONBOARDING_TRPC, useValue: trpc },
+      { provide: PANTRY_TRPC, useValue: pantryTrpc },
       { provide: AuthStore, useValue: authStore },
     ],
   }).compileComponents();
@@ -86,11 +100,11 @@ describe('FridgeStepComponent', () => {
   });
 
   describe('default (Pantry) tab', () => {
-    it('renders heading, subtitle and pantry info', async () => {
+    it('renders heading, subtitle and the pantry empty hint', async () => {
       const { el } = await setup();
       expect(el.textContent).toContain(FRIDGE_STRINGS.heading);
       expect(el.textContent).toContain(FRIDGE_STRINGS.subtitle);
-      expect(el.textContent).toContain(FRIDGE_STRINGS.pantryNotice);
+      expect(el.textContent).toContain(FRIDGE_STRINGS.pantryEmptyHint);
     });
 
     it('exposes both top-level tab labels', async () => {

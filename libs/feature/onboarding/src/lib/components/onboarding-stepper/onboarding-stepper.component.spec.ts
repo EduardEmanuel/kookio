@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
+import { PANTRY_TRPC } from '@kookio/feature-pantry/trpc';
 
 import { ACTION_LABELS } from '../../onboarding-strings';
 import { buildTrpcMock } from '../../testing/build-trpc-mock';
@@ -13,6 +14,18 @@ import { OnboardingStepperComponent } from './onboarding-stepper.component';
 
 const setup = async () => {
   const trpc = buildTrpcMock();
+  // The fridge step embeds PantryFormComponent which injects PANTRY_TRPC
+  // for its ingredient-search autocomplete. Provide a no-op stub so the
+  // stepper can mount the step component during the spec.
+  const pantryTrpc = {
+    pantry: {
+      list: { query: vi.fn() },
+      add: { mutate: vi.fn() },
+      update: { mutate: vi.fn() },
+      remove: { mutate: vi.fn() },
+      searchIngredients: { query: vi.fn().mockResolvedValue([]) },
+    },
+  };
   const authStore = createMockAuthStore({ authReady: true });
 
   await TestBed.configureTestingModule({
@@ -23,6 +36,7 @@ const setup = async () => {
       { provide: PLATFORM_ID, useValue: 'server' },
       OnboardingStore,
       { provide: ONBOARDING_TRPC, useValue: trpc },
+      { provide: PANTRY_TRPC, useValue: pantryTrpc },
       { provide: AuthStore, useValue: authStore },
     ],
   }).compileComponents();

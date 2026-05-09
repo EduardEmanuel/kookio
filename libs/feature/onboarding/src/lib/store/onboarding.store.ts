@@ -13,6 +13,7 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 import { AuthStore } from '@kookio/feature-auth';
+import type { PantryItemView } from '@kookio/feature-pantry';
 import { noopLogger } from '@kookio/core-logging';
 import type {
   DietaryRestrictionRow,
@@ -82,6 +83,14 @@ interface OnboardingState {
   adultsCount: number;
   childrenCount: number;
 
+  /**
+   * Initial pantry items the user added during the fridge step. Held
+   * client-side until `submit()` ships them as part of the onboarding
+   * commit transaction — pantry.add itself is `onboardedProcedure` and
+   * would 403 mid-onboarding.
+   */
+  stagedPantryItems: PantryItemView[];
+
   isSubmitting: boolean;
   submitError: string | null;
 }
@@ -95,6 +104,7 @@ const initialState: OnboardingState = {
   dietaryRestrictionIds: new Set<string>(),
   adultsCount: MIN_ADULTS,
   childrenCount: MIN_CHILDREN,
+  stagedPantryItems: [],
   isSubmitting: false,
   submitError: null,
 };
@@ -210,6 +220,29 @@ export const OnboardingStore = signalStore(
         });
       },
 
+      /**
+       * Stages an item for inclusion in the onboarding commit's pantry seed.
+       * If an item with the same id is already staged it is replaced — the
+       * id matches `ingredientCatalogId` and PantryItem has
+       * `@@unique([userId, ingredientCatalogId])`, so re-adding the same
+       * ingredient should overwrite the previous quantity/unit/expiry rather
+       * than create a duplicate.
+       */
+      stagePantryItem: (item: PantryItemView): void => {
+        const others = store
+          .stagedPantryItems()
+          .filter((it) => it.id !== item.id);
+        patchState(store, { stagedPantryItems: [...others, item] });
+      },
+
+      removeStagedPantryItem: (id: string): void => {
+        patchState(store, {
+          stagedPantryItems: store
+            .stagedPantryItems()
+            .filter((it) => it.id !== id),
+        });
+      },
+
       reset: (): void => {
         patchState(store, initialState);
       },
@@ -264,6 +297,12 @@ export const OnboardingStore = signalStore(
                 preferredAreaIds: [...store.preferredAreaIds()],
                 utensilIds: [...store.utensilIds()],
                 dietaryRestrictionIds: [...store.dietaryRestrictionIds()],
+                pantrySeed: store.stagedPantryItems().map((it) => ({
+                  ingredientCatalogId: it.id,
+                  quantity: it.quantity,
+                  unit: it.unit,
+                  expiresAt: it.expiresAt ? it.expiresAt.toISOString() : null,
+                })),
               }),
             ).pipe(
               tap(() => {

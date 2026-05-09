@@ -10,17 +10,37 @@
 
   <mat-tab-group class="fridge-step__tabs" mat-align-tabs="start">
     <mat-tab [label]="strings.tabs.pantry">
-      <div class="fridge-step__pantry-info">
-        <kookio-icon name="info" />
-        <div class="fridge-step__pantry-text">
-          <p>
-            <!-- i18n: @@onboarding.fridge.pantryNotice -->
-            {{ strings.pantryNotice }}
+      <div class="fridge-step__pantry">
+        @if (stagedItems().length > 0) {
+          <ul class="fridge-step__pantry-list">
+            @for (item of stagedItems(); track item.id) {
+              <li class="fridge-step__pantry-item">
+                <kookio-pantry-item
+                  [item]="item"
+                  (remove)="onRemoveStaged($event)"
+                />
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="fridge-step__pantry-empty-hint">
+            <!-- i18n: @@onboarding.fridge.pantryEmptyHint -->
+            {{ strings.pantryEmptyHint }}
           </p>
-          <p class="fridge-step__pantry-hint">
-            <!-- i18n: @@onboarding.fridge.pantryHint -->
-            {{ strings.pantryHint }}
-          </p>
+        }
+
+        <kookio-pantry-form />
+
+        <div class="fridge-step__pantry-actions">
+          <button
+            matButton="filled"
+            type="button"
+            [disabled]="!form()?.valid()"
+            (click)="onAddToFridge()"
+          >
+            <!-- i18n: @@onboarding.fridge.addToFridge -->
+            {{ strings.addToFridge }}
+          </button>
         </div>
       </div>
     </mat-tab>
