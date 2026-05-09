@@ -19,21 +19,21 @@ import { MEAL_PLAN_TRPC } from '../../meal-plan-trpc';
 const PAGE_SIZE = 20;
 
 /**
- * Bottom-sheet content used by the planner to pick a recipe for a slot.
- * Pulls from `recipes.feed` (newest-first, cursor-paginated) with a manual
- * "Load more" — virtual scroll would be overkill at the demo scale and
- * keeps the sheet's bundle footprint tight.
- *
- * Closes itself via `MatBottomSheetRef.dismiss(recipe)`. The opener resolves
- * the returned recipe to a slot mutation in `PlanStore.setSlot`.
- */
-/**
  * Trigger the next page when the scroll position lands within this many
  * pixels of the list's bottom. Generous enough to start the request before
  * the user runs out of items to read; tight enough that a half-loaded
  * sheet doesn't pre-fetch everything.
  */
 const PREFETCH_PIXELS = 200;
+
+/**
+ * Bottom-sheet content used by the planner to pick a recipe for a slot.
+ * Pulls from `recipes.feed` (newest-first, cursor-paginated) with a
+ * scroll-triggered auto-load — see `onScroll` for the rationale on why we
+ * don't use CDK Virtual Scroll here. Closes itself via
+ * `MatBottomSheetRef.dismiss(recipe)`; the opener resolves the returned
+ * recipe to a slot mutation in `PlanStore.setSlot`.
+ */
 
 @Component({
   selector: 'kookio-recipe-picker-sheet',
