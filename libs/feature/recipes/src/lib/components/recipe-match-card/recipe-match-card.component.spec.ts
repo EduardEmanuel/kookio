@@ -53,12 +53,12 @@ describe('RecipeMatchCardComponent', () => {
   });
 
   describe('complete (missingCount === 0)', () => {
-    it('renders the Ready-to-cook badge on a complete match', async () => {
+    it('renders the Alright-to-cook badge on a complete match', async () => {
       const { el } = await setup(baseItem());
 
       const badge = el.querySelector('.match-card__badge');
       expect(badge).toBeTruthy();
-      expect(badge?.textContent).toContain('Ready to cook');
+      expect(badge?.textContent).toContain('Alright to cook');
     });
 
     it('renders the Cook now button on a complete match', async () => {
