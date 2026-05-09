@@ -91,12 +91,12 @@ describe('RegisterPage', () => {
       onSubmit: () => void;
     };
     instance.form.controls.email.setValue('new@example.com');
-    instance.form.controls.password.setValue('pass1234');
-    instance.form.controls.confirm.setValue('pass1234');
+    instance.form.controls.password.setValue('Pass1234!');
+    instance.form.controls.confirm.setValue('Pass1234!');
     instance.onSubmit();
     expect(store.register).toHaveBeenCalledWith({
       email: 'new@example.com',
-      password: 'pass1234',
+      password: 'Pass1234!',
     });
   });
 
@@ -114,11 +114,40 @@ describe('RegisterPage', () => {
       onSubmit: () => void;
     };
     instance.form.controls.email.setValue('new@example.com');
-    instance.form.controls.password.setValue('pass1234');
-    instance.form.controls.confirm.setValue('different');
+    instance.form.controls.password.setValue('Pass1234!');
+    instance.form.controls.confirm.setValue('Different1!');
     instance.onSubmit();
     expect(store.register).not.toHaveBeenCalled();
     expect(instance.form.errors?.passwordMismatch).toBe(true);
+  });
+
+  it('does not call register when the password fails the complexity policy', async () => {
+    await setup({ authReady: true });
+    const instance = fixture.componentInstance as unknown as {
+      form: {
+        controls: {
+          email: { setValue: (v: string) => void };
+          password: {
+            setValue: (v: string) => void;
+            errors: Record<string, boolean> | null;
+          };
+          confirm: { setValue: (v: string) => void };
+        };
+      };
+      onSubmit: () => void;
+    };
+    instance.form.controls.email.setValue('new@example.com');
+    instance.form.controls.password.setValue('password');
+    instance.form.controls.confirm.setValue('password');
+    instance.onSubmit();
+    expect(store.register).not.toHaveBeenCalled();
+    expect(instance.form.controls.password.errors?.['missingUppercase']).toBe(
+      true,
+    );
+    expect(instance.form.controls.password.errors?.['missingDigit']).toBe(true);
+    expect(instance.form.controls.password.errors?.['missingSpecial']).toBe(
+      true,
+    );
   });
 
   it('does not call register when email is empty', async () => {
@@ -134,8 +163,8 @@ describe('RegisterPage', () => {
       onSubmit: () => void;
     };
     instance.form.controls.email.setValue('');
-    instance.form.controls.password.setValue('pass1234');
-    instance.form.controls.confirm.setValue('pass1234');
+    instance.form.controls.password.setValue('Pass1234!');
+    instance.form.controls.confirm.setValue('Pass1234!');
     instance.onSubmit();
     expect(store.register).not.toHaveBeenCalled();
   });
