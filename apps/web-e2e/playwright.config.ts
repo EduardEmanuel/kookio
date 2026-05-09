@@ -50,10 +50,17 @@ export default defineConfig({
     // Vite SSR cold-start forces Angular (~1.5 MB) and Material (~714 kB)
     // into the AST during route compilation, which exhausts Node's default
     // ~2 GB heap and kills the dev server before any test can connect (the
-    // OOM lands around 2043 MB during the initial mark-compact). Doubling
-    // the heap leaves headroom for parallel-route compilation under load.
+    // initial OOM lands around 2043 MB during the first mark-compact).
+    //
+    // 4 GB covers cold-start, but sustained parallel load (4 browser workers
+    // hitting many routes over 5 minutes) gradually pushes V8 toward
+    // GC-dominated CPU, which manifests as flaky Firefox tests timing out
+    // late in the suite on /login form rendering and tRPC responses.
+    // 6 GB gives the same headroom the production Nitro bundle pass needs
+    // (per .ai/17_analog-ssr-ssg.md) and keeps the dev-server responsive
+    // for the full suite duration.
     env: {
-      NODE_OPTIONS: '--max-old-space-size=4096',
+      NODE_OPTIONS: '--max-old-space-size=6144',
     },
   },
   projects: [
