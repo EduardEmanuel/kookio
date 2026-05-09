@@ -5,17 +5,9 @@
       <span>Today's plan</span>
     </h2>
 
-    @if (store.isLoading() && !store.hasRange()) {
+    @if (store.isLoading() && !store.hasLoadedOnce()) {
     <div class="mpt__loading">
       <mat-spinner diameter="24" />
-    </div>
-    } @else if (!todayInRange()) {
-    <div class="mpt__placeholder">
-      <kookio-emoji char="📅" [size]="40" />
-      <p class="mpt__headline">Today is not in your active plan</p>
-      <small class="mpt__hint">
-        Plan a range that covers today to see meals here.
-      </small>
     </div>
     } @else if (plannedToday() === 0) {
     <div class="mpt__placeholder">

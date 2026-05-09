@@ -82,20 +82,6 @@ export class MealPlanTodayWidgetComponent {
     () => this.todayRows().filter((row) => row.slot !== null).length,
   );
 
-  /**
-   * True only when the loaded plan covers today's date — so we can
-   * differentiate "no plan exists" from "plan exists but today is empty".
-   */
-  protected readonly todayInRange = computed(() => {
-    const start = this.store.startDate();
-    const end = this.store.endDate();
-    if (!start || !end) return false;
-    const todayMs = new Date(this.todayIso).getTime();
-    return (
-      todayMs >= new Date(start).getTime() && todayMs <= new Date(end).getTime()
-    );
-  });
-
   constructor() {
     // Mirrors `/dashboard`'s other widgets: load is client-only — both
     // dashboard and the planner page are gated by `authGuard` +

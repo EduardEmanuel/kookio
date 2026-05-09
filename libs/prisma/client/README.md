@@ -191,10 +191,9 @@ Sourced from TheMealDB, seeded across all environments.
 
 ### 5. Meal planning
 
-| Model          | Purpose                                                                               |
-| -------------- | ------------------------------------------------------------------------------------- |
-| `MealPlan`     | A named date-range plan owned by a user                                               |
-| `MealPlanSlot` | Individual slot — date + meal type (BREAKFAST/LUNCH/DINNER/SNACK) + recipe + servings |
+| Model      | Purpose                                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------------------ |
+| `MealSlot` | A planned meal on the user's timeline — `(userId, date, slotType)` keyed; no parent plan entity, slots stand alone |
 
 ### Enums
 

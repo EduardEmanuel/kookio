@@ -4,18 +4,12 @@ import { MealSlotTypeSchema, type AuthSession } from '@kookio/prisma-client';
 
 import type { Context } from '../context';
 import { appRouter } from './index';
-import { isoWeekRange } from './meal-plan.router';
 
 const Slot = MealSlotTypeSchema.enum;
 
 type PrismaMock = {
-  mealPlan: {
-    findFirst: ReturnType<typeof vi.fn>;
-    findUniqueOrThrow: ReturnType<typeof vi.fn>;
-    create: ReturnType<typeof vi.fn>;
-    update: ReturnType<typeof vi.fn>;
-  };
-  mealPlanSlot: {
+  mealSlot: {
+    findMany: ReturnType<typeof vi.fn>;
     deleteMany: ReturnType<typeof vi.fn>;
     createMany: ReturnType<typeof vi.fn>;
   };
@@ -47,13 +41,8 @@ const makeCtx = (
 
 const makePrismaMock = (): PrismaMock => {
   const mock: PrismaMock = {
-    mealPlan: {
-      findFirst: vi.fn(),
-      findUniqueOrThrow: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
-    },
-    mealPlanSlot: {
+    mealSlot: {
+      findMany: vi.fn(),
       deleteMany: vi.fn(),
       createMany: vi.fn(),
     },
@@ -61,8 +50,8 @@ const makePrismaMock = (): PrismaMock => {
       findMany: vi.fn(),
     },
     // Default `$transaction` impl forwards the same mock as the `tx` arg —
-    // every router we test happens to call only methods that exist on the
-    // top-level mock, so re-using it keeps the assertions in one place.
+    // every method we call inside the transaction also exists on the
+    // top-level mock, so re-using it keeps assertions in one place.
     $transaction: vi.fn((fn: (tx: unknown) => unknown) => fn(mock)),
   };
   return mock;
@@ -71,15 +60,16 @@ const makePrismaMock = (): PrismaMock => {
 const RECIPE_ID_1 = 'a4b6f2c0-0000-0000-0000-000000000001';
 const RECIPE_ID_2 = 'a4b6f2c0-0000-0000-0000-000000000002';
 
-const populatedPlan = {
-  id: 'mp-1',
+const builtSlot = {
+  id: 'ms-1',
   userId: 'user-123',
-  name: null,
-  startDate: new Date('2026-05-04T00:00:00.000Z'),
-  endDate: new Date('2026-05-10T23:59:59.999Z'),
+  recipeId: RECIPE_ID_1,
+  date: new Date('2026-05-04T00:00:00.000Z'),
+  slotType: Slot.LUNCH,
+  servings: 2,
   createdAt: new Date('2026-05-01T00:00:00.000Z'),
   updatedAt: new Date('2026-05-01T00:00:00.000Z'),
-  slots: [],
+  recipe: null,
 };
 
 afterEach(() => {
@@ -88,44 +78,30 @@ afterEach(() => {
 
 describe('mealPlan router', () => {
   describe('getCurrent', () => {
-    it('returns the existing active plan when one is present', async () => {
+    it("returns all of the caller's slots ordered by date then slotType", async () => {
       const prismaMock = makePrismaMock();
-      prismaMock.mealPlan.findFirst.mockResolvedValue(populatedPlan);
+      prismaMock.mealSlot.findMany.mockResolvedValue([builtSlot]);
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
 
       const result = await caller.mealPlan.getCurrent();
 
-      expect(result).toEqual(populatedPlan);
-      expect(prismaMock.mealPlan.findFirst).toHaveBeenCalledWith(
+      expect(result).toEqual([builtSlot]);
+      expect(prismaMock.mealSlot.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({ userId: 'user-123' }),
-          orderBy: { createdAt: 'desc' },
+          where: { userId: 'user-123' },
+          orderBy: [{ date: 'asc' }, { slotType: 'asc' }],
         }),
       );
-      expect(prismaMock.mealPlan.create).not.toHaveBeenCalled();
     });
 
-    it('lazily creates an empty current-week plan when none exists', async () => {
+    it('returns an empty array when the user has no slots', async () => {
       const prismaMock = makePrismaMock();
-      prismaMock.mealPlan.findFirst.mockResolvedValue(null);
-      prismaMock.mealPlan.create.mockResolvedValue(populatedPlan);
+      prismaMock.mealSlot.findMany.mockResolvedValue([]);
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
 
-      await caller.mealPlan.getCurrent();
+      const result = await caller.mealPlan.getCurrent();
 
-      expect(prismaMock.mealPlan.create).toHaveBeenCalledTimes(1);
-      const createArgs = prismaMock.mealPlan.create.mock.calls[0][0];
-      expect(createArgs.data.userId).toBe('user-123');
-      // Asserts the lazy-init range matches `isoWeekRange(now)` exactly —
-      // tolerates the millisecond drift between the test's `new Date()` and
-      // the router's by anchoring on the same week.
-      const expected = isoWeekRange(new Date());
-      expect(createArgs.data.startDate.toISOString()).toBe(
-        expected.startDate.toISOString(),
-      );
-      expect(createArgs.data.endDate.toISOString()).toBe(
-        expected.endDate.toISOString(),
-      );
+      expect(result).toEqual([]);
     });
 
     it('rejects calls without onboarding as PRECONDITION_FAILED', async () => {
@@ -137,7 +113,7 @@ describe('mealPlan router', () => {
       await expect(caller.mealPlan.getCurrent()).rejects.toMatchObject({
         code: 'PRECONDITION_FAILED',
       });
-      expect(prismaMock.mealPlan.findFirst).not.toHaveBeenCalled();
+      expect(prismaMock.mealSlot.findMany).not.toHaveBeenCalled();
     });
 
     it('rejects calls without a session as UNAUTHORIZED', async () => {
@@ -151,7 +127,7 @@ describe('mealPlan router', () => {
 
     it('translates Prisma failures to INTERNAL_SERVER_ERROR', async () => {
       const prismaMock = makePrismaMock();
-      prismaMock.mealPlan.findFirst.mockRejectedValue(new Error('db down'));
+      prismaMock.mealSlot.findMany.mockRejectedValue(new Error('db down'));
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
 
       await expect(caller.mealPlan.getCurrent()).rejects.toMatchObject({
@@ -162,8 +138,6 @@ describe('mealPlan router', () => {
 
   describe('setMealPlan', () => {
     const VALID_INPUT = {
-      startDate: '2026-05-04T00:00:00.000Z',
-      endDate: '2026-05-10T23:59:59.999Z',
       slots: [
         {
           date: '2026-05-04T00:00:00.000Z',
@@ -180,37 +154,35 @@ describe('mealPlan router', () => {
       ],
     };
 
-    it('replaces the active plan slots atomically and returns the populated plan', async () => {
+    it("replaces the caller's slot timeline atomically and returns it", async () => {
       const prismaMock = makePrismaMock();
-      prismaMock.mealPlan.findFirst.mockResolvedValue({ id: 'mp-1' });
       prismaMock.recipe.findMany.mockResolvedValue([
         { id: RECIPE_ID_1 },
         { id: RECIPE_ID_2 },
       ]);
-      prismaMock.mealPlanSlot.deleteMany.mockResolvedValue({ count: 0 });
-      prismaMock.mealPlanSlot.createMany.mockResolvedValue({ count: 2 });
-      prismaMock.mealPlan.update.mockResolvedValue({ id: 'mp-1' });
-      prismaMock.mealPlan.findUniqueOrThrow.mockResolvedValue(populatedPlan);
+      prismaMock.mealSlot.deleteMany.mockResolvedValue({ count: 0 });
+      prismaMock.mealSlot.createMany.mockResolvedValue({ count: 2 });
+      prismaMock.mealSlot.findMany.mockResolvedValue([builtSlot]);
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
 
       const result = await caller.mealPlan.setMealPlan(VALID_INPUT);
 
-      expect(result).toEqual(populatedPlan);
+      expect(result).toEqual([builtSlot]);
       expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
-      expect(prismaMock.mealPlanSlot.deleteMany).toHaveBeenCalledWith({
-        where: { mealPlanId: 'mp-1' },
+      expect(prismaMock.mealSlot.deleteMany).toHaveBeenCalledWith({
+        where: { userId: 'user-123' },
       });
-      expect(prismaMock.mealPlanSlot.createMany).toHaveBeenCalledWith({
+      expect(prismaMock.mealSlot.createMany).toHaveBeenCalledWith({
         data: [
           {
-            mealPlanId: 'mp-1',
+            userId: 'user-123',
             date: new Date('2026-05-04T00:00:00.000Z'),
             slotType: Slot.LUNCH,
             recipeId: RECIPE_ID_1,
             servings: 2,
           },
           {
-            mealPlanId: 'mp-1',
+            userId: 'user-123',
             date: new Date('2026-05-05T00:00:00.000Z'),
             slotType: Slot.DINNER,
             recipeId: RECIPE_ID_2,
@@ -220,69 +192,20 @@ describe('mealPlan router', () => {
       });
     });
 
-    it('creates a plan inside the transaction when no active plan exists', async () => {
+    it('accepts an empty slots array (clears the timeline)', async () => {
       const prismaMock = makePrismaMock();
-      prismaMock.mealPlan.findFirst.mockResolvedValue(null);
-      prismaMock.mealPlan.create.mockResolvedValue({ id: 'mp-new' });
-      prismaMock.recipe.findMany.mockResolvedValue([
-        { id: RECIPE_ID_1 },
-        { id: RECIPE_ID_2 },
-      ]);
-      prismaMock.mealPlanSlot.deleteMany.mockResolvedValue({ count: 0 });
-      prismaMock.mealPlanSlot.createMany.mockResolvedValue({ count: 2 });
-      prismaMock.mealPlan.findUniqueOrThrow.mockResolvedValue(populatedPlan);
+      prismaMock.mealSlot.deleteMany.mockResolvedValue({ count: 21 });
+      prismaMock.mealSlot.findMany.mockResolvedValue([]);
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
 
-      await caller.mealPlan.setMealPlan(VALID_INPUT);
+      const result = await caller.mealPlan.setMealPlan({ slots: [] });
 
-      expect(prismaMock.mealPlan.create).toHaveBeenCalledWith({
-        data: {
-          userId: 'user-123',
-          startDate: new Date('2026-05-04T00:00:00.000Z'),
-          endDate: new Date('2026-05-10T23:59:59.999Z'),
-        },
-        select: { id: true },
-      });
-      expect(prismaMock.mealPlan.update).not.toHaveBeenCalled();
-    });
-
-    it('accepts an empty slots array (clears the week)', async () => {
-      const prismaMock = makePrismaMock();
-      prismaMock.mealPlan.findFirst.mockResolvedValue({ id: 'mp-1' });
-      prismaMock.mealPlanSlot.deleteMany.mockResolvedValue({ count: 21 });
-      prismaMock.mealPlan.update.mockResolvedValue({ id: 'mp-1' });
-      prismaMock.mealPlan.findUniqueOrThrow.mockResolvedValue({
-        ...populatedPlan,
-        slots: [],
-      });
-      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
-
-      await caller.mealPlan.setMealPlan({
-        startDate: VALID_INPUT.startDate,
-        endDate: VALID_INPUT.endDate,
-        slots: [],
-      });
-
+      expect(result).toEqual([]);
       expect(prismaMock.recipe.findMany).not.toHaveBeenCalled();
-      expect(prismaMock.mealPlanSlot.createMany).not.toHaveBeenCalled();
-      expect(prismaMock.mealPlanSlot.deleteMany).toHaveBeenCalledWith({
-        where: { mealPlanId: 'mp-1' },
+      expect(prismaMock.mealSlot.createMany).not.toHaveBeenCalled();
+      expect(prismaMock.mealSlot.deleteMany).toHaveBeenCalledWith({
+        where: { userId: 'user-123' },
       });
-    });
-
-    it('rejects endDate before startDate as BAD_REQUEST', async () => {
-      const prismaMock = makePrismaMock();
-      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
-
-      await expect(
-        caller.mealPlan.setMealPlan({
-          ...VALID_INPUT,
-          startDate: '2026-05-10T00:00:00.000Z',
-          endDate: '2026-05-04T00:00:00.000Z',
-          slots: [],
-        }),
-      ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
-      expect(prismaMock.$transaction).not.toHaveBeenCalled();
     });
 
     it('rejects duplicate (date, slotType) pairs as BAD_REQUEST', async () => {
@@ -291,7 +214,6 @@ describe('mealPlan router', () => {
 
       await expect(
         caller.mealPlan.setMealPlan({
-          ...VALID_INPUT,
           slots: [
             {
               date: '2026-05-04T00:00:00.000Z',
@@ -311,24 +233,27 @@ describe('mealPlan router', () => {
       expect(prismaMock.$transaction).not.toHaveBeenCalled();
     });
 
-    it('rejects slot dates outside [startDate, endDate] as BAD_REQUEST', async () => {
+    it('accepts slots far in the past or future (no range enforcement)', async () => {
       const prismaMock = makePrismaMock();
+      prismaMock.recipe.findMany.mockResolvedValue([{ id: RECIPE_ID_1 }]);
+      prismaMock.mealSlot.deleteMany.mockResolvedValue({ count: 0 });
+      prismaMock.mealSlot.createMany.mockResolvedValue({ count: 1 });
+      prismaMock.mealSlot.findMany.mockResolvedValue([]);
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
 
+      // A slot 6 months from now must be accepted.
       await expect(
         caller.mealPlan.setMealPlan({
-          ...VALID_INPUT,
           slots: [
             {
-              date: '2026-04-30T00:00:00.000Z', // before startDate
+              date: '2026-11-04T00:00:00.000Z',
               slotType: Slot.LUNCH,
               recipeId: RECIPE_ID_1,
               servings: 2,
             },
           ],
         }),
-      ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
-      expect(prismaMock.$transaction).not.toHaveBeenCalled();
+      ).resolves.toEqual([]);
     });
 
     it('rejects unknown recipe ids as NOT_FOUND', async () => {
@@ -361,7 +286,6 @@ describe('mealPlan router', () => {
 
       await expect(
         caller.mealPlan.setMealPlan({
-          ...VALID_INPUT,
           slots: [
             {
               date: '2026-05-04T00:00:00.000Z',
@@ -376,12 +300,11 @@ describe('mealPlan router', () => {
 
     it('translates unexpected Prisma failures to INTERNAL_SERVER_ERROR', async () => {
       const prismaMock = makePrismaMock();
-      prismaMock.mealPlan.findFirst.mockResolvedValue({ id: 'mp-1' });
       prismaMock.recipe.findMany.mockResolvedValue([
         { id: RECIPE_ID_1 },
         { id: RECIPE_ID_2 },
       ]);
-      prismaMock.mealPlanSlot.deleteMany.mockRejectedValue(
+      prismaMock.mealSlot.deleteMany.mockRejectedValue(
         new Error('connection lost'),
       );
       const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));

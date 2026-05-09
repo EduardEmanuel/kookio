@@ -32,24 +32,28 @@ import { MEAL_PLAN_TRPC } from '../../meal-plan-trpc';
 import { PlanStore, slotKey } from '../../store/plan.store';
 import { RecipePickerSheetComponent } from '../recipe-picker-sheet/recipe-picker-sheet.component';
 
-interface DayCell {
+interface DayColumn {
   /** ISO datetime, UTC midnight — matches what the store keys slots by. */
   date: string;
-  /** Day-of-month as plain integer for the tab strip glyph. */
+  /** Day-of-month numeral, locale-independent (e.g. 9). */
   dayOfMonth: number;
-  /** Number of populated slots out of `editableSlotTypes.length`. */
-  plannedCount: number;
+  /** Localized weekday abbreviation (e.g. "Sat"). */
+  weekdayShort: string;
+  /** Localized full date for ARIA labels (e.g. "Saturday, May 9"). */
+  ariaLabel: string;
+  /** True if this column is today — drives the "today" highlight. */
+  isToday: boolean;
 }
 
 /**
- * Discriminated payload attached to every CDK drag origin. The desktop
- * drop handler reads it to decide between "set a slot" (recipe came from
- * the sidebar or another slot) and "clear a slot" (recipe was dragged
- * onto the sidebar — the bin gesture).
+ * Discriminated payload attached to every CDK drag origin. The drop
+ * handler reads it to decide between "set a slot" (recipe came from the
+ * sidebar or another slot) and "clear a slot" (recipe was dragged onto
+ * the sidebar — the bin gesture).
  *
- * Slot→slot drag uses *copy* semantics: dragging Lasagna from Tue→Wed
- * leaves Lasagna in both. To "move", the user drags the source slot to
- * the sidebar afterwards.
+ * Slot→slot drag uses *copy* semantics: dragging Lasagna from one cell
+ * to another leaves Lasagna in both. To "move", drop the source cell
+ * onto the sidebar afterwards.
  */
 type DragPayload =
   | { kind: 'sidebar-recipe'; recipe: RecipeFeedItem }
@@ -63,8 +67,8 @@ type DragPayload =
 const SIDEBAR_PAGE_SIZE = 20;
 
 /**
- * The three slot types we expose in the planner UI today. SNACK exists in
- * the schema (and the server accepts it) but we keep the editor at a tidy
+ * The three slot types the planner exposes today. SNACK exists in the
+ * schema (and the server accepts it) but we keep the editor at a tidy
  * 3 cells per day until there's a product reason to surface SNACK.
  */
 const EDITABLE_SLOT_TYPES: readonly MealSlotType[] = [
@@ -80,6 +84,13 @@ const SLOT_LABELS: Record<MealSlotType, string> = {
   SNACK: 'Snack',
 };
 
+const SLOT_ABBREVIATIONS: Record<MealSlotType, string> = {
+  BREAKFAST: 'B',
+  LUNCH: 'L',
+  DINNER: 'D',
+  SNACK: 'S',
+};
+
 /** UTC midnight at the start of `iso`. Idempotent. */
 const floorToUtcMidnight = (iso: string): Date => {
   const d = new Date(iso);
@@ -87,17 +98,18 @@ const floorToUtcMidnight = (iso: string): Date => {
   return d;
 };
 
-/** ISO list of the [startDate, endDate] day boundaries, inclusive. */
-const enumerateDays = (startIso: string, endIso: string): string[] => {
-  const start = floorToUtcMidnight(startIso);
-  const end = floorToUtcMidnight(endIso);
-  const days: string[] = [];
-  const cursor = new Date(start);
-  while (cursor.getTime() <= end.getTime()) {
-    days.push(cursor.toISOString());
-    cursor.setUTCDate(cursor.getUTCDate() + 1);
-  }
-  return days;
+/** UTC midnight ISO for today's calendar day. */
+const todayUtcMidnightIso = (): string => {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  return d.toISOString();
+};
+
+/** Add `dayDelta` days to an ISO date and return a new ISO string. */
+const shiftDayIso = (iso: string, dayDelta: number): string => {
+  const d = new Date(iso);
+  d.setUTCDate(d.getUTCDate() + dayDelta);
+  return d.toISOString();
 };
 
 @Component({
@@ -125,9 +137,14 @@ export class PlanCalendarComponent {
 
   protected readonly editableSlotTypes = EDITABLE_SLOT_TYPES;
   protected readonly slotLabels = SLOT_LABELS;
+  protected readonly slotAbbreviations = SLOT_ABBREVIATIONS;
 
-  /** Index into `days()` for the active day in the mobile editor. */
-  protected readonly activeDayIndex = signal(0);
+  /**
+   * The middle column's date — the user navigates this with the
+   * arrows. The visible window is always [center - 1, center, center + 1].
+   * Initialised to today so the first frame always has today centered.
+   */
+  protected readonly centerDate = signal(todayUtcMidnightIso());
 
   /** Recipes pulled into the desktop sidebar (newest-first feed pagination). */
   protected readonly sidebarRecipes = signal<RecipeFeedItem[]>([]);
@@ -140,60 +157,35 @@ export class PlanCalendarComponent {
     () => this.sidebarNextCursor() !== null && !this.sidebarLoading(),
   );
 
-  /** The expanded list of days the plan covers. */
-  protected readonly days = computed<DayCell[]>(() => {
-    const start = this.store.startDate();
-    const end = this.store.endDate();
-    if (!start || !end) return [];
-    const slotsByKey = this.store.slotsByKey();
-    return enumerateDays(start, end).map((iso) => {
-      let plannedCount = 0;
-      for (const t of EDITABLE_SLOT_TYPES) {
-        if (slotsByKey.has(slotKey(iso, t))) plannedCount += 1;
-      }
+  /**
+   * The 3 visible day columns: yesterday-of-center, center, tomorrow-of-center.
+   * Recomputed whenever `centerDate` changes (i.e. when arrows fire).
+   */
+  protected readonly visibleDays = computed<DayColumn[]>(() => {
+    const center = this.centerDate();
+    const today = todayUtcMidnightIso();
+    return [-1, 0, 1].map((delta) => {
+      const iso = shiftDayIso(center, delta);
+      const d = floorToUtcMidnight(iso);
       return {
         date: iso,
-        dayOfMonth: floorToUtcMidnight(iso).getUTCDate(),
-        plannedCount,
+        dayOfMonth: d.getUTCDate(),
+        weekdayShort: new Intl.DateTimeFormat(undefined, {
+          weekday: 'short',
+        }).format(d),
+        ariaLabel: new Intl.DateTimeFormat(undefined, {
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric',
+        }).format(d),
+        isToday: iso === today,
       };
     });
   });
 
-  /** ISO of the day currently being edited on mobile. */
-  protected readonly activeDay = computed(() => {
-    const list = this.days();
-    if (list.length === 0) return null;
-    const idx = Math.min(this.activeDayIndex(), list.length - 1);
-    return list[idx]?.date ?? null;
-  });
-
-  /**
-   * Localized header for the active day's editor — uses the platform's
-   * `Intl.DateTimeFormat` so we don't ship a translation table for weekday
-   * and month names.
-   */
-  protected readonly activeDayLabel = computed(() => {
-    const iso = this.activeDay();
-    if (!iso) return '';
-    return new Intl.DateTimeFormat(undefined, {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-    }).format(new Date(iso));
-  });
-
-  /** Localized weekday abbreviation for the desktop column header. */
-  protected readonly weekdayShort = (iso: string): string =>
-    new Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(
-      new Date(iso),
-    );
-
   protected readonly slotKey = slotKey;
 
-  /**
-   * Builds a copy-from-slot drag payload — used in the template via
-   * [cdkDragData] without having to inline the literal each time.
-   */
+  /** Drag payload builders — kept as fields so the template binds tightly. */
   protected readonly slotDragPayload = (
     date: string,
     slotType: MealSlotType,
@@ -271,8 +263,16 @@ export class PlanCalendarComponent {
     });
   }
 
-  protected readonly onTabClick = (idx: number): void => {
-    this.activeDayIndex.set(idx);
+  protected readonly onPrev = (): void => {
+    this.centerDate.set(shiftDayIso(this.centerDate(), -1));
+  };
+
+  protected readonly onNext = (): void => {
+    this.centerDate.set(shiftDayIso(this.centerDate(), 1));
+  };
+
+  protected readonly onToday = (): void => {
+    this.centerDate.set(todayUtcMidnightIso());
   };
 
   protected readonly onSlotClick = async (
@@ -308,12 +308,12 @@ export class PlanCalendarComponent {
     this.store.submit();
   };
 
-  protected readonly onClearWeek = (): void => {
+  protected readonly onClearAll = (): void => {
     if (this.store.plannedCount() === 0) return;
     const ok =
       typeof window !== 'undefined' &&
       window.confirm(
-        'Clear all planned meals for this range? This cannot be undone until you save.',
+        'Clear all planned meals? This cannot be undone until you save.',
       );
     if (ok) this.store.clearAll();
   };
@@ -340,16 +340,13 @@ export class PlanCalendarComponent {
       slotType: targetSlotType,
       recipeId: payload.recipe.id,
       recipe: payload.recipe,
-      // Carry the source slot's servings forward when a slot moves between
-      // cells; sidebar recipes default to the store's standard servings.
-      ...(payload.kind === 'slot' ? { servings: undefined } : {}),
     });
   };
 
   /**
-   * Drop handler for the sidebar — only acts when the drag originated from
-   * a slot (gated by `sidebarEnterPredicate`). The bin gesture: drop a
-   * planned slot back on the sidebar to clear it.
+   * Drop handler for the sidebar — only acts when the drag originated
+   * from a slot (gated by `sidebarEnterPredicate`). The bin gesture:
+   * drop a planned slot back on the sidebar to clear it.
    */
   protected readonly onSidebarDrop = (
     event: CdkDragDrop<unknown, unknown, DragPayload>,

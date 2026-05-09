@@ -37,31 +37,24 @@ const buildSlot = (type: MealSlotType, title: string): PlanSlot => ({
 
 interface MockPlanStore {
   slotsByKey: WritableSignal<Map<string, PlanSlot>>;
-  startDate: WritableSignal<string | null>;
-  endDate: WritableSignal<string | null>;
   isLoading: WritableSignal<boolean>;
-  hasRange: WritableSignal<boolean>;
+  hasLoadedOnce: WritableSignal<boolean>;
   load: ReturnType<typeof vi.fn>;
 }
 
 const createMockStore = (init: {
   slots?: PlanSlot[];
-  startDate?: string | null;
-  endDate?: string | null;
   isLoading?: boolean;
+  hasLoadedOnce?: boolean;
 }): MockPlanStore => {
   const slotMap = new Map<string, PlanSlot>();
   for (const s of init.slots ?? []) {
     slotMap.set(slotKey(s.date, s.slotType), s);
   }
-  const start = init.startDate ?? null;
-  const end = init.endDate ?? null;
   return {
     slotsByKey: signal(slotMap),
-    startDate: signal(start),
-    endDate: signal(end),
     isLoading: signal(init.isLoading ?? false),
-    hasRange: signal(start !== null && end !== null),
+    hasLoadedOnce: signal(init.hasLoadedOnce ?? true),
     load: vi.fn(),
   };
 };
@@ -97,8 +90,8 @@ describe('MealPlanTodayWidgetComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  it('renders a spinner while loading and no plan range is known yet', async () => {
-    const store = createMockStore({ isLoading: true });
+  it('renders a spinner while loading and before the first response lands', async () => {
+    const store = createMockStore({ isLoading: true, hasLoadedOnce: false });
 
     const { el } = await setup(store);
 
@@ -108,23 +101,8 @@ describe('MealPlanTodayWidgetComponent', () => {
     expect(el.querySelectorAll('.mpt__item')).toHaveLength(0);
   });
 
-  it('shows the out-of-range placeholder when today falls outside the active plan', async () => {
-    const store = createMockStore({
-      startDate: '2026-06-01T00:00:00.000Z',
-      endDate: '2026-06-07T23:59:59.999Z',
-    });
-
-    const { el } = await setup(store);
-
-    expect(el.textContent ?? '').toContain('Today is not in your active plan');
-    expect(el.querySelectorAll('.mpt__item')).toHaveLength(0);
-  });
-
-  it('shows the empty-day placeholder when today is in range but no slots are filled', async () => {
-    const store = createMockStore({
-      startDate: '2026-05-04T00:00:00.000Z',
-      endDate: '2026-05-10T23:59:59.999Z',
-    });
+  it('shows the empty-day placeholder when no slots are planned for today', async () => {
+    const store = createMockStore({});
 
     const { el } = await setup(store);
 
@@ -134,8 +112,6 @@ describe('MealPlanTodayWidgetComponent', () => {
 
   it("renders today's three slots with planned titles and 'Not planned' for empty ones", async () => {
     const store = createMockStore({
-      startDate: '2026-05-04T00:00:00.000Z',
-      endDate: '2026-05-10T23:59:59.999Z',
       slots: [
         buildSlot(Slot.BREAKFAST, 'Oatmeal'),
         buildSlot(Slot.DINNER, 'Lasagna'),
@@ -157,10 +133,7 @@ describe('MealPlanTodayWidgetComponent', () => {
   });
 
   it('always shows the "Plan your week" CTA pointing at /plan', async () => {
-    const store = createMockStore({
-      startDate: '2026-05-04T00:00:00.000Z',
-      endDate: '2026-05-10T23:59:59.999Z',
-    });
+    const store = createMockStore({});
 
     const { el } = await setup(store);
 

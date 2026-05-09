@@ -1,8 +1,8 @@
-@if (store.isLoading() && !store.hasRange()) {
+@if (store.isLoading() && !store.hasLoadedOnce()) {
   <div class="plan__loading">
     <mat-spinner diameter="40" />
   </div>
-} @else if (store.hasRange()) {
+} @else if (store.hasLoadedOnce()) {
   @if (store.hasUnsavedDraft()) {
     <div class="plan__banner" role="status">
       <span>You have unsaved changes from a previous session.</span>
@@ -12,78 +12,8 @@
     </div>
   }
 
-  @if (bp.isMobile()) {
-    <nav class="plan__strip" role="tablist" aria-label="Days in this plan">
-      @for (day of days(); track day.date; let i = $index) {
-        <button
-          type="button"
-          role="tab"
-          class="plan__tab"
-          [class.plan__tab--active]="i === activeDayIndex()"
-          [attr.aria-selected]="i === activeDayIndex()"
-          [attr.aria-current]="i === activeDayIndex() ? 'true' : null"
-          (click)="onTabClick(i)"
-        >
-          <span class="plan__tab-day">{{ day.dayOfMonth }}</span>
-          <span
-            class="plan__tab-dots"
-            [attr.aria-label]="
-              day.plannedCount + ' of ' + editableSlotTypes.length + ' planned'
-            "
-          >
-            @for (
-              type of editableSlotTypes;
-              track type;
-              let slotIndex = $index
-            ) {
-              <span
-                class="plan__tab-dot"
-                [class.plan__tab-dot--filled]="slotIndex < day.plannedCount"
-                aria-hidden="true"
-              ></span>
-            }
-          </span>
-        </button>
-      }
-    </nav>
-
-    <section class="plan__editor" aria-live="polite">
-      <h2 class="plan__editor-title">{{ activeDayLabel() }}</h2>
-      @if (activeDay(); as day) {
-        @for (type of editableSlotTypes; track type) {
-          @let cell = store.slotsByKey().get(slotKey(day, type));
-          <button
-            type="button"
-            class="plan__slot"
-            [class.plan__slot--filled]="!!cell"
-            (click)="onSlotClick(day, type)"
-          >
-            <span class="plan__slot-label">{{ slotLabels[type] }}</span>
-            @if (cell?.recipe; as recipe) {
-              <span class="plan__slot-content">
-                <span class="plan__slot-title">{{ recipe.title }}</span>
-                <button
-                  [matButton]="'text'"
-                  type="button"
-                  class="plan__slot-clear"
-                  aria-label="Remove from this slot"
-                  (click)="onClearSlot(day, type, $event)"
-                >
-                  <kookio-icon name="close" />
-                </button>
-              </span>
-            } @else {
-              <span class="plan__slot-empty">
-                <kookio-icon name="add" />
-                <span>Add a recipe</span>
-              </span>
-            }
-          </button>
-        }
-      }
-    </section>
-  } @else {
-    <div class="plan__desktop" cdkDropListGroup>
+  <div class="plan__layout" cdkDropListGroup>
+    @if (bp.isDesktop()) {
       <aside class="plan__sidebar" aria-label="Recipes">
         <header class="plan__sidebar-header">
           <h2 class="plan__sidebar-title">Recipes</h2>
@@ -157,23 +87,64 @@
           </button>
         }
       </aside>
+    }
+
+    <div class="plan__main">
+      <nav class="plan__nav" aria-label="Timeline navigation">
+        <button
+          [matButton]="'tonal'"
+          type="button"
+          class="plan__nav-arrow"
+          aria-label="Previous day"
+          (click)="onPrev()"
+        >
+          <kookio-icon name="chevron_left" />
+        </button>
+        <button
+          [matButton]="'text'"
+          type="button"
+          class="plan__nav-today"
+          (click)="onToday()"
+        >
+          Today
+        </button>
+        <button
+          [matButton]="'tonal'"
+          type="button"
+          class="plan__nav-arrow"
+          aria-label="Next day"
+          (click)="onNext()"
+        >
+          <kookio-icon name="chevron_right" />
+        </button>
+      </nav>
 
       <div class="plan__grid">
         <div class="plan__grid-corner" aria-hidden="true"></div>
-        @for (day of days(); track day.date) {
-          <div class="plan__grid-day">
-            <span class="plan__grid-weekday">{{ weekdayShort(day.date) }}</span>
+        @for (day of visibleDays(); track day.date) {
+          <div
+            class="plan__grid-day"
+            [class.plan__grid-day--today]="day.isToday"
+            [attr.aria-label]="day.ariaLabel"
+          >
+            <span class="plan__grid-weekday">{{ day.weekdayShort }}</span>
             <span class="plan__grid-daynum">{{ day.dayOfMonth }}</span>
           </div>
         }
 
         @for (type of editableSlotTypes; track type) {
-          <div class="plan__grid-rowlabel">{{ slotLabels[type] }}</div>
-          @for (day of days(); track day.date) {
+          <div class="plan__grid-rowlabel" [attr.aria-label]="slotLabels[type]">
+            <span class="plan__grid-rowlabel-full">{{ slotLabels[type] }}</span>
+            <span class="plan__grid-rowlabel-abbr" aria-hidden="true">{{
+              slotAbbreviations[type]
+            }}</span>
+          </div>
+          @for (day of visibleDays(); track day.date) {
             @let cell = store.slotsByKey().get(slotKey(day.date, type));
             <div
               class="plan__cell"
               [class.plan__cell--filled]="!!cell"
+              [class.plan__cell--today]="day.isToday"
               cdkDropList
               (cdkDropListDropped)="onCellDrop(day.date, type, $event)"
             >
@@ -199,7 +170,7 @@
                   type="button"
                   class="plan__cell-empty"
                   [attr.aria-label]="
-                    'Add ' + slotLabels[type] + ' for ' + weekdayShort(day.date)
+                    'Add ' + slotLabels[type] + ' for ' + day.ariaLabel
                   "
                   (click)="onSlotClick(day.date, type)"
                 >
@@ -211,16 +182,16 @@
         }
       </div>
     </div>
-  }
+  </div>
 
   <footer class="plan__actions">
     <button
       [matButton]="'text'"
       type="button"
       [disabled]="store.plannedCount() === 0"
-      (click)="onClearWeek()"
+      (click)="onClearAll()"
     >
-      Clear range
+      Clear all
     </button>
     <button
       [matButton]="'filled'"

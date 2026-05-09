@@ -15,10 +15,8 @@ import {
   resetCollectionCounter,
   createMockCookingSession,
   resetCookingSessionCounter,
-  createMockMealPlan,
-  createMockMealPlanSlot,
-  resetMealPlanCounter,
-  resetMealPlanSlotCounter,
+  createMockMealSlot,
+  resetMealSlotCounter,
 } from './index';
 
 const r = RoleSchema.Values;
@@ -130,26 +128,18 @@ describe('createMockCookingSession', () => {
   });
 });
 
-describe('createMockMealPlan', () => {
-  beforeEach(() => resetMealPlanCounter());
+describe('createMockMealSlot', () => {
+  beforeEach(() => resetMealSlotCounter());
 
   it('binds to the provided userId', () => {
-    const plan = createMockMealPlan('usr_x');
-    expect(plan.userId).toBe('usr_x');
+    const date = new Date('2026-01-05T00:00:00.000Z');
+    const slot = createMockMealSlot('usr_x', null, date, mst.DINNER);
+    expect(slot.userId).toBe('usr_x');
   });
-
-  it('has startDate before endDate', () => {
-    const plan = createMockMealPlan('usr_x');
-    expect(plan.startDate.getTime()).toBeLessThan(plan.endDate.getTime());
-  });
-});
-
-describe('createMockMealPlanSlot', () => {
-  beforeEach(() => resetMealPlanSlotCounter());
 
   it('accepts null recipeId', () => {
     const date = new Date('2026-01-05T00:00:00.000Z');
-    const slot = createMockMealPlanSlot('mp_1', null, date, mst.DINNER);
+    const slot = createMockMealSlot('usr_x', null, date, mst.DINNER);
     expect(slot.recipeId).toBeNull();
     expect(slot.slotType).toBe(mst.DINNER);
   });

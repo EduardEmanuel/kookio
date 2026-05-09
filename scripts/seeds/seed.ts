@@ -2,7 +2,6 @@
 import { prisma } from '@kookio/prisma-client/server';
 import {
   devDietaryRestrictions,
-  devMealPlans,
   devRecipeCollections,
   devUsers,
   devUtensils,
@@ -23,7 +22,7 @@ import { seedUserUtensils } from './seed-user-utensils';
 import { seedRecipeCollections } from './seed-recipe-collections';
 import { seedPantryItems } from './seed-pantry-items';
 import { seedCookingSessions } from './seed-cooking-sessions';
-import { seedMealPlans } from './seed-meal-plans';
+import { seedMealSlots } from './seed-meal-slots';
 
 const fetchSeedRecipeIds = async (): Promise<string[]> => {
   const recipes = await prisma.recipe.findMany({
@@ -68,7 +67,7 @@ const main = async () => {
   await seedRecipeCollections(devRecipeCollections, recipeIds);
   await seedPantryItems(devUserId);
   await seedCookingSessions(devUserId, recipeIds);
-  await seedMealPlans(devMealPlans, recipeIds);
+  await seedMealSlots(devUserId, recipeIds);
 
   logger.info('✅ Database seed complete');
 };

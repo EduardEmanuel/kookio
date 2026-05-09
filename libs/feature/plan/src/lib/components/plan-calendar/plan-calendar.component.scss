@@ -1,7 +1,7 @@
 :host {
   display: block;
   padding: 16px;
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -24,149 +24,18 @@
   font: var(--mat-sys-body-medium);
 }
 
-.plan__strip {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding: 8px 0 16px;
-  margin: 0 -4px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.plan__tab {
-  flex: 1 0 56px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 4px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 12px;
-  background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  cursor: pointer;
-  font: var(--mat-sys-label-large);
-  transition:
-    background 120ms ease,
-    border-color 120ms ease;
-
-  &:focus-visible {
-    outline: 2px solid var(--mat-sys-primary);
-    outline-offset: 2px;
-  }
-}
-
-.plan__tab--active {
-  background: var(--mat-sys-primary-container);
-  color: var(--mat-sys-on-primary-container);
-  border-color: var(--mat-sys-primary);
-  font-weight: 600;
-}
-
-.plan__tab-day {
-  font: var(--mat-sys-title-medium);
-  line-height: 1;
-}
-
-.plan__tab-dots {
-  display: inline-flex;
-  gap: 3px;
-}
-
-.plan__tab-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--mat-sys-outline);
-  opacity: 0.4;
-}
-
-.plan__tab-dot--filled {
-  background: currentColor;
-  opacity: 1;
-}
-
-.plan__editor {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.plan__editor-title {
-  margin: 0 0 8px;
-  font: var(--mat-sys-title-large);
-}
-
-.plan__slot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px;
-  border: 1px dashed var(--mat-sys-outline-variant);
-  border-radius: 12px;
-  background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  cursor: pointer;
-  text-align: start;
-  width: 100%;
-  font: var(--mat-sys-body-large);
-  transition: background 120ms ease;
-
-  &:hover {
-    background: var(--mat-sys-surface-container);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--mat-sys-primary);
-    outline-offset: 2px;
-  }
-}
-
-.plan__slot--filled {
-  border-style: solid;
-  border-color: var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
-}
-
-.plan__slot-label {
-  font: var(--mat-sys-label-large);
-  color: var(--mat-sys-on-surface-variant);
-  min-width: 96px;
-}
-
-.plan__slot-content {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-}
-
-.plan__slot-title {
-  flex: 1;
-  font: var(--mat-sys-body-large);
-}
-
-.plan__slot-clear {
-  margin-right: -8px;
-}
-
-.plan__slot-empty {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--mat-sys-on-surface-variant);
-}
-
-// ─── Desktop layout ─────────────────────────────────────────────────────
-
-.plan__desktop {
+.plan__layout {
   display: grid;
   grid-template-columns: minmax(220px, 280px) 1fr;
   gap: 24px;
   align-items: start;
+
+  @media (max-width: 767.98px) {
+    grid-template-columns: 1fr;
+  }
 }
+
+// ─── Recipe sidebar (desktop only) ──────────────────────────────────────
 
 .plan__sidebar {
   display: flex;
@@ -290,11 +159,39 @@
   align-self: stretch;
 }
 
+// ─── Main calendar area ─────────────────────────────────────────────────
+
+.plan__main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plan__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.plan__nav-arrow {
+  flex: 0 0 auto;
+}
+
+.plan__nav-today {
+  flex: 1;
+}
+
 .plan__grid {
   display: grid;
-  grid-template-columns: minmax(80px, auto) repeat(7, minmax(0, 1fr));
+  grid-template-columns: minmax(56px, auto) repeat(3, minmax(0, 1fr));
   gap: 6px;
   align-items: stretch;
+
+  @media (max-width: 767.98px) {
+    grid-template-columns: minmax(40px, auto) repeat(3, minmax(0, 1fr));
+    gap: 4px;
+  }
 }
 
 .plan__grid-corner {
@@ -311,11 +208,16 @@
   color: var(--mat-sys-on-surface-variant);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  border-radius: 8px;
+}
+
+.plan__grid-day--today {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
 }
 
 .plan__grid-daynum {
   font: var(--mat-sys-title-medium);
-  color: var(--mat-sys-on-surface);
   text-transform: none;
   letter-spacing: 0;
 }
@@ -326,6 +228,25 @@
   font: var(--mat-sys-label-large);
   color: var(--mat-sys-on-surface-variant);
   text-align: end;
+
+  @media (max-width: 767.98px) {
+    padding-right: 4px;
+  }
+}
+
+.plan__grid-rowlabel-full {
+  @media (max-width: 767.98px) {
+    display: none;
+  }
+}
+
+.plan__grid-rowlabel-abbr {
+  display: none;
+  font: var(--mat-sys-title-medium);
+
+  @media (max-width: 767.98px) {
+    display: inline;
+  }
 }
 
 .plan__cell {
@@ -348,6 +269,10 @@
 
 .plan__cell--filled {
   border-style: solid;
+}
+
+.plan__cell--today {
+  border-color: var(--mat-sys-primary);
 }
 
 .plan__cell-recipe {
@@ -399,19 +324,7 @@
   }
 }
 
-// CDK adds .cdk-drag-preview to the floating clone — match the cell-recipe
-// styling so dragging from the sidebar still looks like a slot tile.
-:host ::ng-deep .cdk-drag-preview {
-  padding: 8px 10px;
-  background: var(--mat-sys-surface-container-high);
-  border-radius: 8px;
-  box-shadow: var(--mat-sys-elevation-2);
-  font: var(--mat-sys-body-medium);
-}
-
-:host ::ng-deep .cdk-drag-placeholder {
-  opacity: 0.3;
-}
+// ─── Footer actions ─────────────────────────────────────────────────────
 
 .plan__actions {
   display: flex;
@@ -431,9 +344,22 @@
   text-align: center;
 }
 
+// ─── CDK drag-preview styling (drag clone) ──────────────────────────────
+
+:host ::ng-deep .cdk-drag-preview {
+  padding: 8px 10px;
+  background: var(--mat-sys-surface-container-high);
+  border-radius: 8px;
+  box-shadow: var(--mat-sys-elevation-2);
+  font: var(--mat-sys-body-medium);
+}
+
+:host ::ng-deep .cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .plan__tab,
-  .plan__slot {
+  .plan__cell {
     transition: none;
   }
 }

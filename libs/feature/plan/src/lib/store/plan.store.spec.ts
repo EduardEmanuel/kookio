@@ -7,7 +7,7 @@ import { createMockAuthStore } from '@kookio/feature-auth/testing';
 import {
   MealSlotTypeSchema,
   type AuthSession,
-  type MealPlanFull,
+  type MealSlotWithRecipe,
   type RecipeFeedItem,
 } from '@kookio/prisma-client';
 
@@ -43,26 +43,31 @@ const buildRecipe = (id: string): RecipeFeedItem => ({
   area: null,
 });
 
-const buildPlan = (overrides: Partial<MealPlanFull> = {}): MealPlanFull => ({
-  id: 'mp-1',
+const buildServerSlot = (overrides: {
+  date: Date;
+  slotType: MealSlotWithRecipe['slotType'];
+  recipeId: string | null;
+  recipe: RecipeFeedItem | null;
+  updatedAt?: Date;
+}): MealSlotWithRecipe => ({
+  id: `ms-${overrides.date.toISOString()}-${overrides.slotType}`,
   userId: TEST_UID,
-  name: null,
-  startDate: new Date('2026-05-04T00:00:00.000Z'),
-  endDate: new Date('2026-05-10T23:59:59.999Z'),
+  recipeId: overrides.recipeId,
+  date: overrides.date,
+  slotType: overrides.slotType,
+  servings: 2,
   createdAt: new Date('2026-05-01T00:00:00.000Z'),
-  updatedAt: new Date('2026-05-01T00:00:00.000Z'),
-  slots: [],
-  ...overrides,
+  updatedAt: overrides.updatedAt ?? new Date('2026-05-01T00:00:00.000Z'),
+  recipe: overrides.recipe,
 });
 
 const setup = (trpcOverrides?: {
   getCurrent?: ReturnType<typeof vi.fn>;
   setMealPlan?: ReturnType<typeof vi.fn>;
 }) => {
-  const getCurrent =
-    trpcOverrides?.getCurrent ?? vi.fn().mockResolvedValue(buildPlan());
+  const getCurrent = trpcOverrides?.getCurrent ?? vi.fn().mockResolvedValue([]);
   const setMealPlan =
-    trpcOverrides?.setMealPlan ?? vi.fn().mockResolvedValue(buildPlan());
+    trpcOverrides?.setMealPlan ?? vi.fn().mockResolvedValue([]);
   const feed = vi.fn().mockResolvedValue({ items: [], nextCursor: null });
 
   const trpc: MealPlanTrpcClient = {
@@ -109,42 +114,33 @@ describe('PlanStore', () => {
       const { store } = setup();
       expect(store.slots()).toEqual([]);
       expect(store.plannedCount()).toBe(0);
-      expect(store.startDate()).toBeNull();
-      expect(store.endDate()).toBeNull();
       expect(store.isLoading()).toBe(false);
       expect(store.isSubmitting()).toBe(false);
       expect(store.isDirty()).toBe(false);
       expect(store.hasUnsavedDraft()).toBe(false);
+      expect(store.hasLoadedOnce()).toBe(false);
       expect(store.error()).toBeNull();
       expect(store.blockNavigation()).toBe(false);
-      expect(store.hasRange()).toBe(false);
     });
   });
 
   describe('load', () => {
-    it('populates plan + slots and records serverUpdatedAt', async () => {
+    it('populates slots and records serverUpdatedAt', async () => {
       const recipe = buildRecipe('r1');
-      const plan = buildPlan({
-        slots: [
-          {
-            id: 's1',
-            mealPlanId: 'mp-1',
-            recipeId: 'r1',
-            date: new Date('2026-05-04T00:00:00.000Z'),
-            slotType: Slot.LUNCH,
-            servings: 2,
-            recipe,
-          },
-        ],
+      const slot = buildServerSlot({
+        date: new Date('2026-05-04T00:00:00.000Z'),
+        slotType: Slot.LUNCH,
+        recipeId: 'r1',
+        recipe,
+        updatedAt: new Date('2026-05-09T12:00:00.000Z'),
       });
       const { store } = setup({
-        getCurrent: vi.fn().mockResolvedValue(plan),
+        getCurrent: vi.fn().mockResolvedValue([slot]),
       });
 
       store.load();
       await flush();
 
-      expect(store.startDate()).toBe('2026-05-04T00:00:00.000Z');
       expect(store.slots()).toHaveLength(1);
       expect(
         store.slotsByKey().get(slotKey('2026-05-04T00:00:00.000Z', Slot.LUNCH)),
@@ -154,34 +150,46 @@ describe('PlanStore', () => {
       });
       expect(store.isDirty()).toBe(false);
       expect(store.hasUnsavedDraft()).toBe(false);
+      expect(store.hasLoadedOnce()).toBe(true);
     });
 
     it('drops slots whose recipeId is null (server SET NULL aftermath)', async () => {
-      const plan = buildPlan({
-        slots: [
-          {
-            id: 's-orphan',
-            mealPlanId: 'mp-1',
-            recipeId: null,
-            date: new Date('2026-05-04T00:00:00.000Z'),
-            slotType: Slot.LUNCH,
-            servings: 2,
-            recipe: null,
-          },
-        ],
+      const slot = buildServerSlot({
+        date: new Date('2026-05-04T00:00:00.000Z'),
+        slotType: Slot.LUNCH,
+        recipeId: null,
+        recipe: null,
       });
       const { store } = setup({
-        getCurrent: vi.fn().mockResolvedValue(plan),
+        getCurrent: vi.fn().mockResolvedValue([slot]),
       });
 
       store.load();
       await flush();
 
       expect(store.slots()).toEqual([]);
+      expect(store.hasLoadedOnce()).toBe(true);
     });
 
-    it('restores a draft strictly newer than the server and flags it', async () => {
-      const serverPlan = buildPlan({
+    it('handles an empty server response (no slots ever planned)', async () => {
+      const { store } = setup({
+        getCurrent: vi.fn().mockResolvedValue([]),
+      });
+
+      store.load();
+      await flush();
+
+      expect(store.slots()).toEqual([]);
+      expect(store.hasLoadedOnce()).toBe(true);
+      expect(store.isLoading()).toBe(false);
+    });
+
+    it('restores a draft strictly newer than the latest server slot', async () => {
+      const serverSlot = buildServerSlot({
+        date: new Date('2026-05-04T00:00:00.000Z'),
+        slotType: Slot.LUNCH,
+        recipeId: 'r-server',
+        recipe: buildRecipe('r-server'),
         updatedAt: new Date('2026-05-01T00:00:00.000Z'),
       });
       const draftSlots = [
@@ -196,14 +204,12 @@ describe('PlanStore', () => {
       window.localStorage.setItem(
         DRAFT_KEY,
         JSON.stringify({
-          startDate: '2026-05-04T00:00:00.000Z',
-          endDate: '2026-05-10T23:59:59.999Z',
           slots: draftSlots,
           savedAt: new Date('2026-05-02T00:00:00.000Z').getTime(),
         }),
       );
       const { store } = setup({
-        getCurrent: vi.fn().mockResolvedValue(serverPlan),
+        getCurrent: vi.fn().mockResolvedValue([serverSlot]),
       });
 
       store.load();
@@ -215,14 +221,16 @@ describe('PlanStore', () => {
     });
 
     it('discards a stale draft (server moved on) and clears it from storage', async () => {
-      const serverPlan = buildPlan({
+      const serverSlot = buildServerSlot({
+        date: new Date('2026-05-04T00:00:00.000Z'),
+        slotType: Slot.LUNCH,
+        recipeId: 'r-server',
+        recipe: buildRecipe('r-server'),
         updatedAt: new Date('2026-05-10T00:00:00.000Z'),
       });
       window.localStorage.setItem(
         DRAFT_KEY,
         JSON.stringify({
-          startDate: '2026-05-04T00:00:00.000Z',
-          endDate: '2026-05-10T23:59:59.999Z',
           slots: [
             {
               date: '2026-05-05T00:00:00.000Z',
@@ -236,7 +244,7 @@ describe('PlanStore', () => {
         }),
       );
       const { store } = setup({
-        getCurrent: vi.fn().mockResolvedValue(serverPlan),
+        getCurrent: vi.fn().mockResolvedValue([serverSlot]),
       });
 
       store.load();
@@ -263,7 +271,7 @@ describe('PlanStore', () => {
   describe('setSlot / clearSlot', () => {
     const setupLoaded = async () => {
       const ctx = setup({
-        getCurrent: vi.fn().mockResolvedValue(buildPlan()),
+        getCurrent: vi.fn().mockResolvedValue([]),
       });
       ctx.store.load();
       await flush();
@@ -313,7 +321,6 @@ describe('PlanStore', () => {
         recipeId: 'r1',
       });
 
-      // Clearing a different (date, slotType) is a no-op
       store.clearSlot('2026-05-04T00:00:00.000Z', Slot.DINNER);
       expect(store.slots()).toHaveLength(1);
 
@@ -341,14 +348,10 @@ describe('PlanStore', () => {
   });
 
   describe('submit', () => {
-    it('sends current draft, clears dirty, drops localStorage draft on success', async () => {
-      const setMealPlan = vi
-        .fn()
-        .mockResolvedValue(
-          buildPlan({ updatedAt: new Date('2026-05-09T00:00:00.000Z') }),
-        );
+    it('sends the slot collection, clears dirty, drops the draft on success', async () => {
+      const setMealPlan = vi.fn().mockResolvedValue([]);
       const { store } = setup({
-        getCurrent: vi.fn().mockResolvedValue(buildPlan()),
+        getCurrent: vi.fn().mockResolvedValue([]),
         setMealPlan,
       });
       store.load();
@@ -366,8 +369,6 @@ describe('PlanStore', () => {
       await flush();
 
       expect(setMealPlan).toHaveBeenCalledWith({
-        startDate: '2026-05-04T00:00:00.000Z',
-        endDate: '2026-05-10T23:59:59.999Z',
         slots: [
           {
             date: '2026-05-04T00:00:00.000Z',
@@ -384,7 +385,7 @@ describe('PlanStore', () => {
 
     it('surfaces a setMealPlan failure as an error and keeps the draft', async () => {
       const { store } = setup({
-        getCurrent: vi.fn().mockResolvedValue(buildPlan()),
+        getCurrent: vi.fn().mockResolvedValue([]),
         setMealPlan: vi.fn().mockRejectedValue(new Error('save failed')),
       });
       store.load();
@@ -401,17 +402,6 @@ describe('PlanStore', () => {
       expect(store.isDirty()).toBe(true);
       expect(window.localStorage.getItem(DRAFT_KEY)).not.toBeNull();
     });
-
-    it('refuses to submit when range is unset', async () => {
-      const setMealPlan = vi.fn();
-      const { store } = setup({ setMealPlan });
-      // Note: load() not called → range stays null
-      store.submit();
-      await flush();
-
-      expect(setMealPlan).not.toHaveBeenCalled();
-      expect(store.error()).toBe('Plan range is not set');
-    });
   });
 
   describe('discardDraft', () => {
@@ -419,14 +409,12 @@ describe('PlanStore', () => {
       window.localStorage.setItem(
         DRAFT_KEY,
         JSON.stringify({
-          startDate: '2026-05-04T00:00:00.000Z',
-          endDate: '2026-05-10T23:59:59.999Z',
           slots: [],
           savedAt: Date.now() + 86_400_000,
         }),
       );
       const { store } = setup({
-        getCurrent: vi.fn().mockResolvedValue(buildPlan()),
+        getCurrent: vi.fn().mockResolvedValue([]),
       });
       store.load();
       await flush();

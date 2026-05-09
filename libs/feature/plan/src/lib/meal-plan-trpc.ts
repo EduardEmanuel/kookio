@@ -1,8 +1,8 @@
 import { InjectionToken } from '@angular/core';
 
 import type {
-  MealPlanFull,
   MealPlanSetInput,
+  MealSlotWithRecipe,
   RecipeFeedPage,
 } from '@kookio/prisma-client';
 
@@ -21,12 +21,16 @@ export interface RecipeFeedInput {
  * Minimal tRPC surface required by the plan feature: PlanStore consumes
  * `mealPlan.getCurrent` + `mealPlan.setMealPlan`; the recipe picker (sidebar
  * on desktop, bottom sheet on mobile) consumes `recipes.feed`.
+ *
+ * Both `mealPlan` procedures speak in terms of slot collections — there
+ * is no "plan" entity in the data model anymore. The `mealPlan` namespace
+ * survives because it matches the URL (`/plan`) and the user-facing label.
  */
 export interface MealPlanTrpcClient {
   mealPlan: {
-    getCurrent: { query(): Promise<MealPlanFull> };
+    getCurrent: { query(): Promise<MealSlotWithRecipe[]> };
     setMealPlan: {
-      mutate(input: MealPlanSetInput): Promise<MealPlanFull>;
+      mutate(input: MealPlanSetInput): Promise<MealSlotWithRecipe[]>;
     };
   };
   recipes: {
