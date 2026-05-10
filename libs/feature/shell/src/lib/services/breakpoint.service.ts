@@ -9,6 +9,13 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class BreakpointService {
+  // ⚠ Must stay in sync with `$mobile-max-width` in
+  // `libs/shared/ui/src/styles/_breakpoints.scss`. The SCSS partial is
+  // the source of truth at compile time (used by component @media
+  // queries via `@include bp.mobile`); this string is the same value
+  // used at runtime via `window.matchMedia(...)`. A drift produces
+  // breakpoints that look right in DevTools but disagree with
+  // `bp.isMobile()` in component logic.
   private readonly MOBILE_BREAKPOINT = '(max-width: 767.98px)';
 
   private readonly checkMobile = (): boolean => {

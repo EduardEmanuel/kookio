@@ -122,6 +122,48 @@ $spacings: (0, 4, 8, 12, 16, 24, 32, 48, 64);
 - Use SCSS variables for values used only at compile time (breakpoints, maps)
 - Use CSS custom properties for values that may change at runtime (theming, dark mode)
 
+## Shared SCSS partials (compile-time, not the design tokens)
+
+The design tokens at `libs/shared/ui/src/styles/_*.scss` are
+**.scss-extension files containing pure CSS** — they're concatenated
+into `apps/web/src/styles/kookio-tokens.css` and loaded as a single
+`<link>` (workaround for the `nxViteTsPaths()` Sass-importer bug on
+the global entry, see "Global styles entry must stay .css" above).
+
+A separate category lives next to them: **real SCSS partials** that
+component .scss files `@use` at compile time. Examples:
+`_breakpoints.scss` (variables + responsive mixins). These never get
+loaded as runtime CSS — they only emit code where a component
+`@include`-s a mixin or references a `$variable`.
+
+**Where they live:** `libs/shared/ui/src/styles/_<name>.scss`,
+alongside the design tokens. Tooling tells the two categories apart by
+whether anyone `@use`-s the file (the design tokens are never `@use`-d
+because the global entry is `.css`).
+
+**How to import them:**
+
+```scss
+// Relative path from the component's own .scss file.
+// `nxViteTsPaths()` Sass importer doesn't resolve wildcard aliases
+// like `@kookio/shared-ui/styles/*` — only top-level package aliases
+// that map to a single .ts file. Relative is uglier but always works.
+@use '../../../../../../shared/ui/src/styles/breakpoints' as bp;
+
+.plan__grid {
+  @include bp.mobile {
+    grid-template-rows: auto repeat(3, 110px);
+  }
+}
+```
+
+**When the same value also lives in TypeScript** (e.g. a breakpoint
+is queried at runtime via `window.matchMedia(...)`), the SCSS partial
+is the source of truth at compile time and the TS constant must
+carry a `⚠ Must stay in sync with $foo in <path>` comment. Sass
+can't be imported from TS, so manual sync with a cross-reference is
+the pragmatic limit until someone wires up codegen.
+
 ## Mixins
 
 - Define all reusable mixins in `_mixins.scss`

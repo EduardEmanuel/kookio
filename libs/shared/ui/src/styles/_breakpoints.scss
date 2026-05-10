@@ -1,0 +1,42 @@
+// SCSS-only partial — compiled into component .scss files via `@use`,
+// never bundled at runtime. This file does NOT participate in the
+// design-token concatenation (kookio-tokens.css) — those are CSS-syntax
+// in .scss-extension files for a separate reason (the
+// `nxViteTsPaths()` Sass-importer bug on the global entry — see
+// `.ai/04_scss.md` "Global styles entry must stay .css"). Real SCSS
+// partials live here too; tooling tells them apart by whether anyone
+// `@use`-s them.
+
+// ─── Breakpoint values ──────────────────────────────────────────────
+//
+// 0.02px sub-pixel offset on the max-width values is the Bootstrap
+// convention to avoid breakpoint overlap: at exactly 768px both a
+// `(max-width: 768px)` and `(min-width: 768px)` query would fire,
+// since neither is exclusive at the boundary. The 0.02px gap is
+// smaller than any real viewport's reportable width (browsers round
+// CSS-px-to-device-px at integer values for media query evaluation),
+// so disjoint ranges have no perceptible gap.
+//
+// ⚠ These values must stay in sync with `MOBILE_BREAKPOINT` in
+// `libs/feature/shell/src/lib/services/breakpoint.service.ts` — the
+// service uses `window.matchMedia(...)` with the same query at
+// runtime, and a drift between SCSS layout and the JS isMobile
+// signal produces breakpoints that look correct in DevTools but
+// disagree with `bp.isMobile()` in component logic.
+
+$mobile-max-width: 767.98px;
+$desktop-min-width: 768px;
+
+// ─── Mixins ─────────────────────────────────────────────────────────
+
+@mixin mobile {
+  @media (max-width: $mobile-max-width) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $desktop-min-width) {
+    @content;
+  }
+}

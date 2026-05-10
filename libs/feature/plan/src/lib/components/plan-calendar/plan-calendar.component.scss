@@ -1,3 +1,11 @@
+// Relative path because `nxViteTsPaths()` Sass importer doesn't
+// resolve wildcard aliases like `@kookio/shared-ui/styles/*` —
+// only top-level package aliases that map to a single .ts file.
+// The path is deep but mechanical; if it ever needs to move, find
+// `_breakpoints.scss` in `libs/shared/ui/src/styles/` and let the
+// editor regenerate the relative path.
+@use '../../../../../../shared/ui/src/styles/breakpoints' as bp;
+
 :host {
   display: block;
   padding: 16px;
@@ -30,7 +38,7 @@
   gap: 24px;
   align-items: start;
 
-  @media (max-width: 767.98px) {
+  @include bp.mobile {
     grid-template-columns: 1fr;
   }
 }
@@ -204,7 +212,7 @@
   gap: 6px;
   align-items: stretch;
 
-  @media (max-width: 767.98px) {
+  @include bp.mobile {
     grid-template-columns: minmax(40px, auto) repeat(3, minmax(0, 1fr));
     grid-template-rows: auto repeat(3, 110px);
     gap: 4px;
@@ -242,13 +250,13 @@
   color: var(--mat-sys-on-surface-variant);
   text-align: end;
 
-  @media (max-width: 767.98px) {
+  @include bp.mobile {
     padding-right: 4px;
   }
 }
 
 .plan__grid-rowlabel-full {
-  @media (max-width: 767.98px) {
+  @include bp.mobile {
     display: none;
   }
 }
@@ -257,7 +265,7 @@
   display: none;
   font: var(--mat-sys-title-medium);
 
-  @media (max-width: 767.98px) {
+  @include bp.mobile {
     display: inline;
   }
 }
