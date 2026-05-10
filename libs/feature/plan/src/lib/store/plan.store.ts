@@ -79,6 +79,38 @@ interface DraftPayload {
 const slotKey = (date: string, slotType: MealSlotType): string =>
   `${date}|${slotType}`;
 
+/**
+ * Convert a JS `Date` (in local timezone) to a UTC-midnight ISO string
+ * with the *same calendar day* as the source. Used when:
+ *  - the user picks a date in `MatDatepicker` (which speaks local Date)
+ *    and we need to align with the planner's UTC-midnight slot keys
+ *  - we need "today" — `new Date()` is local, the timeline keys are UTC
+ *
+ * Without this helper, a user in a negative-UTC timezone (e.g. NY, -5)
+ * sees a 1-day skew between what they pick and what the calendar
+ * highlights, because UTC-midnight of the picked day is the *previous*
+ * day in their local time.
+ */
+export const localDateToUtcMidnightIso = (date: Date): string =>
+  new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  ).toISOString();
+
+/**
+ * Inverse of `localDateToUtcMidnightIso` — round-trip safe. Takes a
+ * UTC-midnight ISO and returns a local-timezone `Date` whose Y/M/D
+ * matches. Use this when binding `centerDate` into `MatDatepicker`'s
+ * `[value]`.
+ */
+export const utcMidnightIsoToLocalDate = (iso: string): Date => {
+  const d = new Date(iso);
+  return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+};
+
+/** UTC-midnight ISO for today's *local* calendar day. */
+export const todayUtcMidnightIso = (): string =>
+  localDateToUtcMidnightIso(new Date());
+
 const errorMessage = (action: string, err: unknown): string => {
   const fallback = `Could not ${action} meal plan`;
   if (typeof err === 'object' && err !== null && 'message' in err) {

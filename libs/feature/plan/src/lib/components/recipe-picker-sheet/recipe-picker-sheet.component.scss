@@ -10,18 +10,19 @@
 }
 
 .sheet__header {
+  // The chip carries its own container background + border-radius +
+  // a built-in 32px height; no need for a header-level background or
+  // separator. The padding is just breathing room around the chip.
   display: flex;
   align-items: center;
   padding: 12px 16px 8px;
-  background: var(--mat-sys-surface);
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
   flex: 0 0 auto;
 }
 
 .sheet__header-chip {
-  // The chip carries both the title text and the close affordance —
-  // matChipRemove renders a built-in remove button that we project the
-  // close icon into.
+  // Stretch the chip to the full sheet width so the close affordance
+  // anchors to the right edge instead of hugging the title.
+  width: 100%;
   font: var(--mat-sys-title-small);
 }
 

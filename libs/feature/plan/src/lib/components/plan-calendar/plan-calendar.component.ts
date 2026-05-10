@@ -17,7 +17,10 @@ import {
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import {
+  MAT_DATE_LOCALE,
+  provideNativeDateAdapter,
+} from '@angular/material/core';
 import {
   MatDatepickerModule,
   type MatDatepickerInputEvent,
@@ -36,8 +39,27 @@ import {
 import { KookioIconComponent } from '@kookio/shared-ui';
 
 import { MEAL_PLAN_TRPC } from '../../meal-plan-trpc';
-import { PlanStore, slotKey } from '../../store/plan.store';
+import {
+  PlanStore,
+  localDateToUtcMidnightIso,
+  slotKey,
+  todayUtcMidnightIso,
+  utcMidnightIsoToLocalDate,
+} from '../../store/plan.store';
 import { RecipePickerSheetComponent } from '../recipe-picker-sheet/recipe-picker-sheet.component';
+
+/**
+ * The single source of truth for date-formatting locale across the
+ * calendar surface — feeds both:
+ *  - `MAT_DATE_LOCALE` so the datepicker input + popup speak D/M/Y
+ *  - `Intl.DateTimeFormat` for the column headers
+ *
+ * Hardcoded to `en-GB` so day-first ordering is consistent regardless
+ * of the user's browser locale (a US default would silently flip to
+ * M/D/Y in the picker while the columns stay D/M/Y, producing the
+ * mismatch the planner just shipped a fix for).
+ */
+const PLAN_DATE_LOCALE = 'en-GB';
 
 interface DayColumn {
   /** ISO datetime, UTC midnight — matches what the store keys slots by. */
@@ -116,13 +138,6 @@ const floorToUtcMidnight = (iso: string): Date => {
   return d;
 };
 
-/** UTC midnight ISO for today's calendar day. */
-const todayUtcMidnightIso = (): string => {
-  const d = new Date();
-  d.setUTCHours(0, 0, 0, 0);
-  return d.toISOString();
-};
-
 /** Add `dayDelta` days to an ISO date and return a new ISO string. */
 const shiftDayIso = (iso: string, dayDelta: number): string => {
   const d = new Date(iso);
@@ -146,11 +161,15 @@ const shiftDayIso = (iso: string, dayDelta: number): string => {
     MatProgressSpinnerModule,
     KookioIconComponent,
   ],
-  // Scope `provideNativeDateAdapter()` to the component rather than the root
-  // config — the picker is only present on `/plan`, and a root-level
-  // provider would tax every route's SSR cold-start. Pattern documented in
-  // `.ai/02_angular.md` under "Feature-lib barrel bloat".
-  providers: [provideNativeDateAdapter()],
+  // Scope `provideNativeDateAdapter()` and the date locale to the
+  // component rather than the root config — the picker is only present
+  // on `/plan`, and a root-level provider would tax every route's SSR
+  // cold-start. Pattern documented in `.ai/02_angular.md` under
+  // "Feature-lib barrel bloat".
+  providers: [
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: PLAN_DATE_LOCALE },
+  ],
   templateUrl: './plan-calendar.component.html',
   styleUrl: './plan-calendar.component.scss',
 })
@@ -196,7 +215,7 @@ export class PlanCalendarComponent {
       const d = floorToUtcMidnight(iso);
       return {
         date: iso,
-        dateLabel: new Intl.DateTimeFormat('en-GB', {
+        dateLabel: new Intl.DateTimeFormat(PLAN_DATE_LOCALE, {
           day: '2-digit',
           month: '2-digit',
           year: '2-digit',
@@ -214,10 +233,14 @@ export class PlanCalendarComponent {
 
   /**
    * Center date as a JS `Date` for two-way binding with the Material date
-   * picker. The picker speaks Date in local timezone; `onDateChange`
-   * converts back to UTC midnight ISO before pushing into the signal.
+   * picker. Uses `utcMidnightIsoToLocalDate` so the picker reads the
+   * *same calendar day* the timeline highlights — without it, users in
+   * negative-UTC timezones (e.g. NY, -5) see a 1-day skew between the
+   * picker and the highlighted column.
    */
-  protected readonly centerAsDate = computed(() => new Date(this.centerDate()));
+  protected readonly centerAsDate = computed(() =>
+    utcMidnightIsoToLocalDate(this.centerDate()),
+  );
 
   protected readonly slotKey = slotKey;
 
@@ -312,20 +335,16 @@ export class PlanCalendarComponent {
   };
 
   /**
-   * Date picker handler. The native adapter emits a `Date` in local
-   * timezone (e.g. midnight in Europe/Bucharest), so we extract Y/M/D
-   * and rebuild a UTC midnight `Date` to keep the slot-key alignment
-   * with how the planner stores dates.
+   * Date picker handler. Inverse of `centerAsDate` — converts the
+   * picker's local-timezone `Date` back to a UTC-midnight ISO so the
+   * slot-key alignment with how the planner stores dates is preserved.
    */
   protected readonly onDateChange = (
     event: MatDatepickerInputEvent<Date>,
   ): void => {
     const value = event.value;
     if (!value) return;
-    const utc = new Date(
-      Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()),
-    );
-    this.centerDate.set(utc.toISOString());
+    this.centerDate.set(localDateToUtcMidnightIso(value));
   };
 
   protected readonly onSlotClick = async (

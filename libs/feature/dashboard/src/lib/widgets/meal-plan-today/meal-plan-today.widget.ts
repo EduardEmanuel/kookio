@@ -10,7 +10,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 
-import { PlanStore, slotKey, type PlanSlot } from '@kookio/feature-plan/store';
+import {
+  PlanStore,
+  slotKey,
+  todayUtcMidnightIso,
+  type PlanSlot,
+} from '@kookio/feature-plan/store';
 import { MealSlotTypeSchema, type MealSlotType } from '@kookio/prisma-client';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 
@@ -38,12 +43,6 @@ interface TodayRow {
   label: string;
   slot: PlanSlot | null;
 }
-
-const todayUtcMidnightIso = (): string => {
-  const d = new Date();
-  d.setUTCHours(0, 0, 0, 0);
-  return d.toISOString();
-};
 
 @Component({
   selector: 'kookio-meal-plan-today-widget',
