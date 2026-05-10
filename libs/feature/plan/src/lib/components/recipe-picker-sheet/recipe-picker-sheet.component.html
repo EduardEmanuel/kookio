@@ -1,14 +1,14 @@
 <header class="sheet__header">
-  <h2 class="sheet__title">Pick a recipe</h2>
-  <button
-    [matButton]="'text'"
-    type="button"
-    class="sheet__close"
-    aria-label="Cancel"
-    (click)="onCancel()"
+  <mat-chip
+    class="sheet__header-chip"
+    (removed)="onCancel()"
+    aria-label="Pick a recipe — close"
   >
-    <kookio-icon name="close" />
-  </button>
+    Pick a recipe
+    <button matChipRemove type="button" aria-label="Close picker">
+      <kookio-icon name="close" />
+    </button>
+  </mat-chip>
 </header>
 
 <div class="sheet__scrollable" (scroll)="onScroll($event)">

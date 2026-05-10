@@ -7,7 +7,7 @@ import {
 import { NgOptimizedImage } from '@angular/common';
 import { firstValueFrom, from } from 'rxjs';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import type { RecipeFeedItem } from '@kookio/prisma-client';
@@ -39,7 +39,7 @@ const PREFETCH_PIXELS = 200;
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgOptimizedImage,
-    MatButtonModule,
+    MatChipsModule,
     MatProgressSpinnerModule,
     KookioIconComponent,
   ],

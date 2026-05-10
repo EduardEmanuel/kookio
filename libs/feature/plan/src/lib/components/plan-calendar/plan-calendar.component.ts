@@ -17,6 +17,13 @@ import {
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import {
+  MatDatepickerModule,
+  type MatDatepickerInputEvent,
+} from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -35,11 +42,14 @@ import { RecipePickerSheetComponent } from '../recipe-picker-sheet/recipe-picker
 interface DayColumn {
   /** ISO datetime, UTC midnight — matches what the store keys slots by. */
   date: string;
-  /** Day-of-month numeral, locale-independent (e.g. 9). */
-  dayOfMonth: number;
-  /** Localized weekday abbreviation (e.g. "Sat"). */
-  weekdayShort: string;
-  /** Localized full date for ARIA labels (e.g. "Saturday, May 9"). */
+  /**
+   * Compact date label `dd/mm/yy` — locked to en-GB so day-first ordering
+   * is consistent regardless of the user's browser locale (US default
+   * would otherwise flip month/day and cause confusion in mixed-locale
+   * teams).
+   */
+  dateLabel: string;
+  /** Localized full date for ARIA labels (e.g. "Saturday, May 9, 2026"). */
   ariaLabel: string;
   /** True if this column is today — drives the "today" highlight. */
   isToday: boolean;
@@ -130,9 +140,17 @@ const shiftDayIso = (iso: string, dayDelta: number): string => {
     CdkDropListGroup,
     MatButtonModule,
     MatCardModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatProgressSpinnerModule,
     KookioIconComponent,
   ],
+  // Scope `provideNativeDateAdapter()` to the component rather than the root
+  // config — the picker is only present on `/plan`, and a root-level
+  // provider would tax every route's SSR cold-start. Pattern documented in
+  // `.ai/02_angular.md` under "Feature-lib barrel bloat".
+  providers: [provideNativeDateAdapter()],
   templateUrl: './plan-calendar.component.html',
   styleUrl: './plan-calendar.component.scss',
 })
@@ -167,7 +185,8 @@ export class PlanCalendarComponent {
 
   /**
    * The 3 visible day columns: yesterday-of-center, center, tomorrow-of-center.
-   * Recomputed whenever `centerDate` changes (i.e. when arrows fire).
+   * Recomputed whenever `centerDate` changes (i.e. when arrows fire or the
+   * date picker is used to jump).
    */
   protected readonly visibleDays = computed<DayColumn[]>(() => {
     const center = this.centerDate();
@@ -177,19 +196,28 @@ export class PlanCalendarComponent {
       const d = floorToUtcMidnight(iso);
       return {
         date: iso,
-        dayOfMonth: d.getUTCDate(),
-        weekdayShort: new Intl.DateTimeFormat(undefined, {
-          weekday: 'short',
+        dateLabel: new Intl.DateTimeFormat('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: '2-digit',
         }).format(d),
         ariaLabel: new Intl.DateTimeFormat(undefined, {
           weekday: 'long',
           month: 'long',
           day: 'numeric',
+          year: 'numeric',
         }).format(d),
         isToday: iso === today,
       };
     });
   });
+
+  /**
+   * Center date as a JS `Date` for two-way binding with the Material date
+   * picker. The picker speaks Date in local timezone; `onDateChange`
+   * converts back to UTC midnight ISO before pushing into the signal.
+   */
+  protected readonly centerAsDate = computed(() => new Date(this.centerDate()));
 
   protected readonly slotKey = slotKey;
 
@@ -281,6 +309,23 @@ export class PlanCalendarComponent {
 
   protected readonly onToday = (): void => {
     this.centerDate.set(todayUtcMidnightIso());
+  };
+
+  /**
+   * Date picker handler. The native adapter emits a `Date` in local
+   * timezone (e.g. midnight in Europe/Bucharest), so we extract Y/M/D
+   * and rebuild a UTC midnight `Date` to keep the slot-key alignment
+   * with how the planner stores dates.
+   */
+  protected readonly onDateChange = (
+    event: MatDatepickerInputEvent<Date>,
+  ): void => {
+    const value = event.value;
+    if (!value) return;
+    const utc = new Date(
+      Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()),
+    );
+    this.centerDate.set(utc.toISOString());
   };
 
   protected readonly onSlotClick = async (

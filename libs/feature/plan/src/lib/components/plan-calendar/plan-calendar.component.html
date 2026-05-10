@@ -110,6 +110,23 @@
         </button>
       </nav>
 
+      <mat-form-field
+        appearance="outline"
+        class="plan__nav-jump"
+        subscriptSizing="dynamic"
+      >
+        <mat-label>Jump to date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [value]="centerAsDate()"
+          (dateChange)="onDateChange($event)"
+          readonly
+        />
+        <mat-datepicker-toggle matIconSuffix [for]="picker" />
+        <mat-datepicker #picker />
+      </mat-form-field>
+
       <div class="plan__grid">
         <div class="plan__grid-corner" aria-hidden="true"></div>
         @for (day of visibleDays(); track day.date) {
@@ -118,8 +135,7 @@
             [class.plan__grid-day--today]="day.isToday"
             [attr.aria-label]="day.ariaLabel"
           >
-            <span class="plan__grid-weekday">{{ day.weekdayShort }}</span>
-            <span class="plan__grid-daynum">{{ day.dayOfMonth }}</span>
+            <span class="plan__grid-date">{{ day.dateLabel }}</span>
           </div>
         }
 

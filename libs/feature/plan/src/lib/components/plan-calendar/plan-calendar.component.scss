@@ -161,6 +161,10 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  // Side padding so the nav arrows and grid don't hug the layout edges,
+  // especially noticeable on desktop where the sidebar sits to the left
+  // and the right edge would otherwise sit flush with the viewport.
+  padding: 0 8px;
 }
 
 .plan__nav {
@@ -176,6 +180,14 @@
 
 .plan__nav-today {
   flex: 1;
+}
+
+.plan__nav-jump {
+  width: 100%;
+  // Outline form-field has internal vertical padding; pull the field
+  // closer to the arrows row so the gap reads as ~12px (matches
+  // `.plan__main` gap) rather than the field's intrinsic 24-28px.
+  margin-top: -4px;
 }
 
 .plan__grid {
@@ -198,12 +210,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 8px 4px;
-  font: var(--mat-sys-label-small);
-  color: var(--mat-sys-on-surface-variant);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  justify-content: center;
+  padding: 6px 4px;
   border-radius: 8px;
 }
 
@@ -212,10 +220,10 @@
   color: var(--mat-sys-on-primary-container);
 }
 
-.plan__grid-daynum {
-  font: var(--mat-sys-title-medium);
-  text-transform: none;
-  letter-spacing: 0;
+.plan__grid-date {
+  font: var(--mat-sys-label-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.2px;
 }
 
 .plan__grid-rowlabel {
