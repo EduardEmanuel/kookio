@@ -280,31 +280,90 @@
 }
 
 .plan__cell-recipe {
+  // The cell becomes a relative-positioned thumbnail: the image fills
+  // it (NgOptimizedImage `fill` requires position:relative on the
+  // parent), and the clear button + tooltip anchor overlay-style on
+  // top. Recipe title moves to `matTooltip` because cells are too
+  // narrow on mobile (~115px) to render any non-trivial title without
+  // ellipsis, and image-recognition is faster than reading anyway.
   flex: 1;
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 8px 10px;
+  align-items: stretch;
   background: var(--mat-sys-surface-container-low);
   border-radius: 9px;
+  overflow: hidden; // crop the image to rounded corners
   cursor: grab;
 
   &:active {
     cursor: grabbing;
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
 }
 
-.plan__cell-title {
+.plan__cell-image {
+  // NgOptimizedImage `fill` already sets position:absolute + inset:0;
+  // we just need the cover behaviour so the image isn't squished by
+  // non-square cells.
+  object-fit: cover;
+}
+
+.plan__cell-fallback {
+  // Used when a recipe has no imageUrl — show the icon + a 2-line
+  // clamped title so the cell still says *something* identifiable.
   flex: 1;
-  font: var(--mat-sys-body-medium);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 6px;
+  color: var(--mat-sys-on-surface-variant);
+  text-align: center;
+}
+
+.plan__cell-fallback-title {
+  font: var(--mat-sys-body-small);
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .plan__cell-clear {
-  flex: 0 0 auto;
+  // Floating overlay button on the top-right of the image. Custom
+  // styling (rather than mat-button) because we need a solid
+  // contrasting backdrop against arbitrary recipe imagery.
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
 }
 
 .plan__cell-empty {

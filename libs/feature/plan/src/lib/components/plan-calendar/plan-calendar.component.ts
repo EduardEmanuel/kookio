@@ -29,6 +29,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { BreakpointService } from '@kookio/feature-shell';
 import {
@@ -159,6 +160,7 @@ const shiftDayIso = (iso: string, dayDelta: number): string => {
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     KookioIconComponent,
   ],
   // Scope `provideNativeDateAdapter()` and the date locale to the

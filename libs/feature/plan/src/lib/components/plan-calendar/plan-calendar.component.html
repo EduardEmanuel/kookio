@@ -160,10 +160,33 @@
                   class="plan__cell-recipe"
                   cdkDrag
                   [cdkDragData]="slotDragPayload(day.date, type, recipe)"
+                  [matTooltip]="recipe.title"
+                  matTooltipPosition="above"
+                  matTooltipShowDelay="400"
+                  [attr.aria-label]="
+                    recipe.title +
+                    ', ' +
+                    slotLabels[type] +
+                    ', ' +
+                    day.ariaLabel
+                  "
                 >
-                  <span class="plan__cell-title">{{ recipe.title }}</span>
+                  @if (recipe.imageUrl) {
+                    <img
+                      class="plan__cell-image"
+                      [ngSrc]="recipe.imageUrl"
+                      [alt]="recipe.title"
+                      fill
+                    />
+                  } @else {
+                    <span class="plan__cell-fallback">
+                      <kookio-icon name="restaurant" />
+                      <span class="plan__cell-fallback-title">
+                        {{ recipe.title }}
+                      </span>
+                    </span>
+                  }
                   <button
-                    [matButton]="'text'"
                     type="button"
                     class="plan__cell-clear"
                     aria-label="Remove from this slot"
