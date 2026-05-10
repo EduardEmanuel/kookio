@@ -25,3 +25,14 @@
 .topbar__spacer {
   flex: 1;
 }
+
+.topbar__cook-now-icon {
+  // Match Material's icon-button content slot — <mat-icon> sits at
+  // 24×24 and the matIconButton container assumes that footprint
+  // when computing its 40×40 hit target. Without explicit dims here
+  // the inline SVG falls back to its viewBox (24×24) at the document
+  // font-size, which is close but not guaranteed.
+  width: 24px;
+  height: 24px;
+  display: block;
+}

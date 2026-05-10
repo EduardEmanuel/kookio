@@ -68,7 +68,47 @@
       aria-label="Cook now"
       class="topbar__cook-now"
     >
-      <kookio-icon name="restaurant" />
+      <!-- Brand mark inlined (mirrors `apps/web/public/icons/kookio/filled/icon.svg`).
+           Inlined for the same reasons the topbar logo above is inlined:
+           the SVG uses `Fredoka` from the page-level webfont and themes
+           via `var(--md-sys-color-*)`, both of which only resolve when
+           the SVG participates in the page's DOM — an <img src=...> SVG
+           is rendered in an isolated context and can't reach either.
+           `aria-hidden` because the parent <a> carries aria-label="Cook
+           now" already. -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        class="topbar__cook-now-icon"
+      >
+        <circle
+          cx="10"
+          cy="14"
+          r="9"
+          fill="var(--md-sys-color-primary, #a04100)"
+        />
+        <rect
+          x="15"
+          y="2"
+          width="9"
+          height="3"
+          rx="1"
+          transform="rotate(-45 20 3.5)"
+          fill="var(--md-sys-color-primary, #a04100)"
+        />
+        <text
+          x="10"
+          y="19"
+          text-anchor="middle"
+          font-family="Fredoka, sans-serif"
+          font-size="14"
+          font-weight="bold"
+          fill="var(--md-sys-color-surface, #fff8f6)"
+        >
+          K
+        </text>
+      </svg>
     </a>
   }
 
