@@ -254,7 +254,16 @@
 }
 
 .plan__cell {
-  min-height: 96px;
+  // Square cells so recipe thumbnails crop cleanly (object-fit: cover
+  // on a square container = symmetric crop) instead of squashing
+  // landscape images horizontally. Aspect-ratio derives height from
+  // the column width set by the grid template, so cells stay square at
+  // any viewport.
+  aspect-ratio: 1 / 1;
+  // Cap the desktop side-length so the grid doesn't grow into a
+  // 800px-tall wall on wide viewports. On mobile (~115px columns)
+  // the cap is well above the natural square so it has no effect.
+  max-height: 160px;
   border: 1px dashed var(--mat-sys-outline-variant);
   border-radius: 10px;
   background: var(--mat-sys-surface);
