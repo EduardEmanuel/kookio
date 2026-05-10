@@ -192,12 +192,21 @@
 
 .plan__grid {
   display: grid;
+  // Header row (auto-sized to the date label) + 3 body rows of fixed
+  // height — explicit rows replace the previous aspect-ratio + max-height
+  // combo, which became non-deterministic once the column width grew
+  // past max-height (cells degraded to rectangles instead of squares).
+  // With explicit rows, every cell in the body is exactly the same
+  // size, so header text and cell thumbnails always share the same
+  // column centres.
   grid-template-columns: minmax(56px, auto) repeat(3, minmax(0, 1fr));
+  grid-template-rows: auto repeat(3, 160px);
   gap: 6px;
   align-items: stretch;
 
   @media (max-width: 767.98px) {
     grid-template-columns: minmax(40px, auto) repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto repeat(3, 110px);
     gap: 4px;
   }
 }
@@ -254,23 +263,12 @@
 }
 
 .plan__cell {
-  // ⚠ Load-bearing: aspect-ratio is what gives the cell an explicit
-  // height (= column width set by the grid template). Drop it and the
-  // cell collapses to 0 height because nothing else inside has its
-  // own height — the recipe `<img>` uses NgOptimizedImage's `fill`
-  // (position: absolute; inset: 0) which contributes nothing to its
-  // parent's intrinsic size. Removing this line silently turns the
-  // grid into invisible 0-height rows; cells reappear only on hover
-  // (no, they don't). See `.ai/04_scss.md` "Load-bearing rules need
-  // a comment".
-  //
-  // Square shape also gives object-fit: cover a symmetric crop
-  // instead of squashing landscape images horizontally.
-  aspect-ratio: 1 / 1;
-  // Cap the desktop side-length so the grid doesn't grow into an
-  // 800px-tall wall on wide viewports. On mobile (~115px columns)
-  // the cap is well above the natural square so it has no effect.
-  max-height: 160px;
+  // Cell height comes from `.plan__grid { grid-template-rows: ... 160px }`
+  // — drop that row template and the cell collapses to 0 height
+  // because the recipe `<img>` uses NgOptimizedImage's `fill`
+  // (position: absolute; inset: 0), which contributes nothing to its
+  // parent's intrinsic size. See `.ai/04_scss.md` "Load-bearing rules
+  // need a comment".
   border: 1px dashed var(--mat-sys-outline-variant);
   border-radius: 10px;
   background: var(--mat-sys-surface);
