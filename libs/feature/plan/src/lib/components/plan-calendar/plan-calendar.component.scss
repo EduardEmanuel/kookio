@@ -254,13 +254,20 @@
 }
 
 .plan__cell {
-  // Square cells so recipe thumbnails crop cleanly (object-fit: cover
-  // on a square container = symmetric crop) instead of squashing
-  // landscape images horizontally. Aspect-ratio derives height from
-  // the column width set by the grid template, so cells stay square at
-  // any viewport.
+  // ⚠ Load-bearing: aspect-ratio is what gives the cell an explicit
+  // height (= column width set by the grid template). Drop it and the
+  // cell collapses to 0 height because nothing else inside has its
+  // own height — the recipe `<img>` uses NgOptimizedImage's `fill`
+  // (position: absolute; inset: 0) which contributes nothing to its
+  // parent's intrinsic size. Removing this line silently turns the
+  // grid into invisible 0-height rows; cells reappear only on hover
+  // (no, they don't). See `.ai/04_scss.md` "Load-bearing rules need
+  // a comment".
+  //
+  // Square shape also gives object-fit: cover a symmetric crop
+  // instead of squashing landscape images horizontally.
   aspect-ratio: 1 / 1;
-  // Cap the desktop side-length so the grid doesn't grow into a
+  // Cap the desktop side-length so the grid doesn't grow into an
   // 800px-tall wall on wide viewports. On mobile (~115px columns)
   // the cap is well above the natural square so it has no effect.
   max-height: 160px;

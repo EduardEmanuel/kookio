@@ -220,6 +220,69 @@ Use strict BEM (Block Element Modifier) for all component class names:
 - Multi-word blocks and elements use single hyphen: `bottom-tabs`, `sidenav-menu__item`
 - Never use flat kebab-case (`topbar-logo`) — it loses the block/element/modifier distinction
 
+## Load-bearing rules need a comment
+
+A CSS property whose absence would silently break a _different_ part
+of the page — usually layout — needs a one-line `// why` comment that
+names the dependency. Without it, the next person editing the file
+(you in six months, a teammate, an LLM "tidying up") reads the
+property as decorative and removes it. The layout then goes wrong
+somewhere visually, with no compile or lint error.
+
+Triggers — comment the property when:
+
+- It compensates for a third-party tool's behaviour. Examples:
+  Tailwind preflight's `border: 0 solid` (which surfaces phantom
+  borders on Material MDC slots, see `02_angular.md`); NgOptimizedImage
+  `fill` (which uses `position: absolute; inset: 0` and contributes
+  zero to the parent's intrinsic size, so the parent must have an
+  explicit height from somewhere else); CDK overlay's transformed
+  ancestors (which break `position: sticky` on descendants).
+- It's required by a sibling or descendant rule whose own behaviour
+  depends on it. Examples: `position: relative` on a parent so an
+  absolutely-positioned child has a containing block; `min-height: 0`
+  on a flex child so it can actually shrink and scroll;
+  `overflow: hidden` on a card so a `border-radius` actually clips an
+  inner image.
+- The property's effect is invisible until a _sibling_ rule changes —
+  i.e. removing the property doesn't break anything by itself, but
+  removing it on the same day someone else changes a related rule
+  produces a layout regression nobody traces back.
+
+The comment must name **what breaks**, not just **what the property does**:
+
+```scss
+// ✅ names the dependency — a future deleter knows what they'll break
+.plan__cell {
+  // aspect-ratio gives the cell an explicit height (= column width).
+  // Drop it and the cell collapses to 0 because the recipe `<img>`
+  // uses NgOptimizedImage's `fill` (position: absolute; inset: 0),
+  // which contributes nothing to its parent's intrinsic size.
+  aspect-ratio: 1 / 1;
+}
+
+.sheet__scrollable {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0; // required so the flex child can actually shrink and scroll
+}
+
+// ❌ tautological — describes the property, not the dependency
+.plan__cell {
+  aspect-ratio: 1 / 1; // makes cells square
+}
+
+// ❌ describes the value, doesn't help anyone deleting it
+.plan__cell-recipe {
+  position: relative; // sets positioning context
+}
+```
+
+The bar a comment must clear: a reader who deletes the line should
+be able to tell _from the comment alone_ what they'll break. If they
+can't, write a better comment. Length is fine — three sentences with a
+concrete failure mode beats one cryptic word.
+
 ## General Rules
 
 - Use `@use` and `@forward` — never `@import`
@@ -228,3 +291,5 @@ Use strict BEM (Block Element Modifier) for all component class names:
 - Avoid `!important` — if needed, leave a comment explaining why
 - Use `rem` for typography and spacing, `px` only for borders and shadows
 - Always scope component animations to `@media (prefers-reduced-motion: reduce)`
+- Comment any rule that's load-bearing for a behaviour set elsewhere
+  — see "Load-bearing rules need a comment" above
