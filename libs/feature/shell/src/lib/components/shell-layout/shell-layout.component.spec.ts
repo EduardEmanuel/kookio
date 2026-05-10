@@ -93,16 +93,6 @@ describe('ShellLayoutComponent', () => {
     expect(elDesktop.querySelector('kookio-top-bar')).toBeTruthy();
   });
 
-  it('mounts the cook-now FAB on both layouts', async () => {
-    const { el: elMobile } = await setup(true);
-    expect(elMobile.querySelector('kookio-cook-now-fab')).toBeTruthy();
-
-    TestBed.resetTestingModule();
-
-    const { el: elDesktop } = await setup(false);
-    expect(elDesktop.querySelector('kookio-cook-now-fab')).toBeTruthy();
-  });
-
   describe('auth routes (onboarding/login/register)', () => {
     it('hides the desktop sidenav on /onboarding to reclaim space', async () => {
       const { el } = await setup(false, '/onboarding');

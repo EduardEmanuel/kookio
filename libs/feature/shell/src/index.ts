@@ -6,6 +6,5 @@ export * from './lib/url-map';
 export * from './lib/components/shell-layout/shell-layout.component';
 export * from './lib/components/top-bar/top-bar.component';
 export * from './lib/components/bottom-tabs/bottom-tabs.component';
-export * from './lib/components/cook-now-fab/cook-now-fab.component';
 export * from './lib/components/sidenav-menu/sidenav-menu.component';
 export * from './lib/components/page-stub/page-stub.component';

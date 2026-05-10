@@ -60,6 +60,18 @@
 
   <div class="topbar__spacer"></div>
 
+  @if (cookNowVisible()) {
+    <a
+      matIconButton
+      routerLink="/recipes/match"
+      matTooltip="Cook now"
+      aria-label="Cook now"
+      class="topbar__cook-now"
+    >
+      <kookio-icon name="restaurant" />
+    </a>
+  }
+
   @if (user()) {
     <button
       matIconButton
