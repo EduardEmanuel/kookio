@@ -59,6 +59,15 @@ export class DoneStepComponent {
       });
     }
 
+    const ingredients = this.store.stagedPantryItems().length;
+    if (ingredients > 0) {
+      result.push({
+        key: 'ingredients',
+        emoji: '🥕',
+        label: this.strings.summary.ingredients(ingredients),
+      });
+    }
+
     const utensils = this.store.utensilIds().size;
     if (utensils > 0) {
       result.push({

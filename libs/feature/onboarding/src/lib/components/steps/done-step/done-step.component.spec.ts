@@ -62,10 +62,17 @@ describe('DoneStepComponent', () => {
     expect(chipCount).toBe(1);
   });
 
-  it('shows category, area, utensil and restriction chips when selections exist', async () => {
+  it('shows category, area, ingredient, utensil and restriction chips when selections exist', async () => {
     const { fixture, el, store } = await setup();
     store.togglePreferredCategory('c1');
     store.togglePreferredArea('a1');
+    store.stagePantryItem({
+      id: 'ing-1',
+      ingredient: { name: 'Tomato', imageUrl: null },
+      quantity: 250,
+      unit: 'G',
+      expiresAt: null,
+    });
     store.toggleUtensil('u1');
     store.toggleDietaryRestriction('d1');
     fixture.detectChanges();
@@ -74,6 +81,7 @@ describe('DoneStepComponent', () => {
     const text = el.textContent ?? '';
     expect(text).toContain(DONE_STRINGS.summary.categories(1));
     expect(text).toContain(DONE_STRINGS.summary.areas(1));
+    expect(text).toContain(DONE_STRINGS.summary.ingredients(1));
     expect(text).toContain(DONE_STRINGS.summary.utensils(1));
     expect(text).toContain(DONE_STRINGS.summary.restrictions(1));
   });

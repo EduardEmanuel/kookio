@@ -133,6 +133,8 @@ export const DONE_STRINGS = {
     categories: (count: number) =>
       `${count} categor${count === 1 ? 'y' : 'ies'}`,
     areas: (count: number) => `${count} cuisine${count === 1 ? '' : 's'}`,
+    ingredients: (count: number) =>
+      `${count} ingredient${count === 1 ? '' : 's'}`,
     utensils: (count: number) => `${count} utensil${count === 1 ? '' : 's'}`,
     restrictions: (count: number) =>
       `${count} restriction${count === 1 ? '' : 's'}`,
