@@ -9,61 +9,70 @@
       <kookio-icon name="close" />
     </button>
   </mat-chip>
+
+  <mat-button-toggle-group
+    class="sheet__levels"
+    [value]="level()"
+    (change)="onLevelChange($event.value)"
+    hideSingleSelectionIndicator
+    aria-label="Match level"
+  >
+    <mat-button-toggle value="A" aria-label="I have everything">
+      <kookio-icon name="check_circle" />
+      Alright
+    </mat-button-toggle>
+    <mat-button-toggle value="B" aria-label="Almost there">
+      <kookio-icon name="warning" />
+      Almost
+    </mat-button-toggle>
+    <mat-button-toggle value="C" aria-label="All recipes">
+      <kookio-icon name="restaurant_menu" />
+      All
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <p class="sheet__levelhint">{{ levelHint() }}</p>
 </header>
 
-<div class="sheet__scrollable" (scroll)="onScroll($event)">
-  @if (errorMessage(); as msg) {
-    <p class="sheet__error" role="alert">{{ msg }}</p>
-  }
+@if (errorMessage(); as msg) {
+  <p class="sheet__error" role="alert">{{ msg }}</p>
+}
 
-  <div class="sheet__list" role="list" aria-label="Recipes">
-    @for (recipe of items(); track recipe.id) {
-      <article
-        class="sheet__item"
-        role="listitem"
-        tabindex="0"
-        (click)="onSelect(recipe)"
-        (keydown.enter)="onSelect(recipe)"
-        (keydown.space)="onSelect(recipe)"
-      >
-        <span class="sheet__thumb">
-          @if (recipe.imageUrl) {
-            <img
-              [ngSrc]="recipe.imageUrl"
-              [alt]="recipe.title"
-              width="40"
-              height="40"
-            />
-          } @else {
-            <kookio-icon name="restaurant" />
-          }
-        </span>
-        <span class="sheet__text">
-          <span class="sheet__recipe-title">{{ recipe.title }}</span>
-          @if (
-            recipe.prepTimeMinutes !== null && recipe.cookTimeMinutes !== null
-          ) {
-            <span class="sheet__recipe-meta">
-              {{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} min
-              @if (recipe.area?.name; as areaName) {
-                · {{ areaName }}
-              }
-            </span>
-          } @else if (recipe.area?.name; as areaName) {
-            <span class="sheet__recipe-meta">{{ areaName }}</span>
-          }
-        </span>
-      </article>
-    } @empty {
-      @if (hasLoadedOnce()) {
-        <p class="sheet__empty">No recipes available yet.</p>
-      }
-    }
-  </div>
+<cdk-virtual-scroll-viewport
+  class="sheet__viewport"
+  [itemSize]="itemSize"
+  (scrolledIndexChange)="onScrolledIndexChange()"
+  role="list"
+  aria-label="Recipes"
+>
+  <article
+    *cdkVirtualFor="
+      let recipe of items();
+      trackBy: trackById;
+      templateCacheSize: 0
+    "
+    class="sheet__item"
+    role="listitem"
+    tabindex="0"
+    (click)="onSelect(recipe)"
+    (keydown.enter)="onSelect(recipe)"
+    (keydown.space)="onSelect(recipe)"
+  >
+    <kookio-recipe-match-card-compact [item]="recipe" />
+  </article>
 
   @if (isLoading()) {
-    <div class="sheet__spinner">
+    <div class="sheet__spinner" aria-live="polite">
       <mat-spinner diameter="32" />
     </div>
   }
-</div>
+</cdk-virtual-scroll-viewport>
+
+@if (
+  hasLoadedOnce() &&
+  items().length === 0 &&
+  !isLoading() &&
+  errorMessage() === null
+) {
+  <p class="sheet__empty">No recipes match this level.</p>
+}

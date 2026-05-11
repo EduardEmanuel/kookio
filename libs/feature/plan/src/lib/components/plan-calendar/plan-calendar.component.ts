@@ -513,8 +513,12 @@ export class PlanCalendarComponent {
     const ref = this.sheet.open(RecipePickerSheetComponent, {
       panelClass: 'plan-recipe-picker-sheet',
     });
+    // The sheet dismisses with a `RecipeMatchItem` — a structural
+    // superset of `RecipeFeedItem` (adds `matchInfo`). `PlanStore.setSlot`
+    // accepts the wider shape because every read it does (`recipe.id`,
+    // `recipe.title`, etc.) is in the narrower interface.
     const recipe = (await firstValueFrom(ref.afterDismissed())) as
-      | RecipeFeedItem
+      | RecipeMatchItem
       | null
       | undefined;
     if (!recipe) return;

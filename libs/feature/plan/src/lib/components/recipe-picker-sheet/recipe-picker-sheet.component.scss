@@ -1,20 +1,28 @@
 :host {
-  // The host is a flex column with a capped height so the header stays
-  // pinned at the top as a static flex item, and only the body scrolls.
-  // Avoids `position: sticky` on the header — Material's bottom-sheet
-  // container applies a transform during animations, and a transformed
-  // ancestor breaks sticky positioning inside it.
+  // The host is a flex column with a definite height. `height: 80vh`
+  // (not `max-height`) is load-bearing: `<cdk-virtual-scroll-viewport>`
+  // uses `flex: 1` to claim the remaining space after the header. With
+  // `max-height`, the host would size to content and the viewport's
+  // `flex: 1` would have zero excess to grow into — CDK virtual scroll
+  // would then render at 0 height and never show items. Same gotcha
+  // the desktop sidebar hit; same fix.
+  //
+  // Static-flex header avoids `position: sticky` on the header —
+  // Material's bottom-sheet container applies a transform during
+  // animations, and a transformed ancestor breaks sticky positioning
+  // inside it.
   display: flex;
   flex-direction: column;
-  max-height: 80vh;
+  height: 80vh;
 }
 
 .sheet__header {
+  // Stacked layout: title chip, then the level toggle, then the hint.
   // The chip carries its own container background + border-radius +
-  // a built-in 32px height; no need for a header-level background or
-  // separator. The padding is just breathing room around the chip.
+  // a built-in 32px height; no header-level background needed.
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 6px;
   padding: 12px 16px 8px;
   flex: 0 0 auto;
 }
@@ -26,10 +34,34 @@
   font: var(--mat-sys-title-small);
 }
 
-.sheet__scrollable {
+.sheet__levels {
+  // Grid layout (not inline-flex) so each segment gets exactly 1fr
+  // regardless of label length — mirrors the desktop sidebar fix.
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+
+  ::ng-deep .mat-button-toggle {
+    min-width: 0;
+  }
+}
+
+.sheet__levelhint {
+  margin: 0;
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.sheet__viewport {
+  // Fills the remaining sheet height. min-height: 0 lets the flex
+  // child shrink past its intrinsic content size so internal
+  // overflow scrolls instead of pushing the parent.
   flex: 1 1 auto;
-  overflow-y: auto;
-  min-height: 0; // required so flex child can actually shrink + scroll
+  min-height: 0;
+  display: block;
+  // Horizontal padding lives here (not on a per-item wrapper) so
+  // every item — including the spinner row — shares the same gutter.
+  padding: 0 16px;
 }
 
 .sheet__error {
@@ -38,72 +70,23 @@
   font: var(--mat-sys-body-small);
 }
 
-// Mirror the desktop sidebar's item shape so the picker and the
-// sidebar render recipes identically. Difference: cursor: pointer
-// (tap to select) vs the sidebar's cursor: grab (drag source).
-.sheet__list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 12px 16px;
-}
-
+// Tap-wrapper around `<kookio-recipe-match-card-compact>`. Sits
+// directly on the *cdkVirtualFor element, which is required for CDK
+// to position items via its content-wrapper transform. The card owns
+// the visual chrome (border, padding, thumbnail); the wrapper adds
+// vertical breathing room (matching the desktop sidebar's `padding:
+// 3px 0` on `.plan__sidebar-drag`) plus the focus ring and pointer
+// cursor that signals tap-to-select.
 .sheet__item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  border-radius: 8px;
-  background: var(--mat-sys-surface);
-  border: 1px solid var(--mat-sys-outline-variant);
+  display: block;
+  padding: 3px 0;
   cursor: pointer;
-
-  &:hover {
-    background: var(--mat-sys-surface-container);
-  }
+  border-radius: 8px;
 
   &:focus-visible {
     outline: 2px solid var(--mat-sys-primary);
     outline-offset: 2px;
   }
-}
-
-.sheet__thumb {
-  flex: 0 0 40px;
-  width: 40px;
-  height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  background: var(--mat-sys-surface-container);
-  color: var(--mat-sys-on-surface-variant);
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.sheet__text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.sheet__recipe-title {
-  font: var(--mat-sys-body-medium);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sheet__recipe-meta {
-  font: var(--mat-sys-body-small);
-  color: var(--mat-sys-on-surface-variant);
 }
 
 .sheet__empty {

@@ -68,15 +68,11 @@ const setup = (trpcOverrides?: {
   const getCurrent = trpcOverrides?.getCurrent ?? vi.fn().mockResolvedValue([]);
   const setMealPlan =
     trpcOverrides?.setMealPlan ?? vi.fn().mockResolvedValue([]);
-  const feed = vi.fn().mockResolvedValue({ items: [], nextCursor: null });
 
   const trpc: MealPlanTrpcClient = {
     mealPlan: {
       getCurrent: { query: getCurrent },
       setMealPlan: { mutate: setMealPlan },
-    },
-    recipes: {
-      feed: { query: feed },
     },
   };
 
