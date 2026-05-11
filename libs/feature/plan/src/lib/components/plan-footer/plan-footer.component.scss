@@ -1,0 +1,27 @@
+.plan-footer {
+  // Sticky to the bottom of the page's scroll container. The border
+  // + background span the full host width (parent decides — usually
+  // the page's main content area minus sidenav), while the action
+  // buttons stay centered to a 1200px column so they align with the
+  // calendar's max-width.
+  position: sticky;
+  bottom: 0;
+  background: var(--mat-sys-surface);
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  // Sit above the page content during scroll. Below the top-bar
+  // (which is sticky:top with --z-raised) and below any modal/sheet.
+  z-index: 1;
+}
+
+.plan-footer__content {
+  // Mirrors the calendar's host constraints
+  // (`max-width: 1200px; padding: 16px; margin: 0 auto`) so that the
+  // Save/Clear buttons sit directly under the calendar's right edge
+  // — same horizontal rhythm as the rest of the page.
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

@@ -1,0 +1,26 @@
+@if (store.hasLoadedOnce()) {
+  <footer class="plan-footer">
+    <div class="plan-footer__content">
+      <button
+        [matButton]="'text'"
+        type="button"
+        [disabled]="store.plannedCount() === 0"
+        (click)="onClearAll()"
+      >
+        Clear all
+      </button>
+      <button
+        [matButton]="'filled'"
+        type="button"
+        [disabled]="!store.isDirty() || store.isSubmitting()"
+        (click)="onSave()"
+      >
+        @if (store.isSubmitting()) {
+          Saving…
+        } @else {
+          Save plan
+        }
+      </button>
+    </div>
+  </footer>
+}
