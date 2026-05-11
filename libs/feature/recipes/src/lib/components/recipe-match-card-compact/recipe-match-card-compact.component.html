@@ -1,0 +1,47 @@
+<article
+  class="match-card-compact"
+  [class.match-card-compact--complete]="isComplete()"
+  [class.match-card-compact--almost]="isAlmost()"
+  [attr.aria-label]="ariaLabel()"
+>
+  <span class="match-card-compact__thumb">
+    @if (item().imageUrl; as img) {
+      <img
+        [ngSrc]="img"
+        [alt]="item().title"
+        width="48"
+        height="48"
+        loading="lazy"
+      />
+    } @else {
+      <kookio-icon name="restaurant" />
+    }
+  </span>
+
+  <span class="match-card-compact__text">
+    <span class="match-card-compact__title">{{ item().title }}</span>
+
+    <span class="match-card-compact__meta">
+      @if (isComplete()) {
+        <kookio-icon
+          class="match-card-compact__badge-icon"
+          name="check_circle"
+        />
+        <span class="match-card-compact__badge-text">Alright</span>
+      } @else if (isAlmost()) {
+        <kookio-icon class="match-card-compact__badge-icon" name="warning" />
+        <span class="match-card-compact__badge-text">
+          Missing {{ item().matchInfo.missingCount }}
+        </span>
+      }
+
+      @if (totalMinutes(); as t) {
+        @if (isComplete() || isAlmost()) {
+          <span class="match-card-compact__sep" aria-hidden="true">·</span>
+        }
+        <kookio-icon class="match-card-compact__time-icon" name="schedule" />
+        <span>{{ t }} min</span>
+      }
+    </span>
+  </span>
+</article>

@@ -20,62 +20,121 @@
           <p class="plan__sidebar-hint">
             Drag a recipe onto a slot. Drag a slot back here to clear it.
           </p>
+
+          <mat-button-toggle-group
+            class="plan__sidebar-levels"
+            [value]="level()"
+            (change)="onLevelChange($event.value)"
+            hideSingleSelectionIndicator
+            aria-label="Match level"
+          >
+            <mat-button-toggle value="A" aria-label="I have everything">
+              <kookio-icon name="check_circle" />
+              Alright
+            </mat-button-toggle>
+            <mat-button-toggle value="B" aria-label="Almost there">
+              <kookio-icon name="warning" />
+              Almost
+            </mat-button-toggle>
+            <mat-button-toggle value="C" aria-label="All recipes">
+              <kookio-icon name="restaurant_menu" />
+              All
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+
+          <p class="plan__sidebar-levelhint">{{ levelHint() }}</p>
         </header>
 
-        @if (sidebarErrorMessage(); as msg) {
-          <p class="plan__sidebar-error" role="alert">{{ msg }}</p>
-        }
-
-        <div
-          class="plan__sidebar-list"
+        <cdk-virtual-scroll-viewport
+          class="plan__sidebar-feed"
+          [itemSize]="sidebarItemSize"
+          (scrolledIndexChange)="onSidebarScrolledIndexChange($event)"
           cdkDropList
+          cdkDropListSortingDisabled
           [cdkDropListEnterPredicate]="sidebarEnterPredicate"
           (cdkDropListDropped)="onSidebarDrop($event)"
-          (scroll)="onSidebarScroll($event)"
         >
-          @for (recipe of sidebarRecipes(); track recipe.id) {
-            <article
-              class="plan__sidebar-item"
-              cdkDrag
-              [cdkDragData]="sidebarDragPayload(recipe)"
-            >
-              <span class="plan__sidebar-thumb">
-                @if (recipe.imageUrl) {
-                  <img
-                    [ngSrc]="recipe.imageUrl"
-                    [alt]="recipe.title"
-                    width="40"
-                    height="40"
-                  />
-                } @else {
-                  <kookio-icon name="restaurant" />
-                }
-              </span>
-              <span class="plan__sidebar-text">
-                <span class="plan__sidebar-recipe-title">{{
-                  recipe.title
-                }}</span>
-                @if (
-                  recipe.prepTimeMinutes !== null &&
-                  recipe.cookTimeMinutes !== null
-                ) {
-                  <span class="plan__sidebar-recipe-meta">
-                    {{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} min
-                  </span>
-                }
-              </span>
-            </article>
-          } @empty {
-            @if (sidebarHasLoadedOnce() && !sidebarLoading()) {
-              <p class="plan__sidebar-empty">No recipes available yet.</p>
-            }
-          }
-        </div>
+          <!--
+            `cdkDrag` sits directly on the `*cdkVirtualFor` element —
+            this is CDK's canonical pattern for virtual-scroll +
+            drag-drop. Wrapping the cdkDrag in any intermediate element
+            (e.g. a `<div class="recipes-feed__item">` wrapper) breaks
+            CDK's drag-position math and visually traps the dragged
+            element inside the viewport.
 
-        @if (sidebarLoading()) {
-          <div class="plan__sidebar-spinner">
-            <mat-spinner diameter="24" />
+            `cdkDragPreviewContainer="global"` is load-bearing: the
+            preview is rendered as a `position: fixed` clone, and CDK
+            virtual scroll puts a `transform: translateY(...)` on its
+            internal content wrapper. A transformed ancestor traps
+            fixed-positioned descendants in its containing block —
+            without forcing the preview into `<body>`, the drag clone
+            is clipped by the viewport's `overflow: auto` and never
+            visually leaves the sidebar. Same CSS quirk the
+            `.ai/04_scss.md` "transformed ancestors break sticky/fixed"
+            note documents.
+          -->
+          <article
+            *cdkVirtualFor="
+              let recipe of sidebarItems();
+              trackBy: sidebarTrackById;
+              templateCacheSize: 0
+            "
+            class="plan__sidebar-drag"
+            cdkDrag
+            [cdkDragData]="sidebarDragPayload(recipe)"
+            cdkDragPreviewContainer="global"
+          >
+            <kookio-recipe-match-card-compact [item]="recipe" />
+          </article>
+
+          @if (sidebarIsLoading()) {
+            <div class="plan__sidebar-feed-loading" aria-live="polite">
+              <mat-spinner diameter="24" />
+            </div>
+          }
+
+          @if (sidebarHasError() && sidebarItems().length > 0) {
+            <div class="plan__sidebar-feed-retry">
+              <p>Could not load more recipes.</p>
+              <button
+                [matButton]="'text'"
+                type="button"
+                (click)="sidebarRetry()"
+              >
+                Retry
+              </button>
+            </div>
+          }
+
+          @if (
+            !sidebarIsLoading() &&
+            !sidebarHasError() &&
+            !sidebarHasMore() &&
+            sidebarItems().length > 0
+          ) {
+            <p class="plan__sidebar-feed-end">— You've seen them all —</p>
+          }
+        </cdk-virtual-scroll-viewport>
+
+        @if (
+          sidebarItems().length === 0 &&
+          !sidebarIsLoading() &&
+          sidebarHasError()
+        ) {
+          <div class="plan__sidebar-feed-error">
+            <p>Could not load recipes.</p>
+            <button [matButton]="'text'" type="button" (click)="sidebarRetry()">
+              Retry
+            </button>
           </div>
+        }
+
+        @if (
+          sidebarItems().length === 0 &&
+          !sidebarIsLoading() &&
+          !sidebarHasError()
+        ) {
+          <p class="plan__sidebar-feed-empty">No recipes match this level.</p>
         }
       </aside>
     }

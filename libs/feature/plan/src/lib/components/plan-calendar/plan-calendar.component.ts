@@ -1,21 +1,36 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   computed,
   effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { firstValueFrom, from } from 'rxjs';
+import {
+  Subject,
+  catchError,
+  exhaustMap,
+  firstValueFrom,
+  from,
+  of,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import {
   CdkDrag,
   CdkDropList,
   CdkDropListGroup,
   type CdkDragDrop,
 } from '@angular/cdk/drag-drop';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import {
   MAT_DATE_LOCALE,
@@ -33,13 +48,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { BreakpointService } from '@kookio/feature-shell';
 import {
+  RECIPES_TRPC,
+  RecipeMatchCardCompactComponent,
+} from '@kookio/feature-recipes';
+import {
   MealSlotTypeSchema,
   type MealSlotType,
   type RecipeFeedItem,
+  type RecipeMatchItem,
+  type RecipeMatchLevel,
 } from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
 
-import { MEAL_PLAN_TRPC } from '../../meal-plan-trpc';
 import {
   PlanStore,
   localDateToUtcMidnightIso,
@@ -97,15 +117,24 @@ type DragPayload =
       recipe: RecipeFeedItem;
     };
 
+/**
+ * Pixel height handed to `cdk-virtual-scroll-viewport` for each sidebar
+ * card. Has to be a fixed value (the experimental autosize strategy is
+ * the alternative, deliberately not used) — slightly taller than the
+ * compact card's intrinsic height so two-line variations don't clip.
+ */
+const SIDEBAR_ITEM_SIZE_PX = 72;
+
+/** Page size for the cursor-paginated match feed in the desktop sidebar. */
 const SIDEBAR_PAGE_SIZE = 20;
 
 /**
- * Trigger the next sidebar page when the scroll position lands within
- * this many pixels of the bottom. Same heuristic as the bottom-sheet
- * picker — generous enough to hide network latency, tight enough to
- * avoid pre-fetching pages the user never scrolls into.
+ * When the visible window comes within this many items of the loaded
+ * tail, trigger another page fetch. Mirrors `recipes-feed`'s threshold
+ * — generous enough to hide network latency, tight enough that we don't
+ * pre-fetch pages the user never reaches.
  */
-const SIDEBAR_PREFETCH_PIXELS = 200;
+const SIDEBAR_PREFETCH_THRESHOLD = 5;
 
 /**
  * The three slot types the planner exposes today. SNACK exists in the
@@ -154,7 +183,9 @@ const shiftDayIso = (iso: string, dayDelta: number): string => {
     CdkDrag,
     CdkDropList,
     CdkDropListGroup,
+    ScrollingModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatDatepickerModule,
     MatFormFieldModule,
@@ -162,6 +193,7 @@ const shiftDayIso = (iso: string, dayDelta: number): string => {
     MatProgressSpinnerModule,
     MatTooltipModule,
     KookioIconComponent,
+    RecipeMatchCardCompactComponent,
   ],
   // Scope `provideNativeDateAdapter()` and the date locale to the
   // component rather than the root config — the picker is only present
@@ -180,11 +212,94 @@ export class PlanCalendarComponent {
   protected readonly bp = inject(BreakpointService);
   private readonly sheet = inject(MatBottomSheet);
   private readonly snackBar = inject(MatSnackBar);
-  private readonly trpc = inject(MEAL_PLAN_TRPC);
+  private readonly recipesTrpc = inject(RECIPES_TRPC);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly editableSlotTypes = EDITABLE_SLOT_TYPES;
   protected readonly slotLabels = SLOT_LABELS;
   protected readonly slotAbbreviations = SLOT_ABBREVIATIONS;
+  protected readonly sidebarItemSize = SIDEBAR_ITEM_SIZE_PX;
+
+  /**
+   * Match level for the desktop sidebar. Default `A` (Alright to cook —
+   * pantry covers every ingredient) so the planner surfaces "use what
+   * you already have" first; users planning a shopping week toggle to
+   * `B` or `C`. Mirrors the `/recipes/match` page semantics.
+   */
+  protected readonly level = signal<RecipeMatchLevel>('A');
+
+  protected readonly levelHint = computed(() => {
+    switch (this.level()) {
+      case 'A':
+        return 'Drag recipes you can cook with what you already have.';
+      case 'B':
+        return "Recipes where you're missing 1–3 ingredients.";
+      case 'C':
+        return 'Browse all available recipes.';
+    }
+  });
+
+  // ─── Sidebar feed state ────────────────────────────────────────────
+  //
+  // The sidebar inlines its own virtual-scroll viewport instead of
+  // reusing `<kookio-recipes-feed>`. That keeps `cdkDrag` directly on
+  // the `*cdkVirtualFor` element — CDK's canonical pattern for
+  // virtual-scroll + drag-drop. The feed component wraps each item in
+  // an extra `<div class="recipes-feed__item">`, which moves the
+  // cdkDrag two levels below the *cdkVirtualFor root and breaks CDK's
+  // drag-position math (the dragged element gets visually trapped
+  // inside the viewport instead of following the cursor).
+  //
+  // The pagination/reset/error machinery mirrors
+  // `recipes-feed.component.ts` — same RxJS shape (switchMap on reset,
+  // exhaustMap on loadMore, takeUntil(reset$) to cancel in-flight
+  // pages when the level toggle flips).
+
+  protected readonly sidebarItems = signal<RecipeMatchItem[]>([]);
+  protected readonly sidebarNextCursor = signal<string | null>(null);
+  protected readonly sidebarHasMore = signal(true);
+  protected readonly sidebarIsLoading = signal(false);
+  protected readonly sidebarHasError = signal(false);
+
+  /** Reset trigger — fires whenever `level()` changes. switchMap on this
+   * stream cancels any pending fetch from the previous level. */
+  private readonly sidebarReset$ = new Subject<void>();
+
+  /** Pagination trigger — emitted from `onSidebarScrolledIndexChange`
+   * when the viewport approaches the loaded tail. exhaustMap drops
+   * emissions arriving while a fetch is in flight. */
+  private readonly sidebarLoadMore$ = new Subject<void>();
+
+  protected readonly sidebarTrackById = (
+    _: number,
+    item: RecipeMatchItem,
+  ): string => item.id;
+
+  protected readonly sidebarRetry = (): void => {
+    this.sidebarLoadMore$.next();
+  };
+
+  protected readonly onSidebarScrolledIndexChange = (index: number): void => {
+    const total = this.sidebarItems().length;
+    if (
+      total > SIDEBAR_PREFETCH_THRESHOLD &&
+      total - index <= SIDEBAR_PREFETCH_THRESHOLD &&
+      this.sidebarHasMore() &&
+      !this.sidebarIsLoading() &&
+      !this.sidebarHasError()
+    ) {
+      this.sidebarLoadMore$.next();
+    }
+  };
+
+  private readonly fetchSidebarPage = (cursor: string | null) =>
+    from(
+      this.recipesTrpc.recipes.match.query({
+        level: this.level(),
+        ...(cursor ? { cursor } : {}),
+        limit: SIDEBAR_PAGE_SIZE,
+      }),
+    );
 
   /**
    * The middle column's date — the user navigates this with the
@@ -192,17 +307,6 @@ export class PlanCalendarComponent {
    * Initialised to today so the first frame always has today centered.
    */
   protected readonly centerDate = signal(todayUtcMidnightIso());
-
-  /** Recipes pulled into the desktop sidebar (newest-first feed pagination). */
-  protected readonly sidebarRecipes = signal<RecipeFeedItem[]>([]);
-  protected readonly sidebarLoading = signal(false);
-  protected readonly sidebarNextCursor = signal<string | null>(null);
-  protected readonly sidebarHasLoadedOnce = signal(false);
-  protected readonly sidebarErrorMessage = signal<string | null>(null);
-
-  protected readonly hasMoreSidebar = computed(
-    () => this.sidebarNextCursor() !== null,
-  );
 
   /**
    * The 3 visible day columns: yesterday-of-center, center, tomorrow-of-center.
@@ -266,40 +370,6 @@ export class PlanCalendarComponent {
     drag: CdkDrag<DragPayload>,
   ): boolean => drag.data?.kind === 'slot';
 
-  /**
-   * Field-initialised arrow keeps the project's `prefer-arrow` rule happy
-   * and ensures the binding exists before the constructor's first call.
-   */
-  private readonly loadSidebarPage = async (): Promise<void> => {
-    if (this.sidebarLoading()) return;
-    this.sidebarLoading.set(true);
-    this.sidebarErrorMessage.set(null);
-    try {
-      const cursor = this.sidebarNextCursor();
-      // See note in recipe-picker-sheet: @analogjs/trpc returns Observables;
-      // awaiting bare leaves the resolved value as the Observable instance.
-      const page = await firstValueFrom(
-        from(
-          this.trpc.recipes.feed.query({
-            limit: SIDEBAR_PAGE_SIZE,
-            ...(cursor ? { cursor } : {}),
-          }),
-        ),
-      );
-      this.sidebarRecipes.update((prev) => [...prev, ...page.items]);
-      this.sidebarNextCursor.set(page.nextCursor);
-      this.sidebarHasLoadedOnce.set(true);
-    } catch (err) {
-      this.sidebarErrorMessage.set(
-        err instanceof Error && err.message
-          ? err.message
-          : 'Could not load recipes',
-      );
-    } finally {
-      this.sidebarLoading.set(false);
-    }
-  };
-
   constructor() {
     // Surface store errors as a transient snackbar; clear after acknowledging.
     effect(() => {
@@ -310,19 +380,83 @@ export class PlanCalendarComponent {
       }
     });
 
-    // Trigger the initial load when the component mounts.
+    // Trigger the initial slot load when the component mounts.
     queueMicrotask(() => this.store.load());
 
-    // Pre-load the desktop sidebar lazily once the component decides it's on
-    // a desktop viewport — saves the request on mobile where the sidebar is
-    // not rendered. The effect re-runs if the user drags the window across
-    // the breakpoint mid-session.
+    // Reset + refetch whenever the level toggle flips. Tracking
+    // `level()` inside the effect also drives the initial fetch on
+    // mount (the effect runs once with the initial value).
     effect(() => {
-      if (this.bp.isDesktop() && !this.sidebarHasLoadedOnce()) {
-        this.loadSidebarPage();
-      }
+      this.level();
+      untracked(() => {
+        this.sidebarItems.set([]);
+        this.sidebarNextCursor.set(null);
+        this.sidebarHasMore.set(true);
+        this.sidebarHasError.set(false);
+        this.sidebarIsLoading.set(false);
+        this.sidebarReset$.next();
+      });
     });
+
+    // Reset stream: switchMap cancels any in-flight reset fetch when a
+    // new level arrives — last-wins semantics.
+    this.sidebarReset$
+      .pipe(
+        switchMap(() => {
+          this.sidebarIsLoading.set(true);
+          this.sidebarHasError.set(false);
+          return this.fetchSidebarPage(null).pipe(
+            tap((page) => {
+              this.sidebarItems.set(page.items);
+              this.sidebarNextCursor.set(page.nextCursor);
+              this.sidebarHasMore.set(page.nextCursor !== null);
+              this.sidebarIsLoading.set(false);
+            }),
+            catchError(() => {
+              this.sidebarHasError.set(true);
+              this.sidebarIsLoading.set(false);
+              return of(null);
+            }),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+
+    // Pagination stream: exhaustMap drops emissions arriving while a
+    // fetch is in flight; takeUntil(reset$) cancels the inner observable
+    // if a reset arrives mid-pagination so its tap never writes stale
+    // items into the already-cleared state.
+    this.sidebarLoadMore$
+      .pipe(
+        exhaustMap(() => {
+          if (!this.sidebarHasMore() || this.sidebarIsLoading())
+            return of(null);
+          this.sidebarIsLoading.set(true);
+          this.sidebarHasError.set(false);
+          return this.fetchSidebarPage(this.sidebarNextCursor()).pipe(
+            tap((page) => {
+              this.sidebarItems.update((prev) => [...prev, ...page.items]);
+              this.sidebarNextCursor.set(page.nextCursor);
+              this.sidebarHasMore.set(page.nextCursor !== null);
+              this.sidebarIsLoading.set(false);
+            }),
+            catchError(() => {
+              this.sidebarHasError.set(true);
+              this.sidebarIsLoading.set(false);
+              return of(null);
+            }),
+            takeUntil(this.sidebarReset$),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
+
+  protected readonly onLevelChange = (next: RecipeMatchLevel): void => {
+    this.level.set(next);
+  };
 
   protected readonly onPrev = (): void => {
     this.centerDate.set(shiftDayIso(this.centerDate(), -1));
@@ -381,23 +515,6 @@ export class PlanCalendarComponent {
   protected readonly onDiscardDraft = (): void => {
     this.store.discardDraft();
     this.store.load();
-  };
-
-  /**
-   * Auto-load on scroll near the bottom of the sidebar list. Drag-and-drop
-   * is unaffected because every loaded item stays in the DOM — the
-   * trade-off vs CDK Virtual Scroll is more memory in exchange for not
-   * having items unmount mid-drag (which corrupts the drag preview).
-   */
-  protected readonly onSidebarScroll = (event: Event): void => {
-    if (this.sidebarLoading() || !this.hasMoreSidebar()) return;
-    const el = event.target as HTMLElement;
-    if (
-      el.scrollTop + el.clientHeight >=
-      el.scrollHeight - SIDEBAR_PREFETCH_PIXELS
-    ) {
-      this.loadSidebarPage();
-    }
   };
 
   /** Drop handler for a calendar cell. Uses copy semantics — see DragPayload. */
