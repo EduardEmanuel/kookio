@@ -298,10 +298,15 @@ export class PlanCalendarComponent {
     const viewport = this.sidebarViewport();
     if (!viewport) return;
     const total = this.sidebarItems().length;
-    const renderedEnd = viewport.getRenderedRange().end;
+    // `total > PREFETCH_THRESHOLD` keeps tiny first pages (rare but
+    // possible — e.g. level B with very few matches) from auto-
+    // prefetching the moment everything renders. Without it,
+    // `renderedEnd === total` on initial layout would satisfy the
+    // proximity check and load every page back-to-back without any
+    // real user scrolling. Mirrors the recipes-feed guard.
     if (
-      total > 0 &&
-      total - renderedEnd <= SIDEBAR_PREFETCH_THRESHOLD &&
+      total > SIDEBAR_PREFETCH_THRESHOLD &&
+      total - viewport.getRenderedRange().end <= SIDEBAR_PREFETCH_THRESHOLD &&
       this.sidebarHasMore() &&
       !this.sidebarIsLoading() &&
       !this.sidebarHasError()

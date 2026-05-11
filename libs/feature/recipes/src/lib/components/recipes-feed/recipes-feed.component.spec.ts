@@ -5,6 +5,7 @@ import {
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core';
+import type { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
@@ -13,6 +14,29 @@ import type { RecipeFeedItem, RecipeFeedPage } from '@kookio/prisma-client';
 import { buildRecipesTrpcMock } from '../../testing/build-trpc-mock';
 import { RECIPES_TRPC } from '../../recipes-trpc';
 import { type FeedPage, RecipesFeedComponent } from './recipes-feed.component';
+
+/**
+ * Stubs the component's viewChild-resolved viewport so the prefetch
+ * check reads a known `{ start, end }` instead of the empty range
+ * jsdom-rendered viewports return by default. Use to simulate "user
+ * scrolled near the loaded tail" in pagination tests.
+ */
+const setRenderedEnd = (
+  component: RecipesFeedComponent<RecipeFeedItem>,
+  end: number,
+): void => {
+  const viewport = (
+    component as unknown as {
+      viewport: () => CdkVirtualScrollViewport | undefined;
+    }
+  ).viewport();
+  if (!viewport) {
+    throw new Error(
+      'Viewport not resolved — call fixture.detectChanges() after data loads',
+    );
+  }
+  vi.spyOn(viewport, 'getRenderedRange').mockReturnValue({ start: 0, end });
+};
 
 const makeRecipe = (id: string, title = `Recipe ${id}`): RecipeFeedItem => ({
   id,
@@ -146,15 +170,19 @@ describe('RecipesFeedComponent', () => {
       const c = component as unknown as {
         items: () => RecipeFeedItem[];
         hasMore: () => boolean;
-        onScrolledIndexChange: (i: number) => void;
+        onScrolledIndexChange: () => void;
       };
 
       expect(c.items().length).toBe(20);
       expect(c.hasMore()).toBe(true);
 
-      // Scrolling near the tail (index 16: only 4 items left) triggers a
-      // prefetch; the threshold is 5 in the production component.
-      c.onScrolledIndexChange(16);
+      // Simulate the viewport rendering up to index 16 of 20 — only 4
+      // items past the rendered tail, within the prefetch threshold (5).
+      setRenderedEnd(
+        component as unknown as RecipesFeedComponent<RecipeFeedItem>,
+        16,
+      );
+      c.onScrolledIndexChange();
       await flush();
 
       expect(trpc.recipes.feed.query).toHaveBeenCalledTimes(2);
@@ -168,7 +196,7 @@ describe('RecipesFeedComponent', () => {
 
     it('does not prefetch when the loaded list is below the threshold', async () => {
       // Short feed (2 items) — even though there is a next cursor, the
-      // initial scrolledIndexChange(0) must NOT trigger a prefetch, because
+      // viewport rendering everything must NOT trigger a prefetch, because
       // the threshold guard requires more loaded items to be meaningful.
       const trpc = buildRecipesTrpcMock({
         feed: [makePage(['1', '2'], '2'), makePage(['3', '4'], null)],
@@ -177,14 +205,19 @@ describe('RecipesFeedComponent', () => {
 
       const c = component as unknown as {
         items: () => RecipeFeedItem[];
-        onScrolledIndexChange: (i: number) => void;
+        onScrolledIndexChange: () => void;
       };
 
       // No spurious prefetch from initial render.
       expect(c.items().length).toBe(2);
 
-      c.onScrolledIndexChange(0);
-      c.onScrolledIndexChange(1);
+      // Even with the viewport rendering everything (end === total === 2),
+      // the `total > PREFETCH_THRESHOLD` guard blocks the prefetch.
+      setRenderedEnd(
+        component as unknown as RecipesFeedComponent<RecipeFeedItem>,
+        2,
+      );
+      c.onScrolledIndexChange();
       await flush();
 
       // Still only the first call.
@@ -200,11 +233,16 @@ describe('RecipesFeedComponent', () => {
       });
       const { component } = await setup(trpc);
       const c = component as unknown as {
-        onScrolledIndexChange: (i: number) => void;
+        onScrolledIndexChange: () => void;
       };
 
-      c.onScrolledIndexChange(18);
-      c.onScrolledIndexChange(19);
+      // Even rendered to the very last item, `hasMore() === false` blocks
+      // the prefetch.
+      setRenderedEnd(
+        component as unknown as RecipesFeedComponent<RecipeFeedItem>,
+        20,
+      );
+      c.onScrolledIndexChange();
       await flush();
 
       expect(trpc.recipes.feed.query).toHaveBeenCalledTimes(1);
@@ -242,15 +280,20 @@ describe('RecipesFeedComponent', () => {
       fixture.detectChanges();
       await fixture.whenStable();
       await flush();
+      fixture.detectChanges();
       const c = fixture.componentInstance as unknown as {
-        onScrolledIndexChange: (i: number) => void;
+        onScrolledIndexChange: () => void;
       };
 
-      // Burst of scroll events near the tail (index 17: only 3 items left)
-      // while page 2 is in flight.
-      c.onScrolledIndexChange(17);
-      c.onScrolledIndexChange(18);
-      c.onScrolledIndexChange(19);
+      // Simulate three rapid scroll events near the loaded tail while
+      // page 2 is in flight.
+      setRenderedEnd(
+        fixture.componentInstance as unknown as RecipesFeedComponent<RecipeFeedItem>,
+        17,
+      );
+      c.onScrolledIndexChange();
+      c.onScrolledIndexChange();
+      c.onScrolledIndexChange();
       await Promise.resolve();
 
       // Initial load + one prefetch — never three concurrent fetches.

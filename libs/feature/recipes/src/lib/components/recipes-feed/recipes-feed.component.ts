@@ -8,8 +8,12 @@ import {
   input,
   signal,
   untracked,
+  viewChild,
 } from '@angular/core';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import {
+  CdkVirtualScrollViewport,
+  ScrollingModule,
+} from '@angular/cdk/scrolling';
 import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -200,16 +204,29 @@ export class RecipesFeedComponent<
     ) as unknown as Observable<FeedPage<TItem>>;
   };
 
-  protected readonly onScrolledIndexChange = (index: number): void => {
+  /**
+   * Reference to the inline `cdk-virtual-scroll-viewport`. We read
+   * `getRenderedRange().end` — the index just past the *last* rendered
+   * item — to measure proximity to the loaded tail. Comparing against
+   * `scrolledIndexChange`'s emitted index (the *first* visible item)
+   * tops out at `total - visibleCount`, so a tight threshold never
+   * fires when many of the loaded items are visible simultaneously
+   * (true on consumers with small item sizes like the plan sidebar).
+   */
+  private readonly viewport = viewChild(CdkVirtualScrollViewport);
+
+  protected readonly onScrolledIndexChange = (): void => {
+    const viewport = this.viewport();
+    if (!viewport) return;
     const total = this.items().length;
-    // Only prefetch once the loaded tail is large enough that the threshold
-    // is meaningful. Without this guard, a short feed (fewer items than the
-    // threshold) would auto-prefetch the moment the viewport emits its
-    // initial index 0 — defeating cursor pagination by loading every page
-    // back-to-back without any real user scrolling.
+    // `total > PREFETCH_THRESHOLD` keeps tiny first pages (rare but
+    // possible — e.g. a filtered query returning 2 hits with a next
+    // cursor) from auto-prefetching the moment everything renders.
+    // Without it, `renderedEnd === total` on initial layout would
+    // satisfy the proximity check and load every page back-to-back.
     if (
       total > PREFETCH_THRESHOLD &&
-      total - index <= PREFETCH_THRESHOLD &&
+      total - viewport.getRenderedRange().end <= PREFETCH_THRESHOLD &&
       this.hasMore() &&
       !this.isLoading() &&
       !this.hasError()
