@@ -7,6 +7,7 @@ import {
   inject,
   signal,
   untracked,
+  viewChild,
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import {
@@ -26,7 +27,10 @@ import {
   CdkDropListGroup,
   type CdkDragDrop,
 } from '@angular/cdk/drag-drop';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import {
+  CdkVirtualScrollViewport,
+  ScrollingModule,
+} from '@angular/cdk/scrolling';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
@@ -270,6 +274,17 @@ export class PlanCalendarComponent {
    * emissions arriving while a fetch is in flight. */
   private readonly sidebarLoadMore$ = new Subject<void>();
 
+  /**
+   * Reference to the inline `cdk-virtual-scroll-viewport` so the
+   * prefetch check can read `getRenderedRange().end` — the index just
+   * past the *last* rendered item, which is what we actually want to
+   * compare against the loaded total. Comparing against the index of
+   * the first visible item (what `scrolledIndexChange` emits) tops out
+   * at `total - visibleCount`, so a tight threshold never fires when
+   * the viewport is tall enough to show most of the loaded items.
+   */
+  private readonly sidebarViewport = viewChild(CdkVirtualScrollViewport);
+
   protected readonly sidebarTrackById = (
     _: number,
     item: RecipeMatchItem,
@@ -279,11 +294,14 @@ export class PlanCalendarComponent {
     this.sidebarLoadMore$.next();
   };
 
-  protected readonly onSidebarScrolledIndexChange = (index: number): void => {
+  protected readonly onSidebarScrolledIndexChange = (): void => {
+    const viewport = this.sidebarViewport();
+    if (!viewport) return;
     const total = this.sidebarItems().length;
+    const renderedEnd = viewport.getRenderedRange().end;
     if (
-      total > SIDEBAR_PREFETCH_THRESHOLD &&
-      total - index <= SIDEBAR_PREFETCH_THRESHOLD &&
+      total > 0 &&
+      total - renderedEnd <= SIDEBAR_PREFETCH_THRESHOLD &&
       this.sidebarHasMore() &&
       !this.sidebarIsLoading() &&
       !this.sidebarHasError()
