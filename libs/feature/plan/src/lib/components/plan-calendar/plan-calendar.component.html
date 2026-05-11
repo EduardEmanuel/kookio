@@ -138,7 +138,6 @@
             <span class="plan__grid-date">{{ day.dateLabel }}</span>
           </div>
         }
-
         @for (type of editableSlotTypes; track type) {
           <div class="plan__grid-rowlabel" [attr.aria-label]="slotLabels[type]">
             <span class="plan__grid-rowlabel-full">{{ slotLabels[type] }}</span>

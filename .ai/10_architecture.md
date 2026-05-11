@@ -134,6 +134,82 @@ API Route or External API
 | Component           | `<n>.component.ts`     | `user-card.component.ts` |
 | NX lib              | `<scope>-<type>-<n>`   | `shared-ui-button`       |
 
+## Page-level concerns belong at the page level
+
+When a UI region is _about the whole page_ (sticky save/cancel
+footers, unsaved-changes banners, page-level keyboard shortcuts,
+toolbar actions that apply across page sections), it lives directly
+under the page component as a **sibling** to the page's primary
+content component — not nested inside that component for proximity.
+
+The cost of nesting is silent: visual properties of the inner
+component (especially `max-width`, `padding`, `overflow`) cap the
+nested concern, even though semantically the concern belongs to the
+outer page. The bug surfaces as "the sticky footer's border doesn't
+reach the screen edges" or "my full-width banner is mysteriously
+indented" — both fixable by lifting the concern up one level to
+where it belongs.
+
+Concrete instance: `PlanCalendarComponent` originally owned the
+"Clear all / Save plan" footer for proximity. The calendar had
+`max-width: 1200px`, so the footer's `border-top` only spanned 1200px
+even though it should have stretched edge-to-edge on the page.
+Lifting the footer to `<kookio-plan-footer />` as a sibling of
+`<kookio-plan-calendar />` under `plan.page.ts` gave the footer the
+page's full width, while the inner action buttons stay centered to
+their own 1200px column for horizontal alignment with the calendar.
+
+**Rule of thumb:** if the answer to "does this concern _also_ apply
+when the user is looking at a _different part_ of the inner
+component?" is yes, lift it to the page.
+
+### Sibling collaboration: shared singleton store, not Input/Output drilling
+
+Once page-level concerns sit as siblings under the page, both
+components communicate by **injecting the same singleton store**
+(`providedIn: 'root'`) — no Inputs piped from a parent, no Outputs
+emitted upward.
+
+```typescript
+// plan-calendar.component.ts
+protected readonly store = inject(PlanStore);
+// reads store.slotsByKey, writes via store.setSlot / store.clearSlot
+
+// plan-footer.component.ts
+protected readonly store = inject(PlanStore);
+// reads store.plannedCount + store.isDirty + store.isSubmitting,
+// writes via store.submit / store.clearAll
+```
+
+When the user drops a recipe on a calendar cell, the calendar calls
+`store.setSlot(...)`. The footer's `isDirty` signal recomputes via the
+store's `withComputed`, and the Save button automatically becomes
+enabled. The two components never reference each other.
+
+This is the **canonical Angular pattern for sibling collaboration**.
+React's idiom is the opposite — lift state up to the common parent
+and drill props down as Inputs to children. Both work, but Angular's
+DI-driven singleton-store pattern avoids the prop-drilling and
+parent-recomputation costs that React mitigates with `useContext` /
+`useReducer` / Zustand. Don't mix the two: if you find yourself
+adding an `@Input()` between siblings to pass through a value that
+already lives in a `providedIn: 'root'` store, the store is the
+correct path — the Input is React habit leaking in.
+
+### When a parent-owned signal _is_ correct
+
+The singleton-store pattern is right for **app-domain state** —
+data the store already owns (slots, pantry items, user session, etc.).
+For **pure UI state** that's scoped to a single page (e.g., "which
+day-tab is selected on mobile", "is the recipe picker sheet
+currently open"), keep it as a `signal()` inside the component
+that owns the interaction. Hoisting transient UI state into a
+root-level store inflates the store's surface area for no benefit;
+the component is the natural scope.
+
+The split: store owns _what exists_, components own _what's being
+shown_.
+
 ## General Rules
 
 - All route components are default exports — never named exports
@@ -143,3 +219,9 @@ API Route or External API
 - Use `withDebugRoutes()` in development to inspect the route tree at `/__analog/routes`
 - Keep API routes thin — delegate business logic to services in `data-access` libs
 - Use `TransferState` automatically via AnalogJS — do not duplicate SSR requests
+- Page-level concerns (sticky footers, banners, toolbars) live as siblings of
+  the page's primary content component, not nested inside it — see
+  "Page-level concerns belong at the page level" above
+- Sibling components share state via a singleton store
+  (`providedIn: 'root'`), not via Input/Output piped through a parent —
+  see "Sibling collaboration" above

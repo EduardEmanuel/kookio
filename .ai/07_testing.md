@@ -255,6 +255,54 @@ typecheck on the exact line that needs updating. Hardcoded string literals
 silently satisfy `z.infer` until the value is removed entirely, and partial
 renames across many fixture files are easy to miss in review.
 
+## Cross-lib injection: test discipline when refactoring shared widgets
+
+When a widget changes its **injected dependencies** (adds an `inject(...)`,
+switches from one store to another, depends on a new InjectionToken),
+the widget's own lib tests typically keep passing because they stub the
+new dep locally. Consumer projects — pages that mount the widget
+through `<lib-widget>` in their template — break, because their specs
+were written against the _old_ injection graph and don't know about the
+new dep.
+
+The failure mode is a `NullInjectorError` at component construction,
+not a typecheck error. Static imports change → lint catches it. DI
+graph changes → only tests at the consumer catch it.
+
+Concrete instance: `MealPlanTodayWidgetComponent` was refactored to
+inject `PlanStore` for live data instead of rendering static
+placeholder copy. `feature-dashboard:test` passed (widget spec stubs
+`PlanStore`). `web:test` broke — `dashboard.page.spec.ts` mounts the
+widget through `<kookio-meal-plan-today-widget>` but only stubbed
+`PantryStore`, so PlanStore's `withMethods` factory tried to
+`inject(MEAL_PLAN_TRPC)` against a null injector and threw on the
+first `TestBed.createComponent(DashboardPage)`. The regression sat
+silently for several commits because the cross-lib spec was never
+re-run during the widget refactor.
+
+**Discipline:** after refactoring a shared widget's injected
+dependencies, run tests at _every consumer project_, not just the
+widget's lib:
+
+```bash
+# Either name the consumers explicitly:
+nx run-many -t test -p feature-dashboard web
+
+# Or let NX figure out what depends on the changed code:
+nx affected -t test
+```
+
+`nx affected` is the safer option in a multi-lib repo where the
+dependency graph is non-trivial — it walks `project.json` deps and
+runs everything downstream of the change.
+
+**Mirror the discipline in widget spec design:** when you stub the
+shared store in a consumer spec, stub _only_ the read surface the
+widget actually consumes (signals it reads, methods it calls). The
+stub is then a contract test — when the widget grows a new dep, the
+consumer spec fails fast on a missing stub property rather than
+silently rendering with a partial store.
+
 ## General Rules
 
 - Each test must be independent — no shared mutable state between tests
@@ -263,3 +311,6 @@ renames across many fixture files are easy to miss in review.
 - Do not test Angular internals (change detection, DI resolution)
 - Do not test private methods — test through the public API
 - Aim for tests that are fast, deterministic, and isolated
+- After refactoring a widget's injected dependencies, run `nx affected
+-t test` (not just the widget lib's own tests) — see "Cross-lib
+  injection" above
