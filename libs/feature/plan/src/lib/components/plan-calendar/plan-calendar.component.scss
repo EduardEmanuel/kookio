@@ -409,20 +409,6 @@
   }
 }
 
-// ─── Footer actions ─────────────────────────────────────────────────────
-
-.plan__actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid var(--mat-sys-outline-variant);
-  position: sticky;
-  bottom: 0;
-  background: var(--mat-sys-surface);
-}
-
 .plan__error {
   padding: 16px;
   color: var(--mat-sys-error);

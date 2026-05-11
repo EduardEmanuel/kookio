@@ -7,6 +7,7 @@ import type { User } from 'firebase/auth';
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
 import { PantryStore } from '@kookio/feature-pantry/store';
+import { PlanStore } from '@kookio/feature-plan/store';
 import type { AuthSession } from '@kookio/prisma-client';
 
 import DashboardPage from './dashboard.page';
@@ -14,6 +15,17 @@ import DashboardPage from './dashboard.page';
 const stubPantryStore = {
   items: vi.fn(() => []),
   isLoading: vi.fn(() => false),
+  load: vi.fn(),
+};
+
+// PlanStore is `providedIn: 'root'` and would otherwise try to inject
+// MEAL_PLAN_TRPC (not provided in this spec). The meal-plan-today
+// widget uses only `slotsByKey`, `isLoading`, `hasLoadedOnce` and
+// `load()` — stub matches that read surface.
+const stubPlanStore = {
+  slotsByKey: vi.fn(() => new Map()),
+  isLoading: vi.fn(() => false),
+  hasLoadedOnce: vi.fn(() => true),
   load: vi.fn(),
 };
 
@@ -47,6 +59,7 @@ const setup = async (
       provideRouter([]),
       { provide: AuthStore, useValue: authStore },
       { provide: PantryStore, useValue: stubPantryStore },
+      { provide: PlanStore, useValue: stubPlanStore },
     ],
   }).compileComponents();
 

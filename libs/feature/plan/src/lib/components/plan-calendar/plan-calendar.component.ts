@@ -378,20 +378,6 @@ export class PlanCalendarComponent {
     this.store.clearSlot(date, slotType);
   };
 
-  protected readonly onSave = (): void => {
-    this.store.submit();
-  };
-
-  protected readonly onClearAll = (): void => {
-    if (this.store.plannedCount() === 0) return;
-    const ok =
-      typeof window !== 'undefined' &&
-      window.confirm(
-        'Clear all planned meals? This cannot be undone until you save.',
-      );
-    if (ok) this.store.clearAll();
-  };
-
   protected readonly onDiscardDraft = (): void => {
     this.store.discardDraft();
     this.store.load();

@@ -9,5 +9,6 @@
 //   - `@kookio/feature-plan/store` → PlanStore + slot helpers
 //   - `@kookio/feature-plan/trpc`  → MEAL_PLAN_TRPC token + types
 export * from './lib/components/plan-calendar/plan-calendar.component';
+export * from './lib/components/plan-footer/plan-footer.component';
 export * from './lib/components/recipe-picker-sheet/recipe-picker-sheet.component';
 export * from './lib/plan-can-deactivate.guard';
