@@ -87,9 +87,18 @@ test.describe('tRPC Authorization header', () => {
 // authAwareFetch: if the server returns HTTP 401, force-refresh the token and
 // retry once. We only intercept auth.me so Firebase login itself is unaffected.
 
-// @no-webkit: page.route response-modification does not intercept Angular fetch
-// in webkit. The retry logic is fully covered by unit tests (trpc-client.spec.ts).
-test.describe('authAwareFetch 401 retry @no-webkit', () => {
+// @no-webkit: page.route response-modification does not intercept Angular
+// fetch in webkit. The retry logic is fully covered by unit tests
+// (trpc-client.spec.ts).
+//
+// @no-firefox: the intercept + retry orchestration consistently races
+// against firefox's slower fetch handling on dev-local — the second
+// /auth.me response lands past the 30s waitForResponse timeout in one or
+// the other test on every run (which one varies by worker scheduling).
+// Both sibling tests share the same flake profile, so the tag scopes the
+// whole describe rather than playing whack-a-mole on individual tests.
+// Chromium remains the canonical signal for the retry-stop logic.
+test.describe('authAwareFetch 401 retry @no-webkit @no-firefox', () => {
   test('retries once and succeeds when server returns 401 on first call', async ({
     page,
     testUser,
@@ -137,12 +146,7 @@ test.describe('authAwareFetch 401 retry @no-webkit', () => {
     expect(capturedHeaders[1]).toMatch(/^Bearer .+/);
   });
 
-  // @no-firefox: the double-401 + retry-once-then-stop orchestration races
-  // against firefox's slower fetch interception on dev local — the second
-  // /auth.me response consistently lands past the 30s waitForResponse
-  // timeout. Sibling test (single-401 retry) passes on firefox, so this
-  // tag scopes out only the most timing-sensitive scenario.
-  test('does not retry a second time on double 401 (no infinite loop) @no-firefox', async ({
+  test('does not retry a second time on double 401 (no infinite loop)', async ({
     page,
     testUser,
   }) => {
