@@ -7,7 +7,7 @@ export const URLS = {
   DASHBOARD: '/dashboard',
   PANTRY: '/pantry',
   PLAN: '/plan',
-  SHOPPING_LIST: '/shopping-list',
+  GROCERIES: '/groceries',
   RECIPES: '/recipes',
   RECIPES_MATCH: '/recipes/match',
   RECIPES_SAVED: '/recipes/saved',

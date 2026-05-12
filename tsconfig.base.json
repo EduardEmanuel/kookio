@@ -22,6 +22,13 @@
       "@kookio/feature-auth": ["libs/feature/auth/src/index.ts"],
       "@kookio/feature-auth/testing": ["libs/feature/auth/src/testing.ts"],
       "@kookio/feature-dashboard": ["libs/feature/dashboard/src/index.ts"],
+      "@kookio/feature-groceries": ["libs/feature/groceries/src/index.ts"],
+      "@kookio/feature-groceries/store": [
+        "libs/feature/groceries/src/lib/store/groceries.store.ts"
+      ],
+      "@kookio/feature-groceries/trpc": [
+        "libs/feature/groceries/src/lib/groceries-trpc.ts"
+      ],
       "@kookio/feature-onboarding": ["libs/feature/onboarding/src/index.ts"],
       "@kookio/feature-onboarding/testing": [
         "libs/feature/onboarding/src/testing.ts"
@@ -64,6 +71,9 @@
       "@kookio/shared-mock": ["libs/shared/mock/src/index.ts"],
       "@kookio/shared-ui": ["libs/shared/ui/src/index.ts"],
       "@kookio/shared-utility": ["libs/shared/utility/src/index.ts"],
+      "@kookio/shared-utility/ingredient-categories": [
+        "libs/shared/utility/src/lib/labeling/ingredient-category-labels.ts"
+      ],
       "@kookio/shared-utility/measure-units": [
         "libs/shared/utility/src/lib/labeling/measure-unit-labels.ts"
       ],

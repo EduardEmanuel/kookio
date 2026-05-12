@@ -9,6 +9,18 @@ const REDIS_PREFIX = process.env['REDIS_PREFIX']?.trim() ?? `${APP}:${STAGE}`;
 
 let client: RedisClientType | null = null;
 
+// Cooldown after a connect failure: prevents the next call from immediately
+// kicking off another retry burst. Long enough that a dev nav between pages
+// doesn't restart the loop; short enough that prod recovery picks up Redis
+// coming back without a server restart.
+const CONNECT_FAILURE_COOLDOWN_MS = 60_000;
+// Max retries node-redis attempts before `reconnectStrategy` returns false
+// and the client gives up. Tuned for dev-without-Redis: enough to ride out
+// a brief network blip in prod, capped so a permanently broken URL stops
+// after ~30s of backoff (200 → 400 → … → 2000 ms, mostly at 2000 ms).
+const RECONNECT_MAX_RETRIES = 12;
+let lastConnectFailureAt: number | null = null;
+
 /**
  * Short, non-reversible IP "fingerprint" for keys.
  * Avoid storing raw IP to keep keys short & less sensitive.
@@ -38,6 +50,17 @@ export const redisKey = (...parts: Array<string | number>): string => {
 export const getRedis = async (): Promise<RedisClientType> => {
   if (client && client.isOpen) return client;
 
+  if (
+    lastConnectFailureAt !== null &&
+    Date.now() - lastConnectFailureAt < CONNECT_FAILURE_COOLDOWN_MS
+  ) {
+    // Don't kick off another retry burst inside the cooldown window —
+    // surfaces fast as a clean error to callers (which our routers wrap in
+    // try/catch and degrade gracefully) instead of every page nav restarting
+    // the same 12-retry loop.
+    throw new Error('Redis is temporarily unavailable (cooldown)');
+  }
+
   const url = process.env['REDIS_URL'];
 
   if (!url) {
@@ -46,15 +69,46 @@ export const getRedis = async (): Promise<RedisClientType> => {
     );
   }
 
-  const newClient = createClient({ url });
-
-  newClient.on('error', (err) => {
-    logger.error('❌ [redis] client error:', err?.message ?? err);
+  const newClient = createClient({
+    url,
+    socket: {
+      // Cap reconnects so a permanently broken Redis (dev without VPN to
+      // Redis Cloud, etc.) doesn't loop forever in the background. node-redis
+      // calls this with `retries` starting at 0; returning `false` signals
+      // "give up, transition to closed".
+      reconnectStrategy: (retries: number) => {
+        if (retries >= RECONNECT_MAX_RETRIES) return false;
+        return Math.min(retries * 200, 2000);
+      },
+    },
   });
 
-  await newClient.connect();
-  client = newClient as RedisClientType;
-  return client;
+  // Dedupe the error event to a single line per client lifetime — without
+  // this, every reconnect attempt fires a separate log entry and floods the
+  // dev console even with the cap above. The first error carries the actual
+  // diagnostic; subsequent ones are almost always the same root cause.
+  let errorLogged = false;
+  newClient.on('error', (err) => {
+    if (errorLogged) return;
+    errorLogged = true;
+    // Pino's signature is `error(obj, msg)` — the previous form passed the
+    // err as a positional arg and Pino dropped it on the floor, leaving
+    // every retry as an empty `client error:` line in the logs.
+    logger.error(
+      { err },
+      '❌ [redis] client error (further retries suppressed)',
+    );
+  });
+
+  try {
+    await newClient.connect();
+    client = newClient as RedisClientType;
+    lastConnectFailureAt = null;
+    return client;
+  } catch (err) {
+    lastConnectFailureAt = Date.now();
+    throw err;
+  }
 };
 
 export const quitRedis = async (): Promise<void> => {

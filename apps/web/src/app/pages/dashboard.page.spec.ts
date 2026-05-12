@@ -2,10 +2,15 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 import type { User } from 'firebase/auth';
 
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
+import {
+  GROCERIES_TRPC,
+  type GroceriesTrpcClient,
+} from '@kookio/feature-groceries/trpc';
 import { PantryStore } from '@kookio/feature-pantry/store';
 import { PlanStore } from '@kookio/feature-plan/store';
 import type { AuthSession } from '@kookio/prisma-client';
@@ -27,6 +32,21 @@ const stubPlanStore = {
   isLoading: vi.fn(() => false),
   hasLoadedOnce: vi.fn(() => true),
   load: vi.fn(),
+};
+
+// The groceries-count widget injects GROCERIES_TRPC and calls `stats.query()`.
+// Returning an Observable matches the analog client's runtime shape; the
+// widget wraps with `from(...)` which is a no-op on Observables.
+const stubGroceriesTrpc: GroceriesTrpcClient = {
+  groceries: {
+    list: { query: vi.fn() },
+    toggleBought: { mutate: vi.fn() },
+    stats: {
+      query: vi.fn(() =>
+        of({ total: 0, remaining: 0 }),
+      ) as unknown as GroceriesTrpcClient['groceries']['stats']['query'],
+    },
+  },
 };
 
 const makeSession = (name: string | null): AuthSession => ({
@@ -60,6 +80,7 @@ const setup = async (
       { provide: AuthStore, useValue: authStore },
       { provide: PantryStore, useValue: stubPantryStore },
       { provide: PlanStore, useValue: stubPlanStore },
+      { provide: GROCERIES_TRPC, useValue: stubGroceriesTrpc },
     ],
   }).compileComponents();
 
@@ -101,6 +122,6 @@ describe('DashboardPage', () => {
 
     expect(el.querySelector('kookio-expiring-soon-widget')).not.toBeNull();
     expect(el.querySelector('kookio-meal-plan-today-widget')).not.toBeNull();
-    expect(el.querySelector('kookio-shopping-count-widget')).not.toBeNull();
+    expect(el.querySelector('kookio-groceries-count-widget')).not.toBeNull();
   });
 });

@@ -9,8 +9,8 @@ import type { RouteMeta } from '@analogjs/router';
 import { AuthStore, authGuard, onboardingGuard } from '@kookio/feature-auth';
 import {
   ExpiringSoonWidgetComponent,
+  GroceriesCountWidgetComponent,
   MealPlanTodayWidgetComponent,
-  ShoppingCountWidgetComponent,
 } from '@kookio/feature-dashboard';
 
 export const routeMeta: RouteMeta = {
@@ -29,8 +29,8 @@ const greetingFor = (hour: number): string => {
   selector: 'kookio-dashboard-page',
   imports: [
     ExpiringSoonWidgetComponent,
+    GroceriesCountWidgetComponent,
     MealPlanTodayWidgetComponent,
-    ShoppingCountWidgetComponent,
   ],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.scss',

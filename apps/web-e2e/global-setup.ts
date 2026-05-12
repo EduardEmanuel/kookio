@@ -14,7 +14,7 @@ const ROUTES = [
   '/recipes/match',
   '/recipes/saved',
   '/plan',
-  '/shopping-list',
+  '/groceries',
   '/403',
   '/404',
 ];

@@ -21,6 +21,7 @@ import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
 
 import { AUTH_TRPC, FIREBASE_OPTIONS } from '@kookio/feature-auth';
+import { GROCERIES_TRPC } from '@kookio/feature-groceries/trpc';
 import { ONBOARDING_TRPC } from '@kookio/feature-onboarding';
 import { PANTRY_TRPC } from '@kookio/feature-pantry/trpc';
 import { MEAL_PLAN_TRPC } from '@kookio/feature-plan/trpc';
@@ -59,6 +60,7 @@ export const appConfig: ApplicationConfig = {
     { provide: ONBOARDING_TRPC, useExisting: TrpcClientApp },
     { provide: PANTRY_TRPC, useExisting: TrpcClientApp },
     { provide: MEAL_PLAN_TRPC, useExisting: TrpcClientApp },
+    { provide: GROCERIES_TRPC, useExisting: TrpcClientApp },
     { provide: RECIPES_TRPC, useExisting: TrpcClientApp },
     { provide: COOKING_SESSION_TRPC, useExisting: TrpcClientApp },
     {

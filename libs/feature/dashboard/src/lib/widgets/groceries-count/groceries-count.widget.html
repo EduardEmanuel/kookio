@@ -1,0 +1,46 @@
+<mat-card class="groceries-count" appearance="outlined">
+  <mat-card-content class="groceries-count__content">
+    <h2 class="groceries-count__title">
+      <kookio-icon name="shopping_cart" />
+      <span>Groceries</span>
+    </h2>
+
+    @if (isLoading()) {
+    <div class="groceries-count__loading" role="status" aria-live="polite">
+      <mat-progress-spinner mode="indeterminate" diameter="32" />
+    </div>
+    } @else if (hasError()) {
+    <div class="groceries-count__placeholder">
+      <kookio-emoji char="🛒" [size]="40" />
+      <p class="groceries-count__hint">
+        Could not load — try again from the groceries page.
+      </p>
+    </div>
+    } @else if (!hasItems()) {
+    <div class="groceries-count__placeholder">
+      <kookio-emoji char="🛒" [size]="40" />
+      <p class="groceries-count__count">All set!</p>
+      <small class="groceries-count__hint">
+        Your plan and pantry are in sync.
+      </small>
+    </div>
+    } @else {
+    <div class="groceries-count__placeholder">
+      <kookio-emoji char="🛒" [size]="40" />
+      <p class="groceries-count__count">
+        {{ remaining() }} {{ remaining() === 1 ? 'item' : 'items' }} needed
+      </p>
+      <small class="groceries-count__hint">From your meal plan.</small>
+    </div>
+    }
+
+    <a
+      [matButton]="'text'"
+      [routerLink]="groceriesUrl"
+      class="groceries-count__cta"
+    >
+      <span>View list</span>
+      <kookio-icon name="arrow_forward" />
+    </a>
+  </mat-card-content>
+</mat-card>

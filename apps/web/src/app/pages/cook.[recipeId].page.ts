@@ -85,11 +85,11 @@ export default class CookPage {
   protected readonly sessionId = signal<string | null>(null);
 
   protected readonly servings = signal(
-    pickDefaultServings(this.recipe().servings ?? 4),
+    pickDefaultServings(this.recipe().servings ?? 2),
   );
 
   protected readonly recipeServings = computed(
-    () => this.recipe().servings ?? 4,
+    () => this.recipe().servings ?? 2,
   );
 
   protected readonly steps = computed(() => {

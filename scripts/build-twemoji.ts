@@ -29,9 +29,15 @@ const EXCLUDE_PATTERNS: readonly RegExp[] = [
 // TS: explicit emoji-literal patterns only — never scan raw Extended_Pictographic
 // in .ts files, otherwise server log strings ('🌱 Seeding…') would be subset
 // even though they never reach the browser.
+//
+// The third pattern picks up enum-keyed Records like
+// `INGREDIENT_CATEGORY_EMOJI: Record<IngredientCategory, string> = { MEAT: '🥩', … }`.
+// It matches only when the value between quotes is *exclusively* an emoji
+// sequence (no other characters), so log strings like `'🌱 Seeding…'` are safe.
 const TS_PATTERNS: readonly RegExp[] = [
   /\bemoji:\s*'([^']+)'/g,
   /<kookio-emoji[^>]*\bchar="([^"]+)"/g,
+  /\b[A-Z][A-Z0-9_]{1,}:\s*'(\p{Extended_Pictographic}(?:\u{FE0F})?(?:\u{200D}\p{Extended_Pictographic}(?:\u{FE0F})?)*)'/gu,
 ];
 
 // JSON: catalog seed data uses double-quoted "emoji" / "flag" keys with

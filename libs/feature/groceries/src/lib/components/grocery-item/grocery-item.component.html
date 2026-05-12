@@ -1,0 +1,13 @@
+<mat-checkbox
+  class="grocery-item"
+  [class.grocery-item--bought]="item().isBought"
+  [checked]="item().isBought"
+  (change)="onToggle()"
+  [aria-label]="
+    (item().isBought ? 'Mark not bought: ' : 'Mark bought: ') +
+    item().ingredientName
+  "
+>
+  <span class="grocery-item__name">{{ item().ingredientName }}</span>
+  <span class="grocery-item__qty">{{ quantityLabel() }}</span>
+</mat-checkbox>

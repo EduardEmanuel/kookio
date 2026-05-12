@@ -2,13 +2,14 @@
 
 > **Status: Active.** Pino logger lives at `libs/server/logger/`. Redis code lives at [apps/web/src/server/infra/redis.ts](../apps/web/src/server/infra/redis.ts) and [apps/web/src/server/infra/rate-limit.ts](../apps/web/src/server/infra/rate-limit.ts) — a single-file pair inside the app, **not** the multi-module `libs/server/src/redis/{client,cache,session,rate-limit,queue}.ts` split that the chapter below sketches. The chapter is preserved as a reference for the modules that don't exist yet, but the layout is intentional.
 >
-> **What exists:** `getRedis` (lazy-connect singleton), `redisKey` (prefix builder), `ipHash`, low-level `getString` / `setString` / `getJSON` / `setJSON` with mandatory TTL, `increaseWithTimeToLive` (atomic INCR + EXPIRE), and `rateLimitFixedWindow` + `h3ApplyRateLimit` adapter. Rate limiting uses **fixed window** (`INCR` + `EXPIRE`), not the sliding-window-with-sorted-sets pattern shown below — this is a deliberate choice for public endpoints and is fine at current volume.
+> **What exists:** `getRedis` (lazy-connect singleton with 60 s cooldown circuit breaker, 12-retry reconnect cap, and deduped error log), `redisKey` (prefix builder), `ipHash`, low-level `getString` / `setString` / `getJSON` / `setJSON` with mandatory TTL, `increaseWithTimeToLive` (atomic INCR + EXPIRE), and `rateLimitFixedWindow` + `h3ApplyRateLimit` adapter. The `groceriesBought` store on the tRPC context (Redis-backed in production, in-memory fallback for tests) holds the per-user "bought" markers for the derived `/groceries` list. Rate limiting uses **fixed window** (`INCR` + `EXPIRE`), not the sliding-window-with-sorted-sets pattern shown below — this is a deliberate choice for public endpoints and is fine at current volume.
 >
 > **What does not exist, and why:**
 >
 > - **`cache.ts` (cache-aside helpers like `cacheGetOrSet`).** The primitives `getJSON` / `setJSON` already cover storing values with a TTL; no query has been profiled as slow enough to justify a formal cache-aside layer. Add it the first time a real read hot-spot is identified, not speculatively.
 > - **`session.ts` (Redis-backed sessions).** Auth is Firebase. ID tokens are self-contained JWTs verified per request in the tRPC context via `firebase-admin`; there is no server-side session state to store. Add a session module only if the project moves to opaque server-issued session tokens, immediate revocation deny-lists, or per-session preferences.
 > - **`queue.ts` (pub-sub).** No tRPC subscription, WebSocket, or SSE handler exists in the codebase. Pub-sub becomes mandatory the moment a real-time feature ships on Vercel — events generated on one serverless instance must reach clients connected to other instances. The first such feature (e.g. live "ingredient expiring" alerts) is the trigger to add `queue.ts`, not before.
+> - **Keepalive cron** (weekly `redis.ping()` to prevent the free-tier deletion cycle described under "Provisioning, deletion policy & recovery"). Deferred until Redis becomes a hot-path dependency (catalog cache, AI recommendations) — until then, accept the manual recovery cycle.
 >
 > Treat the cache / session / queue subsections below as **design intent for when one of those triggers fires** — do not preemptively introduce these modules.
 
@@ -247,6 +248,80 @@ export async function subscribe<T>(channel: string, handler: (message: T) => Pro
 - Never store sensitive data (passwords, tokens) in Redis without encryption
 - Monitor key expiry — use `OBJECT ENCODING` and `DEBUG SLEEP` in staging to verify TTLs
 - Never use `KEYS *` in production — use `SCAN` for key iteration
+
+### Provisioning, deletion policy & recovery
+
+Redis is provisioned through the **Vercel Marketplace Integration**
+(Vercel project → Integrations → Redis), **not** by signing up directly
+on redis.io. The integration auto-syncs `REDIS_URL` to every environment
+selected at install time (dev / preview / prod). Local sync is
+`vercel env pull` (or `scripts/with-vercel-env.ts` for multi-env).
+
+**Constraints of the free tier (in use):**
+
+- One free database per Vercel account → all three environments share
+  the same instance by design. Acceptable for current scope; revisit
+  if user data starts crossing env boundaries.
+- 30 MB ceiling. Per-user state must stay small (the groceries-bought
+  set is `string[]` of catalog ids — ~5 KB worst case per power user).
+- No HA. Picking any HA option on the free tier silently makes the
+  plan unavailable, so it stays disabled.
+- Region: Frankfurt (`eu-central-1`) to match the CockroachDB region.
+
+**The free tier auto-deletes on inactivity.** Confirmed 2026-05: the
+previous instance `kookio-shared-fra1-redis` was deleted after a
+warning email on 2026-02-15. The runtime diagnostic at the time was
+`getaddrinfo ENOTFOUND redis-…cloud.redislabs.com` — DNS no longer
+resolved, distinct from `ECONNREFUSED` which would have indicated only
+a transient connection issue. **Plan for the same cycle to recur**
+unless the keepalive cron mentioned in the status banner ships.
+
+**Recovery procedure (env-only, no code changes):**
+
+1. Vercel UI → kookio project → Integrations → Redis → install fresh
+   free instance (Frankfurt, no HA, all envs ticked).
+2. `vercel env pull` locally; restart `nx serve web`.
+3. Verify with a Redis-touching flow (e.g. `groceries.list` followed
+   by a `groceries.toggleBought` click) — successful logs should be
+   silent; the cooldown error string is the canary that something is
+   still wrong.
+
+The old uninstalled instance leaves a cosmetic tombstone row in the
+Vercel UI with status `Uninstalled`. Vercel does not allow removing
+uninstalled product records — by design, ignore.
+
+**Defensive architecture that absorbs Redis outages:**
+
+- **60 s cooldown circuit breaker** in `getRedis()` — after a failed
+  connect, subsequent calls throw fast for the cooldown window instead
+  of recreating the client and starting a new retry burst on every page
+  nav. Without it, every navigation to a Redis-touching route restarted
+  the reconnect loop.
+- **`RECONNECT_MAX_RETRIES = 12`** cap on node-redis reconnect strategy
+  with exponential backoff up to 2 s — gives up cleanly instead of
+  looping forever in the background.
+- **Deduped `client.on('error', …)`** — single log line per client
+  lifetime instead of one per retry. Surfaces the actual diagnostic
+  once.
+- **Read paths** (`groceries.list`, `groceries.stats`) wrap reads in a
+  `safeReadBought` helper that catches and returns the empty set on
+  failure. Page renders fine; bought-state appears unchecked.
+- **Write paths** (`groceries.toggleBought`) catch the Redis call and
+  return `{ persisted: false, isBought: input.intendedState, … }`
+  instead of 500. The client keeps the optimistic flip, surfaces a
+  one-time snackbar, and treats the toggle as session-local.
+
+**Why the asymmetric write contract** (`intendedState` in input,
+`persisted` in output): the server cannot read prior state when Redis
+is down, so it cannot synthesise a correct `isBought` in the response
+on its own. The client passes its post-optimistic-flip state as
+`intendedState`; the server confirms it or — on a real failure that
+escapes the Redis catch — surfaces a 500 so the client rolls back.
+
+When adding a new Redis-touching write path, mirror this pattern:
+catch the Redis call separately from the rest of the handler, return
+a `persisted: false` response on Redis failure, and only 500 for
+genuine bugs (Postgres down, derivation crash, etc.).
 
 ---
 

@@ -1,0 +1,77 @@
+<section class="groceries">
+  @if (store.isLoading() && !store.hasItems()) {
+  <div class="groceries__loading" role="status" aria-live="polite">
+    <mat-progress-spinner mode="indeterminate" diameter="48" />
+  </div>
+  } @else {
+  <header class="groceries__header">
+    <div class="groceries__heading">
+      <h1 class="groceries__title">Groceries</h1>
+      @if (store.hasItems()) {
+      <p class="groceries__counter">
+        {{ store.remainingCount() }} of {{ store.totalCount() }} remaining
+      </p>
+      }
+    </div>
+    <button
+      [matButton]="'tonal'"
+      type="button"
+      (click)="onReload()"
+      [disabled]="store.isLoading()"
+      aria-label="Reload groceries"
+    >
+      <kookio-icon name="refresh" />
+      <span>Reload</span>
+    </button>
+  </header>
+
+  @if (!store.hasItems()) {
+  <div class="groceries__empty">
+    <kookio-emoji char="🛒" [size]="64" />
+    <p class="groceries__empty-title">Nothing to buy right now</p>
+    <p class="groceries__empty-hint">
+      Plan a week or stock your pantry to see suggestions.
+    </p>
+    <a [matButton]="'filled'" [routerLink]="planUrl">
+      <kookio-icon name="calendar_today" />
+      <span>Plan your week</span>
+    </a>
+  </div>
+  } @else { @for (group of store.groupedActive(); track group.category) {
+  <section class="groceries__group">
+    <h2 class="groceries__group-title">
+      <kookio-emoji [char]="categoryEmoji(group.category)" [size]="20" />
+      <span>{{ categoryLabel(group.category) }}</span>
+    </h2>
+    <ul class="groceries__list">
+      @for (item of group.items; track item.ingredientCatalogId) {
+      <li>
+        <kookio-grocery-item [item]="item" (boughtChange)="onToggle($event)" />
+      </li>
+      }
+    </ul>
+  </section>
+  } @if (store.boughtCount() > 0) {
+  <section class="groceries__done">
+    <h2 class="groceries__done-title">Done ({{ store.boughtCount() }})</h2>
+    @for (group of store.groupedBought(); track group.category) {
+    <section class="groceries__group">
+      <h3 class="groceries__group-title">
+        <kookio-emoji [char]="categoryEmoji(group.category)" [size]="20" />
+        <span>{{ categoryLabel(group.category) }}</span>
+      </h3>
+      <ul class="groceries__list">
+        @for ( item of group.items; track item.ingredientCatalogId ) {
+        <li>
+          <kookio-grocery-item
+            [item]="item"
+            (boughtChange)="onToggle($event)"
+          />
+        </li>
+        }
+      </ul>
+    </section>
+    }
+  </section>
+  } } }
+</section>
