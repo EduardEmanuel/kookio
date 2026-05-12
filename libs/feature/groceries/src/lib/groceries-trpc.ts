@@ -17,6 +17,19 @@ export interface GroceryItem {
   isBought: boolean;
 }
 
+/**
+ * Envelope returned by `groceries.list`. The flat `items` array is what
+ * the UI consumes; `boughtAvailable` signals whether the per-row
+ * `isBought` values came from a healthy Redis (`true`) or a fallback
+ * empty set after a Redis read failure (`false`). The store uses this
+ * to decide whether the localStorage cache should override the server's
+ * (silent-fallback) `isBought` values for this device.
+ */
+export interface GroceriesListResponse {
+  items: GroceryItem[];
+  boughtAvailable: boolean;
+}
+
 export interface GroceriesStats {
   total: number;
   remaining: number;
@@ -58,7 +71,7 @@ export interface GroceriesToggleBoughtOutput {
  */
 export interface GroceriesTrpcClient {
   groceries: {
-    list: { query(): Promise<GroceryItem[]> };
+    list: { query(): Promise<GroceriesListResponse> };
     stats: { query(): Promise<GroceriesStats> };
     toggleBought: {
       mutate(

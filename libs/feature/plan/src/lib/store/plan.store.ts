@@ -1,7 +1,7 @@
 import { computed, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
-import { EMPTY, from, pipe } from 'rxjs';
+import { EMPTY, firstValueFrom, forkJoin, from, of, pipe } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs';
 import {
   patchState,
@@ -21,7 +21,12 @@ import type {
   RecipeFeedItem,
 } from '@kookio/prisma-client';
 
-import { MEAL_PLAN_TRPC } from '../meal-plan-trpc';
+import {
+  MEAL_PLAN_TRPC,
+  type MealPlanDraftPayload,
+  type MealPlanDraftSlot,
+  type MealPlanTrpcClient,
+} from '../meal-plan-trpc';
 
 const log = noopLogger;
 
@@ -33,14 +38,12 @@ const DRAFT_KEY_PREFIX = 'kookio:plan-draft:';
  * `mealPlan.getCurrent` but is stored sparsely: `slots` only contains
  * entries the user has filled. Empty cells are absent rather than
  * represented as `recipeId: null`.
+ *
+ * Aliased to `MealPlanDraftSlot` (the wire shape exported from
+ * `meal-plan-trpc.ts`) so the local store and the persisted draft on
+ * Redis share a single source of truth.
  */
-export interface PlanSlot {
-  date: string; // ISO datetime, UTC midnight
-  slotType: MealSlotType;
-  recipeId: string;
-  servings: number;
-  recipe: RecipeFeedItem | null;
-}
+export type PlanSlot = MealPlanDraftSlot;
 
 interface PlanState {
   slots: PlanSlot[];
@@ -51,7 +54,7 @@ interface PlanState {
   serverUpdatedAt: number | null;
   isLoading: boolean;
   isSubmitting: boolean;
-  /** True if a localStorage draft newer than the server was restored on load. */
+  /** True if a draft newer than the server was restored on load. */
   hasUnsavedDraft: boolean;
   /** True after any local mutation since last load/submit. */
   isDirty: boolean;
@@ -70,11 +73,6 @@ const initialState: PlanState = {
   hasLoadedOnce: false,
   error: null,
 };
-
-interface DraftPayload {
-  slots: PlanSlot[];
-  savedAt: number;
-}
 
 const slotKey = (date: string, slotType: MealSlotType): string =>
   `${date}|${slotType}`;
@@ -152,12 +150,12 @@ const draftKeyFor = (uid: string): string => `${DRAFT_KEY_PREFIX}${uid}`;
 const safeReadDraft = (
   uid: string,
   isBrowser: boolean,
-): DraftPayload | null => {
+): MealPlanDraftPayload | null => {
   if (!isBrowser) return null;
   try {
     const raw = window.localStorage.getItem(draftKeyFor(uid));
     if (!raw) return null;
-    return JSON.parse(raw) as DraftPayload;
+    return JSON.parse(raw) as MealPlanDraftPayload;
   } catch {
     return null;
   }
@@ -165,7 +163,7 @@ const safeReadDraft = (
 
 const safeWriteDraft = (
   uid: string,
-  payload: DraftPayload,
+  payload: MealPlanDraftPayload,
   isBrowser: boolean,
 ): void => {
   if (!isBrowser) return;
@@ -173,8 +171,8 @@ const safeWriteDraft = (
     window.localStorage.setItem(draftKeyFor(uid), JSON.stringify(payload));
   } catch {
     // Quota / Safari private browsing / disabled storage. Mutations still
-    // work in-memory for this session — losing the draft on refresh is the
-    // worst case.
+    // work in-memory for this session — losing the local draft on refresh
+    // is the worst case (the Redis copy still covers cross-device).
   }
 };
 
@@ -188,22 +186,52 @@ const safeClearDraft = (uid: string, isBrowser: boolean): void => {
 };
 
 /**
+ * Three-way reconciliation: the freshest draft (local OR remote) wins
+ * IF it is strictly newer than the server's last update. Otherwise the
+ * server data is canonical and both drafts are discarded.
+ *
+ * Why both can be in play simultaneously: the user might have started a
+ * draft on desktop (writes to Redis + this device's localStorage), then
+ * opened the planner on a phone (Redis-only — phone has no local
+ * draft), then back on desktop. Each device's localStorage is
+ * independent; Redis is the cross-device truth. Picking the latest
+ * timestamp handles every interleaving.
+ */
+const pickFreshestDraft = (
+  local: MealPlanDraftPayload | null,
+  remote: MealPlanDraftPayload | null,
+  serverUpdatedAt: number,
+): MealPlanDraftPayload | null => {
+  const candidates: MealPlanDraftPayload[] = [];
+  if (local && local.savedAt > serverUpdatedAt) candidates.push(local);
+  if (remote && remote.savedAt > serverUpdatedAt) candidates.push(remote);
+  if (candidates.length === 0) return null;
+  return candidates.reduce((a, b) => (a.savedAt > b.savedAt ? a : b));
+};
+
+/**
  * Plan editor state — the single source of truth for the `/plan` page.
  *
  * The planner is a draft-and-submit UI: every mutation patches local state
- * (and writes a localStorage draft) without hitting the server. The user
- * commits the whole timeline atomically via `submit()`. This keeps the
- * drag UX snappy (no per-slot roundtrip) and lets `CanDeactivate` warn
- * before lost work.
+ * (and writes a draft to BOTH localStorage and Redis) without hitting the
+ * meal-plan write endpoint. The user commits the whole timeline atomically
+ * via `submit()`. This keeps the drag UX snappy (no per-slot roundtrip) and
+ * lets `CanDeactivate` warn before lost work.
  *
  * The data model is flat — there is no plan entity, just a user-scoped
  * collection of `MealSlot` rows. The store mirrors that shape: `slots`
  * is the entire planner state.
  *
+ * Draft persistence is belt-and-suspenders:
+ *   - localStorage owns offline mode and zero-latency writes
+ *   - Redis (via mealPlan.setDraft) owns cross-device sync
+ *   - Each mutation writes both; load reads both and picks the freshest
+ *   - Redis failures are non-blocking — localStorage covers the gap
+ *
  * Restore policy on load:
  *   - server fetched → `serverUpdatedAt` = max(slot.updatedAt)
- *   - if draft.savedAt > serverUpdatedAt: restore draft, set hasUnsavedDraft
- *   - otherwise: discard draft (server moved on, draft is stale)
+ *   - both drafts compared against serverUpdatedAt; freshest wins
+ *   - if neither beats the server, both are discarded as stale
  */
 export const PlanStore = signalStore(
   { providedIn: 'root' },
@@ -236,22 +264,43 @@ export const PlanStore = signalStore(
     const authStore = inject(AuthStore);
     const isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
+    const writeRemoteDraft = (payload: MealPlanDraftPayload): void => {
+      // Fire-and-forget — failure is non-blocking for the UI. The store
+      // still has the in-memory state and localStorage still holds the
+      // draft, so the user's session continues unaffected.
+      firstValueFrom(from(trpc.mealPlan.setDraft.mutate(payload))).catch(
+        (err: unknown) => {
+          log.warn({ err }, 'mealPlan.setDraft failed (non-blocking)');
+        },
+      );
+    };
+
+    const clearRemoteDraft = (): void => {
+      firstValueFrom(from(trpc.mealPlan.clearDraft.mutate())).catch(
+        (err: unknown) => {
+          log.warn({ err }, 'mealPlan.clearDraft failed (non-blocking)');
+        },
+      );
+    };
+
     const persistDraft = (): void => {
       const uid = authStore.session()?.uid;
       if (!uid) return;
-      safeWriteDraft(
-        uid,
-        {
-          slots: store.slots(),
-          savedAt: Date.now(),
-        },
-        isBrowser,
-      );
+      const payload: MealPlanDraftPayload = {
+        slots: store.slots(),
+        savedAt: Date.now(),
+      };
+      // Sync localStorage write covers offline + zero-latency UX. Async
+      // Redis write covers cross-device sync; failure is silently
+      // absorbed.
+      safeWriteDraft(uid, payload, isBrowser);
+      writeRemoteDraft(payload);
     };
 
     const clearDraftFor = (uid: string | undefined): void => {
       if (!uid) return;
       safeClearDraft(uid, isBrowser);
+      clearRemoteDraft();
     };
 
     return {
@@ -260,23 +309,44 @@ export const PlanStore = signalStore(
       },
 
       /**
-       * Load the user's slots. Restores a localStorage draft only if its
-       * `savedAt` is strictly newer than the latest server slot's
-       * `updatedAt`. Otherwise the (stale) draft is discarded silently.
+       * Load the user's slots. Fetches the server slots and the remote
+       * draft in parallel, then picks the freshest available draft
+       * (local OR remote, both compared against serverUpdatedAt). A
+       * stale draft from either source is silently discarded.
        */
       load: rxMethod<void>(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap(() =>
-            from(trpc.mealPlan.getCurrent.query()).pipe(
-              tap((serverSlots: MealSlotWithRecipe[]) => {
+            forkJoin({
+              serverSlots: from(trpc.mealPlan.getCurrent.query()),
+              // Remote-draft failure must not poison the load — fall
+              // back to localStorage-only reconciliation if Redis is
+              // down.
+              remoteDraft: from(trpc.mealPlan.getDraft.query()).pipe(
+                catchError((err: unknown) => {
+                  log.warn(
+                    { err },
+                    'mealPlan.getDraft failed (falling back to localStorage)',
+                  );
+                  return of(null as MealPlanDraftPayload | null);
+                }),
+              ),
+            }).pipe(
+              tap(({ serverSlots, remoteDraft }) => {
                 const serverUpdatedAt = serverFreshnessTimestamp(serverSlots);
                 const uid = authStore.session()?.uid;
-                const draft = uid ? safeReadDraft(uid, isBrowser) : null;
+                const localDraft = uid ? safeReadDraft(uid, isBrowser) : null;
 
-                if (draft && draft.savedAt > serverUpdatedAt) {
+                const winner = pickFreshestDraft(
+                  localDraft,
+                  remoteDraft,
+                  serverUpdatedAt,
+                );
+
+                if (winner) {
                   patchState(store, {
-                    slots: draft.slots,
+                    slots: winner.slots,
                     serverUpdatedAt,
                     isLoading: false,
                     hasUnsavedDraft: true,
@@ -353,8 +423,9 @@ export const PlanStore = signalStore(
       },
 
       /**
-       * Discard the local draft and reset the banner flag. The page
-       * should follow up with a `load()` to repopulate from the server.
+       * Discard the local + remote draft and reset the banner flag. The
+       * page should follow up with a `load()` to repopulate from the
+       * server.
        */
       discardDraft: (): void => {
         const uid = authStore.session()?.uid;
@@ -364,7 +435,8 @@ export const PlanStore = signalStore(
 
       /**
        * Submit the current draft to the server atomically. On success,
-       * resets dirty + draft + records the new serverUpdatedAt.
+       * resets dirty + clears both local + remote draft + records the
+       * new serverUpdatedAt.
        */
       submit: rxMethod<void>(
         pipe(
@@ -408,3 +480,7 @@ export const PlanStore = signalStore(
 
 // Re-exported so callers (template lookups, specs) share the same key shape.
 export { slotKey };
+
+// Re-exported via the trpc-aware alias so consumers that want the wire
+// shape (e.g. cross-tab sync prototypes) land on the same type.
+export type { MealPlanTrpcClient };

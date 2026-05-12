@@ -29,6 +29,18 @@ const GroceriesStatsOutputSchema = z.object({
   remaining: z.number().int().nonnegative(),
 });
 
+const GroceriesListOutputSchema = z.object({
+  items: z.array(GroceryItemSchema),
+  /**
+   * False when the bought-state read fell back to an empty set because
+   * Redis was unreachable. The client's load path uses this signal to
+   * decide whether to trust `item.isBought` (true → server canonical)
+   * or to override with the localStorage cache (false → Redis is down,
+   * cache holds the truth this session).
+   */
+  boughtAvailable: z.boolean(),
+});
+
 const ToggleBoughtInputSchema = z.object({
   ingredientCatalogId: UuidIdSchema,
   intendedState: z.boolean(),
@@ -104,21 +116,26 @@ const loadDerivedRows = async (
 
 /**
  * Bought-state is a soft preference — a Redis blip should not break the
- * grocery list itself. Read failures degrade to "nothing checked"; the user
- * can re-tick what they had, and the next successful read restores state.
+ * grocery list itself. Read failures degrade to "nothing checked", and the
+ * `available` flag tells the caller whether the empty set is authentic
+ * (Redis up, no items bought) or a fallback (Redis down). The `list`
+ * endpoint forwards `available` to the client so the client-side
+ * localStorage cache can override the empty isBought values when Redis
+ * is degraded.
  */
 const safeReadBought = async (
   ctx: Context,
   userId: string,
-): Promise<readonly string[]> => {
+): Promise<{ ids: readonly string[]; available: boolean }> => {
   try {
-    return await ctx.groceriesBought.get(userId);
+    const ids = await ctx.groceriesBought.get(userId);
+    return { ids, available: true };
   } catch (err) {
     log.error(
       { err, userId },
       'groceries: bought-state read failed, falling back to empty set',
     );
-    return [];
+    return { ids: [], available: false };
   }
 };
 
@@ -133,21 +150,24 @@ export const groceries = router({
    * Returns a flat array; the client groups by `category` for display.
    */
   list: onboardedProcedure
-    .output(z.array(GroceryItemSchema))
+    .output(GroceriesListOutputSchema)
     .query(async ({ ctx }) => {
       const userId = ctx.session!.uid;
 
       try {
-        const [derived, boughtIds] = await Promise.all([
+        const [derived, bought] = await Promise.all([
           loadDerivedRows(ctx, userId),
           safeReadBought(ctx, userId),
         ]);
 
-        const boughtSet = new Set(boughtIds);
-        return derived.map((row) => ({
-          ...row,
-          isBought: boughtSet.has(row.ingredientCatalogId),
-        }));
+        const boughtSet = new Set(bought.ids);
+        return {
+          items: derived.map((row) => ({
+            ...row,
+            isBought: boughtSet.has(row.ingredientCatalogId),
+          })),
+          boughtAvailable: bought.available,
+        };
       } catch (err) {
         log.error({ err, userId }, 'groceries.list failed');
         throw new TRPCError({
@@ -170,12 +190,12 @@ export const groceries = router({
       const userId = ctx.session!.uid;
 
       try {
-        const [derived, boughtIds] = await Promise.all([
+        const [derived, bought] = await Promise.all([
           loadDerivedRows(ctx, userId),
           safeReadBought(ctx, userId),
         ]);
 
-        const boughtSet = new Set(boughtIds);
+        const boughtSet = new Set(bought.ids);
         const total = derived.length;
         const remaining = derived.filter(
           (r) => !boughtSet.has(r.ingredientCatalogId),

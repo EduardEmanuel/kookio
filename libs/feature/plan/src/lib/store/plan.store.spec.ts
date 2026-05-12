@@ -11,7 +11,11 @@ import {
   type RecipeFeedItem,
 } from '@kookio/prisma-client';
 
-import { MEAL_PLAN_TRPC, type MealPlanTrpcClient } from '../meal-plan-trpc';
+import {
+  MEAL_PLAN_TRPC,
+  type MealPlanDraftPayload,
+  type MealPlanTrpcClient,
+} from '../meal-plan-trpc';
 import { PlanStore, slotKey } from './plan.store';
 
 const Slot = MealSlotTypeSchema.enum;
@@ -63,15 +67,28 @@ const buildServerSlot = (overrides: {
 const setup = (trpcOverrides?: {
   getCurrent?: ReturnType<typeof vi.fn>;
   setMealPlan?: ReturnType<typeof vi.fn>;
+  getDraft?: ReturnType<typeof vi.fn>;
+  setDraft?: ReturnType<typeof vi.fn>;
+  clearDraft?: ReturnType<typeof vi.fn>;
 }) => {
   const getCurrent = trpcOverrides?.getCurrent ?? vi.fn().mockResolvedValue([]);
   const setMealPlan =
     trpcOverrides?.setMealPlan ?? vi.fn().mockResolvedValue([]);
+  // Default Redis mocks: no remote draft, all writes succeed. Tests
+  // exercising specific Redis behavior override these.
+  const getDraft = trpcOverrides?.getDraft ?? vi.fn().mockResolvedValue(null);
+  const setDraft =
+    trpcOverrides?.setDraft ?? vi.fn().mockResolvedValue({ persisted: true });
+  const clearDraft =
+    trpcOverrides?.clearDraft ?? vi.fn().mockResolvedValue({ persisted: true });
 
   const trpc: MealPlanTrpcClient = {
     mealPlan: {
       getCurrent: { query: getCurrent },
       setMealPlan: { mutate: setMealPlan },
+      getDraft: { query: getDraft },
+      setDraft: { mutate: setDraft },
+      clearDraft: { mutate: clearDraft },
     },
   };
 
@@ -90,8 +107,33 @@ const setup = (trpcOverrides?: {
   });
 
   const store = TestBed.inject(PlanStore);
-  return { store, authStore, trpc, getCurrent, setMealPlan };
+  return {
+    store,
+    authStore,
+    trpc,
+    getCurrent,
+    setMealPlan,
+    getDraft,
+    setDraft,
+    clearDraft,
+  };
 };
+
+const buildDraftPayload = (
+  recipeId: string,
+  savedAt: Date,
+): MealPlanDraftPayload => ({
+  slots: [
+    {
+      date: '2026-05-05T00:00:00.000Z',
+      slotType: Slot.DINNER,
+      recipeId,
+      servings: 3,
+      recipe: null,
+    },
+  ],
+  savedAt: savedAt.getTime(),
+});
 
 beforeEach(() => {
   window.localStorage.clear();
@@ -179,7 +221,7 @@ describe('PlanStore', () => {
       expect(store.isLoading()).toBe(false);
     });
 
-    it('restores a draft strictly newer than the latest server slot', async () => {
+    it('restores a localStorage draft strictly newer than the latest server slot', async () => {
       const serverSlot = buildServerSlot({
         date: new Date('2026-05-04T00:00:00.000Z'),
         slotType: Slot.LUNCH,
@@ -418,6 +460,237 @@ describe('PlanStore', () => {
       store.discardDraft();
       expect(store.hasUnsavedDraft()).toBe(false);
       expect(window.localStorage.getItem(DRAFT_KEY)).toBeNull();
+    });
+  });
+
+  describe('cross-device draft sync (Redis)', () => {
+    it('restores a remote draft when localStorage is empty and remote is fresher than server', async () => {
+      const serverSlot = buildServerSlot({
+        date: new Date('2026-05-04T00:00:00.000Z'),
+        slotType: Slot.LUNCH,
+        recipeId: 'r-server',
+        recipe: buildRecipe('r-server'),
+        updatedAt: new Date('2026-05-01T00:00:00.000Z'),
+      });
+      const remoteDraft = buildDraftPayload(
+        'r-remote',
+        new Date('2026-05-05T00:00:00.000Z'),
+      );
+      const { store } = setup({
+        getCurrent: vi.fn().mockResolvedValue([serverSlot]),
+        getDraft: vi.fn().mockResolvedValue(remoteDraft),
+      });
+
+      store.load();
+      await flush();
+
+      expect(store.hasUnsavedDraft()).toBe(true);
+      expect(store.isDirty()).toBe(true);
+      expect(store.slots()).toEqual(remoteDraft.slots);
+    });
+
+    it('picks the remote draft when both local and remote beat the server but remote is newer', async () => {
+      const serverSlot = buildServerSlot({
+        date: new Date('2026-05-04T00:00:00.000Z'),
+        slotType: Slot.LUNCH,
+        recipeId: 'r-server',
+        recipe: buildRecipe('r-server'),
+        updatedAt: new Date('2026-05-01T00:00:00.000Z'),
+      });
+      const localDraft = buildDraftPayload(
+        'r-local',
+        new Date('2026-05-03T00:00:00.000Z'),
+      );
+      const remoteDraft = buildDraftPayload(
+        'r-remote',
+        new Date('2026-05-05T00:00:00.000Z'),
+      );
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(localDraft));
+      const { store } = setup({
+        getCurrent: vi.fn().mockResolvedValue([serverSlot]),
+        getDraft: vi.fn().mockResolvedValue(remoteDraft),
+      });
+
+      store.load();
+      await flush();
+
+      expect(store.slots()[0].recipeId).toBe('r-remote');
+    });
+
+    it('picks the local draft when both beat the server but local is newer', async () => {
+      const serverSlot = buildServerSlot({
+        date: new Date('2026-05-04T00:00:00.000Z'),
+        slotType: Slot.LUNCH,
+        recipeId: 'r-server',
+        recipe: buildRecipe('r-server'),
+        updatedAt: new Date('2026-05-01T00:00:00.000Z'),
+      });
+      const localDraft = buildDraftPayload(
+        'r-local',
+        new Date('2026-05-06T00:00:00.000Z'),
+      );
+      const remoteDraft = buildDraftPayload(
+        'r-remote',
+        new Date('2026-05-04T00:00:00.000Z'),
+      );
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(localDraft));
+      const { store } = setup({
+        getCurrent: vi.fn().mockResolvedValue([serverSlot]),
+        getDraft: vi.fn().mockResolvedValue(remoteDraft),
+      });
+
+      store.load();
+      await flush();
+
+      expect(store.slots()[0].recipeId).toBe('r-local');
+    });
+
+    it('falls back to localStorage when getDraft fails (Redis down)', async () => {
+      const serverSlot = buildServerSlot({
+        date: new Date('2026-05-04T00:00:00.000Z'),
+        slotType: Slot.LUNCH,
+        recipeId: 'r-server',
+        recipe: buildRecipe('r-server'),
+        updatedAt: new Date('2026-05-01T00:00:00.000Z'),
+      });
+      const localDraft = buildDraftPayload(
+        'r-local',
+        new Date('2026-05-05T00:00:00.000Z'),
+      );
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(localDraft));
+      const { store } = setup({
+        getCurrent: vi.fn().mockResolvedValue([serverSlot]),
+        getDraft: vi
+          .fn()
+          .mockRejectedValue(new Error('Redis temporarily unavailable')),
+      });
+
+      store.load();
+      await flush();
+
+      // Despite Redis failure, the local draft restores. Load still
+      // resolves cleanly — the planner page renders.
+      expect(store.hasUnsavedDraft()).toBe(true);
+      expect(store.slots()[0].recipeId).toBe('r-local');
+      expect(store.isLoading()).toBe(false);
+      expect(store.error()).toBeNull();
+    });
+
+    it('discards both drafts when neither beats the server', async () => {
+      const serverSlot = buildServerSlot({
+        date: new Date('2026-05-04T00:00:00.000Z'),
+        slotType: Slot.LUNCH,
+        recipeId: 'r-server',
+        recipe: buildRecipe('r-server'),
+        updatedAt: new Date('2026-05-10T00:00:00.000Z'),
+      });
+      const staleLocal = buildDraftPayload(
+        'r-stale-local',
+        new Date('2026-05-02T00:00:00.000Z'),
+      );
+      const staleRemote = buildDraftPayload(
+        'r-stale-remote',
+        new Date('2026-05-03T00:00:00.000Z'),
+      );
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(staleLocal));
+      const { store, clearDraft } = setup({
+        getCurrent: vi.fn().mockResolvedValue([serverSlot]),
+        getDraft: vi.fn().mockResolvedValue(staleRemote),
+      });
+
+      store.load();
+      await flush();
+
+      expect(store.hasUnsavedDraft()).toBe(false);
+      expect(store.isDirty()).toBe(false);
+      expect(store.slots()[0].recipeId).toBe('r-server');
+      expect(window.localStorage.getItem(DRAFT_KEY)).toBeNull();
+      // Remote stale draft also gets a clear call.
+      expect(clearDraft).toHaveBeenCalled();
+    });
+
+    it('writes the draft to Redis on every mutation (fire-and-forget)', async () => {
+      const { store, setDraft } = setup({
+        getCurrent: vi.fn().mockResolvedValue([]),
+      });
+      store.load();
+      await flush();
+
+      store.setSlot({
+        date: '2026-05-04T00:00:00.000Z',
+        slotType: Slot.LUNCH,
+        recipeId: 'r1',
+      });
+      await flush();
+
+      expect(setDraft).toHaveBeenCalledTimes(1);
+      const payload = setDraft.mock.calls[0][0] as MealPlanDraftPayload;
+      expect(payload.slots).toHaveLength(1);
+      expect(payload.slots[0].recipeId).toBe('r1');
+      expect(typeof payload.savedAt).toBe('number');
+    });
+
+    it('clears the remote draft on submit success', async () => {
+      const { store, clearDraft } = setup({
+        getCurrent: vi.fn().mockResolvedValue([]),
+        setMealPlan: vi.fn().mockResolvedValue([]),
+      });
+      store.load();
+      await flush();
+      store.setSlot({
+        date: '2026-05-04T00:00:00.000Z',
+        slotType: Slot.LUNCH,
+        recipeId: 'r1',
+      });
+      await flush();
+
+      store.submit();
+      await flush();
+
+      expect(clearDraft).toHaveBeenCalled();
+    });
+
+    it('clears the remote draft on discardDraft', async () => {
+      window.localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify(
+          buildDraftPayload('r-x', new Date(Date.now() + 86_400_000)),
+        ),
+      );
+      const { store, clearDraft } = setup({
+        getCurrent: vi.fn().mockResolvedValue([]),
+      });
+      store.load();
+      await flush();
+
+      store.discardDraft();
+
+      expect(clearDraft).toHaveBeenCalled();
+    });
+
+    it('absorbs a setDraft rejection silently — UI stays usable', async () => {
+      const { store, setDraft } = setup({
+        getCurrent: vi.fn().mockResolvedValue([]),
+        setDraft: vi
+          .fn()
+          .mockRejectedValue(new Error('Redis temporarily unavailable')),
+      });
+      store.load();
+      await flush();
+
+      store.setSlot({
+        date: '2026-05-04T00:00:00.000Z',
+        slotType: Slot.LUNCH,
+        recipeId: 'r1',
+      });
+      await flush();
+
+      // Mutation succeeded locally; localStorage took the write; Redis
+      // failure didn't surface as an error.
+      expect(store.slots()).toHaveLength(1);
+      expect(store.error()).toBeNull();
+      expect(window.localStorage.getItem(DRAFT_KEY)).not.toBeNull();
+      expect(setDraft).toHaveBeenCalled();
     });
   });
 });

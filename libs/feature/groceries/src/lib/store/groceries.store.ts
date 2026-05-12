@@ -1,4 +1,5 @@
-import { computed, inject } from '@angular/core';
+import { computed, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 import { EMPTY, from, pipe } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs';
@@ -11,6 +12,7 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
+import { AuthStore } from '@kookio/feature-auth';
 import { noopLogger } from '@kookio/core-logging';
 import type { IngredientCategory } from '@kookio/prisma-client';
 
@@ -25,6 +27,13 @@ export interface GroceriesToggleInput {
 }
 
 const log = noopLogger;
+
+/**
+ * localStorage key prefix for the bought-state cache; the per-user
+ * namespace is appended on read/write. Mirrors the plan-draft pattern
+ * (`kookio:plan-draft:<uid>`) for visual symmetry across stores.
+ */
+const BOUGHT_CACHE_PREFIX = 'kookio:groceries-bought:';
 
 interface GroceriesState {
   items: GroceryItem[];
@@ -101,6 +110,50 @@ const groupByCategory = (items: readonly GroceryItem[]): GroceryGroup[] => {
     .sort((a, b) => categoryRank(a.category) - categoryRank(b.category));
 };
 
+interface BoughtCachePayload {
+  boughtIds: string[];
+}
+
+const cacheKeyFor = (uid: string): string => `${BOUGHT_CACHE_PREFIX}${uid}`;
+
+const safeReadCache = (
+  uid: string,
+  isBrowser: boolean,
+): BoughtCachePayload | null => {
+  if (!isBrowser) return null;
+  try {
+    const raw = window.localStorage.getItem(cacheKeyFor(uid));
+    if (!raw) return null;
+    return JSON.parse(raw) as BoughtCachePayload;
+  } catch {
+    return null;
+  }
+};
+
+const safeWriteCache = (
+  uid: string,
+  payload: BoughtCachePayload,
+  isBrowser: boolean,
+): void => {
+  if (!isBrowser) return;
+  try {
+    window.localStorage.setItem(cacheKeyFor(uid), JSON.stringify(payload));
+  } catch {
+    // Quota / Safari private browsing / disabled storage — accept the
+    // loss. The toggle still works in-memory; cross-device sync via
+    // Redis still works when reachable.
+  }
+};
+
+const applyBoughtCacheOverride = (
+  items: GroceryItem[],
+  cached: ReadonlySet<string>,
+): GroceryItem[] =>
+  items.map((i) => ({
+    ...i,
+    isBought: cached.has(i.ingredientCatalogId),
+  }));
+
 /**
  * Groceries CRUD state.
  *
@@ -109,10 +162,27 @@ const groupByCategory = (items: readonly GroceryItem[]): GroceryGroup[] => {
  * visit. The reload button on the page calls `load()` again to pick up
  * mid-session changes without a navigation.
  *
+ * Bought-state persistence is belt-and-suspenders, mirroring the plan
+ * draft strategy:
+ *   - localStorage holds the device's view of bought IDs (zero-latency,
+ *     offline-friendly)
+ *   - Redis (via `groceries.toggleBought`) holds the cross-device
+ *     authoritative state
+ *   - Each toggle writes both
+ *   - On `load`, the server response carries `boughtAvailable: boolean`
+ *     so the client knows whether to trust `item.isBought` (Redis up,
+ *     server canonical → also sync localStorage to match) or to override
+ *     it from localStorage (Redis down, server returned a fallback empty
+ *     set)
+ *
+ * Documented limitation: when Redis was unreachable during a toggle
+ * (`persisted: false`), the localStorage cache holds the change until
+ * Redis recovers. On the next successful list load the server's data is
+ * canonical and any unconfirmed local change is dropped. A pending-writes
+ * queue with retry-on-recovery would close that gap; out of scope here.
+ *
  * `toggleBought` is optimistic — flips the local `isBought` immediately
- * and rolls back on server failure. The bought-state lives in Redis with
- * a 7-day TTL; the server returns updated counts on every successful
- * toggle so the counter stays honest after stale entries get filtered out.
+ * (and writes localStorage) and rolls back on real server failure.
  */
 export const GroceriesStore = signalStore(
   { providedIn: 'root' },
@@ -138,6 +208,17 @@ export const GroceriesStore = signalStore(
 
   withMethods((store) => {
     const trpc = inject(GROCERIES_TRPC);
+    const authStore = inject(AuthStore);
+    const isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
+    const writeCacheFromItems = (items: GroceryItem[]): void => {
+      const uid = authStore.session()?.uid;
+      if (!uid) return;
+      const boughtIds = items
+        .filter((i) => i.isBought)
+        .map((i) => i.ingredientCatalogId);
+      safeWriteCache(uid, { boughtIds }, isBrowser);
+    };
 
     return {
       clearError: (): void => {
@@ -153,7 +234,31 @@ export const GroceriesStore = signalStore(
           tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap(() =>
             from(trpc.groceries.list.query()).pipe(
-              tap((items) => patchState(store, { items, isLoading: false })),
+              tap((response) => {
+                const uid = authStore.session()?.uid;
+                let items = response.items;
+
+                if (response.boughtAvailable) {
+                  // Server canonical — sync localStorage to match. This
+                  // covers cross-device updates: the device that just
+                  // loaded sees the latest bought-state from any device,
+                  // and its cache catches up.
+                  writeCacheFromItems(items);
+                } else {
+                  // Redis is down: server returned isBought=false for
+                  // everything. Override from localStorage so the user
+                  // doesn't lose their visible state on a Redis blip.
+                  const cached = uid ? safeReadCache(uid, isBrowser) : null;
+                  if (cached) {
+                    items = applyBoughtCacheOverride(
+                      items,
+                      new Set(cached.boughtIds),
+                    );
+                  }
+                }
+
+                patchState(store, { items, isLoading: false });
+              }),
               catchError((err: unknown) => {
                 log.warn({ err }, 'groceries.list failed');
                 patchState(store, {
@@ -182,17 +287,21 @@ export const GroceriesStore = signalStore(
             };
           }),
           tap((mutationInput) => {
+            const nextItems = store
+              .items()
+              .map((i) =>
+                i.ingredientCatalogId === mutationInput.ingredientCatalogId
+                  ? { ...i, isBought: mutationInput.intendedState }
+                  : i,
+              );
             patchState(store, {
               isMutating: true,
               error: null,
-              items: store
-                .items()
-                .map((i) =>
-                  i.ingredientCatalogId === mutationInput.ingredientCatalogId
-                    ? { ...i, isBought: mutationInput.intendedState }
-                    : i,
-                ),
+              items: nextItems,
             });
+            // Belt write: localStorage in sync with the optimistic flip.
+            // Survives refresh + offline + Redis-down cases.
+            writeCacheFromItems(nextItems);
           }),
           switchMap((mutationInput) =>
             from(trpc.groceries.toggleBought.mutate(mutationInput)).pipe(
@@ -201,21 +310,27 @@ export const GroceriesStore = signalStore(
                   // Reconcile with the server's authoritative `isBought` —
                   // protects against drift if local state was already stale
                   // (e.g. another tab toggled the same row a moment earlier).
+                  const reconciled = store
+                    .items()
+                    .map((i) =>
+                      i.ingredientCatalogId ===
+                      mutationInput.ingredientCatalogId
+                        ? { ...i, isBought: result.isBought }
+                        : i,
+                    );
                   patchState(store, {
                     isMutating: false,
-                    items: store
-                      .items()
-                      .map((i) =>
-                        i.ingredientCatalogId ===
-                        mutationInput.ingredientCatalogId
-                          ? { ...i, isBought: result.isBought }
-                          : i,
-                      ),
+                    items: reconciled,
                   });
+                  // Keep localStorage in sync with the post-reconcile
+                  // state (server's isBought may differ from the
+                  // optimistic flip if another device raced).
+                  writeCacheFromItems(reconciled);
                 } else {
                   // Redis blip — server confirmed the toggle but couldn't
-                  // persist. Keep the optimistic flip and surface a notice
-                  // the page renders as a one-time snackbar.
+                  // persist. Keep the optimistic flip + localStorage write
+                  // (already done above) and surface a notice the page
+                  // renders as a one-time snackbar.
                   patchState(store, {
                     isMutating: false,
                     unpersistedNotice: true,
@@ -225,19 +340,21 @@ export const GroceriesStore = signalStore(
               catchError((err: unknown) => {
                 log.warn({ err }, 'groceries.toggleBought failed');
                 // Real failure (network down, derivation crash, etc.) — roll
-                // back the optimistic flip back to the prior state.
+                // back the optimistic flip in BOTH the in-memory state and
+                // localStorage.
+                const rolledBack = store
+                  .items()
+                  .map((i) =>
+                    i.ingredientCatalogId === mutationInput.ingredientCatalogId
+                      ? { ...i, isBought: !mutationInput.intendedState }
+                      : i,
+                  );
                 patchState(store, {
                   isMutating: false,
                   error: errorMessage('toggle', err),
-                  items: store
-                    .items()
-                    .map((i) =>
-                      i.ingredientCatalogId ===
-                      mutationInput.ingredientCatalogId
-                        ? { ...i, isBought: !mutationInput.intendedState }
-                        : i,
-                    ),
+                  items: rolledBack,
                 });
+                writeCacheFromItems(rolledBack);
                 return EMPTY;
               }),
             ),

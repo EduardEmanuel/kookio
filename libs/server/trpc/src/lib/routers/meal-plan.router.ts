@@ -2,6 +2,7 @@ import z from 'zod';
 
 import {
   MealPlanSetInputSchema,
+  MealSlotTypeSchema,
   MealSlotWithRecipeSchema,
   type MealSlotWithRecipe,
 } from '@kookio/prisma-client';
@@ -9,6 +10,27 @@ import { createLogger } from '@kookio/server-logger';
 
 import { onboardedProcedure } from '../middlewares/auth';
 import { router, TRPCError } from '../trpc';
+
+const DraftSlotInputSchema = z.object({
+  date: z.string().datetime(),
+  slotType: MealSlotTypeSchema,
+  recipeId: z.string().min(1),
+  servings: z.number().int().min(1).max(20),
+  // Pass-through — the client uses the cached recipe blob to render
+  // restored drafts without a re-fetch. Server doesn't introspect the
+  // shape (the recipe lives in Postgres anyway and could be re-fetched
+  // if missing).
+  recipe: z.unknown().nullable(),
+});
+
+const DraftPayloadSchema = z.object({
+  slots: z.array(DraftSlotInputSchema),
+  savedAt: z.number().int().nonnegative(),
+});
+
+const DraftPersistedOutputSchema = z.object({
+  persisted: z.boolean(),
+});
 
 const log = createLogger('trpc', { router: 'mealPlan' });
 
@@ -148,6 +170,75 @@ export const mealPlan = router({
           message: 'Failed to save meal plan',
           cause: err,
         });
+      }
+    }),
+
+  /**
+   * Onboarded — fetch the caller's persisted draft (or null if none).
+   * Sits alongside `PlanStore`'s localStorage write — Redis owns the
+   * cross-device sync. Read failures degrade to null so the load path
+   * falls back to localStorage cleanly.
+   */
+  getDraft: onboardedProcedure
+    .output(DraftPayloadSchema.nullable())
+    .query(async ({ ctx }) => {
+      const userId = ctx.session!.uid;
+
+      try {
+        return await ctx.mealPlanDraft.get(userId);
+      } catch (err) {
+        log.warn(
+          { err, userId },
+          'mealPlan.getDraft: store unavailable, returning null',
+        );
+        return null;
+      }
+    }),
+
+  /**
+   * Onboarded — persist a draft. `persisted: false` when the underlying
+   * store (Redis) is down — the client treats it as "session-local
+   * only, won't sync across devices for this hop". Mirrors the
+   * `groceries.toggleBought` graceful-degradation contract.
+   */
+  setDraft: onboardedProcedure
+    .input(DraftPayloadSchema)
+    .output(DraftPersistedOutputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session!.uid;
+
+      try {
+        await ctx.mealPlanDraft.set(userId, input);
+        return { persisted: true };
+      } catch (err) {
+        log.warn(
+          { err, userId },
+          'mealPlan.setDraft: store unavailable, returning persisted:false',
+        );
+        return { persisted: false };
+      }
+    }),
+
+  /**
+   * Onboarded — drop the persisted draft. Called after a successful
+   * submit and on explicit "discard draft". Same `persisted: false`
+   * fallback as setDraft so the client UX never gets stuck on a Redis
+   * blip.
+   */
+  clearDraft: onboardedProcedure
+    .output(DraftPersistedOutputSchema)
+    .mutation(async ({ ctx }) => {
+      const userId = ctx.session!.uid;
+
+      try {
+        await ctx.mealPlanDraft.clear(userId);
+        return { persisted: true };
+      } catch (err) {
+        log.warn(
+          { err, userId },
+          'mealPlan.clearDraft: store unavailable, returning persisted:false',
+        );
+        return { persisted: false };
       }
     }),
 });
