@@ -9,7 +9,7 @@ import type {
 
 import type { AuthSession } from '@kookio/prisma-client';
 
-import { authGuard, guestGuard, roleGuard } from './guards';
+import { authGuard, guestGuard } from './guards';
 import { AuthStore } from './auth';
 import { createMockAuthStore } from './testing/auth-store.mock';
 
@@ -107,79 +107,5 @@ describe('guestGuard', () => {
     );
     expect(result).toBeInstanceOf(UrlTree);
     expect(router.serializeUrl(result as UrlTree)).toBe('/');
-  });
-});
-
-// ─── roleGuard ────────────────────────────────────────────────────────────────
-
-describe('roleGuard', () => {
-  it('redirects to /login when not authenticated', async () => {
-    setup(false);
-    const router = TestBed.inject(Router);
-    const result = await TestBed.runInInjectionContext(() =>
-      firstValueFrom(
-        roleGuard('ADMIN')(fakeRoute, fakeState('/admin')) as ReturnType<
-          typeof firstValueFrom
-        >,
-      ),
-    );
-    expect(result).toBeInstanceOf(UrlTree);
-    expect(router.serializeUrl(result as UrlTree)).toBe('/login');
-  });
-
-  it('redirects to /403 when authenticated but session is null', async () => {
-    setup(true, null);
-    const router = TestBed.inject(Router);
-    const result = await TestBed.runInInjectionContext(() =>
-      firstValueFrom(
-        roleGuard('ADMIN')(fakeRoute, fakeState('/admin')) as ReturnType<
-          typeof firstValueFrom
-        >,
-      ),
-    );
-    expect(result).toBeInstanceOf(UrlTree);
-    expect(router.serializeUrl(result as UrlTree)).toBe('/403');
-  });
-
-  it('redirects to /403 when authenticated but role is missing', async () => {
-    const session = { roles: ['USER'] } as unknown as AuthSession;
-    setup(true, session);
-    const router = TestBed.inject(Router);
-    const result = await TestBed.runInInjectionContext(() =>
-      firstValueFrom(
-        roleGuard('ADMIN')(fakeRoute, fakeState('/admin')) as ReturnType<
-          typeof firstValueFrom
-        >,
-      ),
-    );
-    expect(result).toBeInstanceOf(UrlTree);
-    expect(router.serializeUrl(result as UrlTree)).toBe('/403');
-  });
-
-  it('returns true when user has the required role', async () => {
-    const session = { roles: ['ADMIN'] } as unknown as AuthSession;
-    setup(true, session);
-    const result = await TestBed.runInInjectionContext(() =>
-      firstValueFrom(
-        roleGuard('ADMIN')(fakeRoute, fakeState('/admin')) as ReturnType<
-          typeof firstValueFrom
-        >,
-      ),
-    );
-    expect(result).toBe(true);
-  });
-
-  it('accepts any of several required roles', async () => {
-    const session = { roles: ['MODERATOR'] } as unknown as AuthSession;
-    setup(true, session);
-    const result = await TestBed.runInInjectionContext(() =>
-      firstValueFrom(
-        roleGuard('ADMIN', 'MODERATOR')(
-          fakeRoute,
-          fakeState('/admin'),
-        ) as ReturnType<typeof firstValueFrom>,
-      ),
-    );
-    expect(result).toBe(true);
   });
 });

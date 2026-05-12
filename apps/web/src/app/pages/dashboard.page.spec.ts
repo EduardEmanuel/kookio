@@ -53,7 +53,6 @@ const makeSession = (name: string | null): AuthSession => ({
   uid: 'user-123',
   email: 'user@example.com',
   name,
-  roles: [],
   amr: ['password'],
   onboardingDone: true,
 });

@@ -1,22 +1,16 @@
-import type { Role } from '../../prisma-zod-generator/schemas/index';
-
 export type UserId = string;
 
 export type AuditEvent =
   | { type: 'login_success'; uid: UserId }
   | { type: 'login_fail'; reason: string }
   | { type: 'logout'; uid: UserId }
-  | { type: 'register'; uid: string }
-  | { type: 'role_granted'; uid: UserId; role: Role }
-  | { type: 'role_revoked'; uid: UserId; role: Role }
-  | { type: 'role_denied'; uid: UserId; route: string; need: Role[] };
+  | { type: 'register'; uid: string };
 
 export type AuthSession = {
   uid: UserId;
   email: string;
   /** User-provided display name; null until set during onboarding. */
   name: string | null;
-  roles: Role[];
   amr: string[];
   onboardingDone: boolean;
 };

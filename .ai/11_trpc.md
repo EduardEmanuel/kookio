@@ -92,7 +92,6 @@ glance which endpoints are public, authenticated, onboarded, or role-gated.
 | `publicProcedure` (alias for `procedure`) | Genuinely public surface — content discovery, public registration step (`auth.register`), unauthenticated reads (`recipes.feed`, `recipes.byId`).                                                                                  |
 | `protectedProcedure`                      | Auth required, but pre-onboarding access is intentional — `auth.me`, `profile.*`, `onboarding.*`, `onboarding-catalogs.*`.                                                                                                         |
 | `onboardedProcedure`                      | Auth + `onboardingDone === true`. Use for any router that touches data which only starts to exist after onboarding (`pantry.*`, `cookingSession.*`, `recipes.match`, future `mealPlan.*`, `shoppingList.*`, `recipeCollection.*`). |
-| `roleProcedure([...roles])`               | Auth + at least one of the listed roles. Reserve for admin / staff endpoints.                                                                                                                                                      |
 
 **Decision rule**: if the endpoint reads or writes user-scoped data that
 the schema only allows after onboarding (PantryItem, CookingSession,
@@ -376,12 +375,11 @@ throw new TRPCError({
 ## General Rules
 
 - Export `AppRouter` type only — never expose server implementation to the client
-- Use the right procedure builder for the auth surface — `protectedProcedure`,
-  `onboardedProcedure`, or `roleProcedure([...])` from
-  `libs/server/trpc/src/lib/middlewares/auth.ts`. Never compose
-  `procedure.use(<middleware>)` inline in a router, and never check auth
-  manually inside a procedure handler. See "Procedure builder convention"
-  above for the decision matrix.
+- Use the right procedure builder for the auth surface — `protectedProcedure`
+  or `onboardedProcedure` from `libs/server/trpc/src/lib/middlewares/auth.ts`.
+  Never compose `procedure.use(<middleware>)` inline in a router, and never
+  check auth manually inside a procedure handler. See "Procedure builder
+  convention" above for the decision matrix.
 - Keep procedure handlers thin — delegate business logic to services
 - Never use tRPC for file uploads — use h3 API routes with multipart handling instead
 - Use SuperJSON transformer consistently — never serialize dates or complex

@@ -1,6 +1,4 @@
-import { RoleSchema, type UserMock } from '@kookio/prisma-client';
-
-const r = RoleSchema.Values;
+import type { UserMock } from '@kookio/prisma-client';
 
 let _userCounter = 0;
 
@@ -15,7 +13,6 @@ export const createMockUser = (overrides?: Partial<UserMock>): UserMock => {
     id: `usr_mock_${n}`,
     email: `user${n}@kookio.test`,
     name: `Test User ${n}`,
-    roles: [r.USER],
     amr: [],
     isDisabled: false,
     ...overrides,

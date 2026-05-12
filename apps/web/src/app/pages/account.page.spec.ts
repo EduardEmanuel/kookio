@@ -50,7 +50,6 @@ const setup = async (opts: SetupOptions = {}): Promise<SetupResult> => {
           uid: 'u-1',
           email,
           name: sessionName,
-          roles: [],
           amr: ['password'],
           onboardingDone: true,
         }

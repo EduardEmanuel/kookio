@@ -9,7 +9,6 @@ describe('PAGE_SKELETONS', () => {
       URLS.REGISTER,
       URLS.PANTRY,
       URLS.ACCOUNT,
-      URLS.ADMIN,
     ];
     for (const route of expectedRoutes) {
       expect(

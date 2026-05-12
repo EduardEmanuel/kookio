@@ -25,12 +25,6 @@ datasource db {
 // ENUMS
 // ─────────────────────────────────────────────
 
-/// Application roles (business-level).
-enum Role {
-  USER
-  ADMIN
-}
-
 enum RecipeStatus {
   PUBLIC
   PRIVATE
@@ -108,9 +102,6 @@ model User {
 
   /// Optional display name.
   name String?
-
-  /// Assigned roles (from Role enum).
-  roles Role[] @default([])
 
   /// Authentication Methods References — OIDC AMR claim (RFC 8176).
   /// Stored as a String array (e.g. ["password"]) following the

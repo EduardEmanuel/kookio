@@ -26,7 +26,6 @@ const COOK_NOW_HIDDEN_ROUTES = [
   '/onboarding',
   '/recipes/match',
   '/404',
-  '/403',
 ];
 
 @Component({

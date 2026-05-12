@@ -23,5 +23,4 @@ export const PAGE_SKELETONS: Record<string, PageSkeletonConfig> = {
   [URLS.REGISTER]: { count: 5, animation: 'pulse', appearance: 'line' },
   [URLS.PANTRY]: { count: 6, animation: 'pulse', appearance: 'line' },
   [URLS.ACCOUNT]: { count: 3, animation: 'pulse', appearance: 'line' },
-  [URLS.ADMIN]: { count: 4, animation: 'pulse', appearance: 'line' },
 };

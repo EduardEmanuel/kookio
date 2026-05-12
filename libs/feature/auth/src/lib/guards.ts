@@ -5,7 +5,6 @@ import type { Observable } from 'rxjs';
 
 import { AuthStore } from './auth';
 import { URLS } from '@kookio/shared-utility';
-import type { Role } from '@kookio/prisma-client';
 
 /**
  * Blocks unauthenticated users.
@@ -68,32 +67,3 @@ export const onboardingGuard: CanActivateFn = (): Observable<
       ),
     );
 };
-
-/**
- * Factory — blocks users without the required role(s).
- * Redirects to /403 when authenticated but lacking role.
- * Redirects to /login when not authenticated at all.
- */
-export const roleGuard =
-  (...required: Role[]): CanActivateFn =>
-  (): Observable<boolean | UrlTree> => {
-    const router = inject(Router);
-    const authStore = inject(AuthStore);
-
-    return authStore.ready$().pipe(
-      map(() => {
-        if (!authStore.isAuthenticated()) {
-          return router.parseUrl(URLS.LOGIN);
-        }
-
-        const session = authStore.session();
-        if (!session) {
-          // Authenticated with Firebase but session not yet fetched — deny conservatively
-          return router.parseUrl(URLS.FORBIDDEN);
-        }
-
-        const hasRole = required.some((r) => session.roles.includes(r));
-        return hasRole ? true : router.parseUrl(URLS.FORBIDDEN);
-      }),
-    );
-  };

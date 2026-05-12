@@ -14,7 +14,5 @@ export const URLS = {
   RECIPE: (id: string) => `/recipes/${id}`,
   COOK: (recipeId: string) => `/cook/${recipeId}`,
   ACCOUNT: '/account',
-  ADMIN: '/admin',
-  FORBIDDEN: '/403',
   LEGAL_ATTRIBUTIONS: '/legal/attributions',
 } as const;

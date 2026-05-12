@@ -16,7 +16,6 @@ const makeSession = (overrides: Partial<AuthSession> = {}): AuthSession => ({
   uid: 'user-123',
   email: 'user@example.com',
   name: null,
-  roles: [],
   amr: ['password'],
   onboardingDone: false,
   ...overrides,

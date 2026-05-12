@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 
-import { MealSlotTypeSchema, RoleSchema } from '@kookio/prisma-client';
+import { MealSlotTypeSchema } from '@kookio/prisma-client';
 
 import {
   createMockUser,
@@ -19,7 +19,6 @@ import {
   resetMealSlotCounter,
 } from './index';
 
-const r = RoleSchema.Values;
 const mst = MealSlotTypeSchema.Values;
 
 describe('createMockUser', () => {
@@ -38,14 +37,13 @@ describe('createMockUser', () => {
   });
 
   it('applies overrides', () => {
-    const user = createMockUser({ id: 'usr_custom', roles: [r.ADMIN, r.USER] });
+    const user = createMockUser({ id: 'usr_custom', name: 'Custom Person' });
     expect(user.id).toBe('usr_custom');
-    expect(user.roles).toEqual([r.ADMIN, r.USER]);
+    expect(user.name).toBe('Custom Person');
   });
 
-  it('defaults to USER role and disabled=false', () => {
+  it('defaults to disabled=false', () => {
     const user = createMockUser();
-    expect(user.roles).toEqual([r.USER]);
     expect(user.isDisabled).toBe(false);
   });
 });

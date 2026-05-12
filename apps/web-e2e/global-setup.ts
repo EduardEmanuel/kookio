@@ -7,7 +7,6 @@ const ROUTES = [
   '/register',
   '/pantry',
   '/account',
-  '/admin',
   '/onboarding',
   '/dashboard',
   '/recipes',
@@ -15,7 +14,6 @@ const ROUTES = [
   '/recipes/saved',
   '/plan',
   '/groceries',
-  '/403',
   '/404',
 ];
 

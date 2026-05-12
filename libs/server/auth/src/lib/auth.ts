@@ -64,7 +64,6 @@ export const toSession = async (
         id: true,
         email: true,
         name: true,
-        roles: true,
         amr: true,
         profile: { select: { onboardingDone: true } },
       },
@@ -88,7 +87,6 @@ export const toSession = async (
     uid: user.id,
     email: user.email,
     name: user.name ?? null,
-    roles: user.roles,
     amr: user.amr,
     onboardingDone: user.profile?.onboardingDone ?? false,
   };

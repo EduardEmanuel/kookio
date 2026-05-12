@@ -35,7 +35,6 @@ const dbUser = {
   id: 'uid-1',
   email: 'alice@example.com',
   name: null,
-  roles: ['USER'],
   amr: ['password'],
 };
 
@@ -117,7 +116,6 @@ describe('toSession', () => {
         uid: 'uid-1',
         email: 'alice@example.com',
         name: null,
-        roles: ['USER'],
         amr: ['password'],
         onboardingDone: false,
       });
@@ -127,7 +125,6 @@ describe('toSession', () => {
           id: true,
           email: true,
           name: true,
-          roles: true,
           amr: true,
           profile: { select: { onboardingDone: true } },
         },

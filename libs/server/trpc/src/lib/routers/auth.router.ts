@@ -1,9 +1,6 @@
 import z from 'zod';
 
-import { RoleSchema, type Role } from '@kookio/prisma-client';
 import { createAudit, createLogger } from '@kookio/server-logger';
-
-const role = RoleSchema.Values;
 
 import { procedure, router, TRPCError } from '../trpc';
 import { protectedProcedure } from '../middlewares/auth';
@@ -20,7 +17,6 @@ const SessionSchema = z.object({
   uid: z.string(),
   email: z.string(),
   name: z.string().nullable(),
-  roles: z.array(z.nativeEnum(role)),
   amr: z.array(z.string()),
   onboardingDone: z.boolean(),
 });
@@ -28,8 +24,8 @@ const SessionSchema = z.object({
 export const auth = router({
   /**
    * Public — called right after Firebase createUserWithEmailAndPassword.
-   * Creates the DB user if it doesn't exist yet.
-   * Returns the session-shaped payload (roles, amr).
+   * Creates the DB user if it doesn't exist yet. Returns the
+   * session-shaped payload (amr, onboardingDone).
    */
   register: procedure
     .input(RegisterInputSchema)
@@ -49,7 +45,6 @@ export const auth = router({
             uid: existing.id,
             email: existing.email,
             name: existing.name ?? null,
-            roles: existing.roles as Role[],
             amr: existing.amr,
             onboardingDone: existing.profile?.onboardingDone ?? false,
           };
@@ -59,7 +54,6 @@ export const auth = router({
           data: {
             id: firebaseUid,
             email,
-            roles: { set: [role.USER] },
             amr: [],
           },
         });
@@ -70,7 +64,6 @@ export const auth = router({
           uid: created.id,
           email: created.email,
           name: created.name ?? null,
-          roles: created.roles as Role[],
           amr: created.amr,
           onboardingDone: false,
         };
@@ -85,8 +78,9 @@ export const auth = router({
     }),
 
   /**
-   * Protected — returns the current session (uid, email, roles, amr).
-   * Used by the client after login/register to populate AuthStore.
+   * Protected — returns the current session (uid, email, name, amr,
+   * onboardingDone). Used by the client after login/register to populate
+   * AuthStore.
    */
   me: protectedProcedure.output(SessionSchema).query(({ ctx }) => {
     const s = ctx.session!;
@@ -94,7 +88,6 @@ export const auth = router({
       uid: s.uid,
       email: s.email,
       name: s.name,
-      roles: s.roles,
       amr: s.amr,
       onboardingDone: s.onboardingDone,
     };

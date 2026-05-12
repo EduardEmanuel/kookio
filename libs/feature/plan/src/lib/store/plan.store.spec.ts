@@ -25,7 +25,6 @@ const buildSession = (overrides: Partial<AuthSession> = {}): AuthSession => ({
   uid: TEST_UID,
   email: 'user@example.com',
   name: null,
-  roles: [],
   amr: ['password'],
   onboardingDone: true,
   ...overrides,
