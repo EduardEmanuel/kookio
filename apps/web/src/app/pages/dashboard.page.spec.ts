@@ -13,6 +13,7 @@ import {
 } from '@kookio/feature-groceries/trpc';
 import { PantryStore } from '@kookio/feature-pantry/store';
 import { PlanStore } from '@kookio/feature-plan/store';
+import { SavedStore } from '@kookio/feature-saved/store';
 import type { AuthSession } from '@kookio/prisma-client';
 
 import DashboardPage from './dashboard.page';
@@ -31,6 +32,16 @@ const stubPlanStore = {
   slotsByKey: vi.fn(() => new Map()),
   isLoading: vi.fn(() => false),
   hasLoadedOnce: vi.fn(() => true),
+  load: vi.fn(),
+};
+
+// SavedStore is `providedIn: 'root'` and would otherwise inject SAVED_TRPC
+// + AuthStore at construction. The saved-recipes widget consumes only
+// `items`, `isLoading`, `totalCount`, and `load()`.
+const stubSavedStore = {
+  items: vi.fn(() => []),
+  isLoading: vi.fn(() => false),
+  totalCount: vi.fn(() => 0),
   load: vi.fn(),
 };
 
@@ -83,6 +94,7 @@ const setup = async (
       { provide: AuthStore, useValue: authStore },
       { provide: PantryStore, useValue: stubPantryStore },
       { provide: PlanStore, useValue: stubPlanStore },
+      { provide: SavedStore, useValue: stubSavedStore },
       { provide: GROCERIES_TRPC, useValue: stubGroceriesTrpc },
     ],
   }).compileComponents();

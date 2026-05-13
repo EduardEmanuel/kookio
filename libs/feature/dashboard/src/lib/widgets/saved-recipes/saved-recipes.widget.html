@@ -1,0 +1,45 @@
+<mat-card class="sav" appearance="outlined">
+  <mat-card-content class="sav__content">
+    <h2 class="sav__title">
+      <kookio-icon name="bookmark" />
+      <span>Saved</span>
+    </h2>
+
+    @if (store.isLoading() && topItems().length === 0) {
+    <div class="sav__loading">
+      <mat-spinner diameter="24" />
+    </div>
+    } @else if (topItems().length === 0) {
+    <div class="sav__empty">
+      <kookio-emoji char="🔖" [size]="40" />
+      <p>No saved recipes yet.</p>
+      <a [matButton]="'text'" [routerLink]="recipesRoute" class="sav__more">
+        <span>Browse recipes</span>
+        <kookio-icon name="arrow_forward" />
+      </a>
+    </div>
+    } @else {
+    <ul class="sav__list">
+      @for (row of topItems(); track row.recipe.id) {
+      <li class="sav__item">
+        <a class="sav__link" [routerLink]="['/recipes', row.recipe.id]">
+          <span class="sav__name">{{ row.recipe.title }}</span>
+          @if (row.recipe.area; as area) { @if (area.flag) {
+          <kookio-emoji class="sav__flag" [char]="area.flag" [size]="16" />
+          } }
+        </a>
+      </li>
+      }
+    </ul>
+
+    <a [matButton]="'text'" [routerLink]="savedRoute" class="sav__more">
+      @if (hasMore()) {
+      <span>View all {{ store.totalCount() }} saved</span>
+      } @else {
+      <span>View all saved</span>
+      }
+      <kookio-icon name="arrow_forward" />
+    </a>
+    }
+  </mat-card-content>
+</mat-card>

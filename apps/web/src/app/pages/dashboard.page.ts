@@ -11,6 +11,7 @@ import {
   ExpiringSoonWidgetComponent,
   GroceriesCountWidgetComponent,
   MealPlanTodayWidgetComponent,
+  SavedRecipesWidgetComponent,
 } from '@kookio/feature-dashboard';
 
 export const routeMeta: RouteMeta = {
@@ -31,6 +32,7 @@ const greetingFor = (hour: number): string => {
     ExpiringSoonWidgetComponent,
     GroceriesCountWidgetComponent,
     MealPlanTodayWidgetComponent,
+    SavedRecipesWidgetComponent,
   ],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.scss',
