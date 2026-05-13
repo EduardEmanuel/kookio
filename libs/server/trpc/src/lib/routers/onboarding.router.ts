@@ -124,6 +124,15 @@ export const onboarding = router({
               skipDuplicates: true,
             });
           }
+
+          // Seed the user's "favorites" RecipeCollection so toggleSave can
+          // assume it exists. Idempotent via the @@unique([userId, name])
+          // index — re-running onboarding does not duplicate or churn the row.
+          await tx.recipeCollection.upsert({
+            where: { userId_name: { userId, name: 'favorites' } },
+            create: { userId, name: 'favorites' },
+            update: {},
+          });
         });
 
         log.info({ uid: userId }, 'onboarding committed');

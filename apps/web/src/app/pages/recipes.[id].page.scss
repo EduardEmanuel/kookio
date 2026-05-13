@@ -79,6 +79,14 @@
     margin-top: var(--space-xs);
   }
 
+  &__actions {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    margin-top: var(--space-xs);
+    flex-wrap: wrap;
+  }
+
   &__section {
     padding: var(--space-lg) 0;
 

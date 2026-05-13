@@ -64,14 +64,17 @@
       }
     </dl>
     } @if (canCook()) {
-    <a
-      matButton="filled"
-      class="recipe-detail__cook-cta"
-      [routerLink]="['/cook', r.id]"
-    >
-      <kookio-icon name="restaurant" />
-      Cook now
-    </a>
+    <div class="recipe-detail__actions">
+      <a
+        matButton="filled"
+        class="recipe-detail__cook-cta"
+        [routerLink]="['/cook', r.id]"
+      >
+        <kookio-icon name="restaurant" />
+        Cook now
+      </a>
+      <kookio-save-toggle [recipeId]="r.id" variant="button" />
+    </div>
     }
   </header>
 

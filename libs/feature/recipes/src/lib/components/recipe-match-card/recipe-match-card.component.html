@@ -14,6 +14,12 @@
       />
     }
 
+    <kookio-save-toggle
+      class="match-card__save"
+      [recipeId]="item().id"
+      [recipe]="savedRow()"
+    />
+
     @if (isComplete() || isAlmost()) {
       <mat-chip
         class="match-card__badge"

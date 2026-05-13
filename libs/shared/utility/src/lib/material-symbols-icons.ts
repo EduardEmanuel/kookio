@@ -13,7 +13,6 @@
 export const MATERIAL_SYMBOLS_ICONS = [
   'account_circle',
   'add',
-  'admin_panel_settings',
   'arrow_back',
   'arrow_downward',
   'arrow_drop_down',
@@ -21,6 +20,7 @@ export const MATERIAL_SYMBOLS_ICONS = [
   'arrow_upward',
   'bookmark',
   'calendar_today',
+  'category',
   'check',
   'check_circle',
   'chevron_left',
@@ -46,6 +46,7 @@ export const MATERIAL_SYMBOLS_ICONS = [
   'open_in_new',
   'person',
   'play_circle',
+  'public',
   'refresh',
   'remove',
   'restaurant',

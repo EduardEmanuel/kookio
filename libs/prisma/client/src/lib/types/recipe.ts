@@ -56,6 +56,16 @@ export const RecipeFeedItemSchema = RecipeModelSchema.pick({
 });
 export type RecipeFeedItem = z.output<typeof RecipeFeedItemSchema>;
 
+/**
+ * Row shape served by `recipeCollection.getSaved` — the card-level recipe
+ * plus the entry's `addedAt` timestamp so the UI can sort by save time.
+ */
+export const SavedRecipeRowSchema = z.object({
+  recipe: RecipeFeedItemSchema,
+  addedAt: z.date(),
+});
+export type SavedRecipeRow = z.output<typeof SavedRecipeRowSchema>;
+
 export const RecipeFeedPageSchema = z.object({
   items: z.array(RecipeFeedItemSchema),
   nextCursor: z.string().nullable(),

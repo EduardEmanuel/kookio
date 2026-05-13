@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
+import { SAVED_TRPC, type SavedTrpcClient } from '@kookio/feature-saved/trpc';
 import {
   IngredientCategorySchema,
   MeasureUnitSchema,
@@ -15,6 +16,16 @@ import {
 } from '@kookio/prisma-client';
 
 import RecipeDetailPage from './recipes.[id].page';
+
+const makeSavedTrpc = (): SavedTrpcClient => ({
+  recipeCollection: {
+    getSaved: { query: vi.fn().mockResolvedValue([]) },
+    getSavedIds: { query: vi.fn().mockResolvedValue([]) },
+    toggleSave: {
+      mutate: vi.fn().mockResolvedValue({ recipeId: '', saved: true }),
+    },
+  },
+});
 
 const Unit = MeasureUnitSchema.enum;
 const IngCategory = IngredientCategorySchema.enum;
@@ -92,6 +103,7 @@ const setup = async (opts: SetupOpts = {}) => {
       provideZonelessChangeDetection(),
       provideRouter([]),
       { provide: AuthStore, useValue: authStore },
+      { provide: SAVED_TRPC, useValue: makeSavedTrpc() },
       {
         provide: ActivatedRoute,
         useValue: { data: of({ load: { recipe } }) },

@@ -1,0 +1,28 @@
+@if (variant() === 'button') {
+  <button
+    matButton="tonal"
+    type="button"
+    class="save-toggle save-toggle--button"
+    [class.save-toggle--saved]="isSaved()"
+    [attr.aria-pressed]="isSaved()"
+    [attr.aria-label]="ariaLabel()"
+    [disabled]="isPending()"
+    (click)="onToggle($event)"
+  >
+    <kookio-icon name="bookmark" [filled]="isSaved()" />
+    {{ isSaved() ? 'Saved' : 'Save' }}
+  </button>
+} @else {
+  <button
+    matIconButton
+    type="button"
+    class="save-toggle save-toggle--icon"
+    [class.save-toggle--saved]="isSaved()"
+    [attr.aria-pressed]="isSaved()"
+    [attr.aria-label]="ariaLabel()"
+    [disabled]="isPending()"
+    (click)="onToggle($event)"
+  >
+    <kookio-icon name="bookmark" [filled]="isSaved()" />
+  </button>
+}

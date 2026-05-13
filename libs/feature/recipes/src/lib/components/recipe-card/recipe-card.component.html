@@ -14,6 +14,12 @@
       />
     }
 
+    <kookio-save-toggle
+      class="recipe-card__save"
+      [recipeId]="recipe().id"
+      [recipe]="savedRow()"
+    />
+
     <mat-card-content class="recipe-card__content">
       <h3 class="recipe-card__title">{{ recipe().title }}</h3>
 

@@ -9,11 +9,29 @@ import type { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
+import { AuthStore } from '@kookio/feature-auth';
+import { createMockAuthStore } from '@kookio/feature-auth/testing';
+import { SAVED_TRPC, type SavedTrpcClient } from '@kookio/feature-saved/trpc';
 import type { RecipeFeedItem, RecipeFeedPage } from '@kookio/prisma-client';
 
 import { buildRecipesTrpcMock } from '../../testing/build-trpc-mock';
 import { RECIPES_TRPC } from '../../recipes-trpc';
 import { type FeedPage, RecipesFeedComponent } from './recipes-feed.component';
+
+const makeSavedTrpc = (): SavedTrpcClient => ({
+  recipeCollection: {
+    getSaved: { query: vi.fn().mockResolvedValue([]) },
+    getSavedIds: { query: vi.fn().mockResolvedValue([]) },
+    toggleSave: {
+      mutate: vi.fn().mockResolvedValue({ recipeId: '', saved: true }),
+    },
+  },
+});
+
+const savedProviders = () => [
+  { provide: AuthStore, useValue: createMockAuthStore({ session: null }) },
+  { provide: SAVED_TRPC, useValue: makeSavedTrpc() },
+];
 
 /**
  * Stubs the component's viewChild-resolved viewport so the prefetch
@@ -79,6 +97,7 @@ const setup = async (
       provideZonelessChangeDetection(),
       provideRouter([]),
       { provide: RECIPES_TRPC, useValue: trpc },
+      ...savedProviders(),
     ],
   }).compileComponents();
 
@@ -273,6 +292,8 @@ describe('RecipesFeedComponent', () => {
           provideZonelessChangeDetection(),
           provideRouter([]),
           { provide: RECIPES_TRPC, useValue: trpc },
+          ...savedProviders(),
+          ...savedProviders(),
         ],
       }).compileComponents();
 
@@ -320,6 +341,8 @@ describe('RecipesFeedComponent', () => {
           provideZonelessChangeDetection(),
           provideRouter([]),
           { provide: RECIPES_TRPC, useValue: trpc },
+          ...savedProviders(),
+          ...savedProviders(),
         ],
       }).compileComponents();
 
@@ -357,6 +380,8 @@ describe('RecipesFeedComponent', () => {
           provideZonelessChangeDetection(),
           provideRouter([]),
           { provide: RECIPES_TRPC, useValue: trpc },
+          ...savedProviders(),
+          ...savedProviders(),
         ],
       }).compileComponents();
 
@@ -400,6 +425,7 @@ describe('RecipesFeedComponent', () => {
             provide: RECIPES_TRPC,
             useValue: buildRecipesTrpcMock({ feed: makePage([], null) }),
           },
+          ...savedProviders(),
         ],
       }).compileComponents();
 
@@ -472,6 +498,7 @@ describe('RecipesFeedComponent', () => {
             provide: RECIPES_TRPC,
             useValue: buildRecipesTrpcMock({ feed: makePage([], null) }),
           },
+          ...savedProviders(),
         ],
       }).compileComponents();
 
@@ -497,6 +524,7 @@ describe('RecipesFeedComponent', () => {
             provide: RECIPES_TRPC,
             useValue: buildRecipesTrpcMock({ feed: makePage([], null) }),
           },
+          ...savedProviders(),
         ],
       }).compileComponents();
 

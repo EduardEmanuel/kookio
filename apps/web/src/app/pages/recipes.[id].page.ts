@@ -16,6 +16,7 @@ import { map } from 'rxjs';
 import { injectLoad, type RouteMeta } from '@analogjs/router';
 
 import { AuthStore } from '@kookio/feature-auth';
+import { SaveToggleComponent } from '@kookio/feature-saved';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 import { formatMeasureUnit } from '@kookio/shared-utility/measure-units';
 
@@ -36,6 +37,7 @@ export const routeMeta: RouteMeta = {
     MatButtonModule,
     MatChipsModule,
     MatDividerModule,
+    SaveToggleComponent,
     KookioEmojiComponent,
     KookioIconComponent,
   ],

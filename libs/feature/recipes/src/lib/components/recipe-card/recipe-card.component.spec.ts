@@ -1,11 +1,24 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
+import { AuthStore } from '@kookio/feature-auth';
+import { createMockAuthStore } from '@kookio/feature-auth/testing';
+import { SAVED_TRPC, type SavedTrpcClient } from '@kookio/feature-saved/trpc';
 import type { RecipeFeedItem } from '@kookio/prisma-client';
 
 import { RecipeCardComponent } from './recipe-card.component';
+
+const makeSavedTrpc = (): SavedTrpcClient => ({
+  recipeCollection: {
+    getSaved: { query: vi.fn().mockResolvedValue([]) },
+    getSavedIds: { query: vi.fn().mockResolvedValue([]) },
+    toggleSave: {
+      mutate: vi.fn().mockResolvedValue({ recipeId: '', saved: true }),
+    },
+  },
+});
 
 const baseRecipe: RecipeFeedItem = {
   id: '11111111-1111-1111-1111-111111111111',
@@ -20,9 +33,15 @@ const baseRecipe: RecipeFeedItem = {
 };
 
 const setup = async (recipe: RecipeFeedItem) => {
+  const authStore = createMockAuthStore({ session: null });
   await TestBed.configureTestingModule({
     imports: [RecipeCardComponent],
-    providers: [provideZonelessChangeDetection(), provideRouter([])],
+    providers: [
+      provideZonelessChangeDetection(),
+      provideRouter([]),
+      { provide: AuthStore, useValue: authStore },
+      { provide: SAVED_TRPC, useValue: makeSavedTrpc() },
+    ],
   }).compileComponents();
 
   const fixture = TestBed.createComponent(RecipeCardComponent);

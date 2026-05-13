@@ -21,6 +21,21 @@
     object-fit: cover;
   }
 
+  &__save {
+    // Top-left to avoid colliding with the state badge (top-right).
+    // z-index 1 is required because the card image paints above the
+    // default in-flow position; without it the toggle is rendered
+    // behind the image rather than overlaying it.
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    z-index: 1;
+    // Tonal pill behind the bookmark so it reads on any image background.
+    background: var(--mat-sys-surface-container);
+    border-radius: 50%;
+    box-shadow: var(--mat-sys-level-1);
+  }
+
   &__badge {
     position: absolute;
     top: var(--space-sm);

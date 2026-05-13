@@ -11,6 +11,11 @@
   }
 
   &__card {
+    // position: relative is required so `.recipe-card__save` can absolutely
+    // pin to this card box. Without it the toggle escapes to the nearest
+    // positioned ancestor (usually the page root) and lands far from its
+    // owner card.
+    position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -43,6 +48,18 @@
     aspect-ratio: 16 / 9;
     object-fit: cover;
     display: block;
+  }
+
+  &__save {
+    // Top-left overlay on the image. z-index 1 keeps the toggle above the
+    // recipe image (which is the first paint layer inside the card).
+    position: absolute;
+    top: var(--space-sm, 8px);
+    left: var(--space-sm, 8px);
+    z-index: 1;
+    background: var(--mat-sys-surface-container);
+    border-radius: 50%;
+    box-shadow: var(--mat-sys-level-1);
   }
 
   &__content {

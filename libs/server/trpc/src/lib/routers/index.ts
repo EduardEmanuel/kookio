@@ -7,6 +7,7 @@ import { onboarding } from './onboarding.router';
 import { onboardingCatalogs } from './onboarding-catalogs.router';
 import { pantry } from './pantry.router';
 import { profile } from './profile.router';
+import { recipeCollection } from './recipe-collection.router';
 import { recipes } from './recipes/recipes.router';
 
 export const appRouter = router({
@@ -18,5 +19,6 @@ export const appRouter = router({
   onboardingCatalogs,
   pantry,
   profile,
+  recipeCollection,
   recipes,
 });

@@ -1,0 +1,21 @@
+:host {
+  display: inline-flex;
+}
+
+.save-toggle {
+  // Icon-only overlay on cards sits over the recipe image. The parent card
+  // sets `position: relative` so this absolute pin uses the card box.
+  // z-index 1 is required because the inner `<img>` paints on top of the
+  // card content otherwise (NgOptimizedImage-style fills do not contribute
+  // to stacking order on their own).
+  &--icon {
+    border-radius: 50%;
+  }
+
+  // Filled-bookmark icon needs an accent color so the toggled state reads
+  // clearly against the warm-orange palette. `currentColor` lets Material's
+  // tonal/icon-button slots inherit the right state-layer.
+  &--saved {
+    color: var(--mat-sys-primary);
+  }
+}

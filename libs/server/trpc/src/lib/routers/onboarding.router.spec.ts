@@ -38,6 +38,9 @@ type TxMock = {
   pantryItem: {
     createMany: ReturnType<typeof vi.fn>;
   };
+  recipeCollection: {
+    upsert: ReturnType<typeof vi.fn>;
+  };
 };
 
 type PrismaMock = TxMock & {
@@ -101,6 +104,15 @@ const makeTxMock = (): TxMock => ({
   },
   pantryItem: {
     createMany: vi.fn(() => Promise.resolve({ count: 0 })),
+  },
+  recipeCollection: {
+    upsert: vi.fn(() =>
+      Promise.resolve({
+        id: 'rc-favorites',
+        userId: USER_ID,
+        name: 'favorites',
+      }),
+    ),
   },
 });
 
@@ -196,6 +208,15 @@ describe('onboarding router', () => {
         skipDuplicates: true,
       });
 
+      // Favorites collection is seeded idempotently — toggleSave assumes it
+      // exists, so onboarding owns the lazy-init that would otherwise race
+      // on the first save.
+      expect(tx.recipeCollection.upsert).toHaveBeenCalledWith({
+        where: { userId_name: { userId: USER_ID, name: 'favorites' } },
+        create: { userId: USER_ID, name: 'favorites' },
+        update: {},
+      });
+
       expect(result).toEqual({ onboardingDone: true });
     });
 
@@ -220,6 +241,7 @@ describe('onboarding router', () => {
       expect(tx.userPreferredArea.deleteMany).toHaveBeenCalledTimes(1);
       expect(tx.userPreferredArea.createMany).not.toHaveBeenCalled();
       expect(tx.pantryItem.createMany).not.toHaveBeenCalled();
+      expect(tx.recipeCollection.upsert).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ onboardingDone: true });
     });
 

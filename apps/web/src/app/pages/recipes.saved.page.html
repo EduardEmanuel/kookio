@@ -1,0 +1,90 @@
+@if (isEmpty()) {
+<section class="saved-empty">
+  <mat-card>
+    <mat-card-content class="saved-empty__card">
+      <kookio-emoji char="🔖" [size]="64" />
+      <h1 class="saved-empty__title">No saved recipes yet</h1>
+      <p class="saved-empty__hint">
+        Tap the bookmark on any recipe to keep it here.
+      </p>
+      <a
+        matButton="filled"
+        class="saved-empty__cta"
+        [routerLink]="recipesRoute"
+      >
+        Browse recipes
+        <kookio-icon name="arrow_forward" iconPositionEnd />
+      </a>
+    </mat-card-content>
+  </mat-card>
+</section>
+} @else {
+<section class="saved">
+  <header class="saved__header">
+    <h1 class="saved__title">Saved Recipes</h1>
+    <p class="saved__count">
+      {{ store.totalCount() }} {{ store.totalCount() === 1 ? 'saved' : 'saved'
+      }}
+    </p>
+
+    <mat-button-toggle-group
+      class="saved__view-toggle"
+      [value]="store.view()"
+      (change)="onViewChange($event.value)"
+      hideSingleSelectionIndicator
+      aria-label="Group saved recipes"
+    >
+      <mat-button-toggle value="FLAT" aria-label="Show as a flat list">
+        <kookio-icon name="list" />
+        Flat
+      </mat-button-toggle>
+      <mat-button-toggle value="CUISINES" aria-label="Group by cuisine">
+        <kookio-icon name="public" />
+        Cuisines
+      </mat-button-toggle>
+      <mat-button-toggle value="CATEGORIES" aria-label="Group by category">
+        <kookio-icon name="category" />
+        Categories
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </header>
+
+  @switch (store.view()) { @case ('CUISINES') { @for (group of
+  store.groupedByCuisine(); track group.key) {
+  <section class="saved__group">
+    <h2 class="saved__group-title">
+      @if (group.emoji) {
+      <kookio-emoji [char]="group.emoji" [size]="20" />
+      } {{ group.label }}
+      <span class="saved__group-count">({{ group.items.length }})</span>
+    </h2>
+    <div class="saved__grid">
+      @for (row of group.items; track row.recipe.id) {
+      <kookio-recipe-card [recipe]="row.recipe" />
+      }
+    </div>
+  </section>
+  } } @case ('CATEGORIES') { @for (group of store.groupedByCategory(); track
+  group.key) {
+  <section class="saved__group">
+    <h2 class="saved__group-title">
+      @if (group.emoji) {
+      <kookio-emoji [char]="group.emoji" [size]="20" />
+      } {{ group.label }}
+      <span class="saved__group-count">({{ group.items.length }})</span>
+    </h2>
+    <div class="saved__grid">
+      @for (row of group.items; track row.recipe.id) {
+      <kookio-recipe-card [recipe]="row.recipe" />
+      }
+    </div>
+  </section>
+  } } @default {
+  <div class="saved__grid">
+    @for (row of store.items(); track row.recipe.id) {
+    <kookio-recipe-card [recipe]="row.recipe" />
+    }
+  </div>
+  } }
+</section>
+}

@@ -3,6 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { Router, provideRouter } from '@angular/router';
 
+import { AuthStore } from '@kookio/feature-auth';
+import { createMockAuthStore } from '@kookio/feature-auth/testing';
+import { SAVED_TRPC, type SavedTrpcClient } from '@kookio/feature-saved/trpc';
 import type { RecipeMatchItem } from '@kookio/prisma-client';
 
 import { RecipeMatchCardComponent } from './recipe-match-card.component';
@@ -27,10 +30,31 @@ const baseItem = (
   ...overrides,
 });
 
+const makeSavedTrpc = (): SavedTrpcClient => ({
+  recipeCollection: {
+    getSaved: { query: vi.fn().mockResolvedValue([]) },
+    getSavedIds: { query: vi.fn().mockResolvedValue([]) },
+    toggleSave: {
+      mutate: vi.fn().mockResolvedValue({ recipeId: '', saved: true }),
+    },
+  },
+});
+
 const setup = async (item: RecipeMatchItem) => {
+  // The card now renders `<kookio-save-toggle>`, which injects SavedStore;
+  // SavedStore in turn injects AuthStore and SAVED_TRPC. The mock auth store
+  // starts logged-out so the SavedStore's `withHooks` does NOT auto-fire
+  // `loadIds()` — keeps the tests focused on the card itself.
+  const authStore = createMockAuthStore({ session: null });
+
   await TestBed.configureTestingModule({
     imports: [RecipeMatchCardComponent],
-    providers: [provideZonelessChangeDetection(), provideRouter([])],
+    providers: [
+      provideZonelessChangeDetection(),
+      provideRouter([]),
+      { provide: AuthStore, useValue: authStore },
+      { provide: SAVED_TRPC, useValue: makeSavedTrpc() },
+    ],
   }).compileComponents();
 
   const fixture = TestBed.createComponent(RecipeMatchCardComponent);

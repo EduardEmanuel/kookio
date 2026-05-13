@@ -60,6 +60,13 @@
       "@kookio/feature-recipes/testing": [
         "libs/feature/recipes/src/testing.ts"
       ],
+      "@kookio/feature-saved": ["libs/feature/saved/src/index.ts"],
+      "@kookio/feature-saved/store": [
+        "libs/feature/saved/src/lib/store/saved.store.ts"
+      ],
+      "@kookio/feature-saved/trpc": [
+        "libs/feature/saved/src/lib/saved-trpc.ts"
+      ],
       "@kookio/feature-shell": ["libs/feature/shell/src/index.ts"],
       "@kookio/prisma-client": ["libs/prisma/client/src/index.ts"],
       "@kookio/prisma-client/*": ["libs/prisma/client/src/*"],

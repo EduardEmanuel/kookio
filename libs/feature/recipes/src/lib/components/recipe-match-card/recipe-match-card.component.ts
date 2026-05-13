@@ -10,7 +10,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 
-import type { RecipeMatchItem } from '@kookio/prisma-client';
+import type { RecipeMatchItem, SavedRecipeRow } from '@kookio/prisma-client';
+import { SaveToggleComponent } from '@kookio/feature-saved';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 import { URLS } from '@kookio/shared-utility';
 
@@ -27,6 +28,7 @@ const ALMOST_MAX_MISSING = 3;
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
+    SaveToggleComponent,
     KookioEmojiComponent,
     KookioIconComponent,
   ],
@@ -39,6 +41,31 @@ export class RecipeMatchCardComponent {
   private readonly router = inject(Router);
 
   protected readonly recipeUrl = computed(() => URLS.RECIPE(this.item().id));
+
+  /**
+   * Match items include all `RecipeFeedItem` fields plus `matchInfo`; the
+   * `matchInfo` is dropped here so the optimistic insert into `SavedStore.items`
+   * stores the right shape (`SavedRecipeRow.recipe = RecipeFeedItem`). Saving
+   * from `/recipes/match` then surfaces the new card on `/recipes/saved`
+   * before the page's own `load()` fires.
+   */
+  protected readonly savedRow = computed<SavedRecipeRow>(() => {
+    const i = this.item();
+    return {
+      recipe: {
+        id: i.id,
+        slug: i.slug,
+        title: i.title,
+        imageUrl: i.imageUrl,
+        prepTimeMinutes: i.prepTimeMinutes,
+        cookTimeMinutes: i.cookTimeMinutes,
+        servings: i.servings,
+        category: i.category,
+        area: i.area,
+      },
+      addedAt: new Date(),
+    };
+  });
 
   protected readonly isComplete = computed(
     () => this.item().matchInfo.missingCount === 0,

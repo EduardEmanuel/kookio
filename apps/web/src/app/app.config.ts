@@ -27,6 +27,7 @@ import { PANTRY_TRPC } from '@kookio/feature-pantry/trpc';
 import { MEAL_PLAN_TRPC } from '@kookio/feature-plan/trpc';
 import { RECIPES_TRPC } from '@kookio/feature-recipes';
 import { COOKING_SESSION_TRPC } from '@kookio/feature-recipes/cooking-trpc';
+import { SAVED_TRPC } from '@kookio/feature-saved/trpc';
 import { APP_TRPC } from '@kookio/feature-shell';
 
 import { provideTrpcClient, TrpcClientApp } from '../trpc-client';
@@ -63,6 +64,7 @@ export const appConfig: ApplicationConfig = {
     { provide: GROCERIES_TRPC, useExisting: TrpcClientApp },
     { provide: RECIPES_TRPC, useExisting: TrpcClientApp },
     { provide: COOKING_SESSION_TRPC, useExisting: TrpcClientApp },
+    { provide: SAVED_TRPC, useExisting: TrpcClientApp },
     {
       provide: FIREBASE_OPTIONS,
       useValue: {
