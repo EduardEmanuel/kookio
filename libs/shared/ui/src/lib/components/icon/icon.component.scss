@@ -20,3 +20,28 @@
   line-height: 1;
   vertical-align: middle;
 }
+
+// Make the inner <mat-icon> follow the host's box. Material's default
+// mat-icon ships hardcoded `width: 24px; height: 24px; overflow: hidden`
+// and *ignores* host font-size — so a consumer sizing the kookio-icon
+// host smaller (e.g. badge icons on match cards at 14px) shrinks the
+// host while the inner glyph keeps painting at 24px through a smaller
+// clipping window, misaligning against adjacent text.
+//
+// `inherit` propagates the host's values down. At defaults this is a
+// no-op (host = 24×24 with line-height 1 → inner inherits the same,
+// matching Material's defaults). Material slot rules with higher
+// specificity (e.g. `.mat-mdc-chip-graphic .mat-icon`) still win where
+// they apply.
+//
+// Encapsulation note: this rule lands as `mat-icon[_ngcontent-X]` under
+// view encapsulation, which DOES match the inner element because both
+// host and inner share the same kookio-icon ng-content scope. The same
+// descendant rule on a consumer component (different ng-content scope)
+// would NOT match — which is why this fix lives here, not at call sites.
+mat-icon {
+  font-size: inherit;
+  width: inherit;
+  height: inherit;
+  line-height: inherit;
+}

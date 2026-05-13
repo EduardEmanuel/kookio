@@ -36,6 +36,34 @@
     box-shadow: var(--mat-sys-level-1);
   }
 
+  // Shared chip typography — applied to both the corner badge and the
+  // category/area chips inside the card so every mat-chip on this card
+  // renders at the same text size and icon size as the rest of the
+  // card meta (`__missing`, `__times`). The Tailwind `--text-base`
+  // token (1rem / calc(1.5/1) line-height) is the single source of
+  // truth — and matches the `[size]="16"` on the projected chip
+  // emojis so text, icons, and emojis all share the same vertical
+  // footprint.
+  //
+  // Note on the descendant `kookio-icon` rule: `--mat-chip-with-icon-icon-size`
+  // only styles the chip's avatar slot (icons projected with `matChipAvatar`).
+  // The icons in this card sit in the default ng-content slot inside
+  // `.mdc-evolution-chip__text-label`, so we size them directly via
+  // their wrapper — which propagates to the inner <mat-icon> through
+  // the inherit rule in icon.component.scss.
+  &__badge,
+  &__chip {
+    --mat-chip-label-text-size: var(--text-base);
+    --mat-chip-label-text-line-height: var(--text-base--line-height);
+
+    kookio-icon {
+      font-size: var(--text-base);
+      width: var(--text-base);
+      height: var(--text-base);
+      line-height: 1;
+    }
+  }
+
   &__badge {
     position: absolute;
     top: var(--space-sm);
@@ -75,7 +103,8 @@
 
   &__missing {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
     color: var(--color-match-almost);
   }
 
@@ -89,7 +118,8 @@
     display: flex;
     gap: var(--space-md);
     color: var(--color-on-surface-variant);
-    font-size: 0.875rem;
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
   }
 
   &__time {
