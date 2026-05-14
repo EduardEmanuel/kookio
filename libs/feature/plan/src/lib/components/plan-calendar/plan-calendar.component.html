@@ -243,6 +243,57 @@
                       </span>
                     </span>
                   }
+                  <a
+                    class="plan__cell-cook"
+                    [routerLink]="cookUrl(recipe.id)"
+                    [attr.aria-label]="'Cook ' + recipe.title + ' now'"
+                    matTooltip="Cook now"
+                    matTooltipPosition="above"
+                    (click)="$event.stopPropagation()"
+                    (mousedown)="$event.stopPropagation()"
+                    (touchstart)="$event.stopPropagation()"
+                  >
+                    <!-- Same branded "Cook now" mark used by the topbar
+                         shortcut — see top-bar.component.html. Keeping the
+                         markup duplicated rather than extracting a shared
+                         component because the SVG is small, has no
+                         interaction surface of its own, and a wrapper
+                         would force a separate ChangeDetectionStrategy
+                         decision per surface for no benefit. -->
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      class="plan__cell-cook-icon"
+                    >
+                      <circle
+                        cx="10"
+                        cy="14"
+                        r="9"
+                        fill="var(--md-sys-color-primary, #a04100)"
+                      />
+                      <rect
+                        x="15"
+                        y="2"
+                        width="9"
+                        height="3"
+                        rx="1"
+                        transform="rotate(-45 20 3.5)"
+                        fill="var(--md-sys-color-primary, #a04100)"
+                      />
+                      <text
+                        x="10"
+                        y="19"
+                        text-anchor="middle"
+                        font-family="Fredoka, sans-serif"
+                        font-size="14"
+                        font-weight="bold"
+                        fill="var(--md-sys-color-surface, #fff8f6)"
+                      >
+                        K
+                      </text>
+                    </svg>
+                  </a>
                   <button
                     type="button"
                     class="plan__cell-clear"

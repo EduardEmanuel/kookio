@@ -348,9 +348,8 @@
 }
 
 .plan__cell-clear {
-  // Floating overlay button on the top-right of the image. Custom
-  // styling (rather than mat-button) because we need a solid
-  // contrasting backdrop against arbitrary recipe imagery.
+  // Top-right destructive affordance — dark backdrop so the white "X"
+  // reads against arbitrary recipe imagery.
   position: absolute;
   top: 4px;
   right: 4px;
@@ -375,6 +374,49 @@
     outline: 2px solid var(--mat-sys-primary);
     outline-offset: 2px;
   }
+}
+
+.plan__cell-cook {
+  // Top-left affordance — paired opposite the clear button (top-right)
+  // so the cell's two actions are visually balanced and never overlap
+  // on tight cell widths (~115px on mobile).
+  //
+  // No backdrop: the SVG carries its own filled-orange circle that
+  // reads against any recipe image. A drop shadow lifts it off the
+  // image bed at hover for affordance feedback without the heavier
+  // dark-pill treatment of the clear button.
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+  transition: filter 150ms ease;
+
+  &:hover {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.55));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+    border-radius: 50%;
+  }
+}
+
+.plan__cell-cook-icon {
+  // Fills the 24×24 button. Mirrors the topbar's `.topbar__cook-now-icon`
+  // sizing — the same branded SVG renders at the same intrinsic size
+  // both places so the mark stays recognisable at a glance.
+  width: 24px;
+  height: 24px;
+  display: block;
 }
 
 .plan__cell-empty {

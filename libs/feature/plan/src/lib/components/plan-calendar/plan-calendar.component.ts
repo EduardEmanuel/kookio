@@ -10,6 +10,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import {
   Subject,
   catchError,
@@ -63,6 +64,7 @@ import {
   type RecipeMatchLevel,
 } from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
+import { URLS } from '@kookio/shared-utility';
 
 import {
   PlanStore,
@@ -184,6 +186,7 @@ const shiftDayIso = (iso: string, dayDelta: number): string => {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgOptimizedImage,
+    RouterLink,
     CdkDrag,
     CdkDropList,
     CdkDropListGroup,
@@ -223,6 +226,11 @@ export class PlanCalendarComponent {
   protected readonly slotLabels = SLOT_LABELS;
   protected readonly slotAbbreviations = SLOT_ABBREVIATIONS;
   protected readonly sidebarItemSize = SIDEBAR_ITEM_SIZE_PX;
+
+  /** URL helper exposed to the template — `URLS.COOK(recipeId)` is the
+   * canonical way to compose the cook-session deep link. */
+  protected readonly cookUrl = (recipeId: string): string =>
+    URLS.COOK(recipeId);
 
   /**
    * Match level for the desktop sidebar. Default `A` (Alright to cook —
