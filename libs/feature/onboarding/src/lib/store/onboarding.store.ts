@@ -307,7 +307,7 @@ export const OnboardingStore = signalStore(
             ).pipe(
               tap(() => {
                 patchState(store, { isSubmitting: false });
-                authStore.markOnboardingDone();
+                authStore.markOnboardingDone(store.name());
                 void router.navigateByUrl(URLS.DASHBOARD);
               }),
               catchError((err: { message?: string }) => {

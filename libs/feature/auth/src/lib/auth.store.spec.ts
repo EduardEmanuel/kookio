@@ -208,7 +208,7 @@ describe('AuthStore — counters and hasProfileSignals', () => {
   });
 
   describe('markOnboardingDone', () => {
-    it('flips session.onboardingDone locally and triggers loadCounts', async () => {
+    it('flips session.onboardingDone, writes the new name, and triggers loadCounts', async () => {
       const { store, countsSpy } = setup({
         me: () => Promise.resolve(makeSession({ onboardingDone: false })),
         counts: () => Promise.resolve(makeCounts({ utensilCount: 5 })),
@@ -219,35 +219,38 @@ describe('AuthStore — counters and hasProfileSignals', () => {
       expect(store.session()?.onboardingDone).toBe(false);
 
       countsSpy.mockClear();
-      store.markOnboardingDone();
+      store.markOnboardingDone('Ana');
       await flush();
 
       expect(store.session()?.onboardingDone).toBe(true);
+      expect(store.session()?.name).toBe('Ana');
       expect(countsSpy).toHaveBeenCalledOnce();
       expect(store.utensilCount()).toBe(5);
       expect(store.hasProfileSignals()).toBe(true);
     });
 
-    it('is a no-op on session when onboardingDone is already true, but still loads counts', async () => {
+    it('updates the name and loads counts even when onboardingDone is already true (restart-onboarding case)', async () => {
       const { store, countsSpy } = setup({
-        me: () => Promise.resolve(makeSession({ onboardingDone: true })),
+        me: () =>
+          Promise.resolve(makeSession({ onboardingDone: true, name: 'Old' })),
       });
 
       store.fetchSession();
       await flush();
       countsSpy.mockClear();
 
-      store.markOnboardingDone();
+      store.markOnboardingDone('New');
       await flush();
 
       expect(store.session()?.onboardingDone).toBe(true);
+      expect(store.session()?.name).toBe('New');
       expect(countsSpy).toHaveBeenCalledOnce();
     });
 
     it('still triggers loadCounts when no session is present (no-op on session flip)', async () => {
       const { store, countsSpy } = setup();
 
-      store.markOnboardingDone();
+      store.markOnboardingDone('Ana');
       await flush();
 
       expect(store.session()).toBeNull();

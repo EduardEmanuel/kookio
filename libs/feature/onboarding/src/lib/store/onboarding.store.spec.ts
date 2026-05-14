@@ -333,6 +333,7 @@ describe('OnboardingStore', () => {
       expect(store.isSubmitting()).toBe(false);
       expect(store.submitError()).toBeNull();
       expect(authStore.markOnboardingDone).toHaveBeenCalledOnce();
+      expect(authStore.markOnboardingDone).toHaveBeenCalledWith('Ana');
       expect(authStore.fetchSession).not.toHaveBeenCalled();
       expect(navSpy).toHaveBeenCalledWith('/dashboard');
     });

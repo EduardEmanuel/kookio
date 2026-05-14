@@ -247,15 +247,21 @@ export const AuthStore = signalStore(
       loadCounts,
 
       /**
-       * Sync flip of `session.onboardingDone` to true plus `loadCounts()`.
+       * Sync flip of `session.onboardingDone` to true and write the
+       * just-submitted `name` into the local session, plus `loadCounts()`.
        * Called by `OnboardingStore.submit()` after a successful commit so
        * the UI reacts immediately, without a round-trip to `auth.me`.
+       *
+       * The name has to be propagated explicitly: restart-onboarding
+       * commits with a new name while `session.onboardingDone` is already
+       * true, so a guard like `!session.onboardingDone` would silently
+       * drop the rename and leave the dashboard greeting stale.
        */
-      markOnboardingDone: (): void => {
+      markOnboardingDone: (name: string): void => {
         const session = store.session();
-        if (session && !session.onboardingDone) {
+        if (session) {
           patchState(store, {
-            session: { ...session, onboardingDone: true },
+            session: { ...session, onboardingDone: true, name },
           });
         }
         loadCounts();
