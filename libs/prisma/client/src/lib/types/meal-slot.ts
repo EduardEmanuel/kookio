@@ -8,7 +8,6 @@ import { UuidIdSchema } from './ids';
 import { RecipeFeedItemSchema } from './recipe';
 
 export const MealSlotMockSchema = MealSlotModelSchema.pick({
-  id: true,
   userId: true,
   recipeId: true,
   date: true,

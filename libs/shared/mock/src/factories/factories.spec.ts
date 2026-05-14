@@ -16,7 +16,6 @@ import {
   createMockCookingSession,
   resetCookingSessionCounter,
   createMockMealSlot,
-  resetMealSlotCounter,
 } from './index';
 
 const mst = MealSlotTypeSchema.Values;
@@ -127,8 +126,6 @@ describe('createMockCookingSession', () => {
 });
 
 describe('createMockMealSlot', () => {
-  beforeEach(() => resetMealSlotCounter());
-
   it('binds to the provided userId', () => {
     const date = new Date('2026-01-05T00:00:00.000Z');
     const slot = createMockMealSlot('usr_x', null, date, mst.DINNER);

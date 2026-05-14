@@ -1,6 +1,6 @@
 import { prisma } from '@kookio/prisma-client/server';
 import { MealSlotTypeSchema } from '@kookio/prisma-client';
-import { createMockMealSlot, resetMealSlotCounter } from '@kookio/shared-mock';
+import { createMockMealSlot } from '@kookio/shared-mock';
 
 import { logger } from './seed-helpers';
 
@@ -24,7 +24,6 @@ export const seedMealSlots = async (
   }
 
   logger.info({ userId }, '🌱 Seeding meal slots…');
-  resetMealSlotCounter();
 
   const slots = [
     { daysOffset: 0, slotType: mst.DINNER, recipeId: recipeIds[0] },
