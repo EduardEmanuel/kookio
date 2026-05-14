@@ -1,22 +1,19 @@
 import { prisma } from '@kookio/prisma-client/server';
-import { RoleSchema, type Role, type UserSeeded } from '@kookio/prisma-client';
+import type { UserSeeded } from '@kookio/prisma-client';
 import { getAdminAuth } from '@kookio/server-auth';
 
 import { logger } from './seed-helpers';
-
-const role = RoleSchema.Values;
 
 type UserSeed = {
   email: string;
   password: string;
   name: string;
-  roles: Role[];
   claims?: Record<string, unknown>;
 };
 
 const seedUser = async (seed: UserSeed): Promise<UserSeeded> => {
   const auth = getAdminAuth();
-  const { email, password, name, roles, claims = {} } = seed;
+  const { email, password, name, claims = {} } = seed;
 
   let firebaseUid: string;
   try {
@@ -42,18 +39,13 @@ const seedUser = async (seed: UserSeed): Promise<UserSeeded> => {
     }
   }
 
-  // Derive claims from roles + allow overrides
-  const derivedClaims = {
-    admin: roles.includes(role.ADMIN),
-    ...claims,
-  };
-  await auth.setCustomUserClaims(firebaseUid, derivedClaims);
+  await auth.setCustomUserClaims(firebaseUid, claims);
 
   const result = (await prisma.user.upsert({
     where: { email },
-    create: { email, name, firebaseUid, roles, amr: ['password'] },
-    update: { firebaseUid, roles },
-    select: { id: true, email: true, roles: true, firebaseUid: true },
+    create: { email, name, firebaseUid, amr: ['password'] },
+    update: { firebaseUid },
+    select: { id: true, email: true, firebaseUid: true },
   } as never)) as UserSeeded;
 
   logger.info({ user: result }, '✅ User seeded');
@@ -74,7 +66,7 @@ export const seedUsers = async ({
   logger.info('🌱 Seeding users (Firebase + Prisma)…');
 
   const seeds: Array<UserSeed & { key: string }> = [
-    { key: 'admin', ...admin, name: 'Admin', roles: [role.ADMIN, role.USER] },
+    { key: 'admin', ...admin, name: 'Admin' },
   ];
 
   if (regularUser) {
@@ -82,7 +74,6 @@ export const seedUsers = async ({
       key: 'regularUser',
       ...regularUser,
       name: 'Regular User',
-      roles: [role.USER],
     });
   }
 

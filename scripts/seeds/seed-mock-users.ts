@@ -7,8 +7,8 @@ const seedMockUser = async (row: UserMock): Promise<UserSeeded> => {
   const result = (await prisma.user.upsert({
     where: { id: row.id },
     create: { ...row, firebaseUid: null },
-    update: { email: row.email, roles: row.roles, name: row.name },
-    select: { id: true, email: true, roles: true, firebaseUid: true },
+    update: { email: row.email, name: row.name },
+    select: { id: true, email: true, firebaseUid: true },
   } as never)) as UserSeeded;
 
   logger.debug(
