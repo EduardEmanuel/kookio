@@ -1,10 +1,8 @@
 import {
-  CookingRecipeForSessionSchema,
   CookingSessionCompleteInputSchema,
   CookingSessionCompleteOutputSchema,
   CookingSessionStartInputSchema,
   CookingSessionStartOutputSchema,
-  GetRecipeForSessionInputSchema,
   RecipeStatusSchema,
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
@@ -151,94 +149,6 @@ export const cookingSession = router({
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to complete cooking session',
-          cause: err,
-        });
-      }
-    }),
-
-  /**
-   * Onboarded — load a PUBLIC recipe enriched with pantry availability per
-   * ingredient. The composite shape lets the cook page render the ingredient
-   * confirmation dialog without a second round-trip.
-   */
-  getRecipeForSession: onboardedProcedure
-    .input(GetRecipeForSessionInputSchema)
-    .output(CookingRecipeForSessionSchema)
-    .query(async ({ ctx, input }) => {
-      const userId = ctx.session!.uid;
-
-      try {
-        const [recipe, pantryItems] = await Promise.all([
-          ctx.prisma.recipe.findFirst({
-            where: {
-              id: input.recipeId,
-              status: RecipeStatusSchema.enum.PUBLIC,
-            },
-            select: {
-              id: true,
-              title: true,
-              instructions: true,
-              servings: true,
-              ingredients: {
-                select: {
-                  id: true,
-                  ingredientCatalogId: true,
-                  quantity: true,
-                  unit: true,
-                  notes: true,
-                  ingredient: {
-                    select: {
-                      id: true,
-                      name: true,
-                      imageUrl: true,
-                      category: true,
-                    },
-                  },
-                },
-              },
-            },
-          }),
-          ctx.prisma.pantryItem.findMany({
-            where: { userId },
-            select: {
-              ingredientCatalogId: true,
-              quantity: true,
-              unit: true,
-            },
-          }),
-        ]);
-
-        if (!recipe) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Recipe not found',
-          });
-        }
-
-        const pantryByCatalogId = new Map(
-          pantryItems.map((p) => [
-            p.ingredientCatalogId,
-            { quantity: p.quantity, unit: p.unit },
-          ]),
-        );
-
-        return {
-          ...recipe,
-          ingredients: recipe.ingredients.map((ri) => ({
-            ...ri,
-            pantryAvailable:
-              pantryByCatalogId.get(ri.ingredientCatalogId) ?? null,
-          })),
-        };
-      } catch (err) {
-        if (err instanceof TRPCError) throw err;
-        log.error(
-          { err, userId, recipeId: input.recipeId },
-          'cookingSession.getRecipeForSession failed',
-        );
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to load recipe',
           cause: err,
         });
       }

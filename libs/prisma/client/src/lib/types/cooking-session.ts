@@ -6,7 +6,6 @@ import {
   MeasureUnitSchema,
   PantryItemModelSchema,
   RecipeIngredientModelSchema,
-  RecipeModelSchema,
 } from '../../prisma-zod-generator/schemas/index';
 
 import { UuidIdSchema } from './ids';
@@ -82,15 +81,15 @@ export type CookingSessionCompleteOutput = z.output<
 >;
 
 // ─────────────────────────────────────────────
-// cookingSession.getRecipeForSession
+// IngredientConfirmDialog input shape
 // ─────────────────────────────────────────────
-
-export const GetRecipeForSessionInputSchema = z.object({
-  recipeId: UuidIdSchema,
-});
-export type GetRecipeForSessionInput = z.output<
-  typeof GetRecipeForSessionInputSchema
->;
+//
+// Constructed client-side by the cook page (`cook.[recipeId].page.ts`) from
+// the public `recipes.byId` payload joined with a fresh `pantry.list` call,
+// then passed into `IngredientConfirmDialogComponent`. There is no server
+// procedure that returns this shape directly — the merge happens entirely
+// in the browser so the SSR loader can stay on the public-recipe endpoint
+// (Analog's page-server fetch is not auth-aware).
 
 const CookingIngredientCatalogSchema = IngredientCatalogModelSchema.pick({
   id: true,
@@ -122,22 +121,4 @@ const CookingRecipeIngredientSchema = RecipeIngredientModelSchema.pick({
 });
 export type CookingRecipeIngredient = z.output<
   typeof CookingRecipeIngredientSchema
->;
-
-/**
- * Lean recipe shape served to the cook page — only the fields the UI renders
- * (title for the header, servings for the ratio calculation, instructions for
- * the step list) plus ingredients enriched with pantry availability. Add
- * fields here only when the cook page actually starts rendering them.
- */
-export const CookingRecipeForSessionSchema = RecipeModelSchema.pick({
-  id: true,
-  title: true,
-  instructions: true,
-  servings: true,
-}).extend({
-  ingredients: z.array(CookingRecipeIngredientSchema),
-});
-export type CookingRecipeForSession = z.output<
-  typeof CookingRecipeForSessionSchema
 >;

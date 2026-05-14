@@ -1,11 +1,14 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
+  PLATFORM_ID,
   computed,
   inject,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -13,17 +16,23 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
-import { firstValueFrom, map } from 'rxjs';
+import { EMPTY, from, of } from 'rxjs';
+import { catchError, filter, finalize, map, switchMap, tap } from 'rxjs';
 
 import { injectLoad, type RouteMeta } from '@analogjs/router';
 
 import { authGuard, AuthStore, onboardingGuard } from '@kookio/feature-auth';
+import { PANTRY_TRPC } from '@kookio/feature-pantry/trpc';
 import { COOKING_SESSION_TRPC } from '@kookio/feature-recipes/cooking-trpc';
 import {
   type IngredientConfirmDialogData,
   type IngredientConfirmDialogResult,
   IngredientConfirmDialogComponent,
 } from '@kookio/feature-recipes/ingredient-confirm-dialog';
+import type {
+  CookingRecipeIngredient,
+  PantryItemWithIngredient,
+} from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
 import { URLS } from '@kookio/shared-utility';
 
@@ -66,10 +75,13 @@ const pickDefaultServings = (recipeServings: number): number => {
 })
 export default class CookPage {
   private readonly trpc = inject(COOKING_SESSION_TRPC);
+  private readonly pantryTrpc = inject(PANTRY_TRPC);
   private readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly recipe = toSignal(
     injectLoad<typeof load>().pipe(map((d) => d.recipe)),
@@ -105,6 +117,51 @@ export default class CookPage {
     () => this.currentStep() < this.steps().length - 1,
   );
 
+  /**
+   * Pantry hydration. Eager fetch on the browser so by the time the user
+   * reaches the finish dialog the overlay is already in hand; on the
+   * server `pantry.list` would 401 (no auth header in Analog's page-server
+   * fetch — see `cook.[recipeId].server.ts` for the full story), so the
+   * browser-only guard short-circuits SSR. Failure surfaces as an empty
+   * array: the dialog then marks every ingredient "not in pantry" and the
+   * user confirms what they used by hand.
+   */
+  private readonly pantryItems = toSignal(
+    this.isBrowser
+      ? from(this.pantryTrpc.pantry.list.query()).pipe(
+          catchError(() => of<PantryItemWithIngredient[]>([])),
+        )
+      : of<PantryItemWithIngredient[]>([]),
+    { initialValue: [] as PantryItemWithIngredient[] },
+  );
+
+  /**
+   * Recipe ingredients joined with current pantry state — drives the
+   * confirm dialog at finish time. A computed signal means a click on
+   * "Done" lands on the current snapshot without re-fetching, and the
+   * dialog opens instantly once pantry has resolved.
+   */
+  protected readonly enrichedIngredients = computed<CookingRecipeIngredient[]>(
+    () => {
+      const recipe = this.recipe();
+      const pantryMap = new Map(
+        this.pantryItems().map((p) => [
+          p.ingredientCatalogId,
+          { quantity: p.quantity, unit: p.unit },
+        ]),
+      );
+      return recipe.ingredients.map((ri) => ({
+        id: ri.id,
+        ingredientCatalogId: ri.ingredient.id,
+        quantity: ri.quantity,
+        unit: ri.unit,
+        notes: ri.notes,
+        ingredient: ri.ingredient,
+        pantryAvailable: pantryMap.get(ri.ingredient.id) ?? null,
+      }));
+    },
+  );
+
   protected readonly setServings = (value: number): void => {
     this.servings.set(value);
   };
@@ -117,31 +174,44 @@ export default class CookPage {
     this.currentStep.update((n) => Math.max(n - 1, 0));
   };
 
-  protected readonly onStart = async (): Promise<void> => {
+  protected readonly onStart = (): void => {
     if (this.isStarting()) return;
     this.isStarting.set(true);
-    try {
-      const result = await this.trpc.cookingSession.start.mutate({
+    // `from(trpc.X.mutate(...))` is the canonical pattern — `@analogjs/trpc`
+    // procedures return RxJS Observables at runtime even though the
+    // injection-token interfaces declare `Promise<T>`. Bare `await` on the
+    // call resolves to the Observable instance (no subscription, no fetch),
+    // so without `from` + an explicit subscribe the request would never
+    // leave the browser. See `.ai/11_trpc.md` "Procedures return
+    // Observables".
+    from(
+      this.trpc.cookingSession.start.mutate({
         recipeId: this.recipe().id,
         servings: this.servings(),
-      });
-      this.sessionId.set(result.sessionId);
-      this.phase.set('cooking');
-      this.currentStep.set(0);
-    } catch {
-      this.snackBar.open('Failed to start cooking session.', 'OK', {
-        duration: 4000,
-      });
-    } finally {
-      this.isStarting.set(false);
-    }
+      }),
+    )
+      .pipe(
+        tap((result) => {
+          this.sessionId.set(result.sessionId);
+          this.phase.set('cooking');
+          this.currentStep.set(0);
+        }),
+        catchError(() => {
+          this.snackBar.open('Failed to start cooking session.', 'OK', {
+            duration: 4000,
+          });
+          return EMPTY;
+        }),
+        finalize(() => this.isStarting.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   };
 
-  protected readonly onFinish = async (): Promise<void> => {
+  protected readonly onFinish = (): void => {
     const sessionId = this.sessionId();
     if (!sessionId || this.isCompleting()) return;
 
-    const ratio = this.servings() / this.recipeServings();
     const ref = this.dialog.open<
       IngredientConfirmDialogComponent,
       IngredientConfirmDialogData,
@@ -150,29 +220,47 @@ export default class CookPage {
       width: '600px',
       maxWidth: '90vw',
       disableClose: true,
-      data: { ingredients: this.recipe().ingredients, ratio },
+      data: {
+        ingredients: this.enrichedIngredients(),
+        ratio: this.servings() / this.recipeServings(),
+      },
     });
 
-    const consumed = await firstValueFrom(ref.afterClosed());
-    if (!consumed) return; // user cancelled — keep the cook session open
-
-    this.isCompleting.set(true);
-    try {
-      await this.trpc.cookingSession.complete.mutate({
-        sessionId,
-        consumed: [...consumed],
-      });
-      this.authStore.loadCounts();
-      this.snackBar.open('Cooking complete — pantry updated.', 'OK', {
-        duration: 3000,
-      });
-      this.router.navigate([URLS.DASHBOARD]);
-    } catch {
-      this.snackBar.open('Failed to save. Try again.', 'OK', {
-        duration: 4000,
-      });
-    } finally {
-      this.isCompleting.set(false);
-    }
+    ref
+      .afterClosed()
+      .pipe(
+        // Cancel from the dialog closes with `null` — drop those so we never
+        // dispatch a complete with an empty payload.
+        filter(
+          (consumed): consumed is NonNullable<IngredientConfirmDialogResult> =>
+            consumed !== null && consumed !== undefined,
+        ),
+        tap(() => this.isCompleting.set(true)),
+        switchMap((consumed) =>
+          from(
+            this.trpc.cookingSession.complete.mutate({
+              sessionId,
+              consumed: [...consumed],
+            }),
+          ).pipe(
+            tap(() => {
+              this.authStore.loadCounts();
+              this.snackBar.open('Cooking complete — pantry updated.', 'OK', {
+                duration: 3000,
+              });
+              this.router.navigate([URLS.DASHBOARD]);
+            }),
+            catchError(() => {
+              this.snackBar.open('Failed to save. Try again.', 'OK', {
+                duration: 4000,
+              });
+              return EMPTY;
+            }),
+            finalize(() => this.isCompleting.set(false)),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   };
 }
