@@ -2,7 +2,7 @@
   "regions": ["fra1"],
   "crons": [],
   "devCommand": "nx serve web",
-  "buildCommand": "nx build web",
+  "buildCommand": "NODE_OPTIONS=--max-old-space-size=6144 nx build web",
   "headers": [
     {
       "source": "/assets/(.*)",
