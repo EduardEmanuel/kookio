@@ -138,6 +138,21 @@ describe('TopBarComponent', () => {
       expect(link).toBeTruthy();
       expect(link?.textContent).toContain('Attributions');
     });
+
+    it('exposes an About link when authenticated', async () => {
+      const { fixture } = await setup({ user: mockUser });
+
+      const accountBtn = fixture.nativeElement.querySelector(
+        'button[aria-label="User menu"]',
+      ) as HTMLButtonElement;
+      accountBtn.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const link = document.querySelector('a[mat-menu-item][href="/about"]');
+      expect(link).toBeTruthy();
+      expect(link?.textContent).toContain('About');
+    });
   });
 
   describe('behaviour', () => {
