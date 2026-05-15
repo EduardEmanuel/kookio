@@ -136,6 +136,12 @@ ensures consistency and quality across the codebase.
 | `20_analog-forms.md`   | Form Actions (public) vs tRPC mutations (authenticated) |
 | `21_websockets-sse.md` | WebSockets, SSE, tRPC subscriptions, Redis pub-sub      |
 
+### Documentation
+
+| File                        | Topic                                                            |
+| --------------------------- | ---------------------------------------------------------------- |
+| `24_documentation-latex.md` | LaTeX thesis (XeLaTeX/LuaLaTeX) format compliance + known quirks |
+
 ---
 
 ## General Principles
