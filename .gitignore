@@ -4,8 +4,6 @@
 thesis
 UMLs
 docs
-git-history-context.md
-scripts/build-git-history.ts
 
 # compiled output
 dist
