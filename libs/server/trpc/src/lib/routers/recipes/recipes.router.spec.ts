@@ -63,6 +63,7 @@ const makeMatchRow = (
   prepTimeMinutes: null,
   cookTimeMinutes: null,
   servings: 4,
+  difficulty: null,
   category: null,
   area: null,
   ingredients,
@@ -86,6 +87,7 @@ const makeFeedRow = (id: string, overrides: Record<string, unknown> = {}) => ({
   prepTimeMinutes: null,
   cookTimeMinutes: null,
   servings: 4,
+  difficulty: null,
   category: null,
   area: null,
   ...overrides,
@@ -98,11 +100,11 @@ const baseDetail = {
   title: 'Teriyaki Chicken',
   description: null,
   imageUrl: null,
-  youtubeUrl: null,
+  videoUrl: null,
   sourceUrl: null,
-  instructions: 'Step 1.\n\nStep 2.',
   status: 'PUBLIC' as const,
   servings: 4,
+  difficulty: null,
   prepTimeMinutes: null,
   cookTimeMinutes: null,
   categoryId: null,
@@ -114,6 +116,7 @@ const baseDetail = {
   area: null,
   ingredients: [],
   tags: [],
+  steps: [],
 };
 
 afterEach(() => {

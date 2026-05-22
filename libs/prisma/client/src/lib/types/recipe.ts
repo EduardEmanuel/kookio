@@ -1,6 +1,7 @@
 import z from 'zod';
 
 import {
+  DifficultySchema,
   IngredientCatalogModelSchema,
   MealAreaModelSchema,
   MealCategoryModelSchema,
@@ -11,6 +12,7 @@ import {
 } from '../../prisma-zod-generator/schemas/index';
 
 import { RecipeIngredientSeedRowSchema } from './recipe-ingredient';
+import { RecipeStepDetailSchema, RecipeStepSeedRowSchema } from './recipe-step';
 import { RecipeTagSeedRowSchema } from './recipe-tag';
 
 export const RecipeSeedRowSchema = RecipeInputSchema.pick({
@@ -18,14 +20,16 @@ export const RecipeSeedRowSchema = RecipeInputSchema.pick({
   slug: true,
   title: true,
   imageUrl: true,
-  youtubeUrl: true,
+  videoUrl: true,
   sourceUrl: true,
-  instructions: true,
+  servings: true,
 }).extend({
+  difficulty: DifficultySchema.nullable(),
   categoryExternalId: z.string().nullable(),
   areaExternalId: z.string().nullable(),
   tags: z.array(RecipeTagSeedRowSchema),
   ingredients: z.array(RecipeIngredientSeedRowSchema),
+  steps: z.array(RecipeStepSeedRowSchema),
 });
 export type RecipeSeedRow = z.output<typeof RecipeSeedRowSchema>;
 
@@ -50,6 +54,7 @@ export const RecipeFeedItemSchema = RecipeModelSchema.pick({
   prepTimeMinutes: true,
   cookTimeMinutes: true,
   servings: true,
+  difficulty: true,
 }).extend({
   category: RecipeFeedCategorySchema.nullable(),
   area: RecipeFeedAreaSchema.nullable(),
@@ -120,11 +125,11 @@ export const RecipeDetailSchema = RecipeModelSchema.pick({
   title: true,
   description: true,
   imageUrl: true,
-  youtubeUrl: true,
+  videoUrl: true,
   sourceUrl: true,
-  instructions: true,
   status: true,
   servings: true,
+  difficulty: true,
   prepTimeMinutes: true,
   cookTimeMinutes: true,
   categoryId: true,
@@ -137,5 +142,6 @@ export const RecipeDetailSchema = RecipeModelSchema.pick({
   area: RecipeFeedAreaSchema.nullable(),
   ingredients: z.array(RecipeDetailIngredientSchema),
   tags: z.array(RecipeDetailTagSchema),
+  steps: z.array(RecipeStepDetailSchema),
 });
 export type RecipeDetail = z.output<typeof RecipeDetailSchema>;

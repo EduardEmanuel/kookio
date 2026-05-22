@@ -104,13 +104,7 @@ export default class CookPage {
     () => this.recipe().servings ?? 2,
   );
 
-  protected readonly steps = computed(() => {
-    const text = this.recipe().instructions ?? '';
-    return text
-      .split(/\r?\n+/)
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
-  });
+  protected readonly steps = computed(() => this.recipe().steps);
 
   protected readonly canPrev = computed(() => this.currentStep() > 0);
   protected readonly canNext = computed(

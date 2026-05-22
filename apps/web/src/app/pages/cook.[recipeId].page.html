@@ -50,13 +50,17 @@
       [linear]="false"
       orientation="horizontal"
     >
-      @for (step of steps(); track $index) {
-      <mat-step [label]="'Step ' + ($index + 1)" />
+      @for (step of steps(); track step.id) {
+      <mat-step [label]="step.title ?? 'Step ' + step.order" />
       }
     </mat-stepper>
 
     <article class="cook-steps__current" [attr.aria-live]="'polite'">
-      <p class="cook-steps__text">{{ steps()[currentStep()] }}</p>
+      @if (steps()[currentStep()]; as active) { @if (active.title) {
+      <h2 class="cook-steps__title">{{ active.title }}</h2>
+      }
+      <p class="cook-steps__text">{{ active.content }}</p>
+      }
     </article>
 
     <footer class="cook-steps__footer">

@@ -476,7 +476,7 @@ export const RecipeSeedRowSchema = RecipeInputSchema.pick({
   slug: true,
   title: true,
   imageUrl: true,
-  youtubeUrl: true,
+  videoUrl: true,
   sourceUrl: true,
   instructions: true,
 }).extend({

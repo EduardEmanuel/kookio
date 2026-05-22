@@ -60,6 +60,7 @@ export class RecipeMatchCardComponent {
         prepTimeMinutes: i.prepTimeMinutes,
         cookTimeMinutes: i.cookTimeMinutes,
         servings: i.servings,
+        difficulty: i.difficulty,
         category: i.category,
         area: i.area,
       },

@@ -32,6 +32,7 @@ const RECIPE_MATCH_SELECT = {
   prepTimeMinutes: true,
   cookTimeMinutes: true,
   servings: true,
+  difficulty: true,
   category: { select: { id: true, name: true, emoji: true } },
   area: { select: { id: true, name: true, flag: true } },
   ingredients: {
@@ -54,6 +55,7 @@ const toItem = ({ recipe, matchInfo }: EnrichedMatch) => ({
   prepTimeMinutes: recipe.prepTimeMinutes,
   cookTimeMinutes: recipe.cookTimeMinutes,
   servings: recipe.servings,
+  difficulty: recipe.difficulty,
   category: recipe.category,
   area: recipe.area,
   matchInfo,

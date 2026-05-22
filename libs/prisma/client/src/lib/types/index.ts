@@ -10,6 +10,7 @@ export * from './pantry-item';
 export * from './recipe';
 export * from './recipe-collection';
 export * from './recipe-ingredient';
+export * from './recipe-step';
 export * from './recipe-tag';
 export * from './session';
 export * from './user';

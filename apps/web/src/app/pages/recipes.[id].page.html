@@ -117,12 +117,17 @@
       <kookio-icon name="menu_book" />
       Steps
     </h2>
-    @if (instructionSteps().length) {
+    @if (steps().length) {
     <ol class="recipe-detail__instructions">
-      @for (step of instructionSteps(); track $index) {
+      @for (step of steps(); track step.id) {
       <li class="recipe-detail__step">
-        <span class="recipe-detail__step-num">{{ $index + 1 }}</span>
-        <p>{{ step }}</p>
+        <span class="recipe-detail__step-num">{{ step.order }}</span>
+        <div class="recipe-detail__step-body">
+          @if (step.title) {
+          <h3 class="recipe-detail__step-title">{{ step.title }}</h3>
+          }
+          <p>{{ step.content }}</p>
+        </div>
       </li>
       }
     </ol>
@@ -131,7 +136,7 @@
     }
   </section>
 
-  @if (r.youtubeUrl || r.sourceUrl) {
+  @if (r.videoUrl || r.sourceUrl) {
   <mat-divider />
 
   <section class="recipe-detail__section">
@@ -140,15 +145,15 @@
       Source
     </h2>
     <div class="recipe-detail__sources">
-      @if (r.youtubeUrl; as yt) {
+      @if (r.videoUrl; as v) {
       <a
         matButton="outlined"
-        [href]="yt"
+        [href]="v"
         target="_blank"
         rel="noopener noreferrer"
       >
         <kookio-icon name="play_circle" />
-        Watch on YouTube
+        Watch video
       </a>
       } @if (r.sourceUrl; as src) {
       <a

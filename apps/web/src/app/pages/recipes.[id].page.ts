@@ -57,13 +57,7 @@ export default class RecipeDetailPage {
     () => this.authStore.isAuthenticated() && this.authStore.onboardingDone(),
   );
 
-  protected readonly instructionSteps = computed(() => {
-    const text = this.recipe()?.instructions ?? '';
-    return text
-      .split(/\r?\n+/)
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
-  });
+  protected readonly steps = computed(() => this.recipe()?.steps ?? []);
 
   constructor() {
     effect(() => {

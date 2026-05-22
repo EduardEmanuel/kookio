@@ -22,6 +22,7 @@ const SAVED_RECIPE_SELECT = {
   prepTimeMinutes: true,
   cookTimeMinutes: true,
   servings: true,
+  difficulty: true,
   category: { select: { id: true, name: true, emoji: true } },
   area: { select: { id: true, name: true, flag: true } },
 } as const;

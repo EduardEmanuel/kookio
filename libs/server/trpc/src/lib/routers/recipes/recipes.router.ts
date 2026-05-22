@@ -59,6 +59,7 @@ const FEED_RECIPE_SELECT = {
   prepTimeMinutes: true,
   cookTimeMinutes: true,
   servings: true,
+  difficulty: true,
   category: { select: { id: true, name: true, emoji: true } },
   area: { select: { id: true, name: true, flag: true } },
 } as const;
@@ -84,6 +85,10 @@ const DETAIL_RECIPE_INCLUDE = {
     orderBy: { id: 'asc' },
   },
   tags: { select: { tag: true } },
+  steps: {
+    select: { id: true, order: true, title: true, content: true },
+    orderBy: { order: 'asc' },
+  },
 } as const;
 
 export const recipes = router({

@@ -9,6 +9,7 @@ import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
 import { SAVED_TRPC, type SavedTrpcClient } from '@kookio/feature-saved/trpc';
 import {
+  DifficultySchema,
   IngredientCategorySchema,
   MeasureUnitSchema,
   RecipeStatusSchema,
@@ -30,6 +31,7 @@ const makeSavedTrpc = (): SavedTrpcClient => ({
 const Unit = MeasureUnitSchema.enum;
 const IngCategory = IngredientCategorySchema.enum;
 const Status = RecipeStatusSchema.enum;
+const Difficulty = DifficultySchema.enum;
 
 const mockRecipe = (overrides: Partial<RecipeDetail> = {}): RecipeDetail => ({
   id: '11111111-1111-1111-1111-111111111111',
@@ -38,11 +40,11 @@ const mockRecipe = (overrides: Partial<RecipeDetail> = {}): RecipeDetail => ({
   title: 'Spicy Arrabiata Penne',
   description: 'A fiery Italian classic.',
   imageUrl: 'https://example.test/img.jpg',
-  youtubeUrl: 'https://youtube.test/watch?v=1',
+  videoUrl: 'https://youtube.test/watch?v=1',
   sourceUrl: 'https://example.test/source',
-  instructions: 'Boil water.\nCook penne.\nCombine and serve.',
   status: Status.PUBLIC,
   servings: 4,
+  difficulty: Difficulty.MEDIUM,
   prepTimeMinutes: 10,
   cookTimeMinutes: 20,
   categoryId: 'cat-1',
@@ -79,6 +81,16 @@ const mockRecipe = (overrides: Partial<RecipeDetail> = {}): RecipeDetail => ({
     },
   ],
   tags: [{ tag: 'spicy' }, { tag: 'quick' }],
+  steps: [
+    { id: 'step-1', order: 1, title: 'Boil Water', content: 'Boil water.' },
+    { id: 'step-2', order: 2, title: 'Cook Penne', content: 'Cook penne.' },
+    {
+      id: 'step-3',
+      order: 3,
+      title: 'Combine and Serve',
+      content: 'Combine and serve.',
+    },
+  ],
   ...overrides,
 });
 
@@ -180,14 +192,16 @@ describe('RecipeDetailPage', () => {
     expect(items[1].textContent).toContain('fresh');
   });
 
-  it('splits instructions into numbered steps', async () => {
+  it('renders ordered steps with optional titles and content', async () => {
     const { el } = await setup();
     const steps = el.querySelectorAll('.recipe-detail__step');
 
     expect(steps).toHaveLength(3);
     expect(steps[0].textContent).toContain('1');
+    expect(steps[0].textContent).toContain('Boil Water');
     expect(steps[0].textContent).toContain('Boil water.');
     expect(steps[2].textContent).toContain('3');
+    expect(steps[2].textContent).toContain('Combine and Serve');
     expect(steps[2].textContent).toContain('Combine and serve.');
   });
 
@@ -220,7 +234,7 @@ describe('RecipeDetailPage', () => {
     expect(cta?.textContent).toContain('Cook now');
   });
 
-  it('renders source links when youtubeUrl or sourceUrl are present', async () => {
+  it('renders source links when videoUrl or sourceUrl are present', async () => {
     const { el } = await setup();
     const sources = el.querySelectorAll('.recipe-detail__sources a');
 
@@ -234,7 +248,7 @@ describe('RecipeDetailPage', () => {
 
   it('omits the source section when both source URLs are absent', async () => {
     const { el } = await setup({
-      recipe: mockRecipe({ youtubeUrl: null, sourceUrl: null }),
+      recipe: mockRecipe({ videoUrl: null, sourceUrl: null }),
     });
 
     expect(el.querySelector('.recipe-detail__sources')).toBeNull();
@@ -245,9 +259,9 @@ describe('RecipeDetailPage', () => {
     expect(title.getTitle()).toBe('Spicy Arrabiata Penne — Kookio');
   });
 
-  it('shows fallback messages for empty ingredients and instructions', async () => {
+  it('shows fallback messages for empty ingredients and steps', async () => {
     const { el } = await setup({
-      recipe: mockRecipe({ ingredients: [], instructions: '' }),
+      recipe: mockRecipe({ ingredients: [], steps: [] }),
     });
 
     const empties = Array.from(el.querySelectorAll('.recipe-detail__empty'));

@@ -68,6 +68,7 @@ const buildSavedEntry = (overrides: { recipeId?: string } = {}) => ({
     prepTimeMinutes: 10,
     cookTimeMinutes: 20,
     servings: 2,
+    difficulty: null,
     category: { id: 'cat-1', name: 'Pasta', emoji: '🍝' },
     area: { id: 'area-1', name: 'Italian', flag: '🇮🇹' },
   },

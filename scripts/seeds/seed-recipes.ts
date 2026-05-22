@@ -9,6 +9,7 @@ import type {
   IngredientCatalogLookupRow,
   RecipeIngredientSeedRow,
   RecipeSeedRow,
+  RecipeStepSeedRow,
   RecipeTagSeedRow,
 } from '@kookio/prisma-client';
 
@@ -116,6 +117,8 @@ const seedRecipes = async (
   let upsertedIngredients = 0;
   let skippedIngredients = 0;
   let upsertedTags = 0;
+  let upsertedSteps = 0;
+  let removedOrphanSteps = 0;
   const missingIngredients = new Set<string>();
 
   for (const recipe of recipes) {
@@ -152,11 +155,11 @@ const seedRecipes = async (
           slug: recipe.slug,
           title: recipe.title,
           imageUrl: recipe.imageUrl,
-          youtubeUrl: recipe.youtubeUrl,
+          videoUrl: recipe.videoUrl,
           sourceUrl: recipe.sourceUrl,
-          instructions: recipe.instructions,
           status: 'PUBLIC',
-          servings: 4,
+          servings: recipe.servings,
+          difficulty: recipe.difficulty,
           categoryId,
           areaId,
           authorId: null,
@@ -164,9 +167,10 @@ const seedRecipes = async (
         update: {
           title: recipe.title,
           imageUrl: recipe.imageUrl,
-          youtubeUrl: recipe.youtubeUrl,
+          videoUrl: recipe.videoUrl,
           sourceUrl: recipe.sourceUrl,
-          instructions: recipe.instructions,
+          servings: recipe.servings,
+          difficulty: recipe.difficulty,
           categoryId,
           areaId,
         },
@@ -224,6 +228,33 @@ const seedRecipes = async (
         } as never);
         upsertedTags++;
       }
+
+      // RecipeStep: upsert keyed on (recipeId, order) via the @@unique
+      // constraint, then drop any steps left over from a previous seed
+      // run with a higher step count for this recipe.
+      const recipeId = (upsertedRecipe as { id: string }).id;
+      for (const step of recipe.steps as RecipeStepSeedRow[]) {
+        await prisma.recipeStep.upsert({
+          where: {
+            recipeId_order: { recipeId, order: step.order },
+          },
+          create: {
+            recipeId,
+            order: step.order,
+            title: step.title,
+            content: step.content,
+          },
+          update: {
+            title: step.title,
+            content: step.content,
+          },
+        } as never);
+        upsertedSteps++;
+      }
+      const orphans = await prisma.recipeStep.deleteMany({
+        where: { recipeId, order: { gt: recipe.steps.length } },
+      });
+      removedOrphanSteps += orphans.count;
     } catch (err) {
       logger.error({ err, title: recipe.title }, '❌ Failed to upsert recipe');
       skippedRecipes++;
@@ -248,6 +279,8 @@ const seedRecipes = async (
       ingredientsUpserted: upsertedIngredients,
       ingredientsSkipped: skippedIngredients,
       tagsUpserted: upsertedTags,
+      stepsUpserted: upsertedSteps,
+      orphanStepsRemoved: removedOrphanSteps,
     },
     '📊 Seed results',
   );

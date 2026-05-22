@@ -333,15 +333,15 @@ model Recipe {
   /// TheMealDB idMeal — null for user-authored recipes.
   externalId String? @unique
 
-  slug         String       @unique
-  title        String
-  description  String?
-  imageUrl     String?
-  youtubeUrl   String?
-  sourceUrl    String?
-  instructions String
-  status       RecipeStatus @default(PUBLIC)
-  servings     Int          @default(4)
+  slug        String       @unique
+  title       String
+  description String?
+  imageUrl    String?
+  videoUrl    String?
+  sourceUrl   String?
+  status      RecipeStatus @default(PUBLIC)
+  servings    Int
+  difficulty  Difficulty?
 
   /// TheMealDB does not provide these — populated manually or via AI post-licență.
   prepTimeMinutes Int?
@@ -360,6 +360,7 @@ model Recipe {
 
   ingredients       RecipeIngredient[]
   tags              RecipeTag[]
+  steps             RecipeStep[]
   collectionEntries RecipeCollectionEntry[]
   mealSlots         MealSlot[]
   cookingSessions   CookingSession[]
@@ -369,6 +370,28 @@ model Recipe {
   @@index([areaId])
   @@index([authorId])
   @@index([externalId])
+}
+
+/// One instructional step of a recipe. Replaces the flat `instructions`
+/// string on Recipe so the UI can render numbered, titled steps.
+/// `title` is nullable because not every step has a meaningful heading.
+model RecipeStep {
+  id       String  @id @default(uuid())
+  recipeId String
+  order    Int
+  title    String? @db.String(120)
+  content  String
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, order])
+  @@index([recipeId])
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
 }
 
 /// Junction table between Recipe and IngredientCatalog.
