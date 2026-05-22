@@ -53,15 +53,7 @@
 }
 
 .sheet__viewport {
-  // Fills the remaining sheet height. min-height: 0 lets the flex
-  // child shrink past its intrinsic content size so internal
-  // overflow scrolls instead of pushing the parent.
   flex: 1 1 auto;
-  min-height: 0;
-  display: block;
-  // Horizontal padding lives here (not on a per-item wrapper) so
-  // every item — including the spinner row — shares the same gutter.
-  padding: 0 1rem;
 }
 
 .sheet__error {
@@ -79,7 +71,7 @@
 // pointer cursor that signals tap-to-select.
 .sheet__item {
   display: block;
-  padding: 0.1875rem 0;
+  padding: 0.1875rem var(--space-md, 1rem);
   cursor: pointer;
   border-radius: 0.5rem;
 

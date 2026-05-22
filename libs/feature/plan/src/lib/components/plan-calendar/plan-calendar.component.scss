@@ -94,12 +94,21 @@
 }
 
 .plan__sidebar-feed {
-  // The viewport is the sidebar's main vertical filler. flex: 1 takes
-  // the remaining height after the header, min-height: 0 lets it
-  // shrink past the children's intrinsic size on short windows.
+  // The viewport is the sidebar's main vertical filler. `flex: 1`
+  // takes the remaining height after the header.
+  //
+  // No `min-height: 0` or `display: block` overrides here — the
+  // `<cdk-virtual-scroll-viewport>` host already carries
+  // `display: block` and `contain: strict` from CDK's built-in
+  // styles (see `node_modules/@angular/cdk/fesm2022/scrolling.mjs`,
+  // class `cdk-virtual-scrollable`). `contain: strict` makes the
+  // viewport's intrinsic size 0 regardless of how tall the virtual
+  // content is, so a flex child default of `min-height: auto`
+  // already resolves to 0 here. The load-bearing height constraint
+  // is one level up on `.plan__sidebar` — its explicit
+  // `height: calc(100vh - 4rem)` gives this `flex: 1` actual excess
+  // to consume.
   flex: 1;
-  min-height: 0;
-  display: block;
   width: 100%;
 }
 
