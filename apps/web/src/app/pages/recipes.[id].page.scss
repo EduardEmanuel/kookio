@@ -1,6 +1,6 @@
 .recipe-detail {
   margin: 0 auto;
-  padding: var(--space-md, 1rem);
+  width: var(--container-2xl, 42rem);
 
   @media (min-width: 768px) {
     padding: var(--space-xl, 2.5rem) var(--space-md, 1rem);

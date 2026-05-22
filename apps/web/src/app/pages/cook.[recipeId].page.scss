@@ -53,7 +53,7 @@
     text-align: center;
   }
 
-  &__title {
+  &__heading {
     font-family: var(
       --font-display,
       'Fredoka',
@@ -69,20 +69,120 @@
     margin: 0;
   }
 
-  &__stepper {
-    background: transparent;
+  // Mobile-first single column. On desktop the rail takes a fixed-ish
+  // band on the left and the content takes the rest. `align-items: start`
+  // lets the rail use `position: sticky` against the content's height.
+  &__layout {
+    display: grid;
+    gap: var(--space-lg, 1.5rem);
+    grid-template-columns: 1fr;
+    align-items: start;
+
+    @media (min-width: 768px) {
+      grid-template-columns: minmax(13.75rem, 17.5rem) 1fr;
+    }
   }
 
-  &__current {
+  &__rail {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: none; // hidden on mobile; Prev/Next buttons cover nav
+    flex-direction: column;
+    gap: var(--space-2xs, 0.125rem);
+
+    @media (min-width: 768px) {
+      display: flex;
+      // Stays in view while the user scrolls the content pane. `top`
+      // matches the cook-page padding so the rail aligns with the top
+      // of the content card rather than sitting flush against the
+      // viewport edge.
+      position: sticky;
+      top: var(--space-md, 1rem);
+    }
+  }
+
+  &__rail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+    border-radius: var(--radius-sm, 0.5rem);
+    cursor: pointer;
+    color: var(--mat-sys-on-surface-variant);
+    transition: background var(--transition-fast, 150ms ease);
+
+    &:hover {
+      background: var(--mat-sys-surface-container);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--mat-sys-primary);
+      outline-offset: 2px;
+    }
+
+    &.is-active {
+      background: var(--mat-sys-primary-container);
+      color: var(--mat-sys-on-primary-container);
+      font-weight: 600;
+    }
+
+    &.is-complete {
+      color: var(--mat-sys-on-surface-variant);
+    }
+  }
+
+  &__rail-marker {
+    flex: 0 0 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full, 9999px);
+    background: var(--mat-sys-surface-container);
+    color: var(--mat-sys-on-surface);
+    font-weight: 600;
+    font-size: 0.875rem;
+
+    .is-active & {
+      background: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+    }
+
+    .is-complete & {
+      background: var(--mat-sys-tertiary);
+      color: var(--mat-sys-on-tertiary);
+    }
+  }
+
+  &__rail-label {
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__content {
     background: var(--mat-sys-surface-container-low);
     border-radius: var(--radius-lg, 1rem);
     padding: var(--space-xl, 2.5rem);
     min-height: 10rem;
-    display: grid;
-    place-items: center;
   }
 
-  &__text {
+  &__content-title {
+    margin: 0 0 var(--space-md, 1rem);
+    font-family: var(
+      --font-display,
+      'Fredoka',
+      'Roboto',
+      system-ui,
+      sans-serif
+    );
+  }
+
+  &__content-text {
     margin: 0;
     line-height: 1.6;
     font-size: 1.05rem;

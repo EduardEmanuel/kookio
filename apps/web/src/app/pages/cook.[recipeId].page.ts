@@ -10,12 +10,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { CdkListboxModule } from '@angular/cdk/listbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatStepperModule } from '@angular/material/stepper';
 import { EMPTY, from, of } from 'rxjs';
 import { catchError, filter, finalize, map, switchMap, tap } from 'rxjs';
 
@@ -64,10 +64,10 @@ const pickDefaultServings = (recipeServings: number): number => {
   selector: 'kookio-cook-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CdkListboxModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatProgressSpinnerModule,
-    MatStepperModule,
     KookioIconComponent,
   ],
   templateUrl: './cook.[recipeId].page.html',
@@ -166,6 +166,19 @@ export default class CookPage {
 
   protected readonly prevStep = (): void => {
     this.currentStep.update((n) => Math.max(n - 1, 0));
+  };
+
+  /**
+   * Wired to `cdkListbox`'s value-change event. The listbox emits the new
+   * selection as an array (cdk supports multi-select); single-select here
+   * means we take the first element. Clamped against the step bounds even
+   * though cdk guarantees the value matches an existing `cdkOption` — a
+   * stale recipe payload from cache could in theory yield an index past
+   * the current `steps().length`.
+   */
+  protected readonly onStepSelect = (index: number): void => {
+    const clamped = Math.max(0, Math.min(index, this.steps().length - 1));
+    this.currentStep.set(clamped);
   };
 
   protected readonly onStart = (): void => {

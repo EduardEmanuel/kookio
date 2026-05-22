@@ -38,30 +38,53 @@
   } @else {
   <section class="cook-steps">
     <header class="cook-steps__header">
-      <h1 class="cook-steps__title">{{ r.title }}</h1>
+      <h1 class="cook-steps__heading">{{ r.title }}</h1>
       <p class="cook-steps__progress">
         Step {{ currentStep() + 1 }} of {{ steps().length }}
       </p>
     </header>
 
-    <mat-stepper
-      class="cook-steps__stepper"
-      [selectedIndex]="currentStep()"
-      [linear]="false"
-      orientation="horizontal"
-    >
-      @for (step of steps(); track step.id) {
-      <mat-step [label]="step.title ?? 'Step ' + step.order" />
-      }
-    </mat-stepper>
+    <div class="cook-steps__layout">
+      <!-- Left rail: cdk-listbox gives keyboard nav (arrows, Home/End,
+           type-ahead) and ARIA `role="listbox"` / `role="option"` /
+           `aria-selected` for free. Single-select, never empty: the
+           current step always has a selected option. -->
+      <ul
+        class="cook-steps__rail"
+        cdkListbox
+        [cdkListboxValue]="[currentStep()]"
+        (cdkListboxValueChange)="onStepSelect($event.value[0]!)"
+        aria-label="Cooking steps"
+      >
+        @for (step of steps(); track step.id; let i = $index) {
+        <li
+          class="cook-steps__rail-item"
+          [class.is-active]="i === currentStep()"
+          [class.is-complete]="i < currentStep()"
+          [cdkOption]="i"
+        >
+          <span class="cook-steps__rail-marker" aria-hidden="true">
+            @if (i < currentStep()) {
+            <kookio-icon name="check" />
+            } @else { {{ i + 1 }} }
+          </span>
+          <span class="cook-steps__rail-label">
+            {{ step.title ?? 'Step ' + (i + 1) }}
+          </span>
+        </li>
+        }
+      </ul>
 
-    <article class="cook-steps__current" [attr.aria-live]="'polite'">
-      @if (steps()[currentStep()]; as active) { @if (active.title) {
-      <h2 class="cook-steps__title">{{ active.title }}</h2>
-      }
-      <p class="cook-steps__text">{{ active.content }}</p>
-      }
-    </article>
+      <!-- Right pane: active step content fills the entire column at
+           full width, no Material-stepper indentation. -->
+      <article class="cook-steps__content" aria-live="polite">
+        @if (steps()[currentStep()]; as active) { @if (active.title) {
+        <h2 class="cook-steps__content-title">{{ active.title }}</h2>
+        }
+        <p class="cook-steps__content-text">{{ active.content }}</p>
+        }
+      </article>
+    </div>
 
     <footer class="cook-steps__footer">
       <button
