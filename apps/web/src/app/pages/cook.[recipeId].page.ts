@@ -5,11 +5,12 @@ import {
   DestroyRef,
   PLATFORM_ID,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CdkListboxModule } from '@angular/cdk/listbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -78,6 +79,7 @@ export default class CookPage {
   private readonly pantryTrpc = inject(PANTRY_TRPC);
   private readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -106,10 +108,50 @@ export default class CookPage {
 
   protected readonly steps = computed(() => this.recipe().steps);
 
+  /**
+   * Initial step pulled from the `?step=N` query parameter, clamped to the
+   * recipe's step range. Read once at construction time — we do NOT track
+   * `route.queryParams` reactively here because we own URL writes via
+   * `history.replaceState` (see the effect below), and re-reading would
+   * cause a feedback loop. A fresh tab with no param resolves to 0.
+   */
+  private readonly initialStep = ((): number => {
+    const raw = this.route.snapshot.queryParamMap.get('step');
+    if (raw == null) return 0;
+    const parsed = Number.parseInt(raw, 10);
+    if (!Number.isFinite(parsed)) return 0;
+    const max = Math.max(0, this.recipe().steps.length - 1);
+    return Math.max(0, Math.min(parsed, max));
+  })();
+
   protected readonly canPrev = computed(() => this.currentStep() > 0);
   protected readonly canNext = computed(
     () => this.currentStep() < this.steps().length - 1,
   );
+
+  /**
+   * URL persistence for the cooking step. Uses `history.replaceState` —
+   * not `router.navigate` — because `navigate` re-runs route guards and
+   * triggers a full hydration on Vercel SSR, which is dramatic for what
+   * is just a query-param swap. `replaceState` keeps the navigation
+   * stack clean: the back button skips through historical step values
+   * and lands on whatever page the user came from.
+   *
+   * Only active in the `cooking` phase. During setup the param is
+   * meaningless (no step to point at) and writing it would muddle the
+   * setup URL. SSR is skipped via the `isBrowser` guard — `history` is
+   * undefined on the server.
+   */
+  constructor() {
+    effect(() => {
+      if (!this.isBrowser) return;
+      if (this.phase() !== 'cooking') return;
+      const step = this.currentStep();
+      const url = new URL(window.location.href);
+      url.searchParams.set('step', String(step));
+      window.history.replaceState({}, '', url.toString());
+    });
+  }
 
   /**
    * Pantry hydration. Eager fetch on the browser so by the time the user
@@ -201,7 +243,10 @@ export default class CookPage {
         tap((result) => {
           this.sessionId.set(result.sessionId);
           this.phase.set('cooking');
-          this.currentStep.set(0);
+          // Seed from `?step=N` (clamped at construction) so a shared
+          // URL deep-links into the right step. With no param this
+          // resolves to 0 — same as before.
+          this.currentStep.set(this.initialStep);
         }),
         catchError(() => {
           this.snackBar.open('Failed to start cooking session.', 'OK', {
