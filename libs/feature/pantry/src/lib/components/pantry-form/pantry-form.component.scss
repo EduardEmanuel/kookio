@@ -13,9 +13,21 @@
     width: 100%;
   }
 
+  // Quantity + Unit row. Stacks vertically on mobile because two
+  // outlined form-fields plus the gap don't fit on a ~360px viewport
+  // — `flex: 1 1 0` lets them shrink in theory but mat-form-field's
+  // inline-flex host carries enough min-content (label + outline notch
+  // padding) to push past the card width, which then clips because
+  // `.onboarding-shell__card` is `overflow: hidden`. Side-by-side
+  // returns from 768px up where the row breathes.
   &__row {
     display: flex;
+    flex-direction: column;
     gap: var(--space-md, 1rem);
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+    }
   }
 
   &__field--qty {

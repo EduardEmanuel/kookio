@@ -15,9 +15,19 @@
   &__item {
     box-sizing: border-box;
     display: flex;
-    justify-self: center;
-    padding: var(--space-sm, 0.5rem) 0;
-    width: var(--container-2xl, 42rem);
+    // `width: 100%` + `max-width: var(--container-2xl)` lets the card
+    // fill narrow viewports (the previous `width: 42rem` would have
+    // overflowed a 375px mobile by ~300px and clipped). Horizontal
+    // auto margins center the item under 42rem viewports —
+    // `justify-self: center` doesn't apply here because the CDK
+    // virtual-scroll wrapper isn't a grid container.
+    width: 100%;
+    max-width: var(--container-2xl, 42rem);
+    margin: 0 auto;
+    // Side padding gives the card a gutter against narrow viewport
+    // edges so it doesn't kiss the screen border.
+    padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+
     &:first-of-type {
       padding-top: var(--space-md, 1rem);
     }

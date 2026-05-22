@@ -31,6 +31,15 @@
     // radius (would read as a card within a card).
     padding: var(--space-md, 1rem) 0;
     min-height: 12rem;
+
+    // Grid items default to `min-width: auto` (= min-content), which
+    // lets a wide child (e.g. the pantry form's Quantity+Unit flex
+    // row on mobile) expand the column past the viewport. Forcing
+    // min-width: 0 makes the column shrink to its share of the grid
+    // track instead, so internal flex/text wrapping kicks in
+    // properly. Drop this and a long mat-form-field on a 360px
+    // viewport silently widens the entire page.
+    min-width: 0;
   }
 
   &__footer {
