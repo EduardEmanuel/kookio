@@ -13,8 +13,17 @@
   }
 
   &__item {
-    padding: var(--space-md, 16px);
     box-sizing: border-box;
+    display: flex;
+    justify-self: center;
+    padding: var(--space-sm, 8px) 0;
+    width: var(--container-2xl, 42rem);
+    &:first-of-type {
+      padding-top: var(--space-md, 16px);
+    }
+    &:last-of-type {
+      padding-bottom: var(--space-md, 16px);
+    }
   }
 
   &__loading {

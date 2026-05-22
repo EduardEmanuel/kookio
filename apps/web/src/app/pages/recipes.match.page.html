@@ -1,62 +1,60 @@
-<div class="match-page">
-  <header class="match-page__header">
-    <h1 class="match-page__title">Cook with what you have</h1>
+<header class="page__header">
+  <h1 class="page__title">Cook with what you have</h1>
 
-    <mat-button-toggle-group
-      class="match-page__levels"
-      [value]="level()"
-      (change)="onLevelChange($event.value)"
-      hideSingleSelectionIndicator
-      aria-label="Match level"
-    >
-      <mat-button-toggle value="A" aria-label="I have everything">
-        <kookio-icon name="check_circle" />
-        Alright
-      </mat-button-toggle>
-      <mat-button-toggle value="B" aria-label="Almost there">
-        <kookio-icon name="warning" />
-        Almost
-      </mat-button-toggle>
-      <mat-button-toggle value="C" aria-label="All recipes">
-        <kookio-icon name="restaurant_menu" />
-        All
-      </mat-button-toggle>
-    </mat-button-toggle-group>
+  <mat-button-toggle-group
+    class="page__levels"
+    [value]="level()"
+    (change)="onLevelChange($event.value)"
+    hideSingleSelectionIndicator
+    aria-label="Match level"
+  >
+    <mat-button-toggle value="A" aria-label="I have everything">
+      <kookio-icon name="check_circle" />
+      Alright
+    </mat-button-toggle>
+    <mat-button-toggle value="B" aria-label="Almost there">
+      <kookio-icon name="warning" />
+      Almost
+    </mat-button-toggle>
+    <mat-button-toggle value="C" aria-label="All recipes">
+      <kookio-icon name="restaurant_menu" />
+      All
+    </mat-button-toggle>
+  </mat-button-toggle-group>
 
-    <p class="match-page__hint">{{ levelHint() }}</p>
-  </header>
+  <p class="page__hint">{{ levelHint() }}</p>
+</header>
 
-  <kookio-recipes-feed
-    class="match-page__feed"
-    [source]="matchSource"
-    [itemTemplate]="matchCardTpl"
-    [emptyTemplate]="matchEmptyTpl"
-    [resetKey]="level()"
-  />
+<kookio-recipes-feed
+  class="page__feed"
+  [source]="matchSource"
+  [itemTemplate]="matchCardTpl"
+  [emptyTemplate]="matchEmptyTpl"
+  [resetKey]="level()"
+/>
 
-  <ng-template #matchCardTpl let-it>
-    <kookio-recipe-match-card [item]="it" />
-  </ng-template>
+<ng-template #matchCardTpl let-it>
+  <kookio-recipe-match-card [item]="it" />
+</ng-template>
 
-  <ng-template #matchEmptyTpl>
-    <div class="match-page__empty">
-      @switch (level()) { @case ('A') {
-      <p class="match-page__empty-text">No matches yet.</p>
-      <p class="match-page__empty-hint">
-        Add more ingredients to your pantry, or try the "Almost" level.
-      </p>
-      <a matButton="filled" routerLink="/pantry">
-        <kookio-icon name="kitchen" />
-        Manage pantry
-      </a>
-      } @case ('B') {
-      <p class="match-page__empty-text">Nothing close enough.</p>
-      <button matButton="tonal" type="button" (click)="onLevelChange('C')">
-        Browse all
-      </button>
-      } @default {
-      <p class="match-page__empty-text">No recipes available yet.</p>
-      } }
-    </div>
-  </ng-template>
-</div>
+<ng-template #matchEmptyTpl>
+  <div class="page__empty">
+    @switch (level()) { @case ('A') {
+    <p class="page__empty-text">No matches yet.</p>
+    <p class="page__empty-hint">
+      Add more ingredients to your pantry, or try the "Almost" level.
+    </p>
+    <a matButton="filled" routerLink="/pantry">
+      <kookio-icon name="kitchen" />
+      Manage pantry
+    </a>
+    } @case ('B') {
+    <p class="page__empty-text">Nothing close enough.</p>
+    <button matButton="tonal" type="button" (click)="onLevelChange('C')">
+      Browse all
+    </button>
+    } @default {
+    <p class="page__empty-text">No recipes available yet.</p>
+    } }
+  </div>
+</ng-template>

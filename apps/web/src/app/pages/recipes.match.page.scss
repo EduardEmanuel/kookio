@@ -1,22 +1,11 @@
-.match-page {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-width: var(--shell-content-max-width);
-  margin: 0 auto;
-  padding: var(--space-md);
-
-  @media (min-width: 768px) {
-    padding: var(--space-xl) var(--space-md);
-  }
-
+.page {
   &__header {
     text-align: center;
     margin-bottom: var(--space-lg);
   }
 
   &__title {
-    margin: 0 0 var(--space-md);
+    margin: var(--space-md) 0;
     font-family: var(--font-display);
     color: var(--color-on-surface);
   }
@@ -31,13 +20,6 @@
     margin: 0;
     color: var(--mat-sys-on-surface-variant);
     font-size: 0.95rem;
-  }
-
-  // Lets the cursor-paginated feed grow to fill the remaining viewport so
-  // virtual scrolling has a real height to bind to.
-  &__feed {
-    flex: 1;
-    min-height: 0;
   }
 
   &__empty {

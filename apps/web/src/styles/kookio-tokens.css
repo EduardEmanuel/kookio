@@ -78,7 +78,6 @@
   --shell-top-bar-height: 56px;
   --shell-bottom-tabs-height: 64px;
   --shell-sidenav-width: 260px;
-  --shell-content-max-width: 800px;
 }
 :root {
   --md-sys-color-primary: rgb(159 61 0);
