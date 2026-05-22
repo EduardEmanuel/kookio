@@ -6,7 +6,10 @@ import {
   input,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 
+import { AuthStore } from '@kookio/feature-auth';
 import type { SavedRecipeRow } from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
 
@@ -27,7 +30,7 @@ export type SaveToggleVariant = 'button' | 'iconOnly';
 @Component({
   selector: 'kookio-save-toggle',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, KookioIconComponent],
+  imports: [MatButtonModule, MatTooltipModule, KookioIconComponent],
   templateUrl: './save-toggle.component.html',
   styleUrl: './save-toggle.component.scss',
 })
@@ -44,6 +47,8 @@ export class SaveToggleComponent {
   readonly recipe = input<SavedRecipeRow | null>(null);
 
   private readonly store = inject(SavedStore);
+  private readonly authStore = inject(AuthStore);
+  private readonly router = inject(Router);
 
   protected readonly isSaved = computed(() =>
     this.store.isSaved(this.recipeId()),
@@ -53,8 +58,20 @@ export class SaveToggleComponent {
     this.store.isPending(this.recipeId()),
   );
 
+  // Gated on `authReady` so the muted state does not flash during Firebase
+  // init on a hydrating page where the user is actually logged in.
+  protected readonly isGuest = computed(
+    () => this.authStore.authReady() && !this.authStore.isAuthenticated(),
+  );
+
   protected readonly ariaLabel = computed(() =>
     this.isSaved() ? 'Remove from saved' : 'Save recipe',
+  );
+
+  // Empty string disables `matTooltip` on the authenticated path so the
+  // common case stays silent on hover.
+  protected readonly tooltip = computed(() =>
+    this.isGuest() ? 'Login is required' : '',
   );
 
   protected readonly onToggle = (event: MouseEvent): void => {
@@ -63,6 +80,10 @@ export class SaveToggleComponent {
     // navigate to the recipe detail page.
     event.preventDefault();
     event.stopPropagation();
+    if (!this.authStore.isAuthenticated()) {
+      void this.router.navigate(['/login']);
+      return;
+    }
     if (this.isPending()) return;
     this.store.toggleSave({
       recipeId: this.recipeId(),

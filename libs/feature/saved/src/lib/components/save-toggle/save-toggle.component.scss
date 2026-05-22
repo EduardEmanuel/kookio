@@ -18,4 +18,12 @@
   &--saved {
     color: var(--mat-sys-primary);
   }
+
+  // Muted visual for the unauthenticated path. The button stays interactive
+  // (focusable, tooltip-able, clickable into /login) — opacity is the only
+  // signal. Disabling the button would suppress pointer events and hide the
+  // tooltip from the users who most need to know why the action is gated.
+  &--guest {
+    opacity: 0.5;
+  }
 }

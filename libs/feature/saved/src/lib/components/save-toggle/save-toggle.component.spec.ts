@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
+import { Router, provideRouter } from '@angular/router';
 
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
@@ -10,8 +11,18 @@ import { SaveToggleComponent } from './save-toggle.component';
 
 const flush = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
 
+@Component({ template: '' })
+class StubPage {}
+
+interface SetupOptions {
+  recipeId: string;
+  variant?: 'button' | 'iconOnly';
+  authenticated?: boolean;
+  authReady?: boolean;
+}
+
 const setup = async (
-  componentInputs: { recipeId: string; variant?: 'button' | 'iconOnly' },
+  componentInputs: SetupOptions,
   trpcOverrides?: Partial<SavedTrpcClient['recipeCollection']>,
 ) => {
   const getSaved = vi.fn().mockResolvedValue([]);
@@ -28,12 +39,22 @@ const setup = async (
     },
   };
 
-  const authStore = createMockAuthStore({ session: null });
+  const authenticated = componentInputs.authenticated ?? true;
+  const authStore = createMockAuthStore({
+    currentUser: authenticated ? { uid: 'u1' } : null,
+    isAuthenticated: authenticated,
+    authReady: componentInputs.authReady ?? true,
+    session: null,
+  });
 
   await TestBed.configureTestingModule({
     imports: [SaveToggleComponent],
     providers: [
       provideZonelessChangeDetection(),
+      provideRouter([
+        { path: 'login', component: StubPage },
+        { path: '**', component: StubPage },
+      ]),
       { provide: AuthStore, useValue: authStore },
       { provide: SAVED_TRPC, useValue: trpc },
     ],
@@ -52,6 +73,8 @@ const setup = async (
     fixture,
     el: fixture.nativeElement as HTMLElement,
     toggleSave,
+    authStore,
+    router: TestBed.inject(Router),
   };
 };
 
@@ -124,5 +147,39 @@ describe('SaveToggleComponent', () => {
 
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(preventDefaultSpy).toHaveBeenCalled();
+  });
+
+  describe('when the user is not authenticated', () => {
+    it('applies the muted guest class to the button', async () => {
+      const { el } = await setup({ recipeId: 'r1', authenticated: false });
+      const btn = el.querySelector('button') as HTMLButtonElement;
+      expect(btn.classList.contains('save-toggle--guest')).toBe(true);
+    });
+
+    it('routes to /login on click instead of calling toggleSave', async () => {
+      const { el, fixture, toggleSave, router } = await setup({
+        recipeId: 'r1',
+        authenticated: false,
+      });
+      const navigateSpy = vi.spyOn(router, 'navigate');
+
+      const btn = el.querySelector('button') as HTMLButtonElement;
+      btn.click();
+      fixture.detectChanges();
+      await flush();
+
+      expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+      expect(toggleSave).not.toHaveBeenCalled();
+    });
+
+    it('does not mark the button as guest while auth is still initialising', async () => {
+      const { el } = await setup({
+        recipeId: 'r1',
+        authenticated: false,
+        authReady: false,
+      });
+      const btn = el.querySelector('button') as HTMLButtonElement;
+      expect(btn.classList.contains('save-toggle--guest')).toBe(false);
+    });
   });
 });

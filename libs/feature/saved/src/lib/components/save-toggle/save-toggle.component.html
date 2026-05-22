@@ -4,9 +4,11 @@
     type="button"
     class="save-toggle save-toggle--button"
     [class.save-toggle--saved]="isSaved()"
+    [class.save-toggle--guest]="isGuest()"
     [attr.aria-pressed]="isSaved()"
     [attr.aria-label]="ariaLabel()"
     [disabled]="isPending()"
+    [matTooltip]="tooltip()"
     (click)="onToggle($event)"
   >
     <kookio-icon name="bookmark" [filled]="isSaved()" />
@@ -18,9 +20,11 @@
     type="button"
     class="save-toggle save-toggle--icon"
     [class.save-toggle--saved]="isSaved()"
+    [class.save-toggle--guest]="isGuest()"
     [attr.aria-pressed]="isSaved()"
     [attr.aria-label]="ariaLabel()"
     [disabled]="isPending()"
+    [matTooltip]="tooltip()"
     (click)="onToggle($event)"
   >
     <kookio-icon name="bookmark" [filled]="isSaved()" />
