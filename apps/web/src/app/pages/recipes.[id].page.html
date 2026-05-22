@@ -70,11 +70,7 @@
     </dl>
     } @if (canCook()) {
     <div class="recipe-detail__actions">
-      <a
-        matButton="filled"
-        class="recipe-detail__cook-cta"
-        [routerLink]="['/cook', r.id]"
-      >
+      <a matButton="filled" [routerLink]="['/cook', r.id]">
         <kookio-icon name="restaurant" />
         Cook now
       </a>
@@ -82,8 +78,6 @@
     </div>
     }
   </header>
-
-  <mat-divider />
 
   <section class="recipe-detail__section">
     <h2>
@@ -115,8 +109,6 @@
     }
   </section>
 
-  <mat-divider />
-
   <section class="recipe-detail__section">
     <h2>
       <kookio-icon name="menu_book" />
@@ -142,8 +134,6 @@
   </section>
 
   @if (r.videoUrl || r.sourceUrl) {
-  <mat-divider />
-
   <section class="recipe-detail__section">
     <h2>
       <kookio-icon name="link" />

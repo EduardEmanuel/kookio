@@ -10,7 +10,6 @@ import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
 import { map } from 'rxjs';
 
 import { injectLoad, type RouteMeta } from '@analogjs/router';
@@ -40,7 +39,6 @@ export const routeMeta: RouteMeta = {
     RouterLink,
     MatButtonModule,
     MatChipsModule,
-    MatDividerModule,
     SaveToggleComponent,
     KookioEmojiComponent,
     KookioIconComponent,

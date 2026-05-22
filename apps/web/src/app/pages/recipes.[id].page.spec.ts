@@ -223,7 +223,7 @@ describe('RecipeDetailPage', () => {
   it('hides the Cook now CTA for anonymous users', async () => {
     const { el } = await setup({ isAuthenticated: false });
 
-    expect(el.querySelector('.recipe-detail__cook-cta')).toBeNull();
+    expect(el.querySelector('a[href^="/cook/"]')).toBeNull();
   });
 
   it('hides the Cook now CTA for users without onboarding', async () => {
@@ -232,7 +232,7 @@ describe('RecipeDetailPage', () => {
       onboardingDone: false,
     });
 
-    expect(el.querySelector('.recipe-detail__cook-cta')).toBeNull();
+    expect(el.querySelector('a[href^="/cook/"]')).toBeNull();
   });
 
   it('shows the Cook now CTA linking to /cook/:id when authenticated and onboarded', async () => {
@@ -240,7 +240,7 @@ describe('RecipeDetailPage', () => {
       isAuthenticated: true,
       onboardingDone: true,
     });
-    const cta = el.querySelector<HTMLAnchorElement>('.recipe-detail__cook-cta');
+    const cta = el.querySelector<HTMLAnchorElement>('a[href^="/cook/"]');
 
     expect(cta).toBeTruthy();
     expect(cta?.getAttribute('href')).toBe(
