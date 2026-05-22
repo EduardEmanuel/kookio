@@ -67,6 +67,15 @@ interface OnboardingState {
   /** Stepper position. Range: [0, TOTAL_STEPS - 1]. */
   currentStep: number;
 
+  /**
+   * High-water mark of the furthest step the user has reached so far.
+   * Monotonic — `next()` and `loadCurrent` (returning user) can advance
+   * it; `prev()` and direct `goToStep` calls never move it backward.
+   * Drives the rail's reachability gating so the user can revisit any
+   * step they've already seen but cannot skip ahead past validation.
+   */
+  maxStepReached: number;
+
   /** Display name collected on the start step; required to submit. */
   name: string;
 
@@ -97,6 +106,7 @@ interface OnboardingState {
 
 const initialState: OnboardingState = {
   currentStep: 0,
+  maxStepReached: 0,
   name: '',
   preferredCategoryIds: new Set<string>(),
   preferredAreaIds: new Set<string>(),
@@ -161,21 +171,42 @@ export const OnboardingStore = signalStore(
     const authStore = inject(AuthStore);
     const router = inject(Router);
 
+    /**
+     * Reachability gate for the rail. A step is reachable when it sits
+     * at or before the high-water mark — i.e. the user has been there
+     * before. Future steps stay locked until validation lets `next()`
+     * advance the mark.
+     */
+    const isReachable = (step: number): boolean =>
+      step <= store.maxStepReached();
+
     return {
+      isReachable,
+
       goToStep: (step: number): void => {
-        if (step >= 0 && step <= LAST_STEP) {
+        // Bounds check + reachability: only let the user jump back to
+        // steps they've already seen. Forward jumps must go through
+        // `next()` so the validation gates in the template (and the
+        // skip rule that wraps `next()`) stay authoritative.
+        if (step >= 0 && step <= LAST_STEP && isReachable(step)) {
           patchState(store, { currentStep: step });
         }
       },
 
       next: (): void => {
         if (store.currentStep() < LAST_STEP) {
-          patchState(store, { currentStep: store.currentStep() + 1 });
+          const nextStep = store.currentStep() + 1;
+          patchState(store, {
+            currentStep: nextStep,
+            maxStepReached: Math.max(store.maxStepReached(), nextStep),
+          });
         }
       },
 
       prev: (): void => {
         if (store.currentStep() > 0) {
+          // `maxStepReached` deliberately stays put — going back never
+          // re-locks a future step.
           patchState(store, { currentStep: store.currentStep() - 1 });
         }
       },
@@ -265,6 +296,10 @@ export const OnboardingStore = signalStore(
                   preferredAreaIds: new Set(data.preferredAreaIds),
                   utensilIds: new Set(data.utensilIds),
                   dietaryRestrictionIds: new Set(data.dietaryRestrictionIds),
+                  // Returning user: every step is already filled in, so
+                  // unlock the entire rail so they can jump straight to
+                  // whichever step they want to review or edit.
+                  maxStepReached: LAST_STEP,
                 }),
               ),
               catchError((err) => {

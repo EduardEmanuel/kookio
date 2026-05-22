@@ -5,51 +5,69 @@
 -->
 <div class="onboarding-shell">
   <mat-card class="onboarding-shell__card" appearance="outlined">
-    <mat-stepper
-      class="onboarding-shell__stepper"
-      orientation="vertical"
-      [linear]="false"
-      [selectedIndex]="store.currentStep()"
-      (selectionChange)="onStepperSelectionChange($event)"
-    >
-      <mat-step [label]="stepLabels[0]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-start-step />
-        </div>
-      </mat-step>
+    <div class="onboarding-shell__layout">
+      <!-- Left rail (desktop) / chip strip (mobile) — cdk-listbox gives
+           arrow-key navigation, type-ahead, and ARIA listbox/option
+           semantics. Reachability gating is enforced via
+           [cdkOptionDisabled] so the user cannot jump past a step they
+           haven't reached through next() yet. -->
+      <ul
+        class="onboarding-shell__rail"
+        cdkListbox
+        [cdkListboxValue]="railValue()"
+        (cdkListboxValueChange)="onRailSelect($event.value)"
+        aria-label="Onboarding steps"
+      >
+        @for (i of stepIndices; track i) {
+          <li
+            class="onboarding-shell__rail-item"
+            [class.is-active]="i === store.currentStep()"
+            [class.is-complete]="i < store.currentStep()"
+            [cdkOption]="i"
+            [cdkOptionDisabled]="!store.isReachable(i)"
+          >
+            <span class="onboarding-shell__rail-marker" aria-hidden="true">
+              @if (i < store.currentStep()) {
+                <kookio-icon name="check" />
+              } @else {
+                {{ i + 1 }}
+              }
+            </span>
+            <span class="onboarding-shell__rail-label">
+              {{ stepLabels[i] }}
+            </span>
+          </li>
+        }
+      </ul>
 
-      <mat-step [label]="stepLabels[1]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-fridge-step />
-        </div>
-      </mat-step>
-
-      <mat-step [label]="stepLabels[2]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-utensils-step />
-        </div>
-      </mat-step>
-
-      <mat-step [label]="stepLabels[3]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-people-step />
-        </div>
-      </mat-step>
-
-      <mat-step [label]="stepLabels[4]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-restrictions-step />
-        </div>
-      </mat-step>
-
-      <mat-step [label]="stepLabels[5]">
-        <div class="onboarding-shell__body">
-          <kookio-onboarding-done-step />
-        </div>
-      </mat-step>
-    </mat-stepper>
-
-    <mat-divider />
+      <!-- Right pane: active step component selected by index. -->
+      <article
+        class="onboarding-shell__content"
+        aria-live="polite"
+        [attr.aria-label]="stepLabels[store.currentStep()]"
+      >
+        @switch (store.currentStep()) {
+          @case (0) {
+            <kookio-onboarding-start-step />
+          }
+          @case (1) {
+            <kookio-onboarding-fridge-step />
+          }
+          @case (2) {
+            <kookio-onboarding-utensils-step />
+          }
+          @case (3) {
+            <kookio-onboarding-people-step />
+          }
+          @case (4) {
+            <kookio-onboarding-restrictions-step />
+          }
+          @case (5) {
+            <kookio-onboarding-done-step />
+          }
+        }
+      </article>
+    </div>
 
     <mat-card-actions class="onboarding-shell__footer" align="end">
       @if (store.canGoPrev() && !store.isLastStep()) {

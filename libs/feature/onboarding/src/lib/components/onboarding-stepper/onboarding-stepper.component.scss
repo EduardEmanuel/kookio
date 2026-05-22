@@ -1,3 +1,5 @@
+@use '../../../../../../shared/ui/src/styles/stepper' as stepper;
+
 :host {
   display: block;
 }
@@ -13,21 +15,29 @@
   &__card {
     border-radius: var(--radius-lg, 1rem);
     overflow: hidden;
+    padding: var(--space-md, 1rem);
   }
 
-  &__stepper {
-    background: transparent;
-  }
+  // Shared rail + content layout. `'chip-strip'` collapses the rail
+  // into a horizontal row of marker dots above the content on mobile,
+  // so the user still sees their progress while the form below takes
+  // the full width.
+  @include stepper.layout($mobile: 'chip-strip');
 
-  &__body {
+  &__content {
+    // The step content components are full forms (start, fridge,
+    // utensils, etc.); the mat-card already provides the surface, so
+    // the content pane just needs padding — no extra background or
+    // radius (would read as a card within a card).
     padding: var(--space-md, 1rem) 0;
+    min-height: 12rem;
   }
 
   &__footer {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-sm, 0.5rem);
-    padding: var(--space-md, 1rem);
+    padding: var(--space-md, 1rem) 0 0;
   }
 
   &__skip {

@@ -1,0 +1,183 @@
+// Shared two-column stepper layout used by `/cook/[recipeId]` and
+// `/onboarding`. Vertical step rail on the left, active step content on
+// the right; the rail is `cdk-listbox`-driven at the call site so
+// keyboard navigation and ARIA `role="listbox"` / `role="option"` come
+// for free.
+//
+// This is a real SCSS partial (not a runtime CSS token file). Component
+// stylesheets `@use` it at compile time. Both consumers reach it via a
+// relative path because `nxViteTsPaths()`'s Sass importer doesn't
+// resolve the wildcard `@kookio/shared-ui/styles/*` form (see
+// `_breakpoints.scss` for the same constraint and a longer note).
+//
+// ─── Mobile strategy ──────────────────────────────────────────────────
+//
+// The two surfaces diverge below 768px:
+//
+//   - 'hide'        (cook session): the rail disappears entirely; the
+//                    Prev / Next buttons in the footer cover navigation.
+//                    Right for a single-task surface where progress
+//                    visibility is less important than content width.
+//
+//   - 'chip-strip'  (onboarding): the rail collapses to a horizontal
+//                    row of marker dots above the content; labels are
+//                    hidden but step state stays visible. Right for a
+//                    guided journey where the user needs to know how
+//                    many steps remain.
+//
+// Pass the strategy as the `$mobile` argument:
+//
+//   .cook-steps     { @include stepper.layout($mobile: 'hide'); }
+//   .onboarding-shell { @include stepper.layout($mobile: 'chip-strip'); }
+//
+// ─── Selectors emitted ────────────────────────────────────────────────
+//
+// All emitted under the calling block via `&`:
+//
+//   &__layout          — outer grid (column on mobile, 2-col on desktop)
+//   &__rail            — the `<ul cdkListbox>` host
+//   &__rail-item       — each `<li cdkOption>`
+//   &__rail-marker     — the numbered dot inside a rail item
+//   &__rail-label      — the step title beside the marker
+//
+// Item state modifiers consumed (caller binds them via `[class.X]=…`):
+//
+//   .is-active         — current step, primary-container background
+//   .is-complete       — already passed, tertiary marker
+//   [aria-disabled]    — unreached and unselectable; cdk-listbox emits
+//                        this automatically for `[cdkOptionDisabled]`
+//
+// `&__content` and any content-pane styling are intentionally NOT in the
+// mixin — the cook session wraps its single recipe step in a tinted
+// panel, while onboarding hosts an entire form component per step and
+// wants no extra chrome inside the card. Each surface adds its own.
+
+@mixin layout($mobile: 'hide') {
+  &__layout {
+    display: grid;
+    gap: var(--space-lg, 1.5rem);
+    grid-template-columns: 1fr;
+    align-items: start;
+
+    @media (min-width: 768px) {
+      grid-template-columns: minmax(13.75rem, 17.5rem) 1fr;
+    }
+  }
+
+  &__rail {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    @if $mobile == 'hide' {
+      display: none;
+
+      @media (min-width: 768px) {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2xs, 0.125rem);
+        // Sticky against the content pane's height; top offset matches
+        // the page padding so the rail aligns with the content's top
+        // edge rather than the viewport's.
+        position: sticky;
+        top: var(--space-md, 1rem);
+      }
+    } @else if $mobile == 'chip-strip' {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--space-2xs, 0.125rem);
+
+      @media (min-width: 768px) {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        position: sticky;
+        top: var(--space-md, 1rem);
+      }
+    }
+  }
+
+  &__rail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+    border-radius: var(--radius-sm, 0.5rem);
+    cursor: pointer;
+    color: var(--mat-sys-on-surface-variant);
+    transition: background var(--transition-fast, 150ms ease);
+
+    &:hover {
+      background: var(--mat-sys-surface-container);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--mat-sys-primary);
+      outline-offset: 2px;
+    }
+
+    &.is-active {
+      background: var(--mat-sys-primary-container);
+      color: var(--mat-sys-on-primary-container);
+      font-weight: 600;
+    }
+
+    // `[cdkOptionDisabled]` resolves to `aria-disabled="true"` on the
+    // host. Disabling the pointer events keeps tap targets honest on
+    // mobile where the chip strip would otherwise consume the tap
+    // without state change.
+    &[aria-disabled='true'] {
+      cursor: not-allowed;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    @if $mobile == 'chip-strip' {
+      @media (max-width: 767.98px) {
+        // Marker-only on mobile — labels collapse and the padding tightens
+        // so the chip strip can fit a 6-step flow on a narrow viewport.
+        padding: var(--space-2xs, 0.125rem);
+        gap: 0;
+      }
+    }
+  }
+
+  &__rail-marker {
+    flex: 0 0 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full, 9999px);
+    background: var(--mat-sys-surface-container);
+    color: var(--mat-sys-on-surface);
+    font-weight: 600;
+    font-size: 0.875rem;
+
+    .is-active & {
+      background: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+    }
+
+    .is-complete & {
+      background: var(--mat-sys-tertiary);
+      color: var(--mat-sys-on-tertiary);
+    }
+  }
+
+  &__rail-label {
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @if $mobile == 'chip-strip' {
+      @media (max-width: 767.98px) {
+        display: none;
+      }
+    }
+  }
+}

@@ -106,7 +106,9 @@ describe('OnboardingStore', () => {
 
     it('prev() decrements by one and stops at 0', () => {
       const { store } = setup();
-      store.goToStep(3);
+      // Advance to step 3 via next() so the reachability gate lets us
+      // come back; goToStep() is now refused on unreached indices.
+      for (let i = 0; i < 3; i++) store.next();
       store.prev();
       expect(store.currentStep()).toBe(2);
       for (let i = 0; i < 5; i++) store.prev();
@@ -115,19 +117,68 @@ describe('OnboardingStore', () => {
 
     it('goToStep() ignores out-of-range indices', () => {
       const { store } = setup();
-      store.goToStep(2);
+      for (let i = 0; i < 2; i++) store.next();
       store.goToStep(-1);
       expect(store.currentStep()).toBe(2);
       store.goToStep(99);
       expect(store.currentStep()).toBe(2);
     });
 
-    it('goToStep() accepts boundary values 0 and TOTAL_STEPS - 1', () => {
+    it('goToStep() accepts boundary values 0 and TOTAL_STEPS - 1 once reached', () => {
       const { store } = setup();
+      // Walk to the end via next() so the whole rail is reachable.
+      for (let i = 0; i < TOTAL_STEPS; i++) store.next();
       store.goToStep(TOTAL_STEPS - 1);
       expect(store.isLastStep()).toBe(true);
       store.goToStep(0);
       expect(store.isFirstStep()).toBe(true);
+    });
+  });
+
+  describe('reachability gate', () => {
+    it('maxStepReached starts at 0 and only step 0 is reachable', () => {
+      const { store } = setup();
+      expect(store.maxStepReached()).toBe(0);
+      expect(store.isReachable(0)).toBe(true);
+      expect(store.isReachable(1)).toBe(false);
+    });
+
+    it('next() bumps maxStepReached monotonically', () => {
+      const { store } = setup();
+      store.next();
+      store.next();
+      expect(store.maxStepReached()).toBe(2);
+      expect(store.isReachable(2)).toBe(true);
+      expect(store.isReachable(3)).toBe(false);
+    });
+
+    it('prev() leaves maxStepReached untouched', () => {
+      const { store } = setup();
+      store.next();
+      store.next();
+      store.prev();
+      expect(store.currentStep()).toBe(1);
+      expect(store.maxStepReached()).toBe(2);
+      expect(store.isReachable(2)).toBe(true);
+    });
+
+    it('goToStep() refuses to jump past maxStepReached', () => {
+      const { store } = setup();
+      store.next();
+      // Max is 1; trying to land on step 3 should be ignored.
+      store.goToStep(3);
+      expect(store.currentStep()).toBe(1);
+    });
+
+    it('goToStep() accepts previously-reached steps (review path)', () => {
+      const { store } = setup();
+      for (let i = 0; i < 3; i++) store.next();
+      // Now at step 3; go back to step 1 and forward to step 2 — both
+      // already reached.
+      store.goToStep(1);
+      expect(store.currentStep()).toBe(1);
+      store.goToStep(2);
+      expect(store.currentStep()).toBe(2);
     });
   });
 
@@ -284,6 +335,10 @@ describe('OnboardingStore', () => {
       expect(store.childrenCount()).toBe(2);
       expect([...store.preferredCategoryIds()]).toEqual(['c-1', 'c-2']);
       expect([...store.dietaryRestrictionIds()]).toHaveLength(3);
+      // Returning user: the whole rail unlocks so they can jump
+      // straight to any step they want to review.
+      expect(store.maxStepReached()).toBe(TOTAL_STEPS - 1);
+      expect(store.isReachable(TOTAL_STEPS - 1)).toBe(true);
       // The default mock `current` isn't called when we override.
       expect(current).not.toHaveBeenCalled();
     });
