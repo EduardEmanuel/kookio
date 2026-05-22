@@ -8,7 +8,11 @@ import { NgOptimizedImage } from '@angular/common';
 import { MatChipsModule } from '@angular/material/chips';
 
 import type { RecipeMatchItem } from '@kookio/prisma-client';
-import { KookioIconComponent } from '@kookio/shared-ui';
+import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
+import {
+  DIFFICULTY_EMOJI,
+  DIFFICULTY_LABEL,
+} from '@kookio/shared-utility/difficulty';
 
 /**
  * Compact, single-row match card for narrow surfaces (~280px sidebar).
@@ -26,7 +30,12 @@ const ALMOST_MAX_MISSING = 3;
 @Component({
   selector: 'kookio-recipe-match-card-compact',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgOptimizedImage, MatChipsModule, KookioIconComponent],
+  imports: [
+    NgOptimizedImage,
+    MatChipsModule,
+    KookioEmojiComponent,
+    KookioIconComponent,
+  ],
   templateUrl: './recipe-match-card-compact.component.html',
   styleUrl: './recipe-match-card-compact.component.scss',
 })
@@ -56,4 +65,7 @@ export class RecipeMatchCardCompactComponent {
     }
     return i.title;
   });
+
+  protected readonly DIFFICULTY_LABEL = DIFFICULTY_LABEL;
+  protected readonly DIFFICULTY_EMOJI = DIFFICULTY_EMOJI;
 }

@@ -42,6 +42,14 @@
         <kookio-icon class="match-card-compact__time-icon" name="schedule" />
         <span>{{ t }} min</span>
       }
+
+      @if (item().difficulty; as d) {
+        @if (isComplete() || isAlmost() || totalMinutes()) {
+          <span class="match-card-compact__sep" aria-hidden="true">·</span>
+        }
+        <kookio-emoji [char]="DIFFICULTY_EMOJI[d]" [size]="14" />
+        <span>{{ DIFFICULTY_LABEL[d] }}</span>
+      }
     </span>
   </span>
 </article>

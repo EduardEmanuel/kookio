@@ -18,6 +18,10 @@ import { injectLoad, type RouteMeta } from '@analogjs/router';
 import { AuthStore } from '@kookio/feature-auth';
 import { SaveToggleComponent } from '@kookio/feature-saved';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
+import {
+  DIFFICULTY_EMOJI,
+  DIFFICULTY_LABEL,
+} from '@kookio/shared-utility/difficulty';
 import { formatMeasureUnit } from '@kookio/shared-utility/measure-units';
 
 import type { load } from './recipes.[id].server';
@@ -70,4 +74,7 @@ export default class RecipeDetailPage {
 
   protected readonly formatQuantity = (qty: number | null): string =>
     qty == null ? '' : String(qty);
+
+  protected readonly DIFFICULTY_LABEL = DIFFICULTY_LABEL;
+  protected readonly DIFFICULTY_EMOJI = DIFFICULTY_EMOJI;
 }

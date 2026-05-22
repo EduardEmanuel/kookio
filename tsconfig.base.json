@@ -78,6 +78,9 @@
       "@kookio/shared-mock": ["libs/shared/mock/src/index.ts"],
       "@kookio/shared-ui": ["libs/shared/ui/src/index.ts"],
       "@kookio/shared-utility": ["libs/shared/utility/src/index.ts"],
+      "@kookio/shared-utility/difficulty": [
+        "libs/shared/utility/src/lib/labeling/difficulty-labels.ts"
+      ],
       "@kookio/shared-utility/ingredient-categories": [
         "libs/shared/utility/src/lib/labeling/ingredient-category-labels.ts"
       ],

@@ -15,7 +15,7 @@
 
     @if (r.description) {
     <p class="recipe-detail__description">{{ r.description }}</p>
-    } @if (r.category || r.area || r.tags.length) {
+    } @if (r.category || r.area || r.difficulty || r.tags.length) {
     <div class="recipe-detail__meta">
       @if (r.category; as cat) {
       <mat-chip class="recipe-detail__chip" disableRipple>
@@ -28,6 +28,11 @@
         @if (area.flag) {
         <kookio-emoji [char]="area.flag" [size]="16" />
         } {{ area.name }}
+      </mat-chip>
+      } @if (r.difficulty; as d) {
+      <mat-chip class="recipe-detail__chip" disableRipple>
+        <kookio-emoji [char]="DIFFICULTY_EMOJI[d]" [size]="16" />
+        {{ DIFFICULTY_LABEL[d] }}
       </mat-chip>
       } @for (t of r.tags; track t.tag) {
       <mat-chip class="recipe-detail__chip" disableRipple>

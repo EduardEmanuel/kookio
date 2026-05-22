@@ -6,7 +6,7 @@ import { provideRouter } from '@angular/router';
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
 import { SAVED_TRPC, type SavedTrpcClient } from '@kookio/feature-saved/trpc';
-import type { RecipeFeedItem } from '@kookio/prisma-client';
+import { DifficultySchema, type RecipeFeedItem } from '@kookio/prisma-client';
 
 import { RecipeCardComponent } from './recipe-card.component';
 
@@ -92,7 +92,25 @@ describe('RecipeCardComponent', () => {
       expect(chips[1].textContent).toContain('Italian');
     });
 
-    it('omits chips block when no category and no area', async () => {
+    it('renders the difficulty chip when difficulty is set', async () => {
+      const { el } = await setup({
+        ...baseRecipe,
+        difficulty: DifficultySchema.enum.MEDIUM,
+      });
+      const chips = el.querySelectorAll('.recipe-card__chip');
+      const text = Array.from(chips).map((c) => c.textContent?.trim());
+      expect(text.some((t) => t?.includes('Medium'))).toBe(true);
+    });
+
+    it('omits the difficulty chip when difficulty is null', async () => {
+      const { el } = await setup(baseRecipe);
+      const text = el.querySelector('.recipe-card__meta')?.textContent ?? '';
+      expect(text).not.toContain('Easy');
+      expect(text).not.toContain('Medium');
+      expect(text).not.toContain('Hard');
+    });
+
+    it('omits chips block when no category, area, or difficulty', async () => {
       const { el } = await setup({
         ...baseRecipe,
         category: null,

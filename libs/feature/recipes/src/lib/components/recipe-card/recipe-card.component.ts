@@ -12,6 +12,10 @@ import { SaveToggleComponent } from '@kookio/feature-saved';
 import type { RecipeFeedItem, SavedRecipeRow } from '@kookio/prisma-client';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 import { URLS } from '@kookio/shared-utility';
+import {
+  DIFFICULTY_EMOJI,
+  DIFFICULTY_LABEL,
+} from '@kookio/shared-utility/difficulty';
 
 @Component({
   selector: 'kookio-recipe-card',
@@ -48,4 +52,7 @@ export class RecipeCardComponent {
     recipe: this.recipe(),
     addedAt: new Date(),
   }));
+
+  protected readonly DIFFICULTY_LABEL = DIFFICULTY_LABEL;
+  protected readonly DIFFICULTY_EMOJI = DIFFICULTY_EMOJI;
 }

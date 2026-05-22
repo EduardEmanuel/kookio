@@ -2,7 +2,7 @@ import { describe, expect, it, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 
-import type { RecipeMatchItem } from '@kookio/prisma-client';
+import { DifficultySchema, type RecipeMatchItem } from '@kookio/prisma-client';
 
 import { RecipeMatchCardCompactComponent } from './recipe-match-card-compact.component';
 
@@ -88,5 +88,20 @@ describe('RecipeMatchCardCompactComponent', () => {
       makeItem({ prepTimeMinutes: 0, cookTimeMinutes: 0 }),
     );
     expect(el.textContent).not.toContain('min');
+  });
+
+  it('renders the difficulty inline when difficulty is set', async () => {
+    const el = await setup(
+      makeItem({ difficulty: DifficultySchema.enum.EASY }),
+    );
+    expect(el.textContent).toContain('Easy');
+  });
+
+  it('omits difficulty when difficulty is null', async () => {
+    const el = await setup(makeItem());
+    const text = el.textContent ?? '';
+    expect(text).not.toContain('Easy');
+    expect(text).not.toContain('Medium');
+    expect(text).not.toContain('Hard');
   });
 });

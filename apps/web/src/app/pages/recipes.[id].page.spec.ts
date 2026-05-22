@@ -165,6 +165,21 @@ describe('RecipeDetailPage', () => {
     expect(text.some((t) => t?.includes('quick'))).toBe(true);
   });
 
+  it('renders the difficulty chip when difficulty is set', async () => {
+    const { el } = await setup();
+    const chips = el.querySelectorAll('.recipe-detail__chip');
+    const text = Array.from(chips).map((c) => c.textContent?.trim());
+    expect(text.some((t) => t?.includes('Medium'))).toBe(true);
+  });
+
+  it('omits the difficulty chip when difficulty is null', async () => {
+    const { el } = await setup({ recipe: mockRecipe({ difficulty: null }) });
+    const text = el.querySelector('.recipe-detail__meta')?.textContent ?? '';
+    expect(text).not.toContain('Easy');
+    expect(text).not.toContain('Medium');
+    expect(text).not.toContain('Hard');
+  });
+
   it('renders prep, cook and servings stats', async () => {
     const { el } = await setup();
     const text = el.querySelector('.recipe-detail__stats')?.textContent ?? '';

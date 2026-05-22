@@ -45,7 +45,7 @@
         <p class="match-card__missing">Missing: {{ formattedMissing() }}</p>
       }
 
-      @if (item().category || item().area) {
+      @if (item().category || item().area || item().difficulty) {
         <div class="match-card__meta">
           @if (item().category; as cat) {
             <mat-chip class="match-card__chip" disableRipple>
@@ -61,6 +61,12 @@
                 <kookio-emoji [char]="area.flag" [size]="16" />
               }
               {{ area.name }}
+            </mat-chip>
+          }
+          @if (item().difficulty; as d) {
+            <mat-chip class="match-card__chip" disableRipple>
+              <kookio-emoji [char]="DIFFICULTY_EMOJI[d]" [size]="16" />
+              {{ DIFFICULTY_LABEL[d] }}
             </mat-chip>
           }
         </div>

@@ -6,7 +6,7 @@ import { Router, provideRouter } from '@angular/router';
 import { AuthStore } from '@kookio/feature-auth';
 import { createMockAuthStore } from '@kookio/feature-auth/testing';
 import { SAVED_TRPC, type SavedTrpcClient } from '@kookio/feature-saved/trpc';
-import type { RecipeMatchItem } from '@kookio/prisma-client';
+import { DifficultySchema, type RecipeMatchItem } from '@kookio/prisma-client';
 
 import { RecipeMatchCardComponent } from './recipe-match-card.component';
 
@@ -207,6 +207,25 @@ describe('RecipeMatchCardComponent', () => {
       expect(el.querySelector('.match-card__missing')?.textContent).toContain(
         'Missing: a, b, c +4 more',
       );
+    });
+  });
+
+  describe('difficulty chip', () => {
+    it('renders the difficulty chip when difficulty is set', async () => {
+      const { el } = await setup(
+        baseItem({ difficulty: DifficultySchema.enum.HARD }),
+      );
+      const chips = el.querySelectorAll('.match-card__chip');
+      const text = Array.from(chips).map((c) => c.textContent?.trim());
+      expect(text.some((t) => t?.includes('Hard'))).toBe(true);
+    });
+
+    it('omits the difficulty chip when difficulty is null', async () => {
+      const { el } = await setup(baseItem());
+      const text = el.querySelector('.match-card__meta')?.textContent ?? '';
+      expect(text).not.toContain('Easy');
+      expect(text).not.toContain('Medium');
+      expect(text).not.toContain('Hard');
     });
   });
 

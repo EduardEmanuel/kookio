@@ -23,7 +23,7 @@
     <mat-card-content class="recipe-card__content">
       <h3 class="recipe-card__title">{{ recipe().title }}</h3>
 
-      @if (recipe().category || recipe().area) {
+      @if (recipe().category || recipe().area || recipe().difficulty) {
         <div class="recipe-card__meta">
           @if (recipe().category; as cat) {
             <mat-chip class="recipe-card__chip" disableRipple>
@@ -39,6 +39,12 @@
                 <kookio-emoji [char]="area.flag" [size]="16" />
               }
               {{ area.name }}
+            </mat-chip>
+          }
+          @if (recipe().difficulty; as d) {
+            <mat-chip class="recipe-card__chip" disableRipple>
+              <kookio-emoji [char]="DIFFICULTY_EMOJI[d]" [size]="16" />
+              {{ DIFFICULTY_LABEL[d] }}
             </mat-chip>
           }
         </div>

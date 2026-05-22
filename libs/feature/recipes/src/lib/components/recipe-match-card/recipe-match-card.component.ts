@@ -14,6 +14,10 @@ import type { RecipeMatchItem, SavedRecipeRow } from '@kookio/prisma-client';
 import { SaveToggleComponent } from '@kookio/feature-saved';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
 import { URLS } from '@kookio/shared-utility';
+import {
+  DIFFICULTY_EMOJI,
+  DIFFICULTY_LABEL,
+} from '@kookio/shared-utility/difficulty';
 
 /** A "B" match keeps recipes that need at most this many missing ingredients;
  * anything beyond falls into the "browse" bucket. Mirrors the server filter
@@ -110,4 +114,7 @@ export class RecipeMatchCardComponent {
     event.stopPropagation();
     this.router.navigate([URLS.COOK(this.item().id)]);
   };
+
+  protected readonly DIFFICULTY_LABEL = DIFFICULTY_LABEL;
+  protected readonly DIFFICULTY_EMOJI = DIFFICULTY_EMOJI;
 }
