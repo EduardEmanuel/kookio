@@ -9,7 +9,7 @@
 
   &__card {
     width: 100%;
-    max-width: 600px;
+    max-width: 37.5rem;
   }
 
   &__header {
@@ -48,9 +48,9 @@
 
     code {
       padding: 0.125rem 0.375rem;
-      border-radius: 4px;
-      background: var(--color-surface-container);
-      color: var(--color-primary);
+      border-radius: 0.25rem;
+      background: var(--color-surface-container, currentColor);
+      color: var(--color-primary, currentColor);
     }
   }
 }

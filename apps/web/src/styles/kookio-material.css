@@ -114,7 +114,7 @@
    * `--mat-standard-button-toggle-*` which some component docs suggest;
    * verified against `node_modules/@angular/material/fesm2022/button-toggle.mjs`.
    */
-  --mat-button-toggle-shape: var(--radius-full);
+  --mat-button-toggle-shape: var(--radius-full, 9999px);
   --mat-checkbox-unselected-icon-color: var(--mat-sys-outline);
   --mat-checkbox-unselected-hover-icon-color: var(--mat-sys-outline-variant);
   --mat-checkbox-unselected-focus-icon-color: var(--mat-sys-outline-variant);
@@ -183,7 +183,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-full, 9999px);
   & .mdc-button__label {
     display: inline-flex;
     align-items: center;

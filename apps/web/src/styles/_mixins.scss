@@ -63,7 +63,7 @@ $_breakpoints: (
 
 // WCAG AA focus ring — use on interactive elements.
 // $color defaults to the design-system primary token.
-@mixin focus-ring($color: var(--color-primary), $offset: 2px) {
+@mixin focus-ring($color: var(--color-primary, currentColor), $offset: 2px) {
   outline: 2px solid $color;
   outline-offset: $offset;
 }

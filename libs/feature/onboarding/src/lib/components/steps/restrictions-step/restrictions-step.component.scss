@@ -5,12 +5,12 @@
 .restrictions-step {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  padding: var(--space-md) 0;
+  gap: var(--space-md, 1rem);
+  padding: var(--space-md, 1rem) 0;
 
   &__heading {
     margin: 0;
-    font: var(--typescale-headline-small);
+    font: var(--typescale-headline-small, 400 1.5rem / 2rem sans-serif);
   }
 
   &__subtitle {
@@ -21,12 +21,12 @@
   &__list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: var(--space-xs, 0.25rem);
   }
 
   &__row {
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius-md);
+    padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+    border-radius: var(--radius-md, 0.75rem);
     transition: background var(--transition-fast, 150ms ease);
 
     &:hover {
@@ -37,7 +37,7 @@
   &__row-content {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: var(--space-sm, 0.5rem);
   }
 
   &__text {
@@ -52,12 +52,12 @@
   &__loading {
     display: flex;
     justify-content: center;
-    padding: var(--space-lg);
+    padding: var(--space-lg, 1.5rem);
   }
 
   &__empty {
     margin: 0;
-    padding: var(--space-md);
+    padding: var(--space-md, 1rem);
     text-align: center;
     color: var(--mat-sys-on-surface-variant);
   }

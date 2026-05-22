@@ -1,8 +1,8 @@
 .sidenav-menu {
-  width: var(--shell-sidenav-width);
+  width: var(--shell-sidenav-width, 16.25rem);
   height: 100%;
   overflow-y: auto;
-  background: var(--color-surface);
+  background: var(--color-surface, currentColor);
 
   // Replace M3's pill active indicator with a left-edge accent.
   // Material's selected-state label/icon colors (primary) are kept untouched —
@@ -20,7 +20,7 @@
       left: 0;
       top: 0;
       bottom: 0;
-      width: 4px;
+      width: 0.25rem;
       background: var(--mat-sys-primary);
     }
   }

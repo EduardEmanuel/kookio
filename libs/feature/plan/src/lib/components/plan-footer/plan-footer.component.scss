@@ -18,10 +18,10 @@
   // (`max-width: 1200px; padding: 16px; margin: 0 auto`) so that the
   // Save/Clear buttons sit directly under the calendar's right edge
   // — same horizontal rhythm as the rest of the page.
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: 1rem;
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   justify-content: flex-end;
 }

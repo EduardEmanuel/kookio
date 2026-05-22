@@ -1,7 +1,7 @@
 .dialog {
   &__hint {
     color: var(--mat-sys-on-surface-variant);
-    margin: 0 0 var(--space-md);
+    margin: 0 0 var(--space-md, 1rem);
   }
 
   &__list {
@@ -9,15 +9,15 @@
     padding: 0;
     margin: 0;
     display: grid;
-    gap: var(--space-sm);
+    gap: var(--space-sm, 0.5rem);
   }
 
   &__item {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius-sm);
+    gap: var(--space-md, 1rem);
+    padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+    border-radius: var(--radius-sm, 0.5rem);
     background: var(--mat-sys-surface-container-low);
 
     &--disabled {
@@ -40,6 +40,6 @@
   }
 
   &__qty {
-    flex: 0 0 130px;
+    flex: 0 0 8.125rem;
   }
 }

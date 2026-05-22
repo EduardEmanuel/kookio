@@ -44,7 +44,7 @@ describe('RecipesMatchPage', () => {
   it('renders the three-level button toggle group', async () => {
     const { el } = await setup();
 
-    const group = el.querySelector('.match-page__levels');
+    const group = el.querySelector('.page__levels');
     expect(group).toBeTruthy();
     const toggles = el.querySelectorAll('mat-button-toggle');
     expect(toggles.length).toBe(3);
@@ -57,7 +57,7 @@ describe('RecipesMatchPage', () => {
 
   it('shows the hint copy for the default level A', async () => {
     const { el } = await setup();
-    const hint = el.querySelector('.match-page__hint');
+    const hint = el.querySelector('.page__hint');
     expect(hint?.textContent).toContain('cook right now');
   });
 
@@ -69,13 +69,13 @@ describe('RecipesMatchPage', () => {
 
     c.onLevelChange('B');
     fixture.detectChanges();
-    expect(el.querySelector('.match-page__hint')?.textContent).toContain(
+    expect(el.querySelector('.page__hint')?.textContent).toContain(
       'missing 1–3',
     );
 
     c.onLevelChange('C');
     fixture.detectChanges();
-    expect(el.querySelector('.match-page__hint')?.textContent).toContain(
+    expect(el.querySelector('.page__hint')?.textContent).toContain(
       'All available recipes',
     );
   });

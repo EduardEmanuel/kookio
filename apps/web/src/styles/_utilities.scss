@@ -36,15 +36,15 @@
 // ---------------------------------------------------------------------------
 
 .ingredient-available {
-  color: var(--color-ingredient-available);
+  color: var(--color-ingredient-available, currentColor);
 }
 
 .ingredient-missing {
-  color: var(--color-ingredient-missing);
+  color: var(--color-ingredient-missing, currentColor);
 }
 
 .ingredient-partial {
-  color: var(--color-ingredient-partial);
+  color: var(--color-ingredient-partial, currentColor);
 }
 
 // ---------------------------------------------------------------------------
@@ -52,15 +52,15 @@
 // ---------------------------------------------------------------------------
 
 .expiry-ok {
-  color: var(--color-expiry-ok);
+  color: var(--color-expiry-ok, currentColor);
 }
 
 .expiry-soon {
-  color: var(--color-expiry-soon);
+  color: var(--color-expiry-soon, currentColor);
 }
 
 .expiry-expired {
-  color: var(--color-expiry-expired);
+  color: var(--color-expiry-expired, currentColor);
 }
 
 // ---------------------------------------------------------------------------
@@ -79,8 +79,8 @@
 }
 
 .skeleton {
-  background-color: var(--color-surface-container);
-  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-container, currentColor);
+  border-radius: var(--radius-sm, 0.5rem);
   animation: skeleton-pulse 1.5s ease-in-out infinite;
 
   @media (prefers-reduced-motion: reduce) {

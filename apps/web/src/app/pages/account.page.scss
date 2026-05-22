@@ -1,19 +1,19 @@
 .account {
-  max-width: 720px;
+  max-width: 45rem;
   margin: 0 auto;
-  padding: var(--space-md);
+  padding: var(--space-md, 1rem);
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-xl, 2.5rem);
 
   @media (min-width: 768px) {
-    padding: var(--space-xl) var(--space-md);
+    padding: var(--space-xl, 2.5rem) var(--space-md, 1rem);
   }
 
   &__header {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: var(--space-xs, 0.25rem);
   }
 
   &__title {
@@ -23,13 +23,13 @@
 
   &__email {
     margin: 0;
-    color: var(--color-text-disabled);
+    color: var(--color-text-disabled, currentColor);
   }
 
   &__section {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--space-sm, 0.5rem);
   }
 
   &__heading {
@@ -40,14 +40,14 @@
 
   &__hint {
     margin: 0;
-    color: var(--color-text-disabled);
+    color: var(--color-text-disabled, currentColor);
   }
 
   &__form {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-sm);
+    gap: var(--space-sm, 0.5rem);
   }
 
   &__field {
@@ -57,6 +57,6 @@
     // the full max-width instead of leaving an empty trailing cell.
     display: block;
     width: 100%;
-    max-width: 360px;
+    max-width: 22.5rem;
   }
 }

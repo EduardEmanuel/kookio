@@ -32,8 +32,8 @@
   }
 
   .shell__sidenav {
-    width: var(--shell-sidenav-width);
-    border-right: 1px solid var(--color-outline-variant);
+    width: var(--shell-sidenav-width, 16.25rem);
+    border-right: 1px solid var(--color-outline-variant, currentColor);
 
     // M3's drawer container ships with corner-large (16px) baked in to signal
     // "this can slide away." Our sidenav is permanent and structural, so flatten

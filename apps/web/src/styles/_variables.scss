@@ -1,6 +1,6 @@
 // SCSS compile-time variables — mirror the CSS custom properties in kookio-tokens.css.
 // Use these in SCSS logic (loops, maps, conditionals).
-// For runtime theming prefer the CSS custom properties directly (var(--space-md) etc.).
+// For runtime theming prefer the CSS custom properties directly (var(--space-md, 1rem) etc.).
 //
 // Usage in a component:
 //   @use '../../styles/variables' as v;
@@ -13,20 +13,20 @@ $bp-lg: 992px;
 $bp-xl: 1200px;
 
 // Spacing — mirrors --space-* tokens
-$space-2xs: 2px;
-$space-xs: 4px;
-$space-sm: 8px;
-$space-md: 16px;
-$space-lg: 24px;
-$space-xl: 40px;
-$space-2xl: 64px;
+$space-2xs: 0.125rem;
+$space-xs: 0.25rem;
+$space-sm: 0.5rem;
+$space-md: 1rem;
+$space-lg: 1.5rem;
+$space-xl: 2.5rem;
+$space-2xl: 4rem;
 
 // Border radius — mirrors --radius-* tokens
-$radius-xs: 4px;
-$radius-sm: 8px;
-$radius-md: 12px;
-$radius-lg: 16px;
-$radius-xl: 28px;
+$radius-xs: 0.25rem;
+$radius-sm: 0.5rem;
+$radius-md: 0.75rem;
+$radius-lg: 1rem;
+$radius-xl: 1.75rem;
 $radius-full: 9999px;
 
 // Transitions — mirrors --transition-* tokens

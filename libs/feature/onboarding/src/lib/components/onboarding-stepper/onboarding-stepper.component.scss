@@ -4,14 +4,14 @@
 
 .onboarding-shell {
   margin: 0 auto;
-  padding: var(--space-md);
+  padding: var(--space-md, 1rem);
 
   @media (min-width: 768px) {
-    padding: var(--space-xl) var(--space-md);
+    padding: var(--space-xl, 2.5rem) var(--space-md, 1rem);
   }
 
   &__card {
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-lg, 1rem);
     overflow: hidden;
   }
 
@@ -20,14 +20,14 @@
   }
 
   &__body {
-    padding: var(--space-md) 0;
+    padding: var(--space-md, 1rem) 0;
   }
 
   &__footer {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-sm);
-    padding: var(--space-md);
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-md, 1rem);
   }
 
   &__skip {
@@ -37,7 +37,7 @@
 
   &__error {
     margin: 0;
-    padding: var(--space-md);
+    padding: var(--space-md, 1rem);
     color: var(--mat-sys-error);
     text-align: center;
   }

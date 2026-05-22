@@ -2,11 +2,11 @@
   display: block;
   text-decoration: none;
   color: inherit;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg, 1rem);
   outline: none;
   transition:
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+    transform var(--transition-fast, 150ms ease),
+    box-shadow var(--transition-fast, 150ms ease);
 
   &__card {
     position: relative;
@@ -27,8 +27,8 @@
     // default in-flow position; without it the toggle is rendered
     // behind the image rather than overlaying it.
     position: absolute;
-    top: var(--space-sm);
-    left: var(--space-sm);
+    top: var(--space-sm, 0.5rem);
+    left: var(--space-sm, 0.5rem);
     z-index: 1;
     // Tonal pill behind the bookmark so it reads on any image background.
     background: var(--mat-sys-surface-container);
@@ -53,21 +53,21 @@
   // the inherit rule in icon.component.scss.
   &__badge,
   &__chip {
-    --mat-chip-label-text-size: var(--text-base);
-    --mat-chip-label-text-line-height: var(--text-base--line-height);
+    --mat-chip-label-text-size: var(--text-base, 1rem);
+    --mat-chip-label-text-line-height: var(--text-base--line-height, 1.5rem);
 
     kookio-icon {
-      font-size: var(--text-base);
-      width: var(--text-base);
-      height: var(--text-base);
+      font-size: var(--text-base, 1rem);
+      width: var(--text-base, 1rem);
+      height: var(--text-base, 1rem);
       line-height: 1;
     }
   }
 
   &__badge {
     position: absolute;
-    top: var(--space-sm);
-    right: var(--space-sm);
+    top: var(--space-sm, 0.5rem);
+    right: var(--space-sm, 0.5rem);
     // Decorative overlay (aria-hidden); clicks and hover pass through to
     // the parent anchor so the badge inherits the card's pointer cursor
     // and routerLink navigation.
@@ -88,10 +88,10 @@
 
   &__content {
     flex: 1;
-    padding: var(--space-md);
+    padding: var(--space-md, 1rem);
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--space-sm, 0.5rem);
   }
 
   &__title {
@@ -103,38 +103,38 @@
 
   &__missing {
     margin: 0;
-    font-size: var(--text-base);
-    line-height: var(--text-base--line-height);
-    color: var(--color-match-almost);
+    font-size: var(--text-base, 1rem);
+    line-height: var(--text-base--line-height, 1.5rem);
+    color: var(--color-match-almost, currentColor);
   }
 
   &__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2xs);
+    gap: var(--space-2xs, 0.125rem);
   }
 
   &__times {
     display: flex;
-    gap: var(--space-md);
-    color: var(--color-on-surface-variant);
-    font-size: var(--text-base);
-    line-height: var(--text-base--line-height);
+    gap: var(--space-md, 1rem);
+    color: var(--color-on-surface-variant, currentColor);
+    font-size: var(--text-base, 1rem);
+    line-height: var(--text-base--line-height, 1.5rem);
   }
 
   &__time {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: var(--space-xs, 0.25rem);
   }
 
   &__actions {
-    padding: var(--space-sm) var(--space-md);
+    padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
   }
 
   @media (hover: hover) {
     &:hover {
-      transform: translateY(-2px);
+      transform: translateY(-0.125rem);
       box-shadow: var(--mat-sys-elevation-level-3, 0 4px 12px rgb(0 0 0 / 12%));
     }
   }

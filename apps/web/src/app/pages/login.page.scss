@@ -1,37 +1,43 @@
 .login-page {
-  max-width: 400px;
+  max-width: 25rem;
   margin: 0 auto;
-  padding: var(--space-xl) var(--space-md);
+  padding: var(--space-xl, 2.5rem) var(--space-md, 1rem);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-md, 1rem);
 
   &__heading {
     margin: 0;
-    font-family: var(--font-display);
+    font-family: var(
+      --font-display,
+      'Fredoka',
+      'Roboto',
+      system-ui,
+      sans-serif
+    );
     color: var(--mat-sys-on-surface);
   }
 
   &__error {
     margin: 0;
-    padding: var(--space-sm) var(--space-md);
+    padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
     background: color-mix(
       in srgb,
       var(--mat-sys-error) 12%,
       var(--mat-sys-surface)
     );
     color: var(--mat-sys-on-error-container);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-md, 0.75rem);
   }
 
   &__form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: var(--space-md, 1rem);
   }
 
   &__submit {
-    margin-top: var(--space-sm);
+    margin-top: var(--space-sm, 0.5rem);
   }
 
   &__alt {

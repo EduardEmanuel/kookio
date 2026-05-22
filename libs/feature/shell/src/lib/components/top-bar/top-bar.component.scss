@@ -1,13 +1,13 @@
 .topbar {
   display: flex;
   align-items: center;
-  height: var(--shell-top-bar-height);
-  padding: 0 var(--space-sm);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-outline-variant);
+  height: var(--shell-top-bar-height, 3.5rem);
+  padding: 0 var(--space-sm, 0.5rem);
+  background: var(--color-surface, currentColor);
+  border-bottom: 1px solid var(--color-outline-variant, currentColor);
   position: sticky;
   top: 0;
-  z-index: var(--z-raised);
+  z-index: var(--z-raised, 10);
 }
 
 .topbar__logo {
@@ -18,8 +18,8 @@
 }
 
 .topbar__logo-svg {
-  width: 130px;
-  height: 50px;
+  width: 8.125rem;
+  height: 3.125rem;
 }
 
 .topbar__spacer {
@@ -32,7 +32,7 @@
   // when computing its 40×40 hit target. Without explicit dims here
   // the inline SVG falls back to its viewBox (24×24) at the document
   // font-size, which is close but not guaranteed.
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   display: block;
 }

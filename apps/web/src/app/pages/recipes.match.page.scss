@@ -1,19 +1,25 @@
 .page {
   &__header {
     text-align: center;
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-lg, 1.5rem);
   }
 
   &__title {
-    margin: var(--space-md) 0;
-    font-family: var(--font-display);
-    color: var(--color-on-surface);
+    margin: var(--space-md, 1rem) 0;
+    font-family: var(
+      --font-display,
+      'Fredoka',
+      'Roboto',
+      system-ui,
+      sans-serif
+    );
+    color: var(--color-on-surface, currentColor);
   }
 
   &__levels {
     display: inline-flex;
     flex-wrap: wrap;
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-md, 1rem);
   }
 
   &__hint {
@@ -27,8 +33,8 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: var(--space-md);
-    padding: var(--space-xl) var(--space-md);
+    gap: var(--space-md, 1rem);
+    padding: var(--space-xl, 2.5rem) var(--space-md, 1rem);
   }
 
   &__empty-text {

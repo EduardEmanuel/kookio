@@ -2,28 +2,30 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md);
-  padding-left: calc(var(--space-md) + 4px); // space for the indicator bar
-  background: var(--color-surface-container);
-  border-radius: var(--radius-md);
+  gap: var(--space-md, 1rem);
+  padding: var(--space-md, 1rem);
+  padding-left: calc(
+    var(--space-md, 1rem) + 0.25rem
+  ); // space for the indicator bar
+  background: var(--color-surface-container, currentColor);
+  border-radius: var(--radius-md, 0.75rem);
   overflow: hidden;
 
   &__indicator {
     position: absolute;
     inset: 0 auto 0 0;
-    width: 4px;
-    background: var(--color-outline-variant);
+    width: 0.25rem;
+    background: var(--color-outline-variant, currentColor);
   }
 
   &--ok &__indicator {
-    background: var(--color-expiry-ok);
+    background: var(--color-expiry-ok, currentColor);
   }
   &--soon &__indicator {
-    background: var(--color-expiry-soon);
+    background: var(--color-expiry-soon, currentColor);
   }
   &--expired &__indicator {
-    background: var(--color-expiry-expired);
+    background: var(--color-expiry-expired, currentColor);
   }
 
   &--expired {
@@ -32,10 +34,10 @@
 
   &__image,
   &__placeholder {
-    flex: 0 0 64px;
-    width: 64px;
-    height: 64px;
-    border-radius: var(--radius-sm);
+    flex: 0 0 4rem;
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius-sm, 0.5rem);
     object-fit: cover;
   }
 
@@ -43,7 +45,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-outline-variant);
+    background: var(--color-outline-variant, currentColor);
     color: var(--mat-sys-on-surface-variant);
   }
 
@@ -54,44 +56,50 @@
 
   &__name {
     margin: 0;
-    font-family: var(--font-display);
+    font-family: var(
+      --font-display,
+      'Fredoka',
+      'Roboto',
+      system-ui,
+      sans-serif
+    );
     font-size: 1rem;
-    color: var(--color-on-surface);
+    color: var(--color-on-surface, currentColor);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   &__qty {
-    margin: var(--space-2xs) 0 0;
-    color: var(--color-primary);
+    margin: var(--space-2xs, 0.125rem) 0 0;
+    color: var(--color-primary, currentColor);
     font-weight: 600;
   }
 
   &__unit {
-    margin-left: var(--space-2xs);
+    margin-left: var(--space-2xs, 0.125rem);
     font-weight: 500;
   }
 
   &__expiry {
     display: block;
-    margin-top: var(--space-2xs);
+    margin-top: var(--space-2xs, 0.125rem);
     color: var(--mat-sys-on-surface-variant);
     font-size: 0.8125rem;
   }
 
   &--soon &__expiry {
-    color: var(--color-expiry-soon);
+    color: var(--color-expiry-soon, currentColor);
     font-weight: 600;
   }
   &--expired &__expiry {
-    color: var(--color-expiry-expired);
+    color: var(--color-expiry-expired, currentColor);
     font-weight: 600;
   }
 
   &__actions {
     flex: 0 0 auto;
     display: flex;
-    gap: var(--space-2xs);
+    gap: var(--space-2xs, 0.125rem);
   }
 }

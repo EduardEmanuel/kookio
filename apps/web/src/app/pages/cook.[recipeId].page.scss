@@ -1,21 +1,27 @@
 .cook-page {
   margin: 0 auto;
-  padding: var(--space-md);
+  padding: var(--space-md, 1rem);
 
   @media (min-width: 768px) {
-    padding: var(--space-xl) var(--space-md);
+    padding: var(--space-xl, 2.5rem) var(--space-md, 1rem);
   }
 }
 
 .cook-setup {
   display: grid;
   justify-items: center;
-  gap: var(--space-md);
-  padding: var(--space-2xl) 0;
+  gap: var(--space-md, 1rem);
+  padding: var(--space-2xl, 4rem) 0;
   text-align: center;
 
   &__title {
-    font-family: var(--font-display);
+    font-family: var(
+      --font-display,
+      'Fredoka',
+      'Roboto',
+      system-ui,
+      sans-serif
+    );
     margin: 0;
   }
 
@@ -25,31 +31,37 @@
   }
 
   &__servings {
-    margin-top: var(--space-sm);
+    margin-top: var(--space-sm, 0.5rem);
   }
 
   &__base {
     color: var(--mat-sys-on-surface-variant);
     font-size: 0.9rem;
-    margin: 0 0 var(--space-md);
+    margin: 0 0 var(--space-md, 1rem);
   }
 
   &__cta {
-    min-width: 220px;
+    min-width: 13.75rem;
   }
 }
 
 .cook-steps {
   display: grid;
-  gap: var(--space-lg);
+  gap: var(--space-lg, 1.5rem);
 
   &__header {
     text-align: center;
   }
 
   &__title {
-    font-family: var(--font-display);
-    margin: 0 0 var(--space-2xs);
+    font-family: var(
+      --font-display,
+      'Fredoka',
+      'Roboto',
+      system-ui,
+      sans-serif
+    );
+    margin: 0 0 var(--space-2xs, 0.125rem);
   }
 
   &__progress {
@@ -63,9 +75,9 @@
 
   &__current {
     background: var(--mat-sys-surface-container-low);
-    border-radius: var(--radius-lg);
-    padding: var(--space-xl);
-    min-height: 160px;
+    border-radius: var(--radius-lg, 1rem);
+    padding: var(--space-xl, 2.5rem);
+    min-height: 10rem;
     display: grid;
     place-items: center;
   }
@@ -79,6 +91,6 @@
   &__footer {
     display: flex;
     justify-content: space-between;
-    gap: var(--space-md);
+    gap: var(--space-md, 1rem);
   }
 }

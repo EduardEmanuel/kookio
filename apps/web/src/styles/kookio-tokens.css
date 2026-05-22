@@ -29,20 +29,20 @@
   --color-match-browse: var(--md-sys-color-outline-variant);
 
   /* Spacing */
-  --space-2xs: 2px;
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 40px;
-  --space-2xl: 64px;
+  --space-2xs: 0.125rem;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
 
   /* Border radius */
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 28px;
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.75rem;
   --radius-full: 9999px;
 
   /* Typography */
@@ -75,9 +75,9 @@
   --z-toast: 2000;
 
   /* Shell layout */
-  --shell-top-bar-height: 56px;
-  --shell-bottom-tabs-height: 64px;
-  --shell-sidenav-width: 260px;
+  --shell-top-bar-height: 3.5rem;
+  --shell-bottom-tabs-height: 4rem;
+  --shell-sidenav-width: 16.25rem;
 }
 :root {
   --md-sys-color-primary: rgb(159 61 0);

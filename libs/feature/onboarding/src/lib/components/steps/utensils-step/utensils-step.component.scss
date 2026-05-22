@@ -5,12 +5,12 @@
 .utensils-step {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  padding: var(--space-md) 0;
+  gap: var(--space-md, 1rem);
+  padding: var(--space-md, 1rem) 0;
 
   &__heading {
     margin: 0;
-    font: var(--typescale-headline-small);
+    font: var(--typescale-headline-small, 400 1.5rem / 2rem sans-serif);
   }
 
   &__subtitle {
@@ -21,28 +21,28 @@
   &__group {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: var(--space-xs, 0.25rem);
   }
 
   &__category {
     margin: 0;
-    font: var(--typescale-title-small);
+    font: var(--typescale-title-small, 500 0.875rem / 1.25rem sans-serif);
     color: var(--mat-sys-on-surface-variant);
   }
 
   &__emoji {
-    margin-right: var(--space-xs);
+    margin-right: var(--space-xs, 0.25rem);
   }
 
   &__loading {
     display: flex;
     justify-content: center;
-    padding: var(--space-lg);
+    padding: var(--space-lg, 1.5rem);
   }
 
   &__empty {
     margin: 0;
-    padding: var(--space-md);
+    padding: var(--space-md, 1rem);
     text-align: center;
     color: var(--mat-sys-on-surface-variant);
   }

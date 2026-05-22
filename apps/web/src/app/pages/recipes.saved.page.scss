@@ -1,15 +1,15 @@
 .saved {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 16px;
-  max-width: 1200px;
+  gap: 1.5rem;
+  padding: 1rem;
+  max-width: 75rem;
   margin: 0 auto;
 
   &__header {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
   }
 
   &__title {
@@ -30,14 +30,14 @@
   &__group {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
   }
 
   &__group-title {
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
     font: var(--mat-sys-title-medium);
   }
 
@@ -48,23 +48,23 @@
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1rem;
   }
 }
 
 .saved-empty {
   display: flex;
   justify-content: center;
-  padding: 48px 16px;
+  padding: 3rem 1rem;
 
   &__card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
     text-align: center;
-    padding: 24px;
+    padding: 1.5rem;
   }
 
   &__title {
@@ -78,6 +78,6 @@
   }
 
   &__cta {
-    margin-top: 8px;
+    margin-top: 0.5rem;
   }
 }

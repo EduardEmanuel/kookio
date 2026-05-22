@@ -122,6 +122,119 @@ $spacings: (0, 4, 8, 12, 16, 24, 32, 48, 64);
 - Use SCSS variables for values used only at compile time (breakpoints, maps)
 - Use CSS custom properties for values that may change at runtime (theming, dark mode)
 
+## Units: `rem` for spacing/sizing/typography, `px` for the carve-outs
+
+Write spacing, sizing, typography, and border-radius in `rem` so they
+scale with the user's browser font-size setting (the single most
+important built-in accessibility lever). At the default 16px root size
+the rounded values land on a clean scale: 2px → 0.125rem, 4px →
+0.25rem, 8px → 0.5rem, 12px → 0.75rem, 16px → 1rem, 24px → 1.5rem,
+32px → 2rem, 40px → 2.5rem, 48px → 3rem, 64px → 4rem. The design
+tokens in `_tokens.scss` (`--space-*`, `--radius-*`, `--shell-*`) are
+already defined in `rem`, so any consumer of `var(--space-md)` is
+covered automatically.
+
+**Keep `px` for these specific cases and nowhere else:**
+
+- **Borders** (`border: 1px solid …`) — hairlines look sharpest at
+  exactly one device pixel and don't need to scale with type size.
+- **Box-shadow offsets and blur radii** (`box-shadow: 0 1px 2px …`,
+  `filter: drop-shadow(0 4px 12px …)`) — same reasoning as borders.
+- **Media-query breakpoint values** (`@media (min-width: 768px)`).
+  `_breakpoints.scss` is the single source of truth, and its values
+  must stay byte-identical to `BreakpointService` in
+  `libs/feature/shell/src/lib/services/` (the service uses
+  `window.matchMedia(...)` at runtime with the same query string).
+  Changing the unit on one side without the other produces a silent
+  layout-vs-logic drift.
+- **The `9999px` sentinel** in `--radius-full` — semantic "perfect
+  pill", not a real measurement.
+- **The `1px` sr-only hairline** in `_utilities.scss` / `_mixins.scss`
+  — conventional pattern for screen-reader-only content (matched by
+  Bootstrap, Tailwind, MUI).
+
+**Why not px for spacing too?** A user who sets their browser to 200%
+font size sees text bigger but, with px paddings, the same cramped
+layout around it — readability still suffers. Borders and shadows
+don't have this problem because their visual weight doesn't scale with
+type size in the same way.
+
+**How to apply:** when introducing a value that has no design token,
+write a rem literal directly (e.g. `min-width: 13.75rem`). If the
+scale has a gap (no token between `--space-sm: 0.5rem` and
+`--space-md: 1rem`, say), write the rem literal and leave an inline
+comment naming the gap. Don't invent new tokens for one-off values.
+
+## `var()` fallbacks on project-owned tokens
+
+Every `var(--name)` for a **project-owned token** must include a
+fallback as the second argument. The fallback runs when the token
+fails to resolve at runtime — e.g. `kookio-tokens.css` 404s, loads
+after first paint, or gets blocked by a CSP — so the page stays
+legible during the failure window instead of collapsing to property
+defaults (custom properties without a fallback resolve to `unset`,
+which then falls back to `display: block`, `color: canvastext`,
+`padding: 0`, etc.).
+
+**Scope — fall back on these token families:**
+
+- `--space-*`, `--radius-*`, `--shell-*` (scalar layout)
+- `--color-*` (semantic colour aliases)
+- `--font-*`, `--typescale-*` (typography)
+- `--transition-*`, `--z-*` (animation, layering)
+- `--container-*`, `--text-*` (Tailwind v4 exposed tokens)
+
+**Skip — do NOT fall back on raw Material/M3 tokens:**
+`--mat-sys-*` and `--md-sys-color-*`. Adding light-theme hex fallbacks
+to those would pin the colour wrong in dark mode if Material loads but
+our overrides don't; and if Material itself fails to load, its own
+components break too, so the consumer's fallback doesn't rescue a
+working UI — it just paints one layer of a broken system. Cleaner to
+accept the failure as a degraded state.
+
+**Fallback values:**
+
+- **Scalar tokens** — the canonical value from `_tokens.scss` in rem
+  (e.g. `var(--space-md, 1rem)`, `var(--radius-md, 0.75rem)`,
+  `var(--shell-top-bar-height, 3.5rem)`).
+- **Colour tokens (`--color-*`)** — always `currentColor`, **never** a
+  hex/rgb pin. `currentColor` resolves to the element's `color`
+  property, which inherits from its surroundings and reads sensibly in
+  either light or dark mode. A hex/rgb fallback pins one theme and
+  looks wrong in the other.
+- **Typescale shorthands (`--typescale-*`)** — write a complete `font`
+  shorthand fallback so the property parses even when the upstream
+  token is missing: `var(--typescale-body-small, 400 0.75rem / 1rem
+sans-serif)`.
+
+```scss
+// ✅ scalar token — concrete rem fallback
+padding: var(--space-md, 1rem);
+
+// ✅ colour token — currentColor, theme-neutral
+color: var(--color-on-surface, currentColor);
+
+// ✅ typescale — complete font shorthand
+font: var(--typescale-body-small, 400 0.75rem / 1rem sans-serif);
+
+// ✅ raw Material token — no fallback by design
+background: var(--mat-sys-surface-container);
+
+// ❌ colour with hex fallback — pins light theme
+color: var(--color-primary, rgb(159 61 0));
+
+// ❌ no fallback — visible regression if the token file fails to load
+gap: var(--space-md);
+```
+
+**How to apply:** when adding a new project-owned token to
+`_tokens.scss`, sweep every consumer (`grep -r 'var(--name)'`) and add
+the canonical value as the fallback. When a token value changes, sweep
+again — outdated fallbacks won't break anything at runtime (the fresh
+token wins), but the codebase drifts. A future automated check could
+diff `_tokens.scss` against the fallbacks the codebase carries; for
+now, manual.
+
 ## Shared SCSS partials (compile-time, not the design tokens)
 
 The design tokens at `libs/shared/ui/src/styles/_*.scss` are
@@ -331,7 +444,13 @@ concrete failure mode beats one cryptic word.
 - Use `sass:math`, `sass:map`, `sass:color` modules explicitly
 - Avoid nesting deeper than 3 levels
 - Avoid `!important` — if needed, leave a comment explaining why
-- Use `rem` for typography and spacing, `px` only for borders and shadows
+- Use `rem` for spacing/sizing/typography/border-radius; keep `px` only for
+  borders, box-shadow, media-query breakpoints, the `9999px` sentinel, and
+  the sr-only hairline — see "Units" above
+- Pass a fallback to every `var()` for project-owned tokens (scalar tokens
+  pin the canonical value from `_tokens.scss`; colour tokens fall back to
+  `currentColor`; raw Material `--mat-sys-*` / `--md-sys-color-*` are
+  exempt) — see "var() fallbacks on project-owned tokens" above
 - Always scope component animations to `@media (prefers-reduced-motion: reduce)`
 - Comment any rule that's load-bearing for a behaviour set elsewhere
   — see "Load-bearing rules need a comment" above
