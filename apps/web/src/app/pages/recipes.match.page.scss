@@ -39,7 +39,7 @@
 
   &__empty-text {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1var (--text-base, 1rem);
     font-weight: 600;
   }
 

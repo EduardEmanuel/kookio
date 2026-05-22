@@ -77,7 +77,7 @@
 
   &__slot {
     color: var(--mat-sys-on-surface-variant);
-    font-size: 0.875rem;
+    font-size: var(--text-sm, 0.875rem);
   }
 
   &__recipe {

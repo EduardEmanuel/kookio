@@ -1,8 +1,8 @@
 .saved {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 1rem;
+  gap: var(--space-lg, 1.5rem);
+  padding: var(--space-md, 1rem);
   max-width: 75rem;
   margin: 0 auto;
 
@@ -37,7 +37,7 @@
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-sm, 0.5rem);
     font: var(--mat-sys-title-medium);
   }
 
@@ -49,14 +49,14 @@
   &__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: 1rem;
+    gap: var(--space-md, 1rem);
   }
 }
 
 .saved-empty {
   display: flex;
   justify-content: center;
-  padding: 3rem 1rem;
+  padding: 3rem var(--space-md, 1rem);
 
   &__card {
     display: flex;
@@ -64,7 +64,7 @@
     align-items: center;
     gap: 0.75rem;
     text-align: center;
-    padding: 1.5rem;
+    padding: var(--space-lg, 1.5rem);
   }
 
   &__title {
@@ -78,6 +78,6 @@
   }
 
   &__cta {
-    margin-top: 0.5rem;
+    margin-top: var(--space-sm, 0.5rem);
   }
 }

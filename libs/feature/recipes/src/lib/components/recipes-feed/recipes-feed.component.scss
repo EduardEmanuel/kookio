@@ -65,7 +65,7 @@
     margin: 0;
     padding: var(--space-lg, 1.5rem) var(--space-md, 1rem);
     color: var(--color-on-surface-variant, currentColor);
-    font-size: 0.875rem;
+    font-size: var(--text-sm, 0.875rem);
   }
 
   &__retry-row {

@@ -20,8 +20,8 @@
   // — same horizontal rhythm as the rest of the page.
   max-width: 75rem;
   margin: 0 auto;
-  padding: 1rem;
+  padding: var(--space-md, 1rem);
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-sm, 0.5rem);
   justify-content: flex-end;
 }

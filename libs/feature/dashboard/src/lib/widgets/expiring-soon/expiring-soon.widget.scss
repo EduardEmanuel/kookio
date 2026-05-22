@@ -74,7 +74,7 @@
 
   &__when {
     color: var(--color-text-disabled, currentColor);
-    font-size: 0.875rem;
+    font-size: var(--text-sm, 0.875rem);
   }
 
   &__more {

@@ -63,7 +63,7 @@
       system-ui,
       sans-serif
     );
-    font-size: 1rem;
+    font-size: var(--text-base, 1rem);
     color: var(--color-on-surface, currentColor);
     overflow: hidden;
     text-overflow: ellipsis;

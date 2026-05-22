@@ -5,7 +5,7 @@
 .page-stub {
   display: flex;
   justify-content: center;
-  padding: 2rem 1rem;
+  padding: 2rem var(--space-md, 1rem);
 
   &__card {
     width: 100%;
@@ -34,21 +34,21 @@
   }
 
   &__content {
-    padding-top: 1rem;
+    padding-top: var(--space-md, 1rem);
   }
 
   &__placeholder {
-    margin: 0 0 1rem;
+    margin: 0 0 var(--space-md, 1rem);
     color: var(--mat-sys-on-surface-variant);
   }
 
   &__route {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--text-sm, 0.875rem);
 
     code {
-      padding: 0.125rem 0.375rem;
-      border-radius: 0.25rem;
+      padding: var(--space-2xs, 0.125rem) 0.375rem;
+      border-radius: var(--radius-xs, 0.25rem);
       background: var(--color-surface-container, currentColor);
       color: var(--color-primary, currentColor);
     }
