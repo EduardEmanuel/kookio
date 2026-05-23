@@ -1,10 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-
 import type { RouteMeta } from '@analogjs/router';
 
-import { PageStubComponent } from '@kookio/feature-shell';
+import { ErrorPageComponent } from '@kookio/feature-shell';
 
 export const routeMeta: RouteMeta = {
   title: 'Page not found — Kookio',
@@ -13,18 +10,15 @@ export const routeMeta: RouteMeta = {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'kookio-not-found-page',
-  imports: [RouterLink, MatButtonModule, PageStubComponent],
+  imports: [ErrorPageComponent],
   template: `
-    <kookio-page-stub
-      icon="error"
+    <kookio-error-page
+      [code]="404"
       title="Page not found"
-      subtitle="404"
-      placeholder="The page you are looking for does not exist or has been moved."
-      route="/404"
+      icon="warning"
+      description="The page you are looking for does not exist or has been moved."
+      [primaryCta]="{ label: 'Go home', route: '/' }"
     />
-    <div class="flex justify-center mt-4 pb-8">
-      <a matButton="filled" routerLink="/">Go home</a>
-    </div>
   `,
 })
 export default class NotFoundPage {}

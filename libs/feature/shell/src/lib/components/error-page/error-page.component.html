@@ -1,0 +1,34 @@
+<section class="error-page">
+  <kookio-icon class="error-page__icon" [name]="icon()" />
+  <div class="error-page__code">{{ code() }}</div>
+  <h1 class="error-page__title">{{ title() }}</h1>
+  <p class="error-page__description">{{ description() }}</p>
+
+  @if (primaryCta() || secondaryCta()) {
+    <div class="error-page__actions">
+      @let primary = primaryCta();
+      @if (primary) {
+        @if ('route' in primary) {
+          <a matButton="filled" [routerLink]="primary.route">{{
+            primary.label
+          }}</a>
+        } @else {
+          <button matButton="filled" type="button" (click)="primary.action()">
+            {{ primary.label }}
+          </button>
+        }
+      }
+
+      @let secondary = secondaryCta();
+      @if (secondary) {
+        @if ('route' in secondary) {
+          <a matButton [routerLink]="secondary.route">{{ secondary.label }}</a>
+        } @else {
+          <button matButton type="button" (click)="secondary.action()">
+            {{ secondary.label }}
+          </button>
+        }
+      }
+    </div>
+  }
+</section>

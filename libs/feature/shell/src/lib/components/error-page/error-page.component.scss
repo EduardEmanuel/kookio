@@ -1,0 +1,46 @@
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem 1.5rem;
+  gap: 1rem;
+  text-align: center;
+}
+
+.error-page__icon {
+  // Sizing the kookio-icon wrapper: width/height set the host box and the
+  // inner mat-icon inherits via the icon component's own `inherit` rule.
+  width: 4rem;
+  height: 4rem;
+  font-size: 4rem;
+  color: var(--mat-sys-primary);
+}
+
+.error-page__code {
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--mat-sys-primary);
+}
+
+.error-page__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.error-page__description {
+  max-width: 28rem;
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.error-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
