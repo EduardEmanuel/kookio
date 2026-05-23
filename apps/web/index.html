@@ -5,6 +5,21 @@
     <title>Let's kookio it!</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      // Anti-FOUC: apply the persisted theme-override class on <html> before
+      // stylesheets load so the first paint already matches the user's choice.
+      // ThemeService re-applies the same class idempotently on first inject.
+      (function () {
+        try {
+          var t = localStorage.getItem('kookio-theme');
+          if (t === 'light' || t === 'dark') {
+            document.documentElement.classList.add(t);
+          }
+        } catch (e) {
+          /* localStorage may throw in Safari private mode — ignore */
+        }
+      })();
+    </script>
     <link rel="icon" type="image/x-icon" href="/icons/kookio/filled/icon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#16a34a" />

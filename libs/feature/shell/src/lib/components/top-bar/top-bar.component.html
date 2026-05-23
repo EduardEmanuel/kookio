@@ -104,6 +104,48 @@
     </a>
   }
 
+  <button
+    matIconButton
+    [matMenuTriggerFor]="themeMenu"
+    matTooltip="Theme"
+    aria-label="Theme"
+  >
+    @switch (theme.mode()) {
+      @case ('light') {
+        <kookio-icon name="light_mode" />
+      }
+      @case ('dark') {
+        <kookio-icon name="dark_mode" />
+      }
+      @default {
+        <kookio-icon name="settings_suggest" />
+      }
+    }
+  </button>
+  <mat-menu #themeMenu xPosition="before" class="topbar__theme-menu">
+    <div class="topbar__theme-row topbar__theme-row--checkbox">
+      <mat-checkbox
+        [checked]="theme.mode() === 'auto'"
+        (change)="onAutoChange($event.checked)"
+        (click)="$event.stopPropagation()"
+      >
+        System theme
+      </mat-checkbox>
+    </div>
+    <div class="topbar__theme-row topbar__theme-row--slider">
+      <kookio-icon name="light_mode" aria-hidden="true" />
+      <mat-slide-toggle
+        [checked]="isDarkActive()"
+        [disabled]="theme.mode() === 'auto'"
+        (change)="onSliderChange($event.checked)"
+        (click)="$event.stopPropagation()"
+        aria-label="Light or dark theme"
+        hideIcon
+      />
+      <kookio-icon name="dark_mode" aria-hidden="true" />
+    </div>
+  </mat-menu>
+
   @if (user()) {
     <button
       matIconButton

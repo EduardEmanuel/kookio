@@ -202,3 +202,32 @@
   z-index: 1;
   position: relative;
 }
+
+/*
+ * Theme switcher menu. The mat-menu panel renders via cdk-overlay outside
+ * the TopBar component's view encapsulation, so the row layout cannot live
+ * in top-bar.component.scss. The `topbar__theme-menu` class is forwarded
+ * by `<mat-menu class="...">` to the panel; row classes are on the
+ * children inside.
+ */
+.topbar__theme-menu {
+  /* Min-width keeps both rows readable: the "System theme" label + checkbox
+     on one line, and the sun-slider-moon row without the icons crowding the
+     slider. Not pinned to a --space-* token because this is a sizing value,
+     not a spacing one; the --space-* scale only goes up to 4rem. */
+  min-width: 14rem;
+}
+
+.topbar__theme-menu .topbar__theme-row {
+  display: flex;
+  align-items: center;
+  padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+  &.topbar__theme-row--checkbox {
+    padding-left: 0;
+  }
+}
+
+.topbar__theme-menu .topbar__theme-row--slider {
+  gap: var(--space-sm, 0.5rem);
+  justify-content: space-between;
+}

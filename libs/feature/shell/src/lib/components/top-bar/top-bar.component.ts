@@ -7,12 +7,16 @@ import {
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { filter, map, startWith } from 'rxjs';
 
 import { AuthStore } from '@kookio/feature-auth';
 import { KookioIconComponent } from '@kookio/shared-ui';
+
+import { ThemeService } from '../../services/theme.service';
 
 /**
  * Routes where the "Cook now" shortcut is hidden — auth/onboarding
@@ -34,7 +38,9 @@ const COOK_NOW_HIDDEN_ROUTES = [
   imports: [
     RouterLink,
     MatButtonModule,
+    MatCheckboxModule,
     MatMenuModule,
+    MatSlideToggleModule,
     MatTooltipModule,
     KookioIconComponent,
   ],
@@ -45,7 +51,48 @@ export class TopBarComponent {
   private readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
 
+  protected readonly theme = inject(ThemeService);
+
   readonly user = this.authStore.currentUser;
+
+  // Read system preference non-reactively. If the OS theme changes while
+  // the user is in 'auto' mode, isDarkActive won't reflect it until the
+  // theme signal itself changes — acceptable for batch 6 scope.
+  // matchMedia is missing under jsdom (test env) and SSR; default to false
+  // (= light) when unavailable.
+  private readonly systemPrefersDark = (): boolean => {
+    if (
+      typeof window === 'undefined' ||
+      typeof window.matchMedia !== 'function'
+    ) {
+      return false;
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  };
+
+  // Slider position: when an explicit mode is set, reflect it. When in
+  // 'auto', mirror the currently-resolved theme so the slider doesn't
+  // visibly jump when the user toggles off "Follow system".
+  protected readonly isDarkActive = computed<boolean>(() => {
+    const mode = this.theme.mode();
+    if (mode === 'dark') return true;
+    if (mode === 'light') return false;
+    return this.systemPrefersDark();
+  });
+
+  protected readonly onAutoChange = (checked: boolean): void => {
+    if (checked) {
+      this.theme.setMode('auto');
+      return;
+    }
+    // Seed manual mode with the resolved theme so the slider position
+    // does not jump when the user disables "Follow system".
+    this.theme.setMode(this.systemPrefersDark() ? 'dark' : 'light');
+  };
+
+  protected readonly onSliderChange = (checked: boolean): void => {
+    this.theme.setMode(checked ? 'dark' : 'light');
+  };
 
   /**
    * Current URL signal driven by router events — feeds the cook-now
