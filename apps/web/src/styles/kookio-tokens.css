@@ -79,7 +79,17 @@
   --shell-bottom-tabs-height: 4rem;
   --shell-sidenav-width: 16.25rem;
 }
-:root {
+/*
+ * `:root, html.light` — both selectors point at the same <html> element.
+ * The bare `:root` keeps the light palette as the default (system-light or
+ * mode='auto' with no system override). The `html.light` selector also
+ * applies the same palette but at a higher specificity (0,1,1 vs 0,1,0)
+ * so it wins over the dark-mode @media block in _m3-dark.scss when the
+ * user manually picks "light" via the theme switcher (mode='light').
+ * See ThemeService in feature-shell.
+ */
+:root,
+html.light {
   --md-sys-color-primary: rgb(159 61 0);
   --md-sys-color-surface-tint: rgb(163 62 0);
   --md-sys-color-on-primary: rgb(255 255 255);
@@ -196,6 +206,19 @@
   --mat-sys-pressed-state-layer-opacity: 0.1;
   --mat-sys-dragged-state-layer-opacity: 0.16;
 }
+/*
+ * The @media block applies the dark palette when the user's *system*
+ * preference is dark and no manual override is in effect. The separate
+ * `html.dark` block at the bottom applies the same tokens when the user
+ * has manually selected dark via the theme switcher (mode='dark').
+ *
+ * The token list is duplicated rather than shared via a selector union
+ * because `html.dark` must apply outside any @media — combining the two
+ * selectors inside the @media would gate `html.dark` on system dark too,
+ * defeating the manual override.
+ *
+ * See ThemeService in feature-shell.
+ */
 @media (prefers-color-scheme: dark) {
   :root {
     --md-sys-color-primary: rgb(255 181 150);
@@ -248,6 +271,58 @@
     --md-sys-color-surface-container-high: rgb(54 39 32);
     --md-sys-color-surface-container-highest: rgb(65 49 43);
   }
+}
+
+html.dark {
+  --md-sys-color-primary: rgb(255 181 150);
+  --md-sys-color-surface-tint: rgb(255 181 150);
+  --md-sys-color-on-primary: rgb(88 30 0);
+  --md-sys-color-primary-container: rgb(243 99 11);
+  --md-sys-color-on-primary-container: rgb(76 25 0);
+  --md-sys-color-secondary: rgb(255 181 150);
+  --md-sys-color-on-secondary: rgb(88 30 0);
+  --md-sys-color-secondary-container: rgb(119 50 14);
+  --md-sys-color-on-secondary-container: rgb(254 156 112);
+  --md-sys-color-tertiary: rgb(219 200 67);
+  --md-sys-color-on-tertiary: rgb(55 49 0);
+  --md-sys-color-tertiary-container: rgb(190 172 40);
+  --md-sys-color-on-tertiary-container: rgb(72 64 0);
+  --md-sys-color-error: rgb(255 180 171);
+  --md-sys-color-on-error: rgb(105 0 5);
+  --md-sys-color-error-container: rgb(147 0 10);
+  --md-sys-color-on-error-container: rgb(255 218 214);
+  --md-sys-color-background: rgb(29 16 11);
+  --md-sys-color-on-background: rgb(247 221 211);
+  --md-sys-color-surface: rgb(29 16 11);
+  --md-sys-color-on-surface: rgb(247 221 211);
+  --md-sys-color-surface-variant: rgb(90 65 55);
+  --md-sys-color-on-surface-variant: rgb(226 191 177);
+  --md-sys-color-outline: rgb(169 138 126);
+  --md-sys-color-outline-variant: rgb(90 65 55);
+  --md-sys-color-shadow: rgb(0 0 0);
+  --md-sys-color-scrim: rgb(0 0 0);
+  --md-sys-color-inverse-surface: rgb(247 221 211);
+  --md-sys-color-inverse-on-surface: rgb(61 45 38);
+  --md-sys-color-inverse-primary: rgb(163 62 0);
+  --md-sys-color-primary-fixed: rgb(255 219 205);
+  --md-sys-color-on-primary-fixed: rgb(54 15 0);
+  --md-sys-color-primary-fixed-dim: rgb(255 181 150);
+  --md-sys-color-on-primary-fixed-variant: rgb(124 46 0);
+  --md-sys-color-secondary-fixed: rgb(255 219 205);
+  --md-sys-color-on-secondary-fixed: rgb(54 15 0);
+  --md-sys-color-secondary-fixed-dim: rgb(255 181 150);
+  --md-sys-color-on-secondary-fixed-variant: rgb(119 50 14);
+  --md-sys-color-tertiary-fixed: rgb(248 228 93);
+  --md-sys-color-on-tertiary-fixed: rgb(32 28 0);
+  --md-sys-color-tertiary-fixed-dim: rgb(219 200 67);
+  --md-sys-color-on-tertiary-fixed-variant: rgb(80 71 0);
+  --md-sys-color-surface-dim: rgb(29 16 11);
+  --md-sys-color-surface-bright: rgb(70 54 47);
+  --md-sys-color-surface-container-lowest: rgb(23 11 6);
+  --md-sys-color-surface-container-low: rgb(38 24 19);
+  --md-sys-color-surface-container: rgb(42 28 22);
+  --md-sys-color-surface-container-high: rgb(54 39 32);
+  --md-sys-color-surface-container-highest: rgb(65 49 43);
 }
 @media (prefers-contrast: more) {
   :root {

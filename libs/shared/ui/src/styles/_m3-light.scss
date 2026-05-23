@@ -1,4 +1,14 @@
-:root {
+/*
+ * `:root, html.light` — both selectors point at the same <html> element.
+ * The bare `:root` keeps the light palette as the default (system-light or
+ * mode='auto' with no system override). The `html.light` selector also
+ * applies the same palette but at a higher specificity (0,1,1 vs 0,1,0)
+ * so it wins over the dark-mode @media block in _m3-dark.scss when the
+ * user manually picks "light" via the theme switcher (mode='light').
+ * See ThemeService in feature-shell.
+ */
+:root,
+html.light {
   --md-sys-color-primary: rgb(159 61 0);
   --md-sys-color-surface-tint: rgb(163 62 0);
   --md-sys-color-on-primary: rgb(255 255 255);
