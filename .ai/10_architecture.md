@@ -48,6 +48,27 @@ must be the **default export** and are **lazy-loaded** automatically.
 | `products.page.ts` + `products/` | layout + children | Layout route                   |
 | `(auth).page.ts` + `(auth)/`     | pathless layout   | Route group with shared layout |
 
+### All-numeric filenames silently fall through to the catch-all
+
+A `*.page.ts` whose stem is entirely digits (e.g. `500.page.ts`) is
+discovered by `provideFileRouter()` and appears in the transformed
+`ANALOG_ROUTE_FILES` map, but Angular Router empirically fails to match
+the corresponding URL — the request falls through to the
+`[...not-found]` catch-all.
+
+`toRawPath` + `toSegment` (in
+`node_modules/@analogjs/router/fesm2022/analogjs-router.mjs`) produce a
+literal `'500'` segment and the priority sort places it ahead of `**`,
+so by the algorithm it should match. It doesn't. The issue is scoped to
+all-numeric stems; ordinary letter-containing slugs (`/about`,
+`/login`) work fine.
+
+**How to apply**: don't use digit-only filenames for page routes. The
+Next.js convention `pages/500.js` → `/500` is not a working pattern
+under AnalogJS. Use a letter-containing slug instead, e.g.
+`server-error.page.ts` → `/server-error`. The kookio 500 page lives at
+`apps/web/src/app/pages/server-error.page.ts` for this reason.
+
 ### Route Groups
 
 - Wrap folder names in parentheses to group routes without adding a path segment:
