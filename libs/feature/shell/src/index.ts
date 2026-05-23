@@ -10,3 +10,4 @@ export * from './lib/components/bottom-tabs/bottom-tabs.component';
 export * from './lib/components/sidenav-menu/sidenav-menu.component';
 export * from './lib/components/page-stub/page-stub.component';
 export * from './lib/components/error-page/error-page.component';
+export * from './lib/components/install-prompt/install-prompt.component';

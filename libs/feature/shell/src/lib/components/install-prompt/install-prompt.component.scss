@@ -1,0 +1,53 @@
+:host {
+  // The inner `.install-prompt` is fixed-positioned, so the host's box does
+  // not need to participate in layout. A zero-height block is the simplest
+  // choice that keeps the element in the DOM tree for Angular hydration.
+  display: block;
+  height: 0;
+}
+
+.install-prompt {
+  position: fixed;
+  left: var(--space-md, 1rem);
+  right: var(--space-md, 1rem);
+  // Float above the mobile bottom-tabs by their height plus a small gap.
+  bottom: calc(var(--shell-bottom-tabs-height, 4rem) + var(--space-sm, 0.5rem));
+  // Above mat-snackbar (1000) so it never gets covered.
+  z-index: 1100;
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm, 0.5rem);
+
+  padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+  border-radius: var(--radius-lg, 1rem);
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+}
+
+.install-prompt__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1.5rem;
+  color: var(--mat-sys-primary);
+  flex-shrink: 0;
+}
+
+.install-prompt__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+  min-width: 0; // allow long copy to wrap inside the flex row
+}
+
+.install-prompt__text strong {
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}
+
+.install-prompt__text span {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.75rem;
+}

@@ -1,0 +1,24 @@
+@if (visible()) {
+  <div
+    class="install-prompt"
+    role="dialog"
+    aria-labelledby="install-prompt-title"
+  >
+    <kookio-icon name="install_mobile" class="install-prompt__icon" />
+    <div class="install-prompt__text">
+      <strong id="install-prompt-title">Install Kookio</strong>
+      <span>Quick access from your home screen</span>
+    </div>
+    <button matButton="filled" type="button" (click)="onInstall()">
+      Install
+    </button>
+    <button
+      matIconButton
+      type="button"
+      (click)="onDismiss()"
+      aria-label="Dismiss install prompt"
+    >
+      <kookio-icon name="close" />
+    </button>
+  </div>
+}

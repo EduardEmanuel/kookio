@@ -38,6 +38,7 @@ export const MATERIAL_SYMBOLS_ICONS = [
   'expand_more',
   'group',
   'info',
+  'install_mobile',
   'kitchen',
   'light_mode',
   'link',

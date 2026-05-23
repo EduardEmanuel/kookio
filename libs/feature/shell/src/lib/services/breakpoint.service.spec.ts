@@ -91,4 +91,24 @@ describe('BreakpointService', () => {
       expect(service.isDesktop()).toBe(false);
     });
   });
+
+  // Regression test for the matchMedia guard added to the constructor:
+  // jsdom does not ship matchMedia, so without the guard any TestBed
+  // that transitively injects this service would crash with
+  // "window.matchMedia is not a function" (caught when the App spec
+  // started rendering InstallPromptComponent → BreakpointService).
+  describe('browser platform — matchMedia unavailable', () => {
+    it('constructs safely and reports desktop when matchMedia is missing', () => {
+      TestBed.configureTestingModule({
+        providers: [
+          BreakpointService,
+          { provide: PLATFORM_ID, useValue: 'browser' },
+        ],
+      });
+
+      const service = TestBed.inject(BreakpointService);
+      expect(service.isMobile()).toBe(false);
+      expect(service.isDesktop()).toBe(true);
+    });
+  });
 });

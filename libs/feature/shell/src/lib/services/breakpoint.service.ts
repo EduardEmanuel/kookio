@@ -33,7 +33,13 @@ export class BreakpointService {
   readonly isDesktop = computed(() => !this.isMobile());
 
   constructor() {
-    if (isPlatformBrowser(inject(PLATFORM_ID))) {
+    // The matchMedia guard mirrors `checkMobile` above — jsdom (test env)
+    // does not ship matchMedia, so the constructor would otherwise crash
+    // any TestBed that transitively injects this service.
+    if (
+      isPlatformBrowser(inject(PLATFORM_ID)) &&
+      typeof window.matchMedia === 'function'
+    ) {
       const mq = window.matchMedia(this.MOBILE_BREAKPOINT);
       mq.addEventListener('change', (e) => this.mobileMatch.set(e.matches));
     }
