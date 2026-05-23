@@ -438,6 +438,63 @@ be able to tell _from the comment alone_ what they'll break. If they
 can't, write a better comment. Length is fine — three sentences with a
 concrete failure mode beats one cryptic word.
 
+## CDK virtual-scroll viewports — skip the redundant overrides
+
+When wrapping a `<cdk-virtual-scroll-viewport>` in a flex child, do
+**not** add the conventional `min-height: 0` + `display: block` pair on
+the viewport host. Both are no-ops because CDK already applies them
+via its built-in stylesheet — declaring them again is double-declaration
+and the `min-height` comment that calls it "load-bearing" is wrong for
+this case.
+
+**Why both are redundant:** the viewport host element carries the
+`.cdk-virtual-scrollable` class which sets
+`overflow: auto; contain: strict; will-change: scroll-position`, and
+the `cdk-virtual-scroll-viewport` selector itself sets `display: block;
+position: relative`. `contain: strict` includes **size containment**,
+meaning the element's intrinsic size is calculated as if it had no
+descendants. So a flex child with the default `min-height: auto`
+(= `min-content`) already resolves to 0 here — the tall spacer that
+CDK renders inside the viewport (to give the scrollbar the full
+virtual-list range) does **not** affect the viewport's reported
+`min-content`. An explicit `min-height: 0` adds nothing.
+
+The relevant rule lives in
+`node_modules/@angular/cdk/fesm2022/scrolling.mjs` as part of the
+`CdkVirtualScrollViewport` component's inline `styles:` array. If
+behaviour changes in a future major CDK release, re-evaluate.
+
+**Where the load-bearing constraint actually lives:** one level up,
+on the flex _parent_. The parent needs an **explicit height** (not
+`max-height`) so the viewport's `flex: 1` has actual excess to consume.
+Examples in the codebase:
+
+- `.plan__sidebar` carries `height: calc(100vh - 4rem)` so the inner
+  virtual viewport gets a usable height to fill.
+- The recipe-picker-sheet `:host` carries `height: 80vh` for the same
+  reason.
+
+Drop the explicit height (or substitute `max-height`) and the viewport
+renders at zero height — items hydrate but never become visible. _This_
+is the rule that warrants a load-bearing comment, not the viewport's
+own `min-height`.
+
+**Viewport padding is a trap.** Don't apply horizontal padding to the
+viewport host (`padding: 0 1rem` on `.sheet__viewport`,
+`.recipes-feed__viewport`, etc.). The CDK content wrapper is
+`position: absolute; inset: 0` and ignores the host's padding for item
+positioning — visible items align flush with the viewport's outer
+edge during scroll, and the padding only clips the static element. Put
+horizontal padding on the per-item wrapper instead (`.sheet__item`,
+`.plan__sidebar-drag`, the `&__item` slot in `recipes-feed`, etc.).
+That gutter scrolls with the content and stays consistent with
+spinner / empty-state rows too.
+
+**Bottom line:** for a viewport host in a flex layout, the entire
+CSS you need is `flex: 1` (+ `width: 100%` if the parent is a column
+flex with sized children). The parent provides the height, CDK
+provides everything else.
+
 ## General Rules
 
 - Use `@use` and `@forward` — never `@import`
@@ -454,3 +511,10 @@ concrete failure mode beats one cryptic word.
 - Always scope component animations to `@media (prefers-reduced-motion: reduce)`
 - Comment any rule that's load-bearing for a behaviour set elsewhere
   — see "Load-bearing rules need a comment" above
+- When wrapping `<cdk-virtual-scroll-viewport>` in a flex layout, the
+  viewport itself needs only `flex: 1` (+ `width: 100%` if relevant);
+  CDK already sets `display: block` + `contain: strict` on the host,
+  so the conventional `min-height: 0` + `display: block` overrides are
+  no-ops. The load-bearing constraint lives on the flex parent (explicit
+  `height`, not `max-height`) — see "CDK virtual-scroll viewports —
+  skip the redundant overrides" above
