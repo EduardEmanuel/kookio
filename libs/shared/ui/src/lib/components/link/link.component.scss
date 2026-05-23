@@ -1,0 +1,35 @@
+:host {
+  display: inline;
+}
+
+.kookio-link {
+  color: var(--mat-sys-primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 0.0625em;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  border-radius: 0.125rem;
+}
+
+.kookio-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.kookio-link:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+.kookio-link:active {
+  // Slight darkening on press gives tactile feedback without changing layout.
+  color: color-mix(in srgb, var(--mat-sys-primary), black 15%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .kookio-link {
+    transition:
+      color 0.15s ease,
+      text-decoration-color 0.15s ease;
+  }
+}

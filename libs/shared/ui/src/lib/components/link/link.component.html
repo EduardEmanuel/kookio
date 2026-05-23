@@ -1,0 +1,8 @@
+<a
+  class="kookio-link"
+  [attr.href]="to()"
+  [attr.target]="targetAttr()"
+  [attr.rel]="relAttr()"
+  (click)="onClick($event)"
+  ><ng-content
+/></a>
