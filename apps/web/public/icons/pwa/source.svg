@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <!--
+    PWA icon source. Pure-geometry version of `icons/kookio/filled/icon.svg`
+    that does NOT depend on the Fredoka font at render time, so it
+    rasterizes correctly under sharp / librsvg without a system font
+    lookup. The in-app brand SVG keeps the `<text>` form so it picks up
+    Fredoka via the loaded webfont; this file is only used by
+    `scripts/build-pwa-icons.ts` to generate the manifest PNGs.
+
+    Colors are pinned to the M3 light primary (#9f3d00 = rgb(159,61,0))
+    and surface tones (#fff8f6) rather than var() so a non-browser
+    renderer can resolve them.
+  -->
+
+  <!-- Pan -->
+  <circle cx="10" cy="14" r="9" fill="#9f3d00" />
+  <!-- Handle -->
+  <rect
+    x="15"
+    y="2.5"
+    width="9"
+    height="3"
+    rx="1"
+    transform="rotate(-45 20 3.5)"
+    fill="#9f3d00"
+  />
+
+  <!-- K letter, three rounded strokes; meets at the vertical bar's
+       midpoint to mimic a bold sans-serif K -->
+  <g
+    stroke="#fff8f6"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    fill="none"
+  >
+    <line x1="7.5" y1="10.5" x2="7.5" y2="18.5" />
+    <line x1="7.5" y1="14.5" x2="13" y2="10.5" />
+    <line x1="7.5" y1="14.5" x2="13" y2="18.5" />
+  </g>
+</svg>

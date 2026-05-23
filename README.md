@@ -1,4 +1,4 @@
-# <img src="./apps/web/public/icons/kookio/filled/logo.svg" alt="Kookio Logo" width="320"/>
+# <img src="./apps/web/public/icons/pwa/source.svg" alt="Kookio Logo" width="320"/>
 
 Let's Kookio it! is an open-source pantry companion built with the PAN stack—Prisma, Analog, and Nx. The repo hosts both the Analog SSR app and the supporting libraries that make end-to-end type safety possible.
 
