@@ -1,23 +1,23 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import type { RouteMeta } from '@analogjs/router';
 
-import { PageStubComponent } from '@kookio/feature-shell';
+import { KookioLinkComponent } from '@kookio/shared-ui';
 
 export const routeMeta: RouteMeta = {
   title: 'About — Kookio',
+  meta: [
+    {
+      name: 'description',
+      content:
+        'Kookio is a culinary platform that helps reduce food waste by matching recipes to what you already have in your pantry.',
+    },
+  ],
 };
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'kookio-about-page',
-  imports: [PageStubComponent],
-  template: `
-    <kookio-page-stub
-      icon="info"
-      title="About Kookio"
-      subtitle="Minimal SSG page prerendered by Analog"
-      route="/about"
-    />
-  `,
+  imports: [KookioLinkComponent],
+  templateUrl: './about.page.html',
 })
 export default class AboutPage {}
