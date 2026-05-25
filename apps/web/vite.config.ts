@@ -7,6 +7,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 import { defineConfig } from 'vite';
 
+import { injectAssetVersion } from './vite-plugins/inject-asset-version';
+
 const nitroPreset = process.env['NITRO_PRESET'] ?? 'node-server';
 
 // https://vitejs.dev/config/
@@ -39,6 +41,8 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       tailwindcss(),
+
+      injectAssetVersion(),
 
       analog({
         ssr: true,

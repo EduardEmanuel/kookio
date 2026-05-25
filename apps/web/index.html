@@ -20,24 +20,40 @@
         }
       })();
     </script>
-    <link rel="icon" type="image/svg+xml" href="/icons/pwa/source.svg" />
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <!--
+      Cache-bust query strings on public/ assets that don't get a content
+      hash from Vite at build time (PWA icons, manifest, font subset,
+      apple-touch hooks). Vercel ships these with `must-revalidate` —
+      this `?v=...` is a belt-and-suspenders bump for Chrome's memory
+      cache + any aggressive CDN edge. Bump the version on each deploy
+      that touches these assets. Auto-injection via a Vite plugin is a
+      possible follow-up.
+    -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/icons/pwa/source.svg?v=ASSET_VERSION"
+    />
+    <link rel="manifest" href="/manifest.webmanifest?v=ASSET_VERSION" />
     <meta name="theme-color" content="#9f3d00" />
-    <link rel="apple-touch-icon" href="/icons/pwa/apple-touch-icon.png" />
+    <link
+      rel="apple-touch-icon"
+      href="/icons/pwa/apple-touch-icon.png?v=ASSET_VERSION"
+    />
     <link
       rel="apple-touch-startup-image"
       media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
-      href="/icons/pwa/splash-iphone-13.png"
+      href="/icons/pwa/splash-iphone-13.png?v=ASSET_VERSION"
     />
     <link
       rel="apple-touch-startup-image"
       media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
-      href="/icons/pwa/splash-iphone-11.png"
+      href="/icons/pwa/splash-iphone-11.png?v=ASSET_VERSION"
     />
     <link
       rel="apple-touch-startup-image"
       media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
-      href="/icons/pwa/splash-iphone-se.png"
+      href="/icons/pwa/splash-iphone-se.png?v=ASSET_VERSION"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -47,7 +63,7 @@
     />
     <link
       rel="preload"
-      href="/fonts/material-symbols/MaterialSymbolsOutlined-variable.woff2"
+      href="/fonts/material-symbols/MaterialSymbolsOutlined-variable.woff2?v=ASSET_VERSION"
       as="font"
       type="font/woff2"
       crossorigin
