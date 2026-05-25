@@ -18,7 +18,10 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import {
+  MAT_DATE_LOCALE,
+  provideNativeDateAdapter,
+} from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -98,7 +101,13 @@ const ALL_UNITS: readonly MeasureUnit[] = MEASURE_UNITS;
   // `@angular/material/core` does not bloat the SSR module graph for every
   // unrelated route — cold-start of `/login` regressed past Playwright's 30s
   // timeout when the adapter was provided app-wide.
-  providers: [provideNativeDateAdapter()],
+  providers: [
+    provideNativeDateAdapter(),
+    // European date format (DD/MM/YYYY) in the datepicker input + popup.
+    // Matches PLAN_DATE_LOCALE in plan-calendar so the two surfaces stay
+    // consistent regardless of the browser default locale.
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+  ],
   templateUrl: './pantry-form.component.html',
   styleUrl: './pantry-form.component.scss',
 })

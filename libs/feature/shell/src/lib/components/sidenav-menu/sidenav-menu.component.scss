@@ -1,7 +1,12 @@
 .sidenav-menu {
   width: var(--shell-sidenav-width, 16.25rem);
   height: 100%;
-  overflow-y: auto;
+  // The nav items always fit on desktop (top-bar + sidenav-container
+  // is `100dvh`, item count is fixed and short), so the previous
+  // `overflow-y: auto` only ever surfaced a phantom scrollbar on
+  // platforms that render a persistent channel even when nothing
+  // overflows. Clipped instead so the container stays clean.
+  overflow-y: hidden;
   background: var(--color-surface, currentColor);
 
   // Replace M3's pill active indicator with a left-edge accent.
