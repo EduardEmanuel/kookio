@@ -110,10 +110,27 @@ const seedRecipes = async (
     'Catalog lookups loaded',
   );
 
+  // Pre-seed cleanup: remove any recipes already in the DB that have
+  // no steps. A step-less recipe breaks the cook session (nothing to
+  // walk through), and could have leaked in from earlier seed runs
+  // that pre-date the step-presence filter below. Cascade is wired on
+  // every Recipe FK relation, so this cleanly removes related
+  // ingredients, tags, and any orphan steps too.
+  const stepless = await prisma.recipe.deleteMany({
+    where: { steps: { none: {} } },
+  });
+  if (stepless.count > 0) {
+    logger.info(
+      { removed: stepless.count },
+      '🧹 Removed pre-existing recipes with no steps',
+    );
+  }
+
   logger.info(`🍲 Seeding ${recipes.length} recipes...`);
 
   let upsertedRecipes = 0;
   let skippedRecipes = 0;
+  let skippedNoSteps = 0;
   let upsertedIngredients = 0;
   let skippedIngredients = 0;
   let upsertedTags = 0;
@@ -122,6 +139,20 @@ const seedRecipes = async (
   const missingIngredients = new Set<string>();
 
   for (const recipe of recipes) {
+    // Skip recipes that have no cooking steps — the cook session walks
+    // through `steps` one at a time, so a recipe without any of them
+    // is a broken artifact (no instructions to follow). Logged at
+    // debug to avoid flooding info-level output when the snapshot
+    // happens to contain many such rows.
+    if (!recipe.steps || recipe.steps.length === 0) {
+      skippedNoSteps++;
+      logger.debug(
+        { externalId: recipe.externalId, title: recipe.title },
+        '⏭  Skipping recipe with no steps',
+      );
+      continue;
+    }
+
     try {
       const categoryId = recipe.categoryExternalId
         ? (categoryMap.get(recipe.categoryExternalId) ?? null)
@@ -276,6 +307,8 @@ const seedRecipes = async (
     {
       recipesUpserted: upsertedRecipes,
       recipesFailed: skippedRecipes,
+      recipesSkippedNoSteps: skippedNoSteps,
+      recipesDeletedNoSteps: stepless.count,
       ingredientsUpserted: upsertedIngredients,
       ingredientsSkipped: skippedIngredients,
       tagsUpserted: upsertedTags,
