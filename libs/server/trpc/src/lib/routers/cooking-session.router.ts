@@ -6,6 +6,7 @@ import {
   RecipeStatusSchema,
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
+import { convertMeasure } from '@kookio/shared-utility/measure-units';
 
 import { onboardedProcedure } from '../middlewares/auth';
 import { router, TRPCError } from '../trpc';
@@ -114,9 +115,28 @@ export const cookingSession = router({
               select: { id: true, quantity: true, unit: true },
             });
             if (!pantryItem) continue;
-            if (pantryItem.unit !== item.unit) continue;
 
-            const remaining = Math.max(0, pantryItem.quantity - item.quantity);
+            // When the consumed unit differs from the pantry unit, fall
+            // through to a same-family conversion before deciding whether
+            // to skip. Convertible mismatches (e.g. recipe in ml, pantry
+            // in l) now decrement correctly instead of being silently
+            // dropped. Truly incompatible families (weight ↔ volume) or
+            // unitless markers (PIECE, PINCH …) still skip.
+            let consumedInPantryUnit = item.quantity;
+            if (pantryItem.unit !== item.unit) {
+              const converted = convertMeasure(
+                item.quantity,
+                item.unit,
+                pantryItem.unit,
+              );
+              if (converted === null) continue;
+              consumedInPantryUnit = converted;
+            }
+
+            const remaining = Math.max(
+              0,
+              pantryItem.quantity - consumedInPantryUnit,
+            );
 
             if (remaining === 0) {
               await tx.pantryItem.delete({ where: { id: pantryItem.id } });

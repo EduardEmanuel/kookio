@@ -312,7 +312,7 @@ describe('cookingSession router', () => {
       expect(tx.cookingSession.update).toHaveBeenCalled();
     });
 
-    it('skips silently when recipe-side and pantry-side units differ', async () => {
+    it('converts same-family unit mismatches before decrementing (g → kg)', async () => {
       const tx = makeTxMock();
       tx.cookingSession.findUnique.mockResolvedValue(validSession);
       tx.pantryItem.findUnique.mockResolvedValue({
@@ -334,6 +334,39 @@ describe('cookingSession router', () => {
         ],
       });
 
+      // 200 g = 0.2 kg; 0.5 kg pantry − 0.2 kg = 0.3 kg remaining.
+      expect(tx.pantryItem.update).toHaveBeenCalledTimes(1);
+      expect(tx.pantryItem.update).toHaveBeenCalledWith({
+        where: { id: PANTRY_ID_FLOUR },
+        data: { quantity: 0.3 },
+      });
+      expect(tx.pantryItem.delete).not.toHaveBeenCalled();
+      expect(tx.cookingSession.update).toHaveBeenCalled();
+    });
+
+    it('skips silently when units are truly incompatible (weight ↔ volume)', async () => {
+      const tx = makeTxMock();
+      tx.cookingSession.findUnique.mockResolvedValue(validSession);
+      tx.pantryItem.findUnique.mockResolvedValue({
+        id: PANTRY_ID_FLOUR,
+        quantity: 0.5,
+        unit: Unit.L,
+      });
+      tx.cookingSession.update.mockResolvedValue({
+        id: SESSION_ID,
+        completedAt: COMPLETED_AT,
+      });
+      const prismaMock = makePrismaMock(tx);
+      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
+
+      await caller.cookingSession.complete({
+        sessionId: SESSION_ID,
+        consumed: [
+          { ingredientCatalogId: ING_FLOUR, quantity: 200, unit: Unit.G },
+        ],
+      });
+
+      // g (weight) cannot convert to L (volume) without density data → skip.
       expect(tx.pantryItem.update).not.toHaveBeenCalled();
       expect(tx.pantryItem.delete).not.toHaveBeenCalled();
       expect(tx.cookingSession.update).toHaveBeenCalled();

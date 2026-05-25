@@ -120,7 +120,7 @@ describe('IngredientConfirmDialogComponent', () => {
       expect(close).toHaveBeenCalledWith([]);
     });
 
-    it('leaves rows with a unit mismatch unchecked but enabled', async () => {
+    it('keeps a convertible same-family mismatch checked by default (ml vs l)', async () => {
       const { fixture, close } = await setup({
         ingredients: [
           makeIngredient('milk', 'Milk', {
@@ -136,8 +136,36 @@ describe('IngredientConfirmDialogComponent', () => {
       };
       instance.onConfirm();
 
-      // Server would silently skip a unit mismatch on its own; we just don't
-      // pre-check the row so the user has to opt in explicitly.
+      // ml ↔ l is a same-family conversion the server now handles; the row
+      // stays included by default and the recipe-unit quantity is emitted.
+      expect(close).toHaveBeenCalledWith([
+        {
+          ingredientCatalogId: 'cat-milk',
+          quantity: 100,
+          unit: Unit.ML,
+        },
+      ]);
+    });
+
+    it('leaves rows with a truly incompatible unit mismatch unchecked but enabled', async () => {
+      const { fixture, close } = await setup({
+        ingredients: [
+          makeIngredient('milk', 'Milk', {
+            unit: Unit.ML,
+            // Weight vs volume — server cannot convert without density data.
+            pantryAvailable: { quantity: 500, unit: Unit.G },
+          }),
+        ],
+        ratio: 1,
+      });
+
+      const instance = fixture.componentInstance as unknown as {
+        onConfirm: () => void;
+      };
+      instance.onConfirm();
+
+      // Server would silently skip a truly incompatible mismatch on its own;
+      // we just don't pre-check the row so the user has to opt in explicitly.
       expect(close).toHaveBeenCalledWith([]);
     });
   });

@@ -22,6 +22,7 @@ import type {
 } from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
 import {
+  convertMeasure,
   formatMeasureUnit,
   NEGLIGIBLE_MEASURE_UNITS,
 } from '@kookio/shared-utility/measure-units';
@@ -60,8 +61,18 @@ const buildRow = (
   const inPantry = ri.pantryAvailable !== null;
   const recipeUnit = ri.unit;
   const pantryUnit = ri.pantryAvailable?.unit ?? null;
+  // A unit mismatch is only "real" when conversion between the two units
+  // is impossible (different families, or one side is a non-numeric
+  // marker like PIECE/PINCH). Convertible mismatches — e.g. recipe in ml
+  // against pantry in l — are silently handled by the server-side
+  // decrement, so the row stays checked-by-default and the warning is
+  // suppressed.
   const unitMismatch =
-    inPantry && recipeUnit !== null && pantryUnit !== recipeUnit;
+    inPantry &&
+    recipeUnit !== null &&
+    pantryUnit !== null &&
+    pantryUnit !== recipeUnit &&
+    convertMeasure(1, recipeUnit, pantryUnit) === null;
   const negligible =
     recipeUnit !== null && NEGLIGIBLE_MEASURE_UNITS.has(recipeUnit);
   // Disabled rows are structurally unable to update the pantry — either there
