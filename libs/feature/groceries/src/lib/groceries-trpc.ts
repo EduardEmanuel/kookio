@@ -59,6 +59,16 @@ export interface GroceriesToggleBoughtOutput {
 }
 
 /**
+ * Result of moving every currently-bought grocery item into the user's pantry.
+ * Counts shown verbatim in the post-mutation snackbar.
+ */
+export interface GroceriesAddBoughtToPantryOutput {
+  added: number;
+  merged: number;
+  skipped: number;
+}
+
+/**
  * Minimal tRPC surface required by the groceries feature: the page consumes
  * `list` + `toggleBought`; the dashboard widget consumes `stats`. A single
  * token covers all three so the wiring stays a single `provide` line in
@@ -77,6 +87,9 @@ export interface GroceriesTrpcClient {
       mutate(
         input: GroceriesToggleBoughtInput,
       ): Promise<GroceriesToggleBoughtOutput>;
+    };
+    addBoughtToPantry: {
+      mutate(): Promise<GroceriesAddBoughtToPantryOutput>;
     };
   };
 }

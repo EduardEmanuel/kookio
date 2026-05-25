@@ -80,6 +80,30 @@ export default class GroceriesPage {
         this.store.clearUnpersistedNotice();
       });
     });
+
+    // Result of the "Add to pantry" bulk action — show counts so the user
+    // knows what happened. `skipped` is rare (recipe ingredient with null
+    // qty/unit, or — exotic — a concurrent pantry-write race) so it's
+    // surfaced as a separate phrase only when non-zero.
+    effect(() => {
+      const result = this.store.addBoughtResult();
+      if (!result) return;
+      untracked(() => {
+        const moved = result.added + result.merged;
+        const main =
+          moved === 0
+            ? 'Nothing was moved'
+            : moved === 1
+              ? '1 item added to your pantry'
+              : `${moved} items added to your pantry`;
+        const suffix =
+          result.skipped > 0
+            ? ` — ${result.skipped} skipped (missing quantity or unit)`
+            : '';
+        this.snackBar.open(`${main}${suffix}`, 'Dismiss', { duration: 4000 });
+        this.store.clearAddBoughtResult();
+      });
+    });
   }
 
   protected readonly onReload = (): void => {
@@ -88,5 +112,9 @@ export default class GroceriesPage {
 
   protected readonly onToggle = (ingredientCatalogId: string): void => {
     this.store.toggleBought({ ingredientCatalogId });
+  };
+
+  protected readonly onMoveBoughtToPantry = (): void => {
+    this.store.addBoughtToPantry();
   };
 }

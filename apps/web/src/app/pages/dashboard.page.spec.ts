@@ -47,15 +47,16 @@ const stubSavedStore = {
 
 // The groceries-count widget injects GROCERIES_TRPC and calls `stats.query()`.
 // Returning an Observable matches the analog client's runtime shape; the
-// widget wraps with `from(...)` which is a no-op on Observables. `list` and
-// `toggleBought` aren't called on the dashboard surface but need typed
-// stubs to satisfy the interface.
+// widget wraps with `from(...)` which is a no-op on Observables. `list`,
+// `toggleBought`, and `addBoughtToPantry` aren't called on the dashboard
+// surface but need typed stubs to satisfy the interface.
 const stubGroceriesTrpc: GroceriesTrpcClient = {
   groceries: {
     list: {
       query: vi.fn().mockResolvedValue({ items: [], boughtAvailable: true }),
     },
     toggleBought: { mutate: vi.fn() },
+    addBoughtToPantry: { mutate: vi.fn() },
     stats: {
       query: vi.fn(() =>
         of({ total: 0, remaining: 0 }),

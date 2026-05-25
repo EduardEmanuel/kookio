@@ -6,6 +6,7 @@ import {
   UuidIdSchema,
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
+import { convertMeasure } from '@kookio/shared-utility/measure-units';
 
 import { onboardedProcedure } from '../middlewares/auth';
 import { router, TRPCError } from '../trpc';
@@ -56,6 +57,25 @@ const ToggleBoughtOutputSchema = z.object({
   persisted: z.boolean(),
   total: z.number().int().nonnegative(),
   remaining: z.number().int().nonnegative(),
+});
+
+const AddBoughtToPantryOutputSchema = z.object({
+  /** Bought items inserted as new pantry rows. */
+  added: z.number().int().nonnegative(),
+  /**
+   * Bought items merged into an existing pantry row (same-unit add, or a
+   * same-family conversion via {@link convertMeasure}). Should be rare —
+   * `deriveGroceries` filters out anything already in the pantry — but a
+   * concurrent add from another tab can land here.
+   */
+  merged: z.number().int().nonnegative(),
+  /**
+   * Bought items the server could not move: null quantity, null unit, or
+   * an existing pantry row in a truly incompatible unit (weight ↔ volume,
+   * PIECE ↔ anything). Surfaced as a count so the page can show a "kept
+   * N items on the list" hint without naming each one.
+   */
+  skipped: z.number().int().nonnegative(),
 });
 
 const RECIPE_INGREDIENT_SELECT = {
@@ -286,5 +306,185 @@ export const groceries = router({
           cause: err,
         });
       }
+    }),
+
+  /**
+   * Onboarded — move every currently-bought grocery item into the user's
+   * pantry, then clear those ids from the Redis bought-state.
+   *
+   * Bought-state must be readable (Redis up) to run at all — there is no
+   * point trying to move "the user's bought items" if we don't know which
+   * those are. A Redis blip surfaces as INTERNAL_SERVER_ERROR so the
+   * client shows a "try again" snackbar instead of falsely reporting a
+   * no-op success.
+   *
+   * Per item:
+   *  - null quantity or null unit  → skipped (`PantryItem` cannot store either)
+   *  - bought id no longer in derived (already in pantry, plan changed, recipe
+   *    removed) → silently dropped from bought-state, not counted
+   *  - same-unit pantry row exists → merge (sum quantity)
+   *  - same-family pantry row exists → convert and merge
+   *  - incompatible unit pantry row exists → skipped
+   *  - no pantry row → create
+   *
+   * The Postgres write is one transaction. Clearing Redis is best-effort
+   * outside the tx — if Redis fails after the tx commits, the items are in
+   * the pantry already but stay ticked on the list. The list/stats endpoints
+   * filter bought ids against the derived set on read, so the stale ticks
+   * disappear from the UI on the next reload anyway.
+   */
+  addBoughtToPantry: onboardedProcedure
+    .output(AddBoughtToPantryOutputSchema)
+    .mutation(async ({ ctx }) => {
+      const userId = ctx.session!.uid;
+
+      let boughtIds: readonly string[];
+      try {
+        boughtIds = await ctx.groceriesBought.get(userId);
+      } catch (err) {
+        log.error(
+          { err, userId },
+          'groceries.addBoughtToPantry: bought-state read failed',
+        );
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Could not read your bought-state — please try again',
+          cause: err,
+        });
+      }
+
+      if (boughtIds.length === 0) {
+        return { added: 0, merged: 0, skipped: 0 };
+      }
+
+      let added = 0;
+      let merged = 0;
+      let skipped = 0;
+      const movedOrStale: string[] = [];
+
+      try {
+        await ctx.prisma.$transaction(async (tx) => {
+          const [slots, pantryRows] = await Promise.all([
+            tx.mealSlot.findMany({
+              where: { userId, recipeId: { not: null } },
+              select: { recipeId: true, servings: true },
+            }),
+            tx.pantryItem.findMany({
+              where: { userId },
+              select: {
+                id: true,
+                ingredientCatalogId: true,
+                quantity: true,
+                unit: true,
+              },
+            }),
+          ]);
+
+          const recipeIds = Array.from(
+            new Set(
+              slots
+                .map((s) => s.recipeId)
+                .filter((id): id is string => id !== null),
+            ),
+          );
+
+          const recipes = recipeIds.length
+            ? await tx.recipe.findMany({
+                where: { id: { in: recipeIds } },
+                select: RECIPE_INGREDIENT_SELECT,
+              })
+            : [];
+
+          const pantryByIngredient = new Map(
+            pantryRows.map((p) => [p.ingredientCatalogId, p]),
+          );
+          const pantryIds = new Set(pantryByIngredient.keys());
+
+          const derived = deriveGroceries(slots, recipes, pantryIds);
+          const derivedById = new Map(
+            derived.map((row) => [row.ingredientCatalogId, row]),
+          );
+
+          for (const ingredientCatalogId of boughtIds) {
+            const row = derivedById.get(ingredientCatalogId);
+            if (!row) {
+              // Bought but no longer in the derived list — already in
+              // pantry, plan changed, recipe removed, etc. Drop from the
+              // bought set silently.
+              movedOrStale.push(ingredientCatalogId);
+              continue;
+            }
+            if (row.totalQuantity === null || row.unit === null) {
+              skipped++;
+              continue;
+            }
+
+            const existing = pantryByIngredient.get(ingredientCatalogId);
+            if (existing) {
+              // deriveGroceries filters out anything currently in the
+              // pantry, so this branch only fires when a concurrent write
+              // from another tab landed between the snapshot and the tx.
+              let increment = row.totalQuantity;
+              if (existing.unit !== row.unit) {
+                const converted = convertMeasure(
+                  row.totalQuantity,
+                  row.unit,
+                  existing.unit,
+                );
+                if (converted === null) {
+                  skipped++;
+                  continue;
+                }
+                increment = converted;
+              }
+              await tx.pantryItem.update({
+                where: { id: existing.id },
+                data: { quantity: existing.quantity + increment },
+              });
+              merged++;
+              movedOrStale.push(ingredientCatalogId);
+            } else {
+              await tx.pantryItem.create({
+                data: {
+                  userId,
+                  ingredientCatalogId,
+                  quantity: row.totalQuantity,
+                  unit: row.unit,
+                  expiresAt: null,
+                },
+              });
+              added++;
+              movedOrStale.push(ingredientCatalogId);
+            }
+          }
+        });
+      } catch (err) {
+        log.error(
+          { err, userId, boughtCount: boughtIds.length },
+          'groceries.addBoughtToPantry: transaction failed',
+        );
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to move bought items to pantry',
+          cause: err,
+        });
+      }
+
+      try {
+        const movedSet = new Set(movedOrStale);
+        const remaining = boughtIds.filter((id) => !movedSet.has(id));
+        await ctx.groceriesBought.set(userId, remaining);
+      } catch (err) {
+        // The pantry write already committed; a Redis failure here just
+        // leaves the moved items still ticked on the list. The next reload
+        // filters them out via the derive-vs-bought intersection at read
+        // time, so the stale ticks disappear on their own.
+        log.warn(
+          { err, userId },
+          'groceries.addBoughtToPantry: clear-bought failed',
+        );
+      }
+
+      return { added, merged, skipped };
     }),
 });

@@ -53,7 +53,19 @@
   </section>
   } @if (store.boughtCount() > 0) {
   <section class="groceries__done">
-    <h2 class="groceries__done-title">Done ({{ store.boughtCount() }})</h2>
+    <header class="groceries__done-header">
+      <h2 class="groceries__done-title">Done ({{ store.boughtCount() }})</h2>
+      <button
+        [matButton]="'filled'"
+        type="button"
+        (click)="onMoveBoughtToPantry()"
+        [disabled]="store.isMutating()"
+        aria-label="Move bought items to your pantry"
+      >
+        <kookio-icon name="kitchen" />
+        <span>Add to pantry</span>
+      </button>
+    </header>
     @for (group of store.groupedBought(); track group.category) {
     <section class="groceries__group">
       <h3 class="groceries__group-title">

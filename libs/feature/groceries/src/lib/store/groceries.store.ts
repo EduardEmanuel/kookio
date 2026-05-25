@@ -46,6 +46,15 @@ interface GroceriesState {
    * snackbar, then calls `clearUnpersistedNotice()`.
    */
   unpersistedNotice: boolean;
+  /**
+   * Set after a successful `addBoughtToPantry` so the page can show a
+   * snackbar with the counts. Cleared by the page once shown.
+   */
+  addBoughtResult: {
+    added: number;
+    merged: number;
+    skipped: number;
+  } | null;
 }
 
 const initialState: GroceriesState = {
@@ -54,6 +63,7 @@ const initialState: GroceriesState = {
   isMutating: false,
   error: null,
   unpersistedNotice: false,
+  addBoughtResult: null,
 };
 
 const errorMessage = (action: string, err: unknown): string => {
@@ -229,6 +239,10 @@ export const GroceriesStore = signalStore(
         patchState(store, { unpersistedNotice: false });
       },
 
+      clearAddBoughtResult: (): void => {
+        patchState(store, { addBoughtResult: null });
+      },
+
       load: rxMethod<void>(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),
@@ -355,6 +369,47 @@ export const GroceriesStore = signalStore(
                   items: rolledBack,
                 });
                 writeCacheFromItems(rolledBack);
+                return EMPTY;
+              }),
+            ),
+          ),
+        ),
+      ),
+
+      /**
+       * Bulk-move every currently-bought item into the pantry. On success,
+       * drop the moved items from the local list and clear their bought
+       * marks from the localStorage cache; the server has already cleared
+       * Redis on its end. Sets `addBoughtResult` so the page can render a
+       * snackbar with `Added X, merged Y, skipped Z` counts.
+       */
+      addBoughtToPantry: rxMethod<void>(
+        pipe(
+          tap(() => patchState(store, { isMutating: true, error: null })),
+          switchMap(() =>
+            from(trpc.groceries.addBoughtToPantry.mutate()).pipe(
+              tap((result) => {
+                // Trust the server: every bought item that wasn't `skipped`
+                // is now in the pantry (or was already there and is gone
+                // from the derived list). Drop bought items from the local
+                // view en masse — the next reload reconciles with the
+                // server's authoritative derive.
+                const nextItems = store.items().filter((i) => !i.isBought);
+                patchState(store, {
+                  items: nextItems,
+                  isMutating: false,
+                  addBoughtResult: result,
+                });
+                // localStorage cache is now derivable from the items
+                // array's `isBought` field (none after the filter above).
+                writeCacheFromItems(nextItems);
+              }),
+              catchError((err: unknown) => {
+                log.warn({ err }, 'groceries.addBoughtToPantry failed');
+                patchState(store, {
+                  isMutating: false,
+                  error: errorMessage('move to pantry', err),
+                });
                 return EMPTY;
               }),
             ),

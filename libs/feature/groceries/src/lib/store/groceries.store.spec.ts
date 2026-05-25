@@ -43,6 +43,7 @@ const setup = (trpcOverrides?: {
   list?: ReturnType<typeof vi.fn>;
   stats?: ReturnType<typeof vi.fn>;
   toggleBought?: ReturnType<typeof vi.fn>;
+  addBoughtToPantry?: ReturnType<typeof vi.fn>;
 }) => {
   const list =
     trpcOverrides?.list ??
@@ -58,12 +59,16 @@ const setup = (trpcOverrides?: {
       total: 0,
       remaining: 0,
     });
+  const addBoughtToPantry =
+    trpcOverrides?.addBoughtToPantry ??
+    vi.fn().mockResolvedValue({ added: 0, merged: 0, skipped: 0 });
 
   const trpc: GroceriesTrpcClient = {
     groceries: {
       list: { query: list },
       stats: { query: stats },
       toggleBought: { mutate: toggleBought },
+      addBoughtToPantry: { mutate: addBoughtToPantry },
     },
   };
 
@@ -82,7 +87,15 @@ const setup = (trpcOverrides?: {
   });
 
   const store = TestBed.inject(GroceriesStore);
-  return { store, authStore, trpc, list, stats, toggleBought };
+  return {
+    store,
+    authStore,
+    trpc,
+    list,
+    stats,
+    toggleBought,
+    addBoughtToPantry,
+  };
 };
 
 const writeCache = (boughtIds: string[]): void => {
@@ -117,6 +130,7 @@ describe('GroceriesStore', () => {
       expect(store.isMutating()).toBe(false);
       expect(store.error()).toBeNull();
       expect(store.unpersistedNotice()).toBe(false);
+      expect(store.addBoughtResult()).toBeNull();
     });
   });
 
@@ -341,6 +355,89 @@ describe('GroceriesStore', () => {
 
       store.clearUnpersistedNotice();
       expect(store.unpersistedNotice()).toBe(false);
+    });
+
+    it('clearAddBoughtResult resets the result to null', async () => {
+      const items = [
+        buildItem({ ingredientCatalogId: 'flour-id', isBought: true }),
+      ];
+      const { store } = setup({
+        list: vi.fn().mockResolvedValue({ items, boughtAvailable: true }),
+        addBoughtToPantry: vi
+          .fn()
+          .mockResolvedValue({ added: 1, merged: 0, skipped: 0 }),
+      });
+      store.load();
+      await flush();
+
+      store.addBoughtToPantry();
+      await flush();
+      expect(store.addBoughtResult()).toEqual({
+        added: 1,
+        merged: 0,
+        skipped: 0,
+      });
+
+      store.clearAddBoughtResult();
+      expect(store.addBoughtResult()).toBeNull();
+    });
+  });
+
+  describe('addBoughtToPantry', () => {
+    const setupLoaded = async (items: GroceryItem[]) => {
+      const ctx = setup({
+        list: vi.fn().mockResolvedValue({ items, boughtAvailable: true }),
+      });
+      ctx.store.load();
+      await flush();
+      return ctx;
+    };
+
+    it('drops bought items from the local list and records the result counts', async () => {
+      const { store, addBoughtToPantry } = await setupLoaded([
+        buildItem({ ingredientCatalogId: 'flour-id', isBought: true }),
+        buildItem({ ingredientCatalogId: 'sugar-id', isBought: true }),
+        buildItem({ ingredientCatalogId: 'oil-id', isBought: false }),
+      ]);
+      addBoughtToPantry.mockResolvedValueOnce({
+        added: 2,
+        merged: 0,
+        skipped: 0,
+      });
+
+      store.addBoughtToPantry();
+      await flush();
+
+      // Bought rows gone; the un-ticked row stays.
+      expect(store.items().map((i) => i.ingredientCatalogId)).toEqual([
+        'oil-id',
+      ]);
+      expect(store.addBoughtResult()).toEqual({
+        added: 2,
+        merged: 0,
+        skipped: 0,
+      });
+      // localStorage cache is now empty (no bought items left).
+      expect(readCache()).toEqual({ boughtIds: [] });
+      expect(store.isMutating()).toBe(false);
+    });
+
+    it('surfaces a failure as an error message and does not touch the list', async () => {
+      const { store, addBoughtToPantry } = await setupLoaded([
+        buildItem({ ingredientCatalogId: 'flour-id', isBought: true }),
+      ]);
+      addBoughtToPantry.mockRejectedValueOnce(new Error('500 try again'));
+
+      store.addBoughtToPantry();
+      await flush();
+
+      // List unchanged.
+      expect(store.items().map((i) => i.ingredientCatalogId)).toEqual([
+        'flour-id',
+      ]);
+      expect(store.addBoughtResult()).toBeNull();
+      expect(store.error()).toContain('500');
+      expect(store.isMutating()).toBe(false);
     });
   });
 

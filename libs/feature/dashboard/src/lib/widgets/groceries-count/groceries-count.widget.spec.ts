@@ -24,6 +24,7 @@ const buildTrpc = (b: StatsBehaviour): GroceriesTrpcClient => ({
       query: vi.fn().mockResolvedValue({ items: [], boughtAvailable: true }),
     },
     toggleBought: { mutate: vi.fn() },
+    addBoughtToPantry: { mutate: vi.fn() },
     stats: {
       // The widget treats the return value as an Observable via `from(...)`.
       // `from(observable)` is a no-op, so handing back a real Observable here
