@@ -128,7 +128,7 @@ export const RESTRICTIONS_STRINGS = {
 export const DONE_STRINGS = {
   heading: "You're all set!",
   hint: "Here's what you've configured:",
-  cta: 'Tap "Let\'s Kookio it!" to save your preferences.',
+  cta: 'Press "Let\'s Kookio it!" to save your preferences.',
   summary: {
     people: (adults: number, children: number) =>
       `${adults} adult${adults === 1 ? '' : 's'}, ${children} child${children === 1 ? '' : 'ren'}`,
