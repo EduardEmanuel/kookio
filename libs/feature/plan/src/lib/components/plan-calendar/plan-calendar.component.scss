@@ -385,7 +385,7 @@
   }
 }
 
-.plan__cell-cook {
+.plan__cell-link {
   // Top-left affordance — paired opposite the clear button (top-right)
   // so the cell's two actions are visually balanced and never overlap
   // on tight cell widths (~115px on mobile).
@@ -419,7 +419,7 @@
   }
 }
 
-.plan__cell-cook-icon {
+.plan__cell-link-icon {
   // Fills the 1.5rem × 1.5rem button. Mirrors the topbar's
   // `.topbar__cook-now-icon` sizing — the same branded SVG renders at
   // the same intrinsic size both places so the mark stays recognisable

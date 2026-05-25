@@ -227,10 +227,11 @@ export class PlanCalendarComponent {
   protected readonly slotAbbreviations = SLOT_ABBREVIATIONS;
   protected readonly sidebarItemSize = SIDEBAR_ITEM_SIZE_PX;
 
-  /** URL helper exposed to the template — `URLS.COOK(recipeId)` is the
-   * canonical way to compose the cook-session deep link. */
-  protected readonly cookUrl = (recipeId: string): string =>
-    URLS.COOK(recipeId);
+  /** URL helper exposed to the template — sends the user to the recipe
+   * detail page rather than straight into a cook session, so they can
+   * review the steps before committing. */
+  protected readonly recipeUrl = (recipeId: string): string =>
+    URLS.RECIPE(recipeId);
 
   /**
    * Match level for the desktop sidebar. Default `A` (Alright to cook —
