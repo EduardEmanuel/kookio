@@ -106,7 +106,7 @@ describe('SavedRecipesWidgetComponent', () => {
     ]);
   });
 
-  it('shows the "View all <N> saved" link when more than 5 exist', async () => {
+  it('shows the total count in the title when items exist', async () => {
     const rows = Array.from({ length: 7 }, (_, i) =>
       buildRow({ id: `${i + 1}`, title: `Recipe ${i + 1}` }),
     );
@@ -114,14 +114,19 @@ describe('SavedRecipesWidgetComponent', () => {
 
     const { el } = await setup(store);
 
+    const title = el.querySelector('h2.sav__title') as HTMLElement;
+    expect(title.textContent).toContain('7');
+    // Button copy is the same regardless of count (count moved into
+    // the title to keep the CTA under 3 words).
     const more = el.querySelector(
       'a.sav__more[href="/recipes/saved"]',
     ) as HTMLAnchorElement;
     expect(more).not.toBeNull();
-    expect(more.textContent).toContain('View all 7 saved');
+    expect(more.textContent?.trim()).toContain('View all');
+    expect(more.textContent).not.toMatch(/View all 7/);
   });
 
-  it('falls back to "View all saved" when exactly the top N are shown', async () => {
+  it('still shows the count in the title when exactly the top N are shown', async () => {
     const rows = Array.from({ length: 3 }, (_, i) =>
       buildRow({ id: `${i + 1}`, title: `Recipe ${i + 1}` }),
     );
@@ -129,11 +134,12 @@ describe('SavedRecipesWidgetComponent', () => {
 
     const { el } = await setup(store);
 
+    const title = el.querySelector('h2.sav__title') as HTMLElement;
+    expect(title.textContent).toContain('3');
     const more = el.querySelector(
       'a.sav__more[href="/recipes/saved"]',
     ) as HTMLAnchorElement;
-    expect(more.textContent).toContain('View all saved');
-    expect(more.textContent).not.toMatch(/View all 3 saved/);
+    expect(more.textContent?.trim()).toContain('View all');
   });
 
   it('renders a spinner while loading with no items yet', async () => {

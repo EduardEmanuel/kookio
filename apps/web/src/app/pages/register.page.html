@@ -108,9 +108,10 @@
     </button>
   </form>
 
-  <a matButton [routerLink]="loginUrl" class="register-page__alt">
-    Already have an account? Sign in
-  </a>
+  <p class="register-page__alt">
+    Already have an account?
+    <a matButton [routerLink]="loginUrl">Sign in</a>
+  </p>
 </section>
 } @placeholder (minimum 500ms) {
 <kookio-page-skeleton />

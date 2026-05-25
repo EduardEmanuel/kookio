@@ -125,7 +125,7 @@ describe('PantryPage', () => {
 
     const ctas = el.querySelectorAll('button');
     const cta = Array.from(ctas).find((b) =>
-      b.textContent?.includes('Add your first ingredient'),
+      b.textContent?.includes('Add ingredient'),
     ) as HTMLButtonElement;
     cta.click();
 

@@ -3,6 +3,9 @@
     <h2 class="sav__title">
       <kookio-icon name="bookmark" />
       <span>Saved</span>
+      @if (store.totalCount() > 0) {
+      <span class="sav__count">· {{ store.totalCount() }}</span>
+      }
     </h2>
 
     @if (store.isLoading() && topItems().length === 0) {
@@ -33,11 +36,7 @@
     </ul>
 
     <a [matButton]="'text'" [routerLink]="savedRoute" class="sav__more">
-      @if (hasMore()) {
-      <span>View all {{ store.totalCount() }} saved</span>
-      } @else {
-      <span>View all saved</span>
-      }
+      <span>View all</span>
       <kookio-icon name="arrow_forward" />
     </a>
     }
