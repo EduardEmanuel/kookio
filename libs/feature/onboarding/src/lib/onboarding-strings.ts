@@ -25,7 +25,9 @@ export const ACTION_LABELS = {
   skip: 'Skip',
   start: 'Get started',
   continue: 'Continue',
-  submit: "Let's start cooking",
+  // `submit` removed: the last-step CTA is now a wordmark-stamp SVG
+  // (see onboarding-stepper.component.html) so it has no visible text
+  // and uses an aria-label directly on the button instead.
 } as const;
 
 /** Welcome step (index 0). */
@@ -126,7 +128,7 @@ export const RESTRICTIONS_STRINGS = {
 export const DONE_STRINGS = {
   heading: "You're all set!",
   hint: "Here's what you've configured:",
-  cta: 'Tap "Let\'s start cooking" to save your preferences.',
+  cta: 'Tap "Let\'s Kookio it!" to save your preferences.',
   summary: {
     people: (adults: number, children: number) =>
       `${adults} adult${adults === 1 ? '' : 's'}, ${children} child${children === 1 ? '' : 'ren'}`,

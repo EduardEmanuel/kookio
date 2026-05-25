@@ -107,13 +107,71 @@
           type="button"
           [disabled]="store.isSubmitting()"
           (click)="onSubmit()"
+          aria-label="Save preferences and start cooking"
         >
           @if (store.isSubmitting()) {
             <mat-progress-spinner mode="indeterminate" diameter="20" />
           } @else {
-            <!-- i18n: @@onboarding.action.submit -->
-            <span>{{ actions.submit }}</span>
-            <kookio-icon iconPositionEnd name="restaurant" />
+            <!-- Brand-stamp finale: an inverse-palette variant of the
+                 topbar wordmark (libs/feature/shell/.../top-bar.component.html).
+                 The primary-orange fills become `on-primary` (cream) and
+                 the K-letter swaps cream for `primary` to keep the
+                 knockout against the now-cream pan circle. Reads as a
+                 white "Let's Kookio it!" stamp on the orange filled
+                 button. Inline-duplicated rather than extracted as a
+                 component (same precedent as plan-calendar's K-mark) so
+                 each surface tunes its own palette without a wrapper. -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 130 50"
+              role="img"
+              aria-hidden="true"
+              class="onboarding-shell__submit-mark"
+            >
+              <text
+                x="65"
+                y="21"
+                text-anchor="middle"
+                font-family="Fredoka, sans-serif"
+                font-size="18"
+                font-weight="bold"
+                fill="var(--mat-sys-on-primary)"
+              >
+                Let's
+              </text>
+              <circle cx="18" cy="32" r="15" fill="var(--mat-sys-on-primary)" />
+              <rect
+                x="30"
+                y="11"
+                width="15"
+                height="5"
+                rx="1.5"
+                transform="rotate(-45 37.5 17.5)"
+                fill="var(--mat-sys-on-primary)"
+              />
+              <text
+                x="18"
+                y="40"
+                text-anchor="middle"
+                font-family="Fredoka, sans-serif"
+                font-size="24"
+                font-weight="bold"
+                fill="var(--mat-sys-primary)"
+              >
+                K
+              </text>
+              <text
+                x="34"
+                y="40"
+                text-anchor="start"
+                font-family="Fredoka, sans-serif"
+                font-size="22"
+                font-weight="bold"
+                fill="var(--mat-sys-on-primary)"
+              >
+                ookio it!
+              </text>
+            </svg>
           }
         </button>
       } @else {

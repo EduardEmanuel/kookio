@@ -235,14 +235,21 @@ describe('OnboardingStepperComponent', () => {
   });
 
   describe('last step', () => {
-    it('hides skip and back, renders the submit label', async () => {
+    it('hides skip and back, renders the submit button', async () => {
       const { fixture, el, store } = await setup();
       seedToStep(store, 5);
       fixture.detectChanges();
       await fixture.whenStable();
 
+      // The submit CTA on the last step is the wordmark-stamp variant —
+      // no visible text, so we identify it by its accessibility label.
+      const submitBtn = [...el.querySelectorAll('button')].find((b) =>
+        b.getAttribute('aria-label')?.includes('start cooking'),
+      );
+      expect(submitBtn).toBeDefined();
+      expect(submitBtn?.querySelector('svg')).not.toBeNull();
+
       const texts = visibleButtonTexts(el);
-      expect(texts.some((t) => t.includes(ACTION_LABELS.submit))).toBe(true);
       expect(texts.some((t) => t.includes(ACTION_LABELS.skip))).toBe(false);
       expect(texts.some((t) => t.includes(ACTION_LABELS.back))).toBe(false);
     });

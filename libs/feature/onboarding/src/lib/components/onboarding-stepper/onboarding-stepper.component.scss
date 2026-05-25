@@ -60,4 +60,15 @@
     color: var(--mat-sys-error);
     text-align: center;
   }
+
+  // Final-step CTA wordmark — sized so it reads as a brand stamp inside
+  // the filled button without overpowering surrounding chrome. The
+  // viewBox is 130×50 (aspect 2.6); height fixes the visual scale and
+  // width auto-tracks. Block to avoid the inline-flex button collapsing
+  // it to baseline alignment.
+  &__submit-mark {
+    display: block;
+    height: 2rem;
+    width: auto;
+  }
 }
