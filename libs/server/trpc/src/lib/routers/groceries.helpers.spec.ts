@@ -26,11 +26,13 @@ type IngredientArg = {
   unit?:
     | typeof Unit.G
     | typeof Unit.PIECE
+    | typeof Unit.CLOVE
     | typeof Unit.TO_TASTE
     | typeof Unit.PINCH
     | null;
   category?: ReturnType<typeof IngredientCategorySchema.parse> | null;
   imageUrl?: string | null;
+  pieceGrams?: number | null;
 };
 
 const recipe = (
@@ -48,6 +50,7 @@ const recipe = (
       name: i.name,
       imageUrl: i.imageUrl ?? null,
       category: i.category ?? null,
+      pieceGrams: i.pieceGrams ?? null,
     },
   })),
 });
@@ -110,20 +113,29 @@ describe('deriveGroceries', () => {
     });
   });
 
-  it('skips ingredients with negligible units (TO_TASTE, PINCH, etc.)', () => {
+  it('skips flavour-only units (TO_TASTE / TO_SERVE / GARNISH) but keeps PINCH', () => {
+    // Old behaviour skipped the whole NEGLIGIBLE set. Under the grams
+    // pipeline PINCH = 0.5 g is a real mass, so it stays on the shopping
+    // list — the user may genuinely need to buy salt.
     const result = deriveGroceries(
       [slot('r1', 4)],
       [
         recipe('r1', [
           { id: 'flour', name: 'Flour', quantity: 200 },
           { id: 'salt', name: 'Salt', quantity: null, unit: Unit.TO_TASTE },
-          { id: 'pepper', name: 'Pepper', quantity: null, unit: Unit.PINCH },
+          { id: 'pepper', name: 'Pepper', quantity: 2, unit: Unit.PINCH },
         ]),
       ],
       new Set(),
     );
 
-    expect(result.map((r) => r.ingredientCatalogId)).toEqual(['flour']);
+    expect(result.map((r) => r.ingredientCatalogId).sort()).toEqual([
+      'flour',
+      'pepper',
+    ]);
+    const pepper = result.find((r) => r.ingredientCatalogId === 'pepper')!;
+    expect(pepper.unit).toBe(Unit.PINCH);
+    expect(pepper.totalGrams).toBe(1); // 2 pinches × 0.5 g
   });
 
   it('skips ingredients already present in the pantry (binary set-difference)', () => {
@@ -216,5 +228,73 @@ describe('deriveGroceries', () => {
 
     // recipe.servings clamped to 1, slot wants 4 → 4x scale
     expect(result[0].totalQuantity).toBe(400);
+  });
+
+  describe('grams aggregate (cross-unit reconciliation)', () => {
+    it('computes totalGrams using the shared toGrams heuristic', () => {
+      const result = deriveGroceries(
+        [slot('r1', 4)],
+        [recipe('r1', [{ id: 'flour', name: 'Flour', quantity: 200 }])],
+        new Set(),
+      );
+      // 200 g flour, single slot at scale 4/4 = 1 → 200 g.
+      expect(result[0].totalGrams).toBe(200);
+    });
+
+    it('uses pieceGrams from the catalog for piece-class units', () => {
+      const result = deriveGroceries(
+        [slot('r1', 4)],
+        [
+          recipe('r1', [
+            {
+              id: 'eggs',
+              name: 'Eggs',
+              quantity: 3,
+              unit: Unit.PIECE,
+              pieceGrams: 60,
+            },
+          ]),
+        ],
+        new Set(),
+      );
+      // 3 eggs × 60 g = 180 g
+      expect(result[0].totalGrams).toBe(180);
+      expect(result[0].pieceGrams).toBe(60);
+    });
+
+    it('falls back to DEFAULT_PIECE_GRAMS when pieceGrams is null', () => {
+      const result = deriveGroceries(
+        [slot('r1', 4)],
+        [
+          recipe('r1', [
+            // pieceGrams omitted → null → DEFAULT_PIECE_GRAMS (100 g) kicks in.
+            { id: 'mystery', name: 'Mystery', quantity: 2, unit: Unit.PIECE },
+          ]),
+        ],
+        new Set(),
+      );
+      expect(result[0].totalGrams).toBe(200);
+    });
+
+    it('sums totalGrams across slots even when the display unit stays fixed', () => {
+      const result = deriveGroceries(
+        [slot('r1', 4), slot('r2', 4)],
+        [
+          recipe('r1', [
+            { id: 'flour', name: 'Flour', quantity: 200, unit: Unit.G },
+          ]),
+          recipe('r2', [
+            { id: 'flour', name: 'Flour', quantity: 1, unit: Unit.PIECE },
+          ]),
+        ],
+        new Set(),
+      );
+
+      // Display: first-encountered unit (g), totals are added pragmatically.
+      expect(result[0].unit).toBe(Unit.G);
+      expect(result[0].totalQuantity).toBe(201);
+      // Grams: 200 g + 1 × DEFAULT_PIECE_GRAMS (100 g) = 300 g.
+      expect(result[0].totalGrams).toBe(300);
+    });
   });
 });

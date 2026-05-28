@@ -156,6 +156,15 @@ const FLAVOUR_ONLY_UNITS: ReadonlySet<MeasureUnit> = new Set([
 ]);
 
 /**
+ * Predicate matching {@link FLAVOUR_ONLY_UNITS}. Use this in derive/filter
+ * paths that want to exclude meaningless aggregations (e.g. dropping
+ * "3 garnish" rows from a shopping list) without re-importing the set
+ * itself. PINCH is NOT flavour-only — it's a small but real mass.
+ */
+export const isFlavourOnlyUnit = (unit: MeasureUnit): boolean =>
+  FLAVOUR_ONLY_UNITS.has(unit);
+
+/**
  * Fixed mass-per-unit factors for every unit whose grams value is
  * ingredient-agnostic. Weight factors are precise; volume factors use
  * water density (1 g/ml), matching the cooking-grade approximation

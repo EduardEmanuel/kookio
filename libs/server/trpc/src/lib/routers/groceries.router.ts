@@ -6,7 +6,7 @@ import {
   UuidIdSchema,
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
-import { convertMeasure } from '@kookio/shared-utility/measure-units';
+import { fromGrams, toGrams } from '@kookio/shared-utility/measure-units';
 
 import { onboardedProcedure } from '../middlewares/auth';
 import { router, TRPCError } from '../trpc';
@@ -63,16 +63,17 @@ const AddBoughtToPantryOutputSchema = z.object({
   /** Bought items inserted as new pantry rows. */
   added: z.number().int().nonnegative(),
   /**
-   * Bought items merged into an existing pantry row (same-unit add, or a
-   * same-family conversion via {@link convertMeasure}). Should be rare —
-   * `deriveGroceries` filters out anything already in the pantry — but a
-   * concurrent add from another tab can land here.
+   * Bought items merged into an existing pantry row. Quantities reconcile
+   * via the shared grams pipeline (water-density for volumes, pieceGrams
+   * for piece-class) so an ml-recipe can merge into a g-pantry-row. Rare
+   * in practice — `deriveGroceries` filters out anything already in the
+   * pantry — but a concurrent add from another tab can land here.
    */
   merged: z.number().int().nonnegative(),
   /**
    * Bought items the server could not move: null quantity, null unit, or
-   * an existing pantry row in a truly incompatible unit (weight ↔ volume,
-   * PIECE ↔ anything). Surfaced as a count so the page can show a "kept
+   * a unit with no mapping at all (defensive — `toGrams` returned null
+   * for either side). Surfaced as a count so the page can show a "kept
    * N items on the list" hint without naming each one.
    */
   skipped: z.number().int().nonnegative(),
@@ -91,6 +92,7 @@ const RECIPE_INGREDIENT_SELECT = {
           name: true,
           imageUrl: true,
           category: true,
+          pieceGrams: true,
         },
       },
     },
@@ -376,6 +378,7 @@ export const groceries = router({
                 ingredientCatalogId: true,
                 quantity: true,
                 unit: true,
+                ingredient: { select: { pieceGrams: true } },
               },
             }),
           ]);
@@ -424,22 +427,39 @@ export const groceries = router({
               // deriveGroceries filters out anything currently in the
               // pantry, so this branch only fires when a concurrent write
               // from another tab landed between the snapshot and the tx.
-              let increment = row.totalQuantity;
-              if (existing.unit !== row.unit) {
-                const converted = convertMeasure(
-                  row.totalQuantity,
-                  row.unit,
-                  existing.unit,
-                );
-                if (converted === null) {
-                  skipped++;
-                  continue;
-                }
-                increment = converted;
+              // Reconcile both sides through grams using the same per-
+              // ingredient pieceGrams — pulls in the shared thesis Phase
+              // 2b heuristic so an ml-grocery-row can merge into a
+              // g-pantry-row without ad-hoc unit comparisons.
+              const piece = existing.ingredient.pieceGrams ?? null;
+              const consumedGrams = toGrams(
+                row.totalQuantity,
+                row.unit,
+                piece,
+                {
+                  allowDefault: true,
+                },
+              );
+              const existingGrams = toGrams(
+                existing.quantity,
+                existing.unit,
+                piece,
+                { allowDefault: true },
+              );
+              if (consumedGrams === null || existingGrams === null) {
+                skipped++;
+                continue;
               }
+              const newGrams = existingGrams + consumedGrams;
+              const newQuantity = fromGrams(newGrams, existing.unit, piece, {
+                allowDefault: true,
+              });
+              // fromGrams returns null only when toGrams would also have
+              // returned null. Both sides succeeded above, so the inverse
+              // must too.
               await tx.pantryItem.update({
                 where: { id: existing.id },
-                data: { quantity: existing.quantity + increment },
+                data: { quantity: newQuantity! },
               });
               merged++;
               movedOrStale.push(ingredientCatalogId);

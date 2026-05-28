@@ -110,6 +110,7 @@ const recipeWithIngredients = (
     name: string;
     qty: number | null;
     unit: ReturnType<typeof MeasureUnitSchema.parse> | null;
+    pieceGrams?: number | null;
   }>,
   servings = 2,
 ) => ({
@@ -123,6 +124,7 @@ const recipeWithIngredients = (
       name: i.name,
       imageUrl: null,
       category: Category.PRODUCE,
+      pieceGrams: i.pieceGrams ?? null,
     },
   })),
 });
@@ -249,6 +251,7 @@ describe('groceries router', () => {
           ingredientCatalogId: ING_TOMATO,
           quantity: 100,
           unit: Unit.G,
+          ingredient: { pieceGrams: null },
         },
       ]);
       tx.recipe.findMany.mockResolvedValue([
