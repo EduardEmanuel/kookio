@@ -129,3 +129,134 @@ export const convertMeasure = (
  */
 export const isConvertibleUnit = (unit: MeasureUnit): boolean =>
   WEIGHT_TO_GRAMS[unit] !== undefined || VOLUME_TO_ML[unit] !== undefined;
+
+/**
+ * Fallback mass per "piece" when the catalog row has no `pieceGrams` value
+ * and the unit is piece-class (PIECE/SLICE/CLOVE/BUNCH/OTHER). Same number
+ * the thesis Phase 2b `clean-recipes.ts` pipeline uses for unknown
+ * ingredients in its serving-size derivation — kept in sync so the offline
+ * cleanup and runtime pantry math share a single defensible heuristic.
+ *
+ * Exposed publicly so the cook dialog can render an "approx." tag when a
+ * row falls back to this value, prompting the user to override before
+ * confirming a pantry decrement.
+ */
+export const DEFAULT_PIECE_GRAMS = 100;
+
+/**
+ * Pure-flavouring units: 0 g contribution to bulk mass. Aggregating them
+ * over a meal plan is meaningless ("3 garnish") and decrementing 0 g
+ * against a pantry row is a no-op. Kept in their own set so callers can
+ * detect "this is a flavour-only line item, surface it but skip the math".
+ */
+const FLAVOUR_ONLY_UNITS: ReadonlySet<MeasureUnit> = new Set([
+  'TO_TASTE',
+  'TO_SERVE',
+  'GARNISH',
+]);
+
+/**
+ * Fixed mass-per-unit factors for every unit whose grams value is
+ * ingredient-agnostic. Weight factors are precise; volume factors use
+ * water density (1 g/ml), matching the cooking-grade approximation
+ * documented in thesis Phase 2b. PINCH is 0.5 g — small enough to be a
+ * rounding floor, big enough to honestly decrement a pantry row when the
+ * user actively tracks salt.
+ *
+ * PIECE/SLICE/CLOVE/BUNCH/OTHER are excluded — they need a per-ingredient
+ * `pieceGrams` value to resolve. TO_TASTE/TO_SERVE/GARNISH are excluded —
+ * they're flavour-only (0 g, handled by the FLAVOUR_ONLY_UNITS path).
+ */
+const UNIT_TO_GRAMS_FIXED: Partial<Record<MeasureUnit, number>> = {
+  G: 1,
+  KG: 1000,
+  OZ: 28.3495,
+  LB: 453.592,
+  ML: 1,
+  L: 1000,
+  TSP: 5,
+  TBSP: 15,
+  CUP: 240,
+  PINCH: 0.5,
+};
+
+/**
+ * Options for {@link toGrams} / {@link fromGrams}.
+ *
+ * `allowDefault: true` lets the caller opt into the
+ * {@link DEFAULT_PIECE_GRAMS} fallback for piece-class units that have no
+ * `pieceGrams` value on the catalog row. The cook dialog passes `true`
+ * (so the row stays actionable, just flagged as an approximation); the
+ * server-side cooking-session decrement passes `false` (so a missing
+ * pieceGrams becomes an explicit skip rather than a silent guess).
+ */
+export interface GramsConversionOptions {
+  readonly allowDefault?: boolean;
+}
+
+/**
+ * Convert any amount-and-unit to grams.
+ *
+ * Returns:
+ *  - **number** — grams equivalent.
+ *  - **0** — flavour-only unit (TO_TASTE/TO_SERVE/GARNISH). Valid result;
+ *    callers that treat 0 as "skip" should branch on the unit, not the value.
+ *  - **null** — piece-class unit (PIECE/SLICE/CLOVE/BUNCH/OTHER) without a
+ *    `pieceGrams` value on the catalog row AND `opts.allowDefault` is false.
+ *    Caller decides: skip the operation, surface a warning, etc.
+ *
+ * Same heuristic as thesis Phase 2b `clean-recipes.ts` — water density for
+ * volumes, per-ingredient mass for piece units, 0.5 g for PINCH. Single
+ * source of truth across the offline cleanup and runtime pantry math.
+ */
+export const toGrams = (
+  amount: number,
+  unit: MeasureUnit,
+  pieceGrams: number | null = null,
+  opts: GramsConversionOptions = {},
+): number | null => {
+  if (FLAVOUR_ONLY_UNITS.has(unit)) return 0;
+
+  const fixed = UNIT_TO_GRAMS_FIXED[unit];
+  if (fixed !== undefined) return amount * fixed;
+
+  // Piece-class: PIECE, SLICE, CLOVE, BUNCH, OTHER.
+  const piece =
+    pieceGrams !== null && pieceGrams > 0
+      ? pieceGrams
+      : opts.allowDefault
+        ? DEFAULT_PIECE_GRAMS
+        : null;
+  if (piece === null) return null;
+  return amount * piece;
+};
+
+/**
+ * Inverse of {@link toGrams} — express a gram quantity in the user's
+ * display unit. Used after a decrement to redisplay the remaining pantry
+ * quantity in the row's stored unit rather than as raw grams.
+ *
+ * Returns the same `null` cases as `toGrams`: piece-class without a
+ * `pieceGrams` value and `allowDefault: false`. Returns 0 for flavour-only
+ * units (they decrement nothing, so they "remain" at 0 in their own unit).
+ */
+export const fromGrams = (
+  grams: number,
+  unit: MeasureUnit,
+  pieceGrams: number | null = null,
+  opts: GramsConversionOptions = {},
+): number | null => {
+  if (FLAVOUR_ONLY_UNITS.has(unit)) return 0;
+
+  const fixed = UNIT_TO_GRAMS_FIXED[unit];
+  if (fixed !== undefined) return grams / fixed;
+
+  const piece =
+    pieceGrams !== null && pieceGrams > 0
+      ? pieceGrams
+      : opts.allowDefault
+        ? DEFAULT_PIECE_GRAMS
+        : null;
+  if (piece === null) return null;
+  return grams / piece;
+};
