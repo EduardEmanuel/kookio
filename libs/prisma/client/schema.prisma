@@ -316,6 +316,13 @@ model IngredientCatalog {
   imageUrl       String?
   category       IngredientCategory?
 
+  /// Mass of one "piece" in grams, for ingredients counted in piece-class
+  /// units (PIECE / SLICE / CLOVE / BUNCH / OTHER). Null when not meaningful
+  /// — bulk solids and liquids (flour, water, oil) don't have a piece mass.
+  /// Runtime falls back to DEFAULT_PIECE_GRAMS (100) for unknowns; see
+  /// `@kookio/shared-utility/measure-units` and thesis Phase 2b.
+  pieceGrams Float?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -344,7 +344,8 @@
       "normalizedName": "bay_leaf",
       "description": "The bay leaf is an aromatic leaf commonly used in cooking. It can be used whole, or as dried and ground.",
       "imageUrl": "https://www.themealdb.com/images/ingredients/Bay%20Leaf-Small.png",
-      "category": "HERBS"
+      "category": "HERBS",
+      "pieceGrams": 0.5
     },
     {
       "externalId": "23",
@@ -376,7 +377,8 @@
       "normalizedName": "bread",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Bread-Small.png",
-      "category": "GRAINS"
+      "category": "GRAINS",
+      "pieceGrams": 500
     },
     {
       "externalId": "36",
@@ -392,7 +394,8 @@
       "normalizedName": "broccoli",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Broccoli-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 600
     },
     {
       "externalId": "40",
@@ -432,7 +435,8 @@
       "normalizedName": "carrot",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Carrots-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 80
     },
     {
       "externalId": "52",
@@ -456,7 +460,8 @@
       "normalizedName": "celery",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Celery-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 40
     },
     {
       "externalId": "56",
@@ -496,7 +501,8 @@
       "normalizedName": "chicken_breast",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Chicken%20Breast-Small.png",
-      "category": "MEAT"
+      "category": "MEAT",
+      "pieceGrams": 200
     },
     {
       "externalId": "67",
@@ -504,7 +510,8 @@
       "normalizedName": "chicken_leg",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Chicken%20Legs-Small.png",
-      "category": "MEAT"
+      "category": "MEAT",
+      "pieceGrams": 200
     },
     {
       "externalId": "68",
@@ -520,7 +527,8 @@
       "normalizedName": "chicken_thigh",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Chicken%20Thighs-Small.png",
-      "category": "MEAT"
+      "category": "MEAT",
+      "pieceGrams": 150
     },
     {
       "externalId": "71",
@@ -584,7 +592,8 @@
       "normalizedName": "cinnamon_stick",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Cinnamon%20Stick-Small.png",
-      "category": "SPICES"
+      "category": "SPICES",
+      "pieceGrams": 2
     },
     {
       "externalId": "87",
@@ -744,7 +753,8 @@
       "normalizedName": "garlic",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Garlic-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 50
     },
     {
       "externalId": "150",
@@ -752,7 +762,8 @@
       "normalizedName": "garlic_clove",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Garlic%20Clove-Small.png",
-      "category": "SPICES"
+      "category": "SPICES",
+      "pieceGrams": 5
     },
     {
       "externalId": "154",
@@ -760,7 +771,8 @@
       "normalizedName": "ginger",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Ginger-Small.png",
-      "category": "SPICES"
+      "category": "SPICES",
+      "pieceGrams": 50
     },
     {
       "externalId": "160",
@@ -848,7 +860,8 @@
       "normalizedName": "leek",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Leek-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 200
     },
     {
       "externalId": "197",
@@ -856,7 +869,8 @@
       "normalizedName": "lemon",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Lemon-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 100
     },
     {
       "externalId": "198",
@@ -880,7 +894,8 @@
       "normalizedName": "lettuce",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Lettuce-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 300
     },
     {
       "externalId": "202",
@@ -888,7 +903,8 @@
       "normalizedName": "lime",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Lime-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 60
     },
     {
       "externalId": "206",
@@ -912,7 +928,8 @@
       "normalizedName": "mushroom",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Mushrooms-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 20
     },
     {
       "externalId": "222",
@@ -1032,7 +1049,8 @@
       "normalizedName": "red_chilli",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Red%20Chilli-Small.png",
-      "category": "SPICES"
+      "category": "SPICES",
+      "pieceGrams": 10
     },
     {
       "externalId": "263",
@@ -1040,7 +1058,8 @@
       "normalizedName": "red_onion",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Red%20Onions-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 130
     },
     {
       "externalId": "264",
@@ -1048,7 +1067,8 @@
       "normalizedName": "red_pepper",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Red%20Pepper-Small.png",
-      "category": "SPICES"
+      "category": "SPICES",
+      "pieceGrams": 150
     },
     {
       "externalId": "265",
@@ -1160,7 +1180,8 @@
       "normalizedName": "spring_onion",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Spring%20Onions-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 15
     },
     {
       "externalId": "305",
@@ -1328,7 +1349,8 @@
       "normalizedName": "squid",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Squid-Small.png",
-      "category": "FISH"
+      "category": "FISH",
+      "pieceGrams": 200
     },
     {
       "externalId": "362",
@@ -1352,7 +1374,8 @@
       "normalizedName": "onion",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Onion-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 150
     },
     {
       "externalId": "365",
@@ -1360,7 +1383,8 @@
       "normalizedName": "tomato",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Tomato-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 120
     },
     {
       "externalId": "368",
@@ -1528,7 +1552,8 @@
       "normalizedName": "banana",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Banana-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 120
     },
     {
       "externalId": "418",
@@ -1536,7 +1561,8 @@
       "normalizedName": "pumpkin",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Pumpkin-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 1000
     },
     {
       "externalId": "426",
@@ -1544,7 +1570,8 @@
       "normalizedName": "courgette",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Courgettes-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 200
     },
     {
       "externalId": "427",
@@ -1560,7 +1587,8 @@
       "normalizedName": "cabbage",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Cabbage-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 900
     },
     {
       "externalId": "471",
@@ -1592,7 +1620,8 @@
       "normalizedName": "egg",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Egg-Small.png",
-      "category": "DAIRY"
+      "category": "DAIRY",
+      "pieceGrams": 60
     },
     {
       "externalId": "497",
@@ -1600,7 +1629,8 @@
       "normalizedName": "star_anise",
       "description": null,
       "imageUrl": "https://www.themealdb.com/images/ingredients/Star%20Anise-Small.png",
-      "category": "SPICES"
+      "category": "SPICES",
+      "pieceGrams": 0.5
     },
     {
       "externalId": "500",
@@ -1648,7 +1678,8 @@
       "normalizedName": "scotch_bonnet",
       "description": "Scotch bonnet, also known as bonney peppers, or Caribbean red peppers, is a variety of chili pepper named for its resemblance to a tam o' shanter hat. Also called ata rodo by Yoruba speakers of Nigeria, it is found mainly in the Caribbean islands; it is also found in Guyana (where it is called the ball-of-fire pepper), the Maldives Islands (where it is called githeyo mirus), Panama (where it is called aji chombo) and West Africa. Most Scotch bonnets have a heat rating of 100,000–350,000 Scoville units. For comparison, most jalapeño peppers have a heat rating of 2,500 to 8,000 on the Scoville scale. However, completely sweet varieties of Scotch bonnet are grown on some of the Caribbean islands, called cachucha peppers.\n\nThese peppers are used to flavour many different dishes and cuisines worldwide and are often used in hot sauces and condiments. The Scotch bonnet has a sweeter flavour and stouter shape, distinct from its habanero relative with which it is often confused, and gives jerk dishes (pork/chicken) and other Caribbean dishes their unique flavour. Scotch bonnets are mostly used in West African, Antiguan, Kittitian/Nevisian, Anguilan, Dominican, St. Lucian, St Vincentian, Grenadian, Trinidadian, Jamaican, Barbadian, Guyanese, Surinamese, Haitian and Cayman cuisines and pepper sauces, though they often show up in other Caribbean recipes. It is also used in Costa Rica and Panama for Caribbean-styled recipes such as rice and beans, Rondón, saus, beef patties, and Ceviche.\n\nFresh, ripe Scotch bonnets can change from green to yellow to scarlet red, however many other breeds of this pepper can ripen to orange, yellow, peach, or even a chocolate brown.",
       "imageUrl": "https://www.themealdb.com/images/ingredients/Scotch%20Bonnet-Small.png",
-      "category": "SPICES"
+      "category": "SPICES",
+      "pieceGrams": 10
     },
     {
       "externalId": "520",
@@ -1672,7 +1703,8 @@
       "normalizedName": "scallion",
       "description": "Scallions (green onion, spring onion and salad onion) are vegetables of various Allium onion species. Scallions have a milder taste than most onions. Their close relatives include the garlic, shallot, leek, chive, and Chinese onion.\n\nAlthough the bulbs of many Allium species are used as food, the defining characteristic of scallion species is that they lack a fully developed bulb. In common with all Allium species, scallions have hollow, tubular green leaves, growing directly from the bulb. These leaves are used as a vegetable; they are eaten either raw or cooked. The leaves are often chopped into other dishes, in the manner of onions or garlic. Also known as scallions or green onions, spring onions are in fact very young onions, harvested before the bulb has had a chance to swell.",
       "imageUrl": "https://www.themealdb.com/images/ingredients/Scallions-Small.png",
-      "category": "PRODUCE"
+      "category": "PRODUCE",
+      "pieceGrams": 15
     },
     {
       "externalId": "528",

@@ -92,13 +92,18 @@ const seedIngredients = async (
           description: ing.description,
           imageUrl: ing.imageUrl,
           category: ing.category,
+          pieceGrams: ing.pieceGrams ?? null,
         },
         update: {
           // On re-runs: update TheMealDB fields but NOT category —
           // category may have been manually corrected after the first seed.
+          // `pieceGrams` refreshes from the seed JSON so updates to the thesis
+          // estimation table (or a manual catalog tweak landed in the JSON)
+          // propagate to existing rows.
           name: ing.name,
           description: ing.description,
           imageUrl: ing.imageUrl,
+          pieceGrams: ing.pieceGrams ?? null,
         },
       } as never);
       upserted++;
