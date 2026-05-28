@@ -200,6 +200,7 @@ describe('cookingSession router', () => {
         id: PANTRY_ID_TOMATO,
         quantity: 500,
         unit: Unit.G,
+        ingredient: { pieceGrams: null },
       });
       tx.pantryItem.update.mockResolvedValue({});
       tx.cookingSession.update.mockResolvedValue({
@@ -239,6 +240,7 @@ describe('cookingSession router', () => {
         id: PANTRY_ID_TOMATO,
         quantity: 200,
         unit: Unit.G,
+        ingredient: { pieceGrams: null },
       });
       tx.cookingSession.update.mockResolvedValue({
         id: SESSION_ID,
@@ -267,6 +269,7 @@ describe('cookingSession router', () => {
         id: PANTRY_ID_FLOUR,
         quantity: 100,
         unit: Unit.G,
+        ingredient: { pieceGrams: null },
       });
       tx.cookingSession.update.mockResolvedValue({
         id: SESSION_ID,
@@ -319,6 +322,7 @@ describe('cookingSession router', () => {
         id: PANTRY_ID_FLOUR,
         quantity: 0.5,
         unit: Unit.KG,
+        ingredient: { pieceGrams: null },
       });
       tx.cookingSession.update.mockResolvedValue({
         id: SESSION_ID,
@@ -344,13 +348,18 @@ describe('cookingSession router', () => {
       expect(tx.cookingSession.update).toHaveBeenCalled();
     });
 
-    it('skips silently when units are truly incompatible (weight ↔ volume)', async () => {
+    it('reconciles weight-vs-volume pairs through water density (g → l)', async () => {
+      // Under the grams pipeline, every convertible unit lands as grams via
+      // a water-density assumption for volumes (1 ml = 1 g). 0.5 L pantry =
+      // 500 g internally; 200 g consumed → 300 g remaining = 0.3 L back in
+      // the pantry's stored unit. Same compromise as thesis Phase 2b.
       const tx = makeTxMock();
       tx.cookingSession.findUnique.mockResolvedValue(validSession);
       tx.pantryItem.findUnique.mockResolvedValue({
         id: PANTRY_ID_FLOUR,
         quantity: 0.5,
         unit: Unit.L,
+        ingredient: { pieceGrams: null },
       });
       tx.cookingSession.update.mockResolvedValue({
         id: SESSION_ID,
@@ -366,10 +375,142 @@ describe('cookingSession router', () => {
         ],
       });
 
-      // g (weight) cannot convert to L (volume) without density data → skip.
+      expect(tx.pantryItem.update).toHaveBeenCalledTimes(1);
+      expect(tx.pantryItem.update).toHaveBeenCalledWith({
+        where: { id: PANTRY_ID_FLOUR },
+        data: { quantity: 0.3 },
+      });
+    });
+
+    it('decrements piece-class via catalog pieceGrams (CLOVE)', async () => {
+      // 5 cloves pantry @ 5 g/clove = 25 g; 2 cloves consumed = 10 g →
+      // 15 g remaining → 3 cloves displayed.
+      const tx = makeTxMock();
+      tx.cookingSession.findUnique.mockResolvedValue(validSession);
+      tx.pantryItem.findUnique.mockResolvedValue({
+        id: PANTRY_ID_FLOUR,
+        quantity: 5,
+        unit: Unit.CLOVE,
+        ingredient: { pieceGrams: 5 },
+      });
+      tx.cookingSession.update.mockResolvedValue({
+        id: SESSION_ID,
+        completedAt: COMPLETED_AT,
+      });
+      const prismaMock = makePrismaMock(tx);
+      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
+
+      await caller.cookingSession.complete({
+        sessionId: SESSION_ID,
+        consumed: [
+          { ingredientCatalogId: ING_FLOUR, quantity: 2, unit: Unit.CLOVE },
+        ],
+      });
+
+      expect(tx.pantryItem.update).toHaveBeenCalledWith({
+        where: { id: PANTRY_ID_FLOUR },
+        data: { quantity: 3 },
+      });
+    });
+
+    it('falls back to DEFAULT_PIECE_GRAMS when pieceGrams is null on a piece-class row', async () => {
+      // 2 PIECE pantry × 100 g default = 200 g; 1 PIECE consumed × 100 g
+      // default = 100 g → 100 g remaining → 1 PIECE displayed. The user
+      // would have seen the "approx." hint on the dialog and could have
+      // adjusted; the server honours whatever they confirmed.
+      const tx = makeTxMock();
+      tx.cookingSession.findUnique.mockResolvedValue(validSession);
+      tx.pantryItem.findUnique.mockResolvedValue({
+        id: PANTRY_ID_TOMATO,
+        quantity: 2,
+        unit: Unit.PIECE,
+        ingredient: { pieceGrams: null },
+      });
+      tx.cookingSession.update.mockResolvedValue({
+        id: SESSION_ID,
+        completedAt: COMPLETED_AT,
+      });
+      const prismaMock = makePrismaMock(tx);
+      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
+
+      await caller.cookingSession.complete({
+        sessionId: SESSION_ID,
+        consumed: [
+          { ingredientCatalogId: ING_TOMATO, quantity: 1, unit: Unit.PIECE },
+        ],
+      });
+
+      expect(tx.pantryItem.update).toHaveBeenCalledWith({
+        where: { id: PANTRY_ID_TOMATO },
+        data: { quantity: 1 },
+      });
+    });
+
+    it('skips flavour-only consumed items (TO_TASTE = 0 g, no-op)', async () => {
+      // The dialog leaves TO_TASTE/TO_SERVE/GARNISH unchecked by default, but
+      // a determined user could opt in. Server still no-ops because the
+      // grams decrement is 0 — saves a pointless update write.
+      const tx = makeTxMock();
+      tx.cookingSession.findUnique.mockResolvedValue(validSession);
+      tx.pantryItem.findUnique.mockResolvedValue({
+        id: PANTRY_ID_FLOUR,
+        quantity: 500,
+        unit: Unit.G,
+        ingredient: { pieceGrams: null },
+      });
+      tx.cookingSession.update.mockResolvedValue({
+        id: SESSION_ID,
+        completedAt: COMPLETED_AT,
+      });
+      const prismaMock = makePrismaMock(tx);
+      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
+
+      await caller.cookingSession.complete({
+        sessionId: SESSION_ID,
+        consumed: [
+          {
+            ingredientCatalogId: ING_SALT,
+            quantity: 1,
+            unit: Unit.TO_TASTE,
+          },
+        ],
+      });
+
       expect(tx.pantryItem.update).not.toHaveBeenCalled();
       expect(tx.pantryItem.delete).not.toHaveBeenCalled();
-      expect(tx.cookingSession.update).toHaveBeenCalled();
+    });
+
+    it('deletes the row when the sub-pinch (< 0.5 g) noise floor is hit', async () => {
+      // 0.6 g pantry − 0.4 g consumed = 0.2 g remaining; below the 0.5 g
+      // floor so the row is deleted rather than leaving floating-point
+      // residue behind. Picks the floor over leaving a "0.0002 onion" row
+      // hanging around after enough decrements.
+      const tx = makeTxMock();
+      tx.cookingSession.findUnique.mockResolvedValue(validSession);
+      tx.pantryItem.findUnique.mockResolvedValue({
+        id: PANTRY_ID_FLOUR,
+        quantity: 0.6,
+        unit: Unit.G,
+        ingredient: { pieceGrams: null },
+      });
+      tx.cookingSession.update.mockResolvedValue({
+        id: SESSION_ID,
+        completedAt: COMPLETED_AT,
+      });
+      const prismaMock = makePrismaMock(tx);
+      const caller = appRouter.createCaller(makeCtx(makeSession(), prismaMock));
+
+      await caller.cookingSession.complete({
+        sessionId: SESSION_ID,
+        consumed: [
+          { ingredientCatalogId: ING_FLOUR, quantity: 0.4, unit: Unit.G },
+        ],
+      });
+
+      expect(tx.pantryItem.delete).toHaveBeenCalledWith({
+        where: { id: PANTRY_ID_FLOUR },
+      });
+      expect(tx.pantryItem.update).not.toHaveBeenCalled();
     });
 
     it('skips items with quantity = 0 without touching the pantry', async () => {
@@ -403,11 +544,13 @@ describe('cookingSession router', () => {
           id: PANTRY_ID_TOMATO,
           quantity: 500,
           unit: Unit.G,
+          ingredient: { pieceGrams: null },
         })
         .mockResolvedValueOnce({
           id: PANTRY_ID_FLOUR,
           quantity: 200,
           unit: Unit.G,
+          ingredient: { pieceGrams: null },
         })
         .mockResolvedValueOnce(null);
       tx.cookingSession.update.mockResolvedValue({

@@ -6,7 +6,12 @@ import {
   RecipeStatusSchema,
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
-import { convertMeasure } from '@kookio/shared-utility/measure-units';
+import { fromGrams, toGrams } from '@kookio/shared-utility/measure-units';
+
+// Sub-pinch (0.5 g) remainders are rounded down to a delete rather than left
+// in floating-point limbo. Matches the cooking-grade noise floor documented
+// in `@kookio/shared-utility/measure-units` and Q3 of the grams-pipeline plan.
+const REMAINING_DELETE_THRESHOLD_GRAMS = 0.5;
 
 import { onboardedProcedure } from '../middlewares/auth';
 import { router, TRPCError } from '../trpc';
@@ -66,14 +71,21 @@ export const cookingSession = router({
    * Pantry decrement rules, applied per consumed item inside a single
    * transaction so a failure rolls everything back:
    *
-   *  - `quantity <= 0`           → no-op
-   *  - pantry row missing        → skip silent (user removed it after `start`)
-   *  - units differ              → skip silent (no automatic unit conversion;
-   *                                 the dialog warns the user about this)
-   *  - `pantry - consumed <= 0`  → delete the pantry row (no zero-quantity rows
-   *                                 left behind)
-   *  - otherwise                 → update with `Math.max(0, ...)` as a defensive
-   *                                 floor against the row changing under us
+   *  - `quantity <= 0`             → no-op
+   *  - pantry row missing          → skip silent (user removed it after `start`)
+   *  - either side has no grams    → skip silent (piece-class unit on a catalog
+   *                                   row with no `pieceGrams` AND the default
+   *                                   fallback would have already applied; this
+   *                                   branch only fires when the unit itself is
+   *                                   missing from every mapping — defensive)
+   *  - consumed-grams === 0        → skip silent (flavour-only unit, no-op decrement)
+   *  - remaining < 0.5 g           → delete the pantry row (sub-pinch noise floor)
+   *  - otherwise                   → convert remaining grams back into the
+   *                                   pantry row's stored unit and update
+   *
+   * All math runs in grams internally via the shared `toGrams` helper, so the
+   * recipe and pantry units no longer have to match. Same heuristic as thesis
+   * Phase 2b — water density for volumes, per-ingredient mass for piece units.
    *
    * Ownership and "not yet completed" are checked on the session row by id;
    * a session belonging to another user — or one already completed — surfaces
@@ -112,38 +124,51 @@ export const cookingSession = router({
                   ingredientCatalogId: item.ingredientCatalogId,
                 },
               },
-              select: { id: true, quantity: true, unit: true },
+              select: {
+                id: true,
+                quantity: true,
+                unit: true,
+                ingredient: { select: { pieceGrams: true } },
+              },
             });
             if (!pantryItem) continue;
 
-            // When the consumed unit differs from the pantry unit, fall
-            // through to a same-family conversion before deciding whether
-            // to skip. Convertible mismatches (e.g. recipe in ml, pantry
-            // in l) now decrement correctly instead of being silently
-            // dropped. Truly incompatible families (weight ↔ volume) or
-            // unitless markers (PIECE, PINCH …) still skip.
-            let consumedInPantryUnit = item.quantity;
-            if (pantryItem.unit !== item.unit) {
-              const converted = convertMeasure(
-                item.quantity,
-                item.unit,
-                pantryItem.unit,
-              );
-              if (converted === null) continue;
-              consumedInPantryUnit = converted;
-            }
-
-            const remaining = Math.max(
-              0,
-              pantryItem.quantity - consumedInPantryUnit,
+            const piece = pantryItem.ingredient.pieceGrams ?? null;
+            // `allowDefault: true` — same fallback semantics the cook dialog
+            // uses when piece-class meets a pieceGrams-less catalog row, so
+            // a row the user opted into actually decrements rather than
+            // silently dropping. Server still rejects truly-unmappable units
+            // (toGrams returns null) — defence in depth without surprising
+            // the user.
+            const consumedGrams = toGrams(item.quantity, item.unit, piece, {
+              allowDefault: true,
+            });
+            const pantryGrams = toGrams(
+              pantryItem.quantity,
+              pantryItem.unit,
+              piece,
+              { allowDefault: true },
             );
+            if (consumedGrams === null || pantryGrams === null) continue;
+            // Flavour-only consumption (TO_TASTE/TO_SERVE/GARNISH) is 0 g —
+            // skip the write rather than burning a no-op update.
+            if (consumedGrams === 0) continue;
 
-            if (remaining === 0) {
+            const remainingGrams = Math.max(0, pantryGrams - consumedGrams);
+
+            if (remainingGrams < REMAINING_DELETE_THRESHOLD_GRAMS) {
               await tx.pantryItem.delete({ where: { id: pantryItem.id } });
             } else {
+              const remainingInDisplayUnit = fromGrams(
+                remainingGrams,
+                pantryItem.unit,
+                piece,
+                { allowDefault: true },
+              );
+              // pantryGrams was non-null above, so the inverse is too.
               await tx.pantryItem.update({
                 where: { id: pantryItem.id },
-                data: { quantity: remaining },
+                data: { quantity: remainingInDisplayUnit! },
               });
             }
           }
