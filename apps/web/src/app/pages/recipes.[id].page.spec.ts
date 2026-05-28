@@ -65,6 +65,7 @@ const mockRecipe = (overrides: Partial<RecipeDetail> = {}): RecipeDetail => ({
         name: 'Penne',
         imageUrl: null,
         category: IngCategory.GRAINS,
+        pieceGrams: null,
       },
     },
     {
@@ -77,6 +78,7 @@ const mockRecipe = (overrides: Partial<RecipeDetail> = {}): RecipeDetail => ({
         name: 'Parsley',
         imageUrl: null,
         category: IngCategory.HERBS,
+        pieceGrams: null,
       },
     },
   ],

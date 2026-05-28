@@ -96,6 +96,7 @@ const CookingIngredientCatalogSchema = IngredientCatalogModelSchema.pick({
   name: true,
   imageUrl: true,
   category: true,
+  pieceGrams: true,
 });
 
 /**

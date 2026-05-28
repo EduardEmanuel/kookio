@@ -22,9 +22,8 @@ import type {
 } from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
 import {
-  convertMeasure,
   formatMeasureUnit,
-  NEGLIGIBLE_MEASURE_UNITS,
+  toGrams,
 } from '@kookio/shared-utility/measure-units';
 
 export interface IngredientConfirmDialogData {
@@ -44,7 +43,13 @@ interface RowState {
   readonly recipeUnit: MeasureUnit | null;
   readonly pantryUnit: MeasureUnit | null;
   readonly inPantry: boolean;
-  readonly unitMismatch: boolean;
+  /**
+   * True when the row's grams equivalent had to fall back to
+   * DEFAULT_PIECE_GRAMS because the catalog row carries no `pieceGrams`
+   * value for a piece-class unit. The template renders an "approx." hint
+   * so the user can override the quantity input before confirming.
+   */
+  readonly approximate: boolean;
   /** Disabled rows can never be consumed (no recipe unit, or not in pantry). */
   readonly disabled: boolean;
 }
@@ -61,30 +66,39 @@ const buildRow = (
   const inPantry = ri.pantryAvailable !== null;
   const recipeUnit = ri.unit;
   const pantryUnit = ri.pantryAvailable?.unit ?? null;
-  // A unit mismatch is only "real" when conversion between the two units
-  // is impossible (different families, or one side is a non-numeric
-  // marker like PIECE/PINCH). Convertible mismatches — e.g. recipe in ml
-  // against pantry in l — are silently handled by the server-side
-  // decrement, so the row stays checked-by-default and the warning is
-  // suppressed.
-  const unitMismatch =
-    inPantry &&
-    recipeUnit !== null &&
-    pantryUnit !== null &&
-    pantryUnit !== recipeUnit &&
-    convertMeasure(1, recipeUnit, pantryUnit) === null;
-  const negligible =
-    recipeUnit !== null && NEGLIGIBLE_MEASURE_UNITS.has(recipeUnit);
-  // Disabled rows are structurally unable to update the pantry — either there
-  // is no pantry row to subtract from, or the recipe ingredient has no unit
-  // and the server's `consumed` schema rejects null units. Negligible units
-  // (PINCH / TO_TASTE / TO_SERVE / GARNISH) stay enabled so the user can
-  // override the default and bill them against the pantry if they actually
-  // tracked salt or oil there.
-  const disabled = !inPantry || recipeUnit === null;
-  const includedByDefault = !disabled && !negligible && !unitMismatch;
-
+  const pieceGrams = ri.ingredient.pieceGrams ?? null;
   const baseQuantity = (ri.quantity ?? 0) * ratio;
+
+  // Probe `toGrams` twice so we can tell "the math can run, possibly with
+  // a default fallback" apart from "the math can also run without falling
+  // back". The fallback path is allowed (so piece-class units without a
+  // catalog `pieceGrams` value still produce a decrement) but flagged via
+  // `approximate` so the UI can prompt the user to adjust before confirming.
+  const consumedGramsExact =
+    recipeUnit !== null ? toGrams(baseQuantity, recipeUnit, pieceGrams) : null;
+  const consumedGramsApprox =
+    recipeUnit !== null
+      ? toGrams(baseQuantity, recipeUnit, pieceGrams, { allowDefault: true })
+      : null;
+  const approximate =
+    recipeUnit !== null &&
+    consumedGramsExact === null &&
+    consumedGramsApprox !== null;
+
+  // Disabled when the math truly cannot run: no pantry row, no recipe unit,
+  // or a piece-class unit where even the default fallback didn't apply
+  // (toGrams returned null with allowDefault: true — only happens when the
+  // unit itself is missing from every mapping, defensive).
+  const disabled =
+    !inPantry || recipeUnit === null || consumedGramsApprox === null;
+
+  // toGrams returns 0 only for TO_TASTE / TO_SERVE / GARNISH — flavour-only
+  // markers that decrement nothing. Surface the row so the user knows the
+  // recipe calls for "salt to taste", but leave it unchecked because a tick
+  // would be a 0 g no-op.
+  const isFlavourOnly = consumedGramsApprox === 0;
+
+  const includedByDefault = !disabled && !isFlavourOnly;
 
   const state: RowState = {
     id: ri.id,
@@ -93,7 +107,7 @@ const buildRow = (
     recipeUnit,
     pantryUnit,
     inPantry,
-    unitMismatch,
+    approximate,
     disabled,
   };
   const group = new FormGroup<RowFormShape>({

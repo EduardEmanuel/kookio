@@ -32,9 +32,18 @@ const makeIngredient = (
     name,
     imageUrl: null,
     category: Category.GRAINS,
+    pieceGrams: null,
   },
   pantryAvailable: { quantity: 500, unit: Unit.G },
   ...overrides,
+});
+
+const withIngredientPieceGrams = (
+  ri: CookingRecipeIngredient,
+  pieceGrams: number,
+): CookingRecipeIngredient => ({
+  ...ri,
+  ingredient: { ...ri.ingredient, pieceGrams },
 });
 
 const setup = async (data: IngredientConfirmDialogData) => {
@@ -147,12 +156,16 @@ describe('IngredientConfirmDialogComponent', () => {
       ]);
     });
 
-    it('leaves rows with a truly incompatible unit mismatch unchecked but enabled', async () => {
+    it('reconciles a weight-vs-volume pantry-vs-recipe pair through grams', async () => {
+      // Old behaviour treated ml-recipe-vs-g-pantry as an incompatible
+      // mismatch and left the row unchecked. With the grams pipeline both
+      // sides reconcile via the water-density assumption (1 ml = 1 g), so
+      // the row stays checked-by-default and the server decrement runs in
+      // grams internally.
       const { fixture, close } = await setup({
         ingredients: [
           makeIngredient('milk', 'Milk', {
             unit: Unit.ML,
-            // Weight vs volume — server cannot convert without density data.
             pantryAvailable: { quantity: 500, unit: Unit.G },
           }),
         ],
@@ -164,9 +177,114 @@ describe('IngredientConfirmDialogComponent', () => {
       };
       instance.onConfirm();
 
-      // Server would silently skip a truly incompatible mismatch on its own;
-      // we just don't pre-check the row so the user has to opt in explicitly.
-      expect(close).toHaveBeenCalledWith([]);
+      expect(close).toHaveBeenCalledWith([
+        { ingredientCatalogId: 'cat-milk', quantity: 100, unit: Unit.ML },
+      ]);
+    });
+
+    it('checks PINCH rows by default when the pantry has the ingredient', async () => {
+      // Old behaviour was "negligible = unchecked". Now PINCH = 0.5 g is a
+      // real decrement and a pantry row signals "I track this", so default
+      // to checked.
+      const { fixture, close } = await setup({
+        ingredients: [
+          makeIngredient('salt', 'Salt', {
+            unit: Unit.PINCH,
+            quantity: 2,
+            pantryAvailable: { quantity: 500, unit: Unit.G },
+          }),
+        ],
+        ratio: 1,
+      });
+
+      const instance = fixture.componentInstance as unknown as {
+        onConfirm: () => void;
+      };
+      instance.onConfirm();
+
+      expect(close).toHaveBeenCalledWith([
+        { ingredientCatalogId: 'cat-salt', quantity: 2, unit: Unit.PINCH },
+      ]);
+    });
+
+    it('checks PIECE rows with a catalog pieceGrams value (not approximate)', async () => {
+      const onion = withIngredientPieceGrams(
+        makeIngredient('onion', 'Onion', {
+          unit: Unit.PIECE,
+          quantity: 1,
+          pantryAvailable: { quantity: 2, unit: Unit.PIECE },
+        }),
+        150,
+      );
+      const { fixture, close } = await setup({
+        ingredients: [onion],
+        ratio: 1,
+      });
+
+      const instance = fixture.componentInstance as unknown as {
+        onConfirm: () => void;
+        rows: ReadonlyArray<{ approximate: boolean; disabled: boolean }>;
+      };
+      // The row is enabled, checked, and NOT approximate (pieceGrams known).
+      expect(instance.rows[0].disabled).toBe(false);
+      expect(instance.rows[0].approximate).toBe(false);
+
+      instance.onConfirm();
+      expect(close).toHaveBeenCalledWith([
+        { ingredientCatalogId: 'cat-onion', quantity: 1, unit: Unit.PIECE },
+      ]);
+    });
+
+    it('still checks PIECE rows without pieceGrams but flags them as approximate', async () => {
+      // pieceGrams = null on the catalog row → DEFAULT_PIECE_GRAMS kicks in,
+      // row stays actionable, approximate = true so the template renders an
+      // "approx., adjust if needed" hint.
+      const { fixture, close } = await setup({
+        ingredients: [
+          makeIngredient('mystery', 'Mystery fruit', {
+            unit: Unit.PIECE,
+            quantity: 1,
+            pantryAvailable: { quantity: 3, unit: Unit.PIECE },
+          }),
+        ],
+        ratio: 1,
+      });
+
+      const instance = fixture.componentInstance as unknown as {
+        onConfirm: () => void;
+        rows: ReadonlyArray<{ approximate: boolean; disabled: boolean }>;
+      };
+      expect(instance.rows[0].disabled).toBe(false);
+      expect(instance.rows[0].approximate).toBe(true);
+
+      instance.onConfirm();
+      expect(close).toHaveBeenCalledWith([
+        { ingredientCatalogId: 'cat-mystery', quantity: 1, unit: Unit.PIECE },
+      ]);
+    });
+
+    it('checks CLOVE rows with a catalog pieceGrams value', async () => {
+      const garlic = withIngredientPieceGrams(
+        makeIngredient('garlic', 'Garlic', {
+          unit: Unit.CLOVE,
+          quantity: 2,
+          pantryAvailable: { quantity: 5, unit: Unit.CLOVE },
+        }),
+        5,
+      );
+      const { fixture, close } = await setup({
+        ingredients: [garlic],
+        ratio: 1,
+      });
+
+      const instance = fixture.componentInstance as unknown as {
+        onConfirm: () => void;
+      };
+      instance.onConfirm();
+
+      expect(close).toHaveBeenCalledWith([
+        { ingredientCatalogId: 'cat-garlic', quantity: 2, unit: Unit.CLOVE },
+      ]);
     });
   });
 

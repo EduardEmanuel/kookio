@@ -16,11 +16,10 @@
           <span class="dialog__name">{{ row.ingredientName }}</span>
           @if (!row.inPantry) {
             <small class="dialog__warn">— not in pantry</small>
-          } @else if (row.unitMismatch) {
-            <small class="dialog__warn">
-              — pantry stored as {{ formatUnit(row.pantryUnit) }}, recipe uses
-              {{ formatUnit(row.recipeUnit) }}
-            </small>
+          } @else if (row.approximate) {
+            <small class="dialog__hint-inline"
+              >— approx., adjust if needed</small
+            >
           }
         </mat-checkbox>
 

@@ -104,6 +104,7 @@ const RecipeDetailIngredientCatalogSchema = IngredientCatalogModelSchema.pick({
   name: true,
   imageUrl: true,
   category: true,
+  pieceGrams: true,
 });
 
 const RecipeDetailIngredientSchema = RecipeIngredientModelSchema.pick({

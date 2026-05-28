@@ -79,6 +79,7 @@ const DETAIL_RECIPE_INCLUDE = {
           name: true,
           imageUrl: true,
           category: true,
+          pieceGrams: true,
         },
       },
     },
