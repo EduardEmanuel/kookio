@@ -17,7 +17,7 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/vitest:test",
       "options": {
         "config": "libs/shared/mock/vite.config.ts",
         "passWithNoTests": true

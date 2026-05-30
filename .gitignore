@@ -66,3 +66,6 @@ CLAUDE.md
 GEMINI.md
 .github/copilot-instructions.md
 # END: AI Setup
+
+.nx/polygraph
+.nx/self-healing

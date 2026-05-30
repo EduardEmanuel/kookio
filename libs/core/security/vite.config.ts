@@ -13,6 +13,8 @@ export default defineConfig(() => ({
   test: {
     name: 'security',
     watch: false,
+    // Vitest 4 exits non-zero on "no test files found"; this lib is types/config only.
+    passWithNoTests: true,
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],

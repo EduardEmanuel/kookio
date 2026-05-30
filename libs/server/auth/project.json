@@ -16,7 +16,7 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/vitest:test",
       "options": {
         "config": "libs/server/auth/vite.config.ts",
         "passWithNoTests": true
