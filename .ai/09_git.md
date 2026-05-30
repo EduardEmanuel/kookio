@@ -262,6 +262,33 @@ CI then re-runs `npm ci` against the synced lock and passes.
 
 All of the above solve a problem that is not the actual problem. The npm error message ends with the literal sentence `Please update your lock file with npm install before continuing.` — treat that as the entire diagnostic procedure.
 
+#### Exception: `npm install` changes nothing but `npm ci` still fails
+
+The procedure above fixes the **common** desync, where local and CI npm
+resolve the same tree. There is a distinct, rarer case where it does not — and
+the symptom tells them apart: **`npm install` produces no change to
+`package-lock.json`, yet CI's `npm ci` still reports the same packages
+"Missing from lock file".**
+
+Only then is it a genuine **platform-dependent resolution divergence** — the
+one situation where the "don't investigate cross-platform" warning above
+doesn't apply. It happens when a transitive **optional peer** resolves on the
+Linux CI runner but not on macOS. Concrete instance: Prisma 7's CLI bundles
+`@prisma/studio-core`, whose `@radix-ui/*` UI deps peer-depend on React; Linux
+npm pulls `react` / `react-dom` / `react-refresh` / `scheduler` /
+`@types/react` / `csstype`, macOS npm does not, so a lockfile generated on
+macOS is missing them and even a from-scratch `npm install` won't add them.
+
+**Fix:** declare the missing cluster explicitly (as `devDependencies` if it's
+a dev-only tool like Prisma Studio) so the lockfile carries it on every
+platform. Verify with `npm ci --dry-run` locally, and keep the diff minimal —
+restore the committed lock and add only the missing packages incrementally,
+rather than committing a full from-scratch regeneration.
+
+**How to tell which case you're in:** run `npm install`. If the lockfile
+changes, it was the common desync — commit it, done. If it does **not** change
+and CI still fails, it's this platform-divergence case.
+
 ## AI-Assisted Development
 
 This project is developed with the help of AI coding assistants (Claude, ChatGPT, Gemini, GitHub Copilot, or similar tools).

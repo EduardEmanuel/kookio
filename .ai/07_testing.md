@@ -303,6 +303,101 @@ stub is then a contract test — when the widget grows a new dep, the
 consumer spec fails fast on a missing stub property rather than
 silently rendering with a partial store.
 
+## Vitest 4 + Angular 21 test environment
+
+> **Status: Active** — wired up across every Angular project's
+> `src/test-setup.ts` and `vite.config.{ts,mts}` after the Vitest 3→4 /
+> Angular 20→21 / AnalogJS 2 upgrade.
+
+### `setupTestBed()` is the Angular-21 init pattern
+
+For Angular > 20, the test environment is initialised via
+`@analogjs/vitest-angular`'s `setupTestBed()` — **not** a hand-written
+`getTestBed().initTestEnvironment(...)` call:
+
+```typescript
+import '@angular/compiler';
+import '@analogjs/vitest-angular/setup-snapshots';
+import '@analogjs/vitest-angular/setup-serializers';
+import { setupTestBed } from '@analogjs/vitest-angular/setup-testbed';
+
+setupTestBed();
+```
+
+`setupTestBed()` guards `initTestEnvironment` behind a per-worker `globalThis`
+flag, registers Angular's cleanup hooks in `before/afterEach`, and provides
+`provideZonelessChangeDetection()` (matching the app — this also clears the
+`NG0914` "zoneless but loading Zone.js" warnings). Because it's zoneless,
+specs trigger change detection with `TestBed.tick()`, not Zone-based
+`fakeAsync`/`tick`.
+
+### CI runs spec files in one shared context — design for it
+
+Vitest's default is `fileParallelism: true` (each spec file isolated). A
+**resource-constrained CI runner flips it off**: when there aren't enough
+cores to fork a worker, Vitest runs every spec file in a project in ONE
+shared module context. This is especially likely for a project whose `test`
+target runs concurrently with a heavy `build` target — `nx affected -t test
+build` runs `web:test` alongside `web:build` on a 2-core runner, starving it.
+Under one shared context Angular's module-level `TestBed` singleton leaks
+across files and you get `Cannot set base providers because it has already
+been called`, `Need to call TestBed.initTestEnvironment() first`, `Cannot read
+properties of null (reading 'ngModule')`, or `NG0400`.
+
+**Two defences, applied together:**
+
+1. **Assert `fileParallelism: true` in every Angular vitest config.** It's
+   already the default, but stating it explicitly overrides an
+   environment-derived flip (only a CLI flag — which the `@nx/vitest`
+   executor does not pass — can beat config). This is enough for projects
+   whose test target isn't starved: the feature libs (≤ ~10 spec files) pass
+   on stock `setupTestBed()` once parallelism is asserted.
+
+2. **For a project still starved into single-context, make its test-setup
+   idempotent.** `setupTestBed()`'s `globalThis` guard desyncs from the
+   module-level TestBed once Vitest re-evaluates `@angular/core/testing`
+   across many files (`web` has 23). Replace it with an unconditional
+   teardown + re-init:
+
+   ```typescript
+   import { destroyPlatform, getPlatform, NgModule, provideZonelessChangeDetection } from '@angular/core';
+   import { ɵgetCleanupHook as getCleanupHook, getTestBed } from '@angular/core/testing';
+   // ...
+   @NgModule({ providers: [provideZonelessChangeDetection()] })
+   class ZonelessTestModule {}
+
+   beforeEach(getCleanupHook(false));
+   afterEach(getCleanupHook(true));
+
+   const testBed = getTestBed();
+   if (getPlatform()) destroyPlatform(); // tear down a platform from a prior eval — avoids NG0400
+   testBed.resetTestEnvironment();
+   testBed.initTestEnvironment([BrowserTestingModule, ZonelessTestModule], platformBrowserTesting(), { teardown: { destroyAfterEach: true } });
+   ```
+
+   There is **no reliable public way to read whether the env is already
+   initialised** (`testBed.platform` reads falsy even when set), which is why
+   the guard is "tear down then re-init" rather than "init if missing". Keep
+   this divergence to the one project that needs it; the libs stay on stock
+   `setupTestBed()`.
+
+**Reproduce the CI condition locally** (your dev machine has too many cores to
+trigger it on its own): `npx vitest run --config <path> --no-file-parallelism`.
+This reproduces the exact errors — verify any fix against it, not just a
+normal run.
+
+### Other Vitest 4 breaking changes that bit
+
+- `restoreAllMocks()` no longer clears a plain `vi.fn()`'s call history (it
+  only restores `spyOn` spies). Reset persistent mocks explicitly
+  (`mockReset()` in `beforeEach`).
+- Vitest 4 exits non-zero on "No test files found". Libs with no specs need
+  `passWithNoTests: true` in their vitest config.
+- `@nx/vitest` (new in NX 22) is a separate package; the test executor is
+  `@nx/vitest:test`, not `@nx/vite:test`.
+- Zod 4 removed the `.Values` enum accessor used in prisma-zod fixtures — use
+  `MeasureUnitSchema.enum` (see `12_prisma-zod.md`).
+
 ## General Rules
 
 - Each test must be independent — no shared mutable state between tests

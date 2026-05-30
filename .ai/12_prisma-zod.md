@@ -557,6 +557,84 @@ generator — the project doesn't have one and won't get one. The minimum steps:
    tRPC router. Wrap multi-step writes in `ctx.prisma.$transaction(async tx =>
 ...)`. Do not introduce a wrapper class.
 
+## Prisma 7 (driver adapter) + Zod 4
+
+> **Status: Active.** The Stack table and the `prisma-client-js` /
+> `import { ... } from '@prisma/client'` prose earlier in this chapter are
+> v6-era. Prisma was upgraded to **v7** and Zod to **v4**; this section is the
+> current reality and supersedes those references.
+
+### Prisma 7 is a structural migration, not a version bump
+
+- **Client generator** is `prisma-client` (Rust-free, self-contained) with a
+  mandatory `output`, not `prisma-client-js`:
+
+  ```prisma
+  generator client {
+    provider = "prisma-client"
+    output   = "./src/generated/prisma"
+  }
+  ```
+
+  The generated client imports only `node:*` — it does **not** depend on
+  `@prisma/client` at runtime. Consume it from the generated path
+  (`prisma-client.ts` imports `PrismaClient` / `Prisma` from
+  `../generated/prisma/client`); `Prisma.TransactionClient` replaces the old
+  `@prisma/client/runtime/library.js` `ITXClientDenyList` type. The generated
+  dir is git-ignored and rebuilt by the `generate` target.
+
+- **Connection URLs move to `prisma.config.ts`** at the repo root — the
+  `datasource` block in `schema.prisma` keeps only `provider`. Use a plain
+  `process.env` read with a placeholder fallback, **not** the `env()` helper:
+  Prisma 7 resolves the config eagerly on _every_ command, and `env()` throws
+  when the variable is absent, which breaks offline `generate` / `build` /
+  `test`.
+
+  ```typescript
+  datasource: {
+    url:
+      process.env['DATABASE_URL'] ??
+      'postgresql://placeholder:placeholder@localhost:26257/kookio',
+  }
+  ```
+
+  `directUrl` was removed from the datasource config (migrations now run over
+  `url` through the adapter), so `DIRECT_DATABASE_URL` is unused.
+
+- **The client takes a driver adapter.** CockroachDB speaks the Postgres wire
+  protocol, so `@prisma/adapter-pg` (which bundles `pg` + `@types/pg`):
+
+  ```typescript
+  const adapter = new PrismaPg({
+    connectionString: process.env['DATABASE_URL'] ?? '<placeholder>',
+  });
+  new PrismaClient({ adapter });
+  ```
+
+  Because the generated client is self-contained and `adapter-pg` bundles
+  `pg`, the `@prisma/client`, `pg`, and `@types/pg` packages were **dropped as
+  direct deps** (`@nx/dependency-checks` correctly flags them as unused once
+  the import goes through the generated path).
+
+- **Validate the adapter ↔ CockroachDB connection against the live DB** after
+  upgrading. `prisma generate` is offline, but the driver-adapter connection
+  can only be confirmed with `migrate-deploy` + a real query. A pure
+  generator/datasource _config_ change produces no migration, so existing
+  migrations stand.
+
+### Zod 4 gotchas
+
+- **`z.uuid()` is now strict RFC-4122** (enforces version + variant bits).
+  Zod 3's `.uuid()` accepted any `8-4-4-4-12` hex. Use **`z.guid()`** for the
+  loose form — `UuidIdSchema` does, deliberately: per "Validation strictness
+  mirrors data reality" above, tightening to strict v4 would reject
+  hand-written fixture / E2E IDs the schema accepted before, for no real
+  safety gain.
+- **`z.unknown()` no longer makes an object key optional** (Zod 3 did). Add
+  `.optional()` explicitly where a pass-through field should stay optional.
+- **`.Values` was removed** from enum schemas — use `.enum` (e.g.
+  `MeasureUnitSchema.enum`). This bit seed scripts and fixtures.
+
 ## Conventions
 
 - **Do not introduce a repository layer**, a `src/dtos/` folder, or a CRUD
