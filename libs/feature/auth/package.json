@@ -12,7 +12,7 @@
     "@angular/router": "~20.2.4",
     "rxjs": "~7.8.2",
     "@ngrx/signals": "^20.1.0",
-    "firebase": "^12.8.0",
+    "firebase": "^12.14.0",
     "@kookio/core-logging": "0.0.1",
     "@kookio/prisma-client": "0.0.1",
     "@kookio/shared-utility": "0.0.1"

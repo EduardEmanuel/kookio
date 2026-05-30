@@ -20,7 +20,7 @@
     }
   },
   "dependencies": {
-    "superjson": "~2.2.2",
+    "superjson": "~2.2.6",
     "@trpc/server": "~10.45.2",
     "@kookio/prisma-client": "0.0.1",
     "@kookio/server-logger": "0.0.1",
