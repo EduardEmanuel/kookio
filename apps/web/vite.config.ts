@@ -105,6 +105,13 @@ export default defineConfig(({ mode }) => {
       setupFiles: ['src/test-setup.ts'],
       include: ['**/*.spec.ts'],
       reporters: ['default'],
+      // Assert per-file isolation explicitly. Vitest's default is `true`, but
+      // resource-constrained CI runners flip it off, which collapses every
+      // spec file into one shared context — Angular's module-level TestBed
+      // then double-inits ("Cannot set base providers...") or loses its env
+      // ("Need to call initTestEnvironment() first"). Forcing it here keeps
+      // each spec file isolated regardless of the runner.
+      fileParallelism: true,
     },
     define: {
       'import.meta.vitest': mode !== 'production',

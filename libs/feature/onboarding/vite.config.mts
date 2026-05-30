@@ -19,6 +19,9 @@ export default defineConfig(() => ({
     environment: 'jsdom',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     setupFiles: ['src/test-setup.ts'],
+    // Force per-file isolation; CI runners flip Vitest's default off, collapsing
+    // spec files into one shared context and breaking Angular's module-level TestBed.
+    fileParallelism: true,
     reporters: ['default'],
     coverage: {
       reportsDirectory: '../../../coverage/libs/feature/onboarding',
