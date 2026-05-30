@@ -21,6 +21,10 @@ describe('authAwareFetch', () => {
   const mockFetch = vi.fn();
 
   beforeEach(() => {
+    // Vitest 4's restoreAllMocks (in afterEach) no longer clears the call
+    // history of a plain vi.fn(); reset mockFetch explicitly so per-test
+    // call-count assertions and mockResolvedValueOnce chains don't leak.
+    mockFetch.mockReset();
     vi.stubGlobal('fetch', mockFetch);
     vi.mocked(getResolvedAuth).mockReturnValue(null);
     mockFetch.mockResolvedValue(new Response('ok', { status: 200 }));

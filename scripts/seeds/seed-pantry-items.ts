@@ -3,7 +3,7 @@ import { MeasureUnitSchema } from '@kookio/prisma-client';
 
 import { logger } from './seed-helpers';
 
-const mu = MeasureUnitSchema.Values;
+const mu = MeasureUnitSchema.enum;
 
 // Ingredient names to pre-stock in the dev pantry (resolved against IngredientCatalog)
 const DEV_PANTRY_INGREDIENTS: Array<{

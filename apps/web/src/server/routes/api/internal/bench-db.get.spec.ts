@@ -284,8 +284,6 @@ describe('bench-db.get – Redis summary', () => {
 });
 
 describe('bench-db.get – rate limit / headers (production)', () => {
-  let perfSpy: ReturnType<typeof vi.spyOn> | undefined;
-
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv('VERCEL_ENV', 'production');
@@ -299,7 +297,6 @@ describe('bench-db.get – rate limit / headers (production)', () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
-    perfSpy?.mockRestore();
   });
 
   it('sets X-RateLimit-* headers and allows under the threshold', async () => {

@@ -5,7 +5,7 @@ import { prisma } from '@kookio/prisma-client/server';
 import { pingRedis } from '../../infra/redis';
 
 export default defineEventHandler(async () => {
-  let prismaStatus: 'ok' | 'down' = 'down';
+  let prismaStatus: 'ok' | 'down';
   let prismaError: string | null = null;
   let prismaLatencyMs: number | null = null;
   const startedPrisma = performance.now();

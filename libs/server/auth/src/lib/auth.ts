@@ -39,7 +39,7 @@ export const toSession = async (
 ): Promise<AuthSession | null> => {
   if (!idToken) return null;
 
-  let uid = '';
+  let uid: string;
   let email: string | undefined;
 
   try {

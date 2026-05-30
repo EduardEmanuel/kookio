@@ -15,7 +15,7 @@ import z from 'zod';
  *  │                         │ `DietaryRestriction`).       │
  *  ├─────────────────────────┼──────────────────────────────┤
  *  │ UuidIdSchema            │ Everything else — IDs come   │
- *  │  = z.string().uuid()    │ from Prisma's runtime        │
+ *  │  = z.guid()             │ from Prisma's runtime        │
  *  │                         │ `@default(uuid())` and are   │
  *  │                         │ never written by hand        │
  *  │                         │ (PantryItem, Recipe,         │
@@ -35,4 +35,12 @@ import z from 'zod';
 
 export const SemanticIdSchema = z.string().min(1);
 
-export const UuidIdSchema = z.string().uuid();
+// `z.guid()`, not Zod 4's `z.uuid()`. Zod 4 split UUID validation into a
+// strict `z.uuid()` (enforces the RFC 9562 version + variant bits) and a
+// loose `z.guid()` (any `8-4-4-4-12` hex) — the latter matches what Zod 3's
+// `z.string().uuid()` accepted. Keeping the loose form is deliberate per the
+// project's "validation mirrors data reality" rule: format validation here
+// is a typo-catcher, the write-time existence check is the real integrity
+// boundary, and tightening to strict v4 would reject hand-written fixture /
+// E2E IDs that the schema accepted before without buying any real safety.
+export const UuidIdSchema = z.guid();

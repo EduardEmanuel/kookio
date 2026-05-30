@@ -6,7 +6,7 @@
   "tags": ["scope:frontend", "type:feature"],
   "targets": {
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/vitest:test",
       "options": {
         "configFile": "libs/feature/shell/vite.config.ts"
       }

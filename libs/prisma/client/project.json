@@ -8,7 +8,12 @@
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
-      "dependsOn": [{ "target": "generate", "projects": "self" }],
+      "dependsOn": [
+        {
+          "target": "generate",
+          "projects": "self"
+        }
+      ],
       "options": {
         "outputPath": "dist/libs/prisma/client",
         "main": "libs/prisma/client/src/index.ts",
@@ -31,8 +36,15 @@
       "executor": "nx:run-commands",
       "cache": false,
       "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" },
-        { "target": "migrate-guard", "projects": "self" }
+        {
+          "target": "generate",
+          "projects": "self",
+          "params": "forward"
+        },
+        {
+          "target": "migrate-guard",
+          "projects": "self"
+        }
       ],
       "options": {
         "cwd": ".",
@@ -47,8 +59,15 @@
       "executor": "nx:run-commands",
       "cache": false,
       "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" },
-        { "target": "migrate-guard", "projects": "self" }
+        {
+          "target": "generate",
+          "projects": "self",
+          "params": "forward"
+        },
+        {
+          "target": "migrate-guard",
+          "projects": "self"
+        }
       ],
       "options": {
         "cwd": ".",
@@ -63,7 +82,11 @@
       "executor": "nx:run-commands",
       "cache": false,
       "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" }
+        {
+          "target": "generate",
+          "projects": "self",
+          "params": "forward"
+        }
       ],
       "options": {
         "cwd": ".",
@@ -103,8 +126,15 @@
       "executor": "nx:run-commands",
       "cache": false,
       "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" },
-        { "target": "migrate-guard", "projects": "self" }
+        {
+          "target": "generate",
+          "projects": "self",
+          "params": "forward"
+        },
+        {
+          "target": "migrate-guard",
+          "projects": "self"
+        }
       ],
       "options": {
         "cwd": ".",
@@ -119,7 +149,11 @@
       "executor": "nx:run-commands",
       "cache": false,
       "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" }
+        {
+          "target": "generate",
+          "projects": "self",
+          "params": "forward"
+        }
       ],
       "options": {
         "cwd": ".",
@@ -134,7 +168,11 @@
       "executor": "nx:run-commands",
       "cache": false,
       "dependsOn": [
-        { "target": "generate", "projects": "self", "params": "forward" }
+        {
+          "target": "generate",
+          "projects": "self",
+          "params": "forward"
+        }
       ],
       "options": {
         "cwd": ".",
@@ -146,8 +184,13 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
-      "dependsOn": [{ "target": "generate", "projects": "self" }],
+      "executor": "@nx/vitest:test",
+      "dependsOn": [
+        {
+          "target": "generate",
+          "projects": "self"
+        }
+      ],
       "options": {
         "config": "libs/prisma/client/vite.config.ts",
         "passWithNoTests": true

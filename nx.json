@@ -33,15 +33,12 @@
       "cache": true,
       "inputs": [
         "default",
+        "^default",
         "{workspaceRoot}/.eslintrc.json",
         "{workspaceRoot}/.eslintignore",
-        "{workspaceRoot}/eslint.config.mjs"
+        "{workspaceRoot}/eslint.config.mjs",
+        "{workspaceRoot}/tools/eslint-rules/**/*"
       ]
-    },
-    "@nx/vite:test": {
-      "cache": true,
-      "dependsOn": ["prisma-client:generate"],
-      "inputs": ["default", "^production"]
     },
     "@analogjs/vitest-angular:test": {
       "cache": true,
@@ -62,6 +59,11 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx/vitest:test": {
+      "cache": true,
+      "dependsOn": ["prisma-client:generate"],
+      "inputs": ["default", "^production"]
     }
   },
   "plugins": [
@@ -81,7 +83,6 @@
       "plugin": "@nx/vite/plugin",
       "options": {
         "buildTargetName": "vite:build",
-        "testTargetName": "vite:test",
         "serveTargetName": "vite:serve",
         "devTargetName": "dev",
         "previewTargetName": "preview",
@@ -90,6 +91,12 @@
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
       }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "vite:test"
+      }
     }
   ],
   "generators": {
@@ -97,11 +104,11 @@
       "e2eTestRunner": "playwright",
       "linter": "eslint",
       "style": "css",
-      "unitTestRunner": "vitest"
+      "unitTestRunner": "vitest-analog"
     },
     "@nx/angular:library": {
       "linter": "eslint",
-      "unitTestRunner": "vitest"
+      "unitTestRunner": "vitest-analog"
     },
     "@nx/angular:component": {
       "style": "scss"

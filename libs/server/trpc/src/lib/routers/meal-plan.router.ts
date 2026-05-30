@@ -20,7 +20,12 @@ const DraftSlotInputSchema = z.object({
   // restored drafts without a re-fetch. Server doesn't introspect the
   // shape (the recipe lives in Postgres anyway and could be re-fetched
   // if missing).
-  recipe: z.unknown().nullable(),
+  //
+  // `.optional()` is explicit: Zod 4 no longer infers a bare
+  // `z.unknown()` object key as optional (Zod 3 did), so without it the
+  // inferred output would require `recipe`, mismatching the optional
+  // `recipe?` on MealPlanDraftRecord.
+  recipe: z.unknown().nullable().optional(),
 });
 
 const DraftPayloadSchema = z.object({

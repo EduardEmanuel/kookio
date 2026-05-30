@@ -3,7 +3,8 @@
 // https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "./src/generated/prisma"
 }
 
 generator zod {
@@ -16,9 +17,7 @@ generator zod {
 }
 
 datasource db {
-  provider  = "cockroachdb"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_DATABASE_URL")
+  provider = "cockroachdb"
 }
 
 // ─────────────────────────────────────────────
