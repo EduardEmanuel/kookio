@@ -4,7 +4,7 @@ import { createMockMealSlot } from '@kookio/shared-mock';
 
 import { logger } from './seed-helpers';
 
-const mst = MealSlotTypeSchema.Values;
+const mst = MealSlotTypeSchema.enum;
 
 /**
  * Seed a sample week of meal slots for the given user. Slots are flat —

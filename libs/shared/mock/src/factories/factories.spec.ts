@@ -18,7 +18,7 @@ import {
   createMockMealSlot,
 } from './index';
 
-const mst = MealSlotTypeSchema.Values;
+const mst = MealSlotTypeSchema.enum;
 
 describe('createMockUser', () => {
   beforeEach(() => resetUserCounter());

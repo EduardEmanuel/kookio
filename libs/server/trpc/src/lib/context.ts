@@ -38,8 +38,10 @@ export type MealPlanDraftRecord = {
     recipeId: string;
     servings: number;
     // Optional + opaque on the storage layer — the router's zod schema
-    // is `z.unknown().nullable()`, which TypeScript infers as
-    // `recipe?: unknown` (the `null` collapses into `unknown`).
+    // is `z.unknown().nullable().optional()`, which TypeScript infers as
+    // `recipe?: unknown` (the `null` collapses into `unknown`). The
+    // `.optional()` is explicit under Zod 4, which — unlike Zod 3 — does
+    // not infer a bare `z.unknown()` key as optional on its own.
     // The client side defines the concrete RecipeFeedItem shape; the
     // server only persists it as a JSON pass-through.
     recipe?: unknown;

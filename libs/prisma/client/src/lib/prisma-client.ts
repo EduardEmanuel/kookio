@@ -1,5 +1,6 @@
-import { Prisma, PrismaClient } from '@prisma/client';
-import * as runtime from '@prisma/client/runtime/library.js';
+import { PrismaPg } from '@prisma/adapter-pg';
+
+import { Prisma, PrismaClient } from '../generated/prisma/client';
 
 export const isRetryableTxError = (e: unknown) => {
   const err = e as unknown & { code?: string; message?: string };
@@ -44,7 +45,20 @@ const retryExtension = Prisma.defineExtension({
   },
 });
 
-const createPrismaClient = () => new PrismaClient().$extends(retryExtension);
+const createPrismaClient = () => {
+  // Prisma 7 is Rust-free: the connection runs through a JS driver adapter
+  // (`@prisma/adapter-pg` — CockroachDB speaks the Postgres wire protocol).
+  // The placeholder mirrors prisma.config.ts so module construction never
+  // throws when DATABASE_URL is absent (SSR build / prerender path); the
+  // pg pool connects lazily on first query, and real server runtimes always
+  // have the variable injected via `with:env`.
+  const adapter = new PrismaPg({
+    connectionString:
+      process.env['DATABASE_URL'] ??
+      'postgresql://placeholder:placeholder@localhost:26257/kookio',
+  });
+  return new PrismaClient({ adapter }).$extends(retryExtension);
+};
 
 type ExtendedPrismaClient = ReturnType<typeof createPrismaClient>;
 
@@ -53,14 +67,14 @@ export const prisma: ExtendedPrismaClient = (g.prisma ??= createPrismaClient());
 
 export const withTxRetry = async <T>(
   client: PrismaClient,
-  fn: (client: Omit<PrismaClient, runtime.ITXClientDenyList>) => Promise<T>,
+  fn: (client: Prisma.TransactionClient) => Promise<T>,
   retries = 3,
 ): Promise<T> => {
   let last: unknown;
   for (let i = 0; i <= retries; i++) {
     try {
-      return await client.$transaction(
-        async (tx: Omit<PrismaClient, runtime.ITXClientDenyList>) => fn(tx),
+      return await client.$transaction(async (tx: Prisma.TransactionClient) =>
+        fn(tx),
       );
     } catch (e) {
       last = e;
