@@ -55,7 +55,7 @@ describe('RecipesMatchPage', () => {
     expect(el.querySelector('kookio-recipes-feed')).toBeTruthy();
   });
 
-  it('shows the hint copy for the default level A', async () => {
+  it('shows the hint copy for the default level Alright', async () => {
     const { el } = await setup();
     const hint = el.querySelector('.page__hint');
     expect(hint?.textContent).toContain('cook right now');
@@ -64,16 +64,16 @@ describe('RecipesMatchPage', () => {
   it('updates the hint copy when the level changes', async () => {
     const { fixture, el, component } = await setup();
     const c = component as unknown as {
-      onLevelChange: (n: 'A' | 'B' | 'C') => void;
+      onLevelChange: (n: 'Alright' | 'Almost' | 'All') => void;
     };
 
-    c.onLevelChange('B');
+    c.onLevelChange('Almost');
     fixture.detectChanges();
     expect(el.querySelector('.page__hint')?.textContent).toContain(
       'missing 1–3',
     );
 
-    c.onLevelChange('C');
+    c.onLevelChange('All');
     fixture.detectChanges();
     expect(el.querySelector('.page__hint')?.textContent).toContain(
       'All available recipes',

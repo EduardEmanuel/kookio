@@ -18,8 +18,12 @@ import {
   RecipeMatchCardComponent,
   RecipesFeedComponent,
 } from '@kookio/feature-recipes';
-import type { RecipeMatchItem, RecipeMatchLevel } from '@kookio/prisma-client';
+import type { RecipeMatchItem } from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
+import {
+  RECIPE_MATCH_LEVEL_HINT,
+  type RecipeMatchLevel,
+} from '@kookio/shared-utility/recipe-match-level';
 
 export const routeMeta: RouteMeta = {
   canActivate: [authGuard, onboardingGuard],
@@ -43,18 +47,11 @@ export const routeMeta: RouteMeta = {
 export default class RecipesMatchPage {
   private readonly trpc = inject(RECIPES_TRPC);
 
-  protected readonly level = signal<RecipeMatchLevel>('A');
+  protected readonly level = signal<RecipeMatchLevel>('Alright');
 
-  protected readonly levelHint = computed(() => {
-    switch (this.level()) {
-      case 'A':
-        return 'Recipes you can cook right now with your pantry.';
-      case 'B':
-        return "Recipes where you're missing 1–3 ingredients.";
-      case 'C':
-        return 'All available recipes.';
-    }
-  });
+  protected readonly levelHint = computed<string>(
+    () => RECIPE_MATCH_LEVEL_HINT[this.level()],
+  );
 
   // The source closure reads the level signal at fetch time, so each page
   // request reflects the current toggle. Reset semantics on resetKey ensure

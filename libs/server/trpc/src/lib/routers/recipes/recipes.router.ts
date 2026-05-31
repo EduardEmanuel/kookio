@@ -3,11 +3,11 @@ import z from 'zod';
 import {
   RecipeDetailSchema,
   RecipeFeedPageSchema,
-  RecipeMatchLevelSchema,
   RecipeMatchPageSchema,
   UuidIdSchema,
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
+import { RecipeMatchLevelSchema } from '@kookio/shared-utility/recipe-match-level';
 
 import { onboardedProcedure } from '../../middlewares/auth';
 import { procedure, router, TRPCError } from '../../trpc';
@@ -166,15 +166,15 @@ export const recipes = router({
     }),
 
   /**
-   * Onboarded — progressive A/B/C match against the caller's pantry.
-   *  - A: every non-staple ingredient is already in the pantry.
-   *  - B: 1 to 3 ingredients are missing — the "almost there" bucket.
-   *  - C: every PUBLIC recipe, identical pagination shape to feed but with
+   * Onboarded — progressive Alright/Almost/All match against the caller's pantry.
+   *  - Alright: every non-staple ingredient is already in the pantry.
+   *  - Almost: 1 to 3 ingredients are missing — the "almost there" bucket.
+   *  - All: every PUBLIC recipe, identical pagination shape to feed but with
    *       enriched matchInfo for the UI.
    *
-   * Levels A and B use a budgeted scan (`scanForMatches`) because the level
-   * filter is post-DB; level C bypasses the loop and runs a single query for
-   * efficiency. See `recipes.match.ts` for cursor + budget semantics.
+   * Levels Alright and Almost use a budgeted scan (`scanForMatches`) because the
+   * level filter is post-DB; level All bypasses the loop and runs a single query
+   * for efficiency. See `recipes.match.ts` for cursor + budget semantics.
    */
   match: onboardedProcedure
     .input(MatchInputSchema)
@@ -189,7 +189,7 @@ export const recipes = router({
         });
         const pantryMap = buildPantryMap(pantryRows);
 
-        if (input.level === 'C') {
+        if (input.level === 'All') {
           return await fetchAllRecipesPage({
             prisma: ctx.prisma,
             pantryMap,

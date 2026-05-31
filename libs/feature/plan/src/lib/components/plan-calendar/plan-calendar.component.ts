@@ -61,10 +61,10 @@ import {
   type MealSlotType,
   type RecipeFeedItem,
   type RecipeMatchItem,
-  type RecipeMatchLevel,
 } from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
 import { URLS } from '@kookio/shared-utility';
+import type { RecipeMatchLevel } from '@kookio/shared-utility/recipe-match-level';
 
 import {
   PlanStore,
@@ -234,20 +234,20 @@ export class PlanCalendarComponent {
     URLS.RECIPE(recipeId);
 
   /**
-   * Match level for the desktop sidebar. Default `A` (Alright to cook —
-   * pantry covers every ingredient) so the planner surfaces "use what
-   * you already have" first; users planning a shopping week toggle to
-   * `B` or `C`. Mirrors the `/recipes/match` page semantics.
+   * Match level for the desktop sidebar. Default `Alright` (pantry
+   * covers every ingredient) so the planner surfaces "use what you
+   * already have" first; users planning a shopping week toggle to
+   * `Almost` or `All`. Mirrors the `/recipes/match` page semantics.
    */
-  protected readonly level = signal<RecipeMatchLevel>('A');
+  protected readonly level = signal<RecipeMatchLevel>('Alright');
 
   protected readonly levelHint = computed(() => {
     switch (this.level()) {
-      case 'A':
+      case 'Alright':
         return 'Drag recipes you can cook with what you already have.';
-      case 'B':
+      case 'Almost':
         return "Recipes where you're missing 1–3 ingredients.";
-      case 'C':
+      case 'All':
         return 'Browse all available recipes.';
     }
   });
