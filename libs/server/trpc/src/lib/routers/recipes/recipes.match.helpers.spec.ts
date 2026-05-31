@@ -155,22 +155,22 @@ describe('recipes.match.helpers', () => {
       missingNames: [],
     });
 
-    it('level A passes only when nothing is missing', () => {
-      expect(passesLevel(info(0), 'A')).toBe(true);
-      expect(passesLevel(info(1), 'A')).toBe(false);
-      expect(passesLevel(info(5), 'A')).toBe(false);
+    it('level Alright passes only when nothing is missing', () => {
+      expect(passesLevel(info(0), 'Alright')).toBe(true);
+      expect(passesLevel(info(1), 'Alright')).toBe(false);
+      expect(passesLevel(info(5), 'Alright')).toBe(false);
     });
 
-    it('level B passes for 1 to 3 missing, inclusive on both ends', () => {
-      expect(passesLevel(info(0), 'B')).toBe(false);
-      expect(passesLevel(info(1), 'B')).toBe(true);
-      expect(passesLevel(info(3), 'B')).toBe(true);
-      expect(passesLevel(info(4), 'B')).toBe(false);
+    it('level Almost passes for 1 to 3 missing, inclusive on both ends', () => {
+      expect(passesLevel(info(0), 'Almost')).toBe(false);
+      expect(passesLevel(info(1), 'Almost')).toBe(true);
+      expect(passesLevel(info(3), 'Almost')).toBe(true);
+      expect(passesLevel(info(4), 'Almost')).toBe(false);
     });
 
-    it('level C passes for any missingCount', () => {
-      expect(passesLevel(info(0), 'C')).toBe(true);
-      expect(passesLevel(info(50), 'C')).toBe(true);
+    it('level All passes for any missingCount', () => {
+      expect(passesLevel(info(0), 'All')).toBe(true);
+      expect(passesLevel(info(50), 'All')).toBe(true);
     });
   });
 });

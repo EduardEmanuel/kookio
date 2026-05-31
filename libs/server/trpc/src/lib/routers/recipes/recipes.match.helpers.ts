@@ -2,9 +2,9 @@ import type {
   MeasureUnit,
   RecipeFeedItem,
   RecipeMatchInfo,
-  RecipeMatchLevel,
 } from '@kookio/prisma-client';
 import { NEGLIGIBLE_MEASURE_UNITS } from '@kookio/shared-utility/measure-units';
+import type { RecipeMatchLevel } from '@kookio/shared-utility/recipe-match-level';
 
 const MAX_MISSING_NAMES = 3;
 
@@ -69,16 +69,16 @@ export const enrichWithMatchInfo = (
 
 /**
  * Level filter for the match procedure.
- *  - A: pantry covers everything (0 missing)
- *  - B: 1 to 3 missing — "almost there" bucket
- *  - C: no filter — used for the "browse all" surface
+ *  - Alright: pantry covers everything (0 missing)
+ *  - Almost: 1 to 3 missing — "almost there" bucket
+ *  - All: no filter — used for the "browse all" surface
  */
 export const passesLevel = (
   matchInfo: RecipeMatchInfo,
   level: RecipeMatchLevel,
 ): boolean => {
-  if (level === 'A') return matchInfo.missingCount === 0;
-  if (level === 'B')
+  if (level === 'Alright') return matchInfo.missingCount === 0;
+  if (level === 'Almost')
     return matchInfo.missingCount >= 1 && matchInfo.missingCount <= 3;
   return true;
 };

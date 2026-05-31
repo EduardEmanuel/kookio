@@ -22,8 +22,9 @@ import {
   RECIPES_TRPC,
   RecipeMatchCardCompactComponent,
 } from '@kookio/feature-recipes';
-import type { RecipeMatchItem, RecipeMatchLevel } from '@kookio/prisma-client';
+import type { RecipeMatchItem } from '@kookio/prisma-client';
 import { KookioIconComponent } from '@kookio/shared-ui';
+import type { RecipeMatchLevel } from '@kookio/shared-utility/recipe-match-level';
 
 const PAGE_SIZE = 20;
 
@@ -44,7 +45,7 @@ const PREFETCH_THRESHOLD = 5;
 /**
  * Bottom-sheet content used by the planner to pick a recipe for a slot
  * on mobile. Mirrors the desktop sidebar: pantry-aware `recipes.match`
- * feed with the same A/B/C level toggle, the same
+ * feed with the same Alright/Almost/All level toggle, the same
  * `<kookio-recipe-match-card-compact>` rows, and virtual scroll via
  * `cdk-virtual-scroll-viewport`. The opener (`onSlotClick` in
  * `PlanCalendarComponent`) reads the dismissed `RecipeMatchItem` and
@@ -77,19 +78,19 @@ export class RecipePickerSheetComponent {
     >(MatBottomSheetRef);
 
   /**
-   * Match level for the sheet. Default `A` (Alright to cook — pantry
-   * covers every ingredient) so mobile users see "use what you have"
-   * first, matching the desktop sidebar's default.
+   * Match level for the sheet. Default `Alright` (pantry covers every
+   * ingredient) so mobile users see "use what you have" first, matching
+   * the desktop sidebar's default.
    */
-  protected readonly level = signal<RecipeMatchLevel>('A');
+  protected readonly level = signal<RecipeMatchLevel>('Alright');
 
   protected readonly levelHint = computed(() => {
     switch (this.level()) {
-      case 'A':
+      case 'Alright':
         return 'Recipes you can cook with what you already have.';
-      case 'B':
+      case 'Almost':
         return "Recipes where you're missing 1–3 ingredients.";
-      case 'C':
+      case 'All':
         return 'Browse all available recipes.';
     }
   });

@@ -274,7 +274,7 @@ describe('recipes router', () => {
         const caller = appRouter.createCaller(makeCtx(null, prismaMock));
 
         await expect(
-          caller.recipes.match({ level: 'A' }),
+          caller.recipes.match({ level: 'Alright' }),
         ).rejects.toMatchObject({ code: 'UNAUTHORIZED' });
         expect(prismaMock.pantryItem.findMany).not.toHaveBeenCalled();
       });
@@ -286,7 +286,7 @@ describe('recipes router', () => {
         );
 
         await expect(
-          caller.recipes.match({ level: 'A' }),
+          caller.recipes.match({ level: 'Alright' }),
         ).rejects.toMatchObject({ code: 'PRECONDITION_FAILED' });
         expect(prismaMock.pantryItem.findMany).not.toHaveBeenCalled();
       });
@@ -313,16 +313,16 @@ describe('recipes router', () => {
         );
 
         await expect(
-          caller.recipes.match({ level: 'A', limit: 0 }),
+          caller.recipes.match({ level: 'Alright', limit: 0 }),
         ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
         await expect(
-          caller.recipes.match({ level: 'A', limit: 51 }),
+          caller.recipes.match({ level: 'Alright', limit: 51 }),
         ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
       });
     });
 
     describe('level dispatch', () => {
-      it('level C runs a single fetch with take = limit + 1 (loop bypass)', async () => {
+      it('level All runs a single fetch with take = limit + 1 (loop bypass)', async () => {
         const prismaMock = makePrismaMock();
         prismaMock.pantryItem.findMany.mockResolvedValue([]);
         // 6 rows = limit (5) + 1 sentinel → hasMore
@@ -336,7 +336,7 @@ describe('recipes router', () => {
           makeCtx(makeSession(), prismaMock),
         );
 
-        const result = await caller.recipes.match({ level: 'C', limit: 5 });
+        const result = await caller.recipes.match({ level: 'All', limit: 5 });
 
         expect(prismaMock.recipe.findMany).toHaveBeenCalledTimes(1);
         expect(prismaMock.recipe.findMany).toHaveBeenCalledWith(
@@ -349,7 +349,7 @@ describe('recipes router', () => {
         expect(result.items).toHaveLength(5);
         expect(result.nextCursor).toBe('r-5');
         expect(result.partialScan).toBe(false);
-        // Every C item still gets matchInfo enriched.
+        // Every All item still gets matchInfo enriched.
         expect(result.items[0]?.matchInfo).toEqual({
           missingCount: 1,
           totalIngredients: 1,
@@ -357,7 +357,7 @@ describe('recipes router', () => {
         });
       });
 
-      it('level A returns only recipes whose ingredients are entirely covered', async () => {
+      it('level Alright returns only recipes whose ingredients are entirely covered', async () => {
         const prismaMock = makePrismaMock();
         // Pantry has flour + eggs.
         prismaMock.pantryItem.findMany.mockResolvedValue([
@@ -374,7 +374,10 @@ describe('recipes router', () => {
           makeCtx(makeSession(), prismaMock),
         );
 
-        const result = await caller.recipes.match({ level: 'A', limit: 20 });
+        const result = await caller.recipes.match({
+          level: 'Alright',
+          limit: 20,
+        });
 
         expect(result.items.map((r) => r.id)).toEqual(['r-1', 'r-3']);
         expect(result.items.every((r) => r.matchInfo.missingCount === 0)).toBe(
@@ -383,7 +386,7 @@ describe('recipes router', () => {
         expect(result.partialScan).toBe(false);
       });
 
-      it('level B returns recipes with 1 to 3 missing ingredients', async () => {
+      it('level Almost returns recipes with 1 to 3 missing ingredients', async () => {
         const prismaMock = makePrismaMock();
         prismaMock.pantryItem.findMany.mockResolvedValue([
           { ingredientCatalogId: 'flour', quantity: 500, unit: Unit.G },
@@ -409,7 +412,10 @@ describe('recipes router', () => {
           makeCtx(makeSession(), prismaMock),
         );
 
-        const result = await caller.recipes.match({ level: 'B', limit: 20 });
+        const result = await caller.recipes.match({
+          level: 'Almost',
+          limit: 20,
+        });
 
         expect(result.items.map((r) => r.id)).toEqual(['r-1miss', 'r-3miss']);
       });
@@ -425,7 +431,7 @@ describe('recipes router', () => {
         );
 
         await caller.recipes.match({
-          level: 'C',
+          level: 'All',
           cursor: '11111111-1111-1111-1111-111111111111',
         });
 
@@ -447,7 +453,7 @@ describe('recipes router', () => {
         );
 
         await expect(
-          caller.recipes.match({ level: 'A' }),
+          caller.recipes.match({ level: 'Alright' }),
         ).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR' });
       });
 
@@ -460,7 +466,7 @@ describe('recipes router', () => {
         );
 
         await expect(
-          caller.recipes.match({ level: 'C' }),
+          caller.recipes.match({ level: 'All' }),
         ).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR' });
       });
     });

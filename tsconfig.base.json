@@ -87,6 +87,9 @@
       "@kookio/shared-utility/measure-units": [
         "libs/shared/utility/src/lib/labeling/measure-unit-labels.ts"
       ],
+      "@kookio/shared-utility/recipe-match-level": [
+        "libs/shared/utility/src/lib/labeling/recipe-match-level.ts"
+      ],
       "@server/*": ["apps/web/src/server/*"]
     }
   },

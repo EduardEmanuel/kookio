@@ -1,10 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
-import type {
-  RecipeFeedPage,
-  RecipeMatchLevel,
-  RecipeMatchPage,
-} from '@kookio/prisma-client';
+import type { RecipeFeedPage, RecipeMatchPage } from '@kookio/prisma-client';
+import type { RecipeMatchLevel } from '@kookio/shared-utility/recipe-match-level';
 
 /**
  * Input shape for `recipes.feed`. Mirrors the server contract (cursor + limit

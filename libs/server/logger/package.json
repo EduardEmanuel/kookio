@@ -6,7 +6,7 @@
   "main": "./index.cjs",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "pino": "~9.14.0",
+    "pino": "~10.3.1",
     "@kookio/core-logging": "0.0.1",
     "@kookio/prisma-client": "0.0.1"
   }

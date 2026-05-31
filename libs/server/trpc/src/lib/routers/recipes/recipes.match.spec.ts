@@ -47,7 +47,7 @@ const makeRow = (id: string, ingredients: Ing[]) => ({
 });
 
 const baseInput = (overrides: Partial<ScanInput> = {}): ScanInput => ({
-  level: 'A',
+  level: 'Alright',
   limit: 20,
   ...overrides,
 });
@@ -75,7 +75,7 @@ describe('scanForMatches', () => {
       prisma: asPrisma(prisma),
       pantryMap: pantry,
       userId,
-      input: baseInput({ level: 'A' }),
+      input: baseInput({ level: 'Alright' }),
       batchSize: 50,
       examinedBudget: 100,
     });
@@ -109,7 +109,7 @@ describe('scanForMatches', () => {
       prisma: asPrisma(prisma),
       pantryMap: pantry,
       userId,
-      input: baseInput({ level: 'A', limit: 20 }),
+      input: baseInput({ level: 'Alright', limit: 20 }),
       batchSize: 3,
       examinedBudget: 100,
     });
@@ -153,7 +153,7 @@ describe('scanForMatches', () => {
       prisma: asPrisma(prisma),
       pantryMap: pantry,
       userId,
-      input: baseInput({ level: 'A', limit: 3 }),
+      input: baseInput({ level: 'Alright', limit: 3 }),
       batchSize: 5,
       examinedBudget: 100,
     });
@@ -168,7 +168,7 @@ describe('scanForMatches', () => {
 
   it('returns partialScan=true with cursor on last examined when budget is hit', async () => {
     const prisma = makePrisma();
-    // Empty pantry → every recipe is rejected at level A.
+    // Empty pantry → every recipe is rejected at level Alright.
     const pantry = buildPantryMap([]);
 
     // Three batches of 4 rows each = 12 examined, budget = 10 → budget hit.
@@ -196,7 +196,7 @@ describe('scanForMatches', () => {
       prisma: asPrisma(prisma),
       pantryMap: pantry,
       userId,
-      input: baseInput({ level: 'A', limit: 5 }),
+      input: baseInput({ level: 'Alright', limit: 5 }),
       batchSize: 4,
       examinedBudget: 10,
     });
@@ -217,7 +217,7 @@ describe('scanForMatches', () => {
       prisma: asPrisma(prisma),
       pantryMap: buildPantryMap([]),
       userId,
-      input: baseInput({ level: 'A', cursor: 'cursor-id' }),
+      input: baseInput({ level: 'Alright', cursor: 'cursor-id' }),
       batchSize: 50,
       examinedBudget: 100,
     });
@@ -244,7 +244,7 @@ describe('scanForMatches', () => {
         { ingredientCatalogId: 'flour', quantity: 100, unit: Unit.G },
       ]),
       userId,
-      input: baseInput({ level: 'A', limit: 20 }),
+      input: baseInput({ level: 'Alright', limit: 20 }),
       batchSize: 5,
       examinedBudget: 100,
     });

@@ -77,9 +77,6 @@ export const RecipeFeedPageSchema = z.object({
 });
 export type RecipeFeedPage = z.output<typeof RecipeFeedPageSchema>;
 
-export const RecipeMatchLevelSchema = z.enum(['A', 'B', 'C']);
-export type RecipeMatchLevel = z.output<typeof RecipeMatchLevelSchema>;
-
 const RecipeMatchInfoSchema = z.object({
   missingCount: z.number().int().min(0),
   totalIngredients: z.number().int().min(0),

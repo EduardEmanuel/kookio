@@ -1,9 +1,9 @@
 import {
   type RecipeMatchInfo,
-  type RecipeMatchLevel,
   type RecipeMatchPage,
 } from '@kookio/prisma-client';
 import { createLogger } from '@kookio/server-logger';
+import { type RecipeMatchLevel } from '@kookio/shared-utility/recipe-match-level';
 
 import type { Context } from '../../context';
 import {
@@ -20,7 +20,7 @@ const DEFAULT_EXAMINED_BUDGET =
   Number(process.env['RECIPE_MATCH_EXAMINED_BUDGET']) || 1500;
 
 /**
- * Selection used by both A/B (loop) and C (single fetch) paths. Keeping a
+ * Selection used by both Alright/Almost (loop) and All (single fetch) paths. Keeping a
  * single shape here means the output mapper at the bottom of each function is
  * identical and the row→ScannedRecipe cast is sound.
  */
@@ -62,7 +62,7 @@ const toItem = ({ recipe, matchInfo }: EnrichedMatch) => ({
 });
 
 export type ScanInput = {
-  level: Exclude<RecipeMatchLevel, 'C'>;
+  level: Exclude<RecipeMatchLevel, 'All'>;
   cursor?: string;
   limit: number;
 };
@@ -77,7 +77,7 @@ export type ScanOpts = {
 };
 
 /**
- * Loop-based pager for levels A and B. Fetches recipes in batches, filters
+ * Loop-based pager for levels Alright and Almost. Fetches recipes in batches, filters
  * each batch by the level rule, accumulates matches until either the page is
  * full, the DB is exhausted, or the safety budget is reached. The three exit
  * conditions map to three cursor strategies — see comments at each branch.
@@ -168,8 +168,8 @@ export type FetchAllOpts = {
 };
 
 /**
- * Single-query pager for level C. Identical shape to scanForMatches output,
- * but skips the loop machinery: filter is identity at level C, so a one-shot
+ * Single-query pager for level All. Identical shape to scanForMatches output,
+ * but skips the loop machinery: filter is identity at level All, so a one-shot
  * cursor query with `take: limit + 1` is equivalent and cheaper.
  */
 export const fetchAllRecipesPage = async ({
