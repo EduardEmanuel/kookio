@@ -242,3 +242,78 @@ The script runs `lualatex` once, then `makeglossaries` + `biber`, then `lualatex
 - **Reference apparatus stays compact**: TOC, glossary, bibliography use `\singlespacing` + `\raggedbottom`. Body uses `\onehalfspacing` + `\flushbottom`.
 - **Voice and person**: first-person Romanian ("am ales", "mi-am propus", "am organizat") is reserved for paragraphs that _motivate a decision or narrate the author's reasoning path_ — typically chapter openings, thematic-lead paragraphs, or motivation sections. Roughly four out of seven body paragraphs is a healthy ceiling; more than that overdoes the voice and weakens the academic register. Descriptive technical content — what a library does, how a mechanism behaves, what a configuration option means — uses impersonal or passive voice ("aplicația folosește", "configurarea se face", "rutele sunt definite"). Mixing voices within a single paragraph is acceptable when the paragraph itself opens with motivation and continues into technical elaboration; flipping mid-paragraph for no rhetorical reason is not. Concrete heuristic for technical subsections (e.g., "Persistență: Prisma și CockroachDB"): if the paragraph describes _what the technology does in the project_, write it impersonally; if it explains _why I picked it_, first person is appropriate.
 - **Long `\texttt{}` blocks need explicit break opportunities**: monospaced content inside `\texttt{}` has no automatic line-break points — LaTeX treats the whole block as one indivisible token. When the block is long enough to overflow the right margin (typically 30+ characters with body line width), the line extends past the margin instead of wrapping. Add `\allowbreak` at logical boundaries inside the block: after each `/` in file paths, after each `(` in compound function names, after `.` in dotted identifiers. The macro is invisible — it doesn't force a break, it only tells LaTeX one is acceptable here if needed. Triggers: file paths with three or more segments (e.g., `\texttt{apps/\allowbreak web/\allowbreak src/\allowbreak app/\allowbreak pages/}`); nested or compound function calls (e.g., `\texttt{provideClientHydration(\allowbreak withEventReplay())}`); dotted attribute chains over ~25 characters. Apply when overflow is observed during a render pass, not preventively across every `\texttt{}` in the source — short paths and identifiers don't need the macro and the source noise outweighs the benefit. After applying, re-render the affected page to confirm LaTeX actually used one of the offered break points.
+
+## Diagnosing layout issues — render, localize, don't tune blind
+
+The general method is in `25_debugging.md` ("when a metric is invariant
+across changes, you're pulling the wrong lever" + "verify empirically, not
+just green-compiler"). The LaTeX-specific tooling and traps:
+
+- **A green compile (exit 0) proves nothing about layout.** `lualatex`
+  returns 0 with whitespace holes, phantom overfull boxes, and clipped
+  descenders all present. Render the affected page to PNG and inspect it
+  before proposing the next fix (see "Visually verify LaTeX layout" above and
+  the `gs` recipe in memory). A `\thispagestyle` leak, a `[H]` float that
+  bumped to the next page leaving a hole, and an unbreakable box all look
+  identical to the compiler: fine.
+
+- **Locate an overfull box with `\overfullrule=5mm`** (set just before
+  `\begin{document}`). The offending box gets a black bar in the PDF; find
+  the page that carries it. **If no page carries it, the box is an
+  end-of-run / teardown artifact, not page content.** Read the `.log`: an
+  `Overfull \hbox` reported "at lines N--N" where N is the master file's
+  `\end{document}` line, appearing _after_ `(./kookio_thesis.aux)` is re-read,
+  is emitted by the final flush — not by any paragraph. Real instance — a
+  256.75589pt box that stayed byte-identical across five `biburl`-penalty /
+  `\UrlBreaks` changes turned out to be `\let\clearpage\relax` at
+  `\end{document}` neutering the final flush. Removing the hack (and the now
+  redundant trailing `\clearpage`) cleared the box _and_ dropped a trailing
+  blank page — `\end{document}`'s own flush ships the last page cleanly
+  without either workaround.
+
+- **`[H]` float that doesn't fit → page-bottom hole.** A `table[H]` too tall
+  to fit under the preceding text is forced to the next page, leaving the
+  current page mostly empty with the heading and intro stranded at the top.
+  Switch to `[htbp]` so the float moves naturally and following text fills the
+  gap. `[H]` is right only for floats that must sit exactly inline _and_ fit;
+  it is the wrong tool for a tall table near a page boundary.
+
+## Verifying a pasted chapter proposal against the codebase
+
+When fact-checking a pasted `.tex` proposal (a rewrite/expansion drafted with
+AI help) against the kookio repo, the general "trust the source, not the
+summary" and "verify claims before asserting" rules in `25_debugging.md`
+apply. LaTeX/thesis-specific pitfalls that cost real time:
+
+- **Separate claims about the code from claims about the document's current
+  state.** Code claims (paths, signatures, schema constraints, seed values,
+  `git log` history) are real — verify them. Doc-state claims (a label is
+  dangling, a section is "not documented", a macro is "undefined") are often
+  **false positives**: the proposal is an _unapplied_ expansion, so an agent
+  reading the on-disk `.tex` reports the old state. Read the live file before
+  trusting either side.
+- **`\newacronym` multi-line definitions are invisible to single-line grep.**
+  The `\newacronym[longplural=…]\n  {key}{…}{…}` form makes a naive
+  `grep '\newacronym{key}'` report the acronym as undefined when it is in fact
+  defined. Confirm with a form-tolerant search before claiming "missing".
+- **The build moves the PDF.** `npx tsx thesis/build.ts ro` runs
+  lualatex → makeglossaries → biber → lualatex×2 and writes the result to
+  **`thesis/dist/kookio_thesis_ro.pdf`** (timestamped backup first). A manual
+  `lualatex` in `thesis/ro/` leaves its PDF _there_ — so the file the user is
+  viewing (the `dist/` one) is stale until you copy it over. Render from, and
+  copy to, `dist/` to match what the user sees.
+- **`tsx` may not be on PATH;** when iterating, run the toolchain directly
+  with `export PATH="/Library/TeX/texbin:$PATH"` and call `lualatex` /
+  `makeglossaries` / `biber` by hand.
+- **The conclusions chapter is `4-concluzii.tex`** (it carries
+  `\label{cap:concluzii}` and is the one `\input` by the master). A paste
+  headed `% 3-concluzii.tex` is a misnomer — writing to that name creates an
+  orphan nothing includes.
+- **PDF page vs printed folio offset ≈ 2** (roman-numbered front matter), so
+  add ~2 when targeting a folio with `gs -dFirstPage`.
+- **Academic integrity:** the thesis is the student's own work and neither its
+  text nor its commit history may carry any trace of AI involvement (same rule
+  as commit messages in `09_git.md`). Verify every "we did X" claim against
+  `git log` / the schema rather than copying a drafted number — one proposal
+  asserted "models 20 → 19" (wrong — 20 now, a model was added later) and
+  `egg: 50` (actually `60` in `catalog.json`).

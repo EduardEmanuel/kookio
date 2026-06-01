@@ -141,6 +141,7 @@ ensures consistency and quality across the codebase.
 | File                        | Topic                                                            |
 | --------------------------- | ---------------------------------------------------------------- |
 | `24_documentation-latex.md` | LaTeX thesis (XeLaTeX/LuaLaTeX) format compliance + known quirks |
+| `25_debugging.md`           | Debugging & verification discipline (localize before tuning)     |
 
 ---
 
