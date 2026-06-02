@@ -235,6 +235,65 @@ trigger surface (pre-commit instead of CI build).
 are fine on the default heap. **Never** reach for `--no-verify` to bypass
 the hook — that loses the lint/format guarantees the project relies on.
 
+### Never run `husky --version` to check the version
+
+Husky v9 (the project is on `9.1.7` — there is **no v10** published yet,
+despite the `WILL FAIL in v10.0.0` deprecation banner) has **no `--version`
+flag**. Its CLI reads any argument as the **hooks install directory**. So
+`npx husky --version` is interpreted as "install hooks into a directory
+named `--version`": it creates `./--version/_/` and rewrites
+`git config core.hooksPath` to `--version/_`.
+
+Nothing breaks until the next hook fires — then git invokes
+`--version/_/pre-commit`, husky's `_/h` wrapper runs `sh -e "$s"` with a path
+beginning `--version`, `sh` reads it as a flag, and you get
+`sh: --version/_/pre-commit: invalid option` followed by a bash usage dump,
+with the commit (or push) aborted.
+
+**How to check the version instead:** read the installed package —
+`node -p "require('husky/package.json').version"` — or the `husky` line in
+`package.json`. Never `husky --version`.
+
+**Recovery if already corrupted:** `npx husky` (no args) reinstalls into
+`.husky` and restores `core.hooksPath` to `.husky/_`; then
+`rm -rf -- "--version"` removes the stray directory. Confirm with
+`git config --get core.hooksPath` → `.husky/_`.
+
+### The pre-push gate runs `build` in its own serial pass
+
+`.husky/pre-push` runs `nx affected -t lint test` first, then — only on
+`main` — a **separate** `nx affected -t build --parallel=1` pass. Do NOT fold
+`build` back into the same `nx affected` invocation as `test`.
+
+**Why:** the heavy Nitro/Angular bundle competing with the vitest workers for
+cores and RAM starves them on a constrained machine. Millisecond unit tests
+blow past the 5 s Vitest timeout and fail as flaky — not because the code is
+wrong, but because the runner never got scheduled (a 13-minute spec run that
+takes 463 ms in isolation is the signature). Same starvation root cause
+documented for CI in `07_testing.md`. Splitting `build` into its own
+`--parallel=1` pass removes the contention while keeping the full gate.
+
+**Do NOT export the build's heap onto the push.** Prefixing the whole command
+— `NODE_OPTIONS="--max-old-space-size=6144" git push` — leaks the 6 GB ceiling
+into every vitest `vmThreads` worker the hook spawns; they then balloon and
+swap-thrash, producing the same flaky timeouts. The `--max-old-space-size`
+heap raise belongs to the build step alone (CI sets it on the Nitro pass; see
+`17_analog-ssr-ssg.md`), never on the outer `git push`.
+
+**The affected base must be a real ref.** Fetch `origin main`, not
+`origin origin/main` — the latter names a branch that does not exist on the
+remote, fails silently under `|| true`, and leaves `nx affected` diffing
+against a stale tracking ref (the visible symptom is
+`fatal: couldn't find remote ref origin/main`).
+
+**If the hook hangs with no task output at ~0 % CPU, it's an Nx daemon
+deadlock, not a slow build** — a real build shows a high-CPU rollup/esbuild
+process and real memory use. Kill the wedged `nx affected` process and run
+`npx nx reset` before retrying. A genuine flaky-timeout failure is the
+opposite and is verifiable: re-run the affected projects in isolation
+(`nx run-many -t test -p … --parallel=1`) and confirm they pass in seconds
+before treating a red pre-push as a real regression.
+
 ## Responding to CI Failures
 
 When CI fails, the error message usually contains the fix verbatim. Read it carefully before reaching for hypotheses about the underlying cause.
