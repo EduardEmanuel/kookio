@@ -1,13 +1,22 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
 set -e
 
 [ -n "$CI" ] && exit 0
 
-git fetch origin origin/main --depth=1 || true
+# Update origin/main so `nx affected` has a real base to diff against.
+# Must be `origin main` (a branch on the remote), not `origin origin/main`
+# (no such ref) — the latter fails and leaves a stale tracking ref behind.
+git fetch origin main || true
 
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-TARGETS="lint test"
-[ "$BRANCH" = "main" ] && TARGETS="lint test build"
 
-npm exec nx affected -- -t $TARGETS --parallel=3
+# Lint + tests run together (parallel) — light tasks that benefit from concurrency.
+npm exec nx affected -- -t lint test --parallel=3
+
+# On main, also run the build — but in its own serial pass, never alongside the
+# tests. The heavy Nitro/Angular bundle competing with the vitest workers for
+# cores and RAM starves them on a constrained machine: millisecond unit tests
+# blew past the 5s timeout when the build shared the host. Isolating the build
+# (and --parallel=1) keeps the gate intact without the contention.
+if [ "$BRANCH" = "main" ]; then
+  npm exec nx affected -- -t build --parallel=1
+fi
