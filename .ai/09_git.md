@@ -348,6 +348,72 @@ rather than committing a full from-scratch regeneration.
 changes, it was the common desync — commit it, done. If it does **not** change
 and CI still fails, it's this platform-divergence case.
 
+### Peer-dependency ERESOLVE on the Vercel build — strict-validate dep bumps
+
+Distinct from the lockfile desync above. Here the Vercel build fails at
+`Installing dependencies...` with `npm error code ERESOLVE` /
+`Conflicting peer dependency`, even though the same `npm install` passed
+locally. The cause is **lenient local resolution masking a real peer
+conflict** that Vercel's stricter install rejects.
+
+**Why local passes but Vercel fails:** the local/shell environment carries
+`npm_config_legacy_peer_deps=true` (confirm with `npm config get
+legacy-peer-deps` → look for "overridden by env"; it is **not** in any
+`~/.npmrc`). With legacy-peer-deps on, npm ignores peer-dependency
+conflicts, so an incompatible bump resolves and gets committed into the
+lockfile. Vercel installs with the default strict resolution and errors.
+Worse, it errors **one conflict at a time** — each redeploy surfaces the
+next (the June 2026 incident walked sharp → esbuild → vite across three
+deploys before the root cause was found).
+
+**Reproduce Vercel locally and find ALL conflicts at once** — force strict
+resolution, lockfile-only (does not touch `node_modules`):
+
+```bash
+npm_config_legacy_peer_deps=false npm install --package-lock-only \
+  --strict-peer-deps --no-audit --no-fund
+```
+
+A clean exit means Vercel's install will resolve. An ERESOLVE names the
+real conflict — read the `peer ... from <pkg>` line to see which package
+imposes the ceiling, then pin the offending direct dep back into range.
+The conflict is almost always an over-eager "upgrade to latest" past an
+AnalogJS/Angular peer gate (this session pinned vite ≤ 7, sharp 0.33.x;
+tRPC 10, marked 15, TS 5.9 are gated the same way). **Do this before
+committing any dependency bump** — a green local `npm install` proves
+nothing while legacy-peer-deps is masking the graph.
+
+**NEVER regenerate the lockfile from scratch on macOS to fix it**
+(`rm package-lock.json && npm install`). A from-scratch resolve on a Mac
+**drops the Linux-only optional binaries Vercel needs** —
+`@rollup/rollup-linux-x64-gnu`, `@img/sharp-linux-x64`, and
+`@img/sharp-linuxmusl-x64` all vanished in the incident (esbuild's linux
+entries happened to survive; rollup's and sharp's did not). Committing
+that trades the ERESOLVE for a "missing linux binary" build failure.
+
+Instead, **update incrementally** so the cross-platform entries persist:
+
+```bash
+git checkout -- package-lock.json     # restore the all-platform lock
+# bump the offending version in package.json, then (NO rm):
+npm install --package-lock-only --no-audit --no-fund
+```
+
+Verify both that the conflict is gone (strict resolve above) and that the
+platform binaries survived:
+
+```bash
+for p in '@rollup/rollup-linux-x64-gnu' '@img/sharp-linux-x64' \
+         '@img/sharp-linuxmusl-x64'; do
+  echo "$p: $(grep -c "node_modules/$p\"" package-lock.json)"   # each ≥ 1
+done
+```
+
+The incremental diff stays small (hundreds of lines, scoped to the changed
+subtree) instead of a 15k-line rewrite — a small diff is itself the signal
+that parity was preserved. Same minimal-diff discipline as the
+platform-divergence case above.
+
 ## AI-Assisted Development
 
 This project is developed with the help of AI coding assistants (Claude, ChatGPT, Gemini, GitHub Copilot, or similar tools).
