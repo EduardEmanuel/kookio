@@ -2,7 +2,7 @@ import {
   ApplicationConfig,
   inject,
   provideAppInitializer,
-  provideZoneChangeDetection,
+  provideZonelessChangeDetection,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import {
@@ -35,7 +35,7 @@ import { provideTrpcClient, TrpcClientApp } from '../trpc-client';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
     // Material 20's outlined `mat-form-field` measures its label to compute
     // the notch width; without an animations provider that measurement runs
     // before the floating label has its final layout, so the notch ends up

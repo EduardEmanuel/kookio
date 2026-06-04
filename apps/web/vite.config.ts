@@ -70,7 +70,6 @@ export default defineConfig(({ mode }) => {
               /^rxjs/,
               /^firebase/,
               /@firebase\//,
-              /^zone\.js/,
             ],
           },
           ignore: ['**/*.spec.ts'],
