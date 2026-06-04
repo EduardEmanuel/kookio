@@ -383,36 +383,10 @@ tRPC 10, marked 15, TS 5.9 are gated the same way). **Do this before
 committing any dependency bump** — a green local `npm install` proves
 nothing while legacy-peer-deps is masking the graph.
 
-**NEVER regenerate the lockfile from scratch on macOS to fix it**
-(`rm package-lock.json && npm install`). A from-scratch resolve on a Mac
-**drops the Linux-only optional binaries Vercel needs** —
-`@rollup/rollup-linux-x64-gnu`, `@img/sharp-linux-x64`, and
-`@img/sharp-linuxmusl-x64` all vanished in the incident (esbuild's linux
-entries happened to survive; rollup's and sharp's did not). Committing
-that trades the ERESOLVE for a "missing linux binary" build failure.
-
-Instead, **update incrementally** so the cross-platform entries persist:
-
-```bash
-git checkout -- package-lock.json     # restore the all-platform lock
-# bump the offending version in package.json, then (NO rm):
-npm install --package-lock-only --no-audit --no-fund
-```
-
-Verify both that the conflict is gone (strict resolve above) and that the
-platform binaries survived:
-
-```bash
-for p in '@rollup/rollup-linux-x64-gnu' '@img/sharp-linux-x64' \
-         '@img/sharp-linuxmusl-x64'; do
-  echo "$p: $(grep -c "node_modules/$p\"" package-lock.json)"   # each ≥ 1
-done
-```
-
-The incremental diff stays small (hundreds of lines, scoped to the changed
-subtree) instead of a 15k-line rewrite — a small diff is itself the signal
-that parity was preserved. Same minimal-diff discipline as the
-platform-divergence case above.
+When a strict-peer conflict is found, pin the offending direct dep back
+into range and re-resolve **incrementally** (`npm install
+--package-lock-only`, no `rm`), keeping the diff scoped to the changed
+subtree rather than rewriting the whole lockfile.
 
 ## AI-Assisted Development
 
