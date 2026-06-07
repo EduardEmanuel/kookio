@@ -644,10 +644,14 @@ generator — the project doesn't have one and won't get one. The minimum steps:
 - Multi-step writes go inside `ctx.prisma.$transaction(async tx => ...)` —
   never split a logically atomic write across multiple top-level calls.
 - The retry-on-conflict logic is applied globally via the Prisma extension in
-  `prisma-client.ts`. Do not call retry helpers manually in routers. The
-  exported `withTxRetry` symbol in `prisma-client.ts` is currently unused;
-  treat it as legacy until someone introduces a use case that the global
-  extension cannot cover.
+  `prisma-client.ts` — it wraps every single-statement mutation (`create`,
+  `update`, `upsert`, …). Do not call retry helpers manually in routers. There
+  are **no** interactive multi-write transactions in the codebase today (a
+  repo-wide grep for `$transaction` in routers returns nothing), so the global
+  extension is the only retry mechanism and is sufficient. If a future router
+  introduces a genuine multi-step interactive `$transaction` that must restart
+  as a unit on a CockroachDB serializable abort (`40001`), add a tx-level retry
+  wrapper at that point — the global per-statement extension cannot cover it.
 - Never use `prisma.<model>.findUnique()` without handling the `null` case explicitly
 - Never select more fields than needed — use `select` or `include` explicitly:
 
