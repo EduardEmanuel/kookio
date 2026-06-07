@@ -1,6 +1,6 @@
 # Architecture Guidelines
 
-> **Status: Active (partial)** — AnalogJS file-based routing under `apps/web/src/app/pages/` with `*.page.ts` is in use; tRPC handler at `apps/web/src/server/routes/api/trpc/[trpc].ts` and h3 routes (`health.get.ts`, `internal/bench-db.get.ts`) are live. **Diverges** from the described layout: actual lib tree is `libs/{core,feature,prisma,server,shared}` with sub-areas `core/{config,logging,security}`, `feature/{auth,shell}`, `server/{auth,logger,trpc}`, `shared/{mock,ui,utility}` — there is no `libs/shared/{ui,data-access,util,types}` split, no `libs/shared/types/`, and no `data-access` libs. Server-side data fetching via `injectLoad()` / `*.server.ts` is **future direction** (no `*.server.ts` page loaders exist yet).
+> **Status: Active** — AnalogJS file-based routing under `apps/web/src/app/pages/` with `*.page.ts` is in use; tRPC handler at `apps/web/src/server/routes/api/trpc/[trpc].ts` and h3 routes (`health.get.ts`, `internal/bench-db.get.ts`) are live. The "Project Structure" section below documents the real **scope-first** lib tree `libs/{core,feature,prisma,server,shared}` — there is deliberately **no** `data-access` or `types` lib type (stores/services live with their feature, types live with the code that owns them). Server-side data fetching via `injectLoad()` / `*.server.ts` is **future direction** (no `*.server.ts` page loaders exist yet).
 
 ## Stack
 
@@ -10,25 +10,70 @@
 
 ## Project Structure (NX + AnalogJS)
 
+### App layout
+
+```text
 apps/
-└── app-name/
-└── src/
-├── app/
-│ ├── pages/ ← filesystem-based routing (AnalogJS)
-│ ├── components/ ← shared presentational components
-│ ├── layout/ ← shell, header, sidebar, footer
-│ └── app.config.ts
-├── server/
-│ └── routes/
-│ └── api/ ← API routes (h3/Nitro)
-├── styles/ ← global SCSS (see SCSS guidelines)
-└── environments/
+└── web/
+    └── src/
+        ├── app/
+        │   ├── pages/         ← filesystem-based routing (AnalogJS, *.page.ts)
+        │   └── app.config.ts  ← root providers (keep lean — see SSR cold-start note in 08_e2e.md)
+        ├── server/
+        │   ├── routes/api/    ← h3/Nitro API routes (trpc handler, health, …)
+        │   └── middleware/    ← Nitro middleware (security, asset 404)
+        ├── styles/            ← global CSS entry + token CSS (see SCSS guidelines)
+        └── trpc-client.ts     ← authAwareFetch tRPC client
+```
+
+### Lib layout — scope-first, five groups
+
+The lib tree is organized **by scope, then by domain** — NOT by the classic
+NX `ui / data-access / util / types` taxonomy. There is no `data-access` lib
+(a domain's stores and services live with its feature) and no `types` lib
+(types live with the code that owns them — `libs/prisma/client/src/lib/types/`,
+`libs/feature/shell/src/lib/models/`, …).
+
+```text
 libs/
-└── shared/ ← shared libs across NX apps
-├── ui/ ← reusable UI components
-├── data-access/ ← services, stores, API clients
-├── util/ ← pure functions, helpers, pipes
-└── types/ ← shared TypeScript interfaces/types
+├── core/      ← cross-cutting infrastructure; framework-light, no domain knowledge
+│   ├── config/       app + environment configuration
+│   ├── logging/      client-safe logging surface
+│   └── security/     cross-cutting security primitives
+├── feature/   ← smart libs: a domain's Signal Stores + UI + routing surface together
+│   ├── auth/         AuthStore, route guards, Firebase client glue
+│   ├── shell/        app shell — nav, layout, route map, breakpoint service
+│   └── dashboard/ groceries/ onboarding/ pantry/ plan/ recipes/ saved/
+├── prisma/    ← persistence layer
+│   └── client/       extended Prisma client + generated Zod schemas + per-model types
+├── server/    ← server-only code; never imported from browser code
+│   ├── auth/         Firebase Admin SDK, token verification
+│   ├── logger/       Pino server logger
+│   └── trpc/         tRPC routers, context, procedure builders
+└── shared/    ← stateless reusable pieces; no feature DI, no router dependency
+    ├── mock/         test / mock fixtures
+    ├── ui/           presentational components (KookioIcon, KookioEmoji, …)
+    └── utility/      pure functions, labelers, URL helpers, icon manifest
+```
+
+**Where does a new lib go?**
+
+| It is…                                                                   | Group              |
+| ------------------------------------------------------------------------ | ------------------ |
+| A domain's stores + UI + routes (the "data-access + ui" of one domain)   | `feature/<domain>` |
+| Cross-cutting infra with no domain knowledge (config, logging, security) | `core/<name>`      |
+| Persistence (Prisma client, schemas, derived types)                      | `prisma/<name>`    |
+| Server-only (Nitro/h3, admin SDK, tRPC) — must never reach the browser   | `server/<name>`    |
+| Stateless, reusable, no feature DI (pure UI, pure utils, mocks)          | `shared/<name>`    |
+
+> **Heads-up — directory group ≠ NX scope tag.** The five directory groups are
+> an organizational convention; the _enforced_ dependency boundary keys on the
+> `scope:*` tag in each `project.json`, and the two do **not** line up
+> one-to-one. `core/*` and `shared/{mock,utility}` are tagged `scope:shared`
+> (browser-safe); `shared/ui` is `scope:frontend` (it pulls in Angular);
+> `feature/*` is `scope:frontend`; `server/*` is `scope:server`;
+> `prisma/client` is `scope:prisma`. The full tag matrix and the rules it
+> enforces live in `23_nx.md`.
 
 ## Filesystem-based Routing (AnalogJS)
 
@@ -139,7 +184,7 @@ API Route (Nitro/h3)
 External API / Database
 Page Component
 ↓ inject(Store)
-NgRx Signal Store (data-access lib)
+NgRx Signal Store (in the domain's `feature/<domain>` lib)
 ↓ rxMethod / HttpClient
 API Route or External API
 
@@ -153,7 +198,7 @@ API Route or External API
 | Store               | `<feature>.store.ts`   | `users.store.ts`         |
 | Service             | `<feature>.service.ts` | `users.service.ts`       |
 | Component           | `<n>.component.ts`     | `user-card.component.ts` |
-| NX lib              | `<scope>-<type>-<n>`   | `shared-ui-button`       |
+| NX lib              | `<group>-<n>`          | `feature-pantry`         |
 
 ## Page-level concerns belong at the page level
 
@@ -238,7 +283,8 @@ shown_.
 - Use `HttpClient` with `requestContextInterceptor` for all internal API calls
 - Use `withComponentInputBinding()` in `provideFileRouter()` to access route params as inputs
 - Use `withDebugRoutes()` in development to inspect the route tree at `/__analog/routes`
-- Keep API routes thin — delegate business logic to services in `data-access` libs
+- Keep API routes thin — delegate business logic to tRPC routers (`server/trpc`)
+  and the per-domain stores/services in `feature/<domain>`
 - Use `TransferState` automatically via AnalogJS — do not duplicate SSR requests
 - Page-level concerns (sticky footers, banners, toolbars) live as siblings of
   the page's primary content component, not nested inside it — see
