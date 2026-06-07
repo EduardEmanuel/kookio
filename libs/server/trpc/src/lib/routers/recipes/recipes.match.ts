@@ -45,6 +45,14 @@ const RECIPE_MATCH_SELECT = {
 
 type Prisma = Context['prisma'];
 
+/**
+ * `where` fragment shared by both pagers — built by the router from the PUBLIC
+ * status plus the optional category / area preference filters. Typed loosely
+ * (the concrete Prisma WhereInput is opaque here) but always at least
+ * `{ status: 'PUBLIC' }`.
+ */
+type RecipeWhere = { status: 'PUBLIC' } & Record<string, unknown>;
+
 type EnrichedMatch = { recipe: ScannedRecipe; matchInfo: RecipeMatchInfo };
 
 const toItem = ({ recipe, matchInfo }: EnrichedMatch) => ({
@@ -71,10 +79,15 @@ export type ScanOpts = {
   prisma: Prisma;
   pantryMap: PantryMap;
   userId: string;
+  /** Defaults to `{ status: 'PUBLIC' }` — the router widens it with optional
+   *  category / area preference filters. */
+  where?: RecipeWhere;
   input: ScanInput;
   batchSize?: number;
   examinedBudget?: number;
 };
+
+const DEFAULT_WHERE: RecipeWhere = { status: 'PUBLIC' };
 
 /**
  * Loop-based pager for levels Alright and Almost. Fetches recipes in batches, filters
@@ -86,6 +99,7 @@ export const scanForMatches = async ({
   prisma,
   pantryMap,
   userId,
+  where = DEFAULT_WHERE,
   input,
   batchSize = DEFAULT_BATCH_SIZE,
   examinedBudget = DEFAULT_EXAMINED_BUDGET,
@@ -101,7 +115,7 @@ export const scanForMatches = async ({
     !dbExhausted
   ) {
     const batch = (await prisma.recipe.findMany({
-      where: { status: 'PUBLIC' },
+      where,
       select: RECIPE_MATCH_SELECT,
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       take: batchSize,
@@ -164,21 +178,25 @@ export const scanForMatches = async ({
 export type FetchAllOpts = {
   prisma: Prisma;
   pantryMap: PantryMap;
+  /** Defaults to `{ status: 'PUBLIC' }` — see {@link ScanOpts.where}. */
+  where?: RecipeWhere;
   input: { cursor?: string; limit: number };
 };
 
 /**
  * Single-query pager for level All. Identical shape to scanForMatches output,
- * but skips the loop machinery: filter is identity at level All, so a one-shot
- * cursor query with `take: limit + 1` is equivalent and cheaper.
+ * but skips the loop machinery: the level filter is identity at level All, so a
+ * one-shot cursor query with `take: limit + 1` is equivalent and cheaper. The
+ * `where` may still carry category / area preference restrictions.
  */
 export const fetchAllRecipesPage = async ({
   prisma,
   pantryMap,
+  where = DEFAULT_WHERE,
   input,
 }: FetchAllOpts): Promise<RecipeMatchPage> => {
   const rows = (await prisma.recipe.findMany({
-    where: { status: 'PUBLIC' },
+    where,
     select: RECIPE_MATCH_SELECT,
     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
     take: input.limit + 1,

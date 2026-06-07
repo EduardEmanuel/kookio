@@ -470,5 +470,72 @@ describe('recipes router', () => {
         ).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR' });
       });
     });
+
+    describe('preference filters', () => {
+      it('leaves the where clause unfiltered when no preference ids are given', async () => {
+        const prismaMock = makePrismaMock();
+        prismaMock.pantryItem.findMany.mockResolvedValue([]);
+        prismaMock.recipe.findMany.mockResolvedValue([]);
+        const caller = appRouter.createCaller(
+          makeCtx(makeSession(), prismaMock),
+        );
+
+        await caller.recipes.match({ level: 'All', limit: 5 });
+
+        expect(prismaMock.recipe.findMany).toHaveBeenCalledWith(
+          expect.objectContaining({ where: { status: 'PUBLIC' } }),
+        );
+      });
+
+      it('restricts the where clause by category and area when ids are given', async () => {
+        const prismaMock = makePrismaMock();
+        prismaMock.pantryItem.findMany.mockResolvedValue([]);
+        prismaMock.recipe.findMany.mockResolvedValue([]);
+        const caller = appRouter.createCaller(
+          makeCtx(makeSession(), prismaMock),
+        );
+
+        const catA = '11111111-1111-4111-8111-111111111111';
+        const catB = '22222222-2222-4222-8222-222222222222';
+        const areaA = '33333333-3333-4333-8333-333333333333';
+
+        await caller.recipes.match({
+          level: 'All',
+          limit: 5,
+          categoryIds: [catA, catB],
+          areaIds: [areaA],
+        });
+
+        expect(prismaMock.recipe.findMany).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: {
+              status: 'PUBLIC',
+              categoryId: { in: [catA, catB] },
+              areaId: { in: [areaA] },
+            },
+          }),
+        );
+      });
+
+      it('ignores empty preference arrays (treated as no filter)', async () => {
+        const prismaMock = makePrismaMock();
+        prismaMock.pantryItem.findMany.mockResolvedValue([]);
+        prismaMock.recipe.findMany.mockResolvedValue([]);
+        const caller = appRouter.createCaller(
+          makeCtx(makeSession(), prismaMock),
+        );
+
+        await caller.recipes.match({
+          level: 'All',
+          limit: 5,
+          categoryIds: [],
+          areaIds: [],
+        });
+
+        expect(prismaMock.recipe.findMany).toHaveBeenCalledWith(
+          expect.objectContaining({ where: { status: 'PUBLIC' } }),
+        );
+      });
+    });
   });
 });

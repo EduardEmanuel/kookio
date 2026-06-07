@@ -31,6 +31,29 @@ const MatchInputSchema = z.object({
     .min(1)
     .max(MATCH_MAX_LIMIT)
     .default(MATCH_DEFAULT_LIMIT),
+  // Optional preference filters (sourced from the user's onboarding choices by
+  // the client). When non-empty they restrict the match to recipes in the given
+  // categories / areas; omitted or empty leaves the result unfiltered, so the
+  // default behaviour is unchanged. They only widen the `where` clause — the
+  // global `orderBy` (and therefore cursor pagination) is untouched.
+  categoryIds: z.array(UuidIdSchema).optional(),
+  areaIds: z.array(UuidIdSchema).optional(),
+});
+
+/**
+ * Build the shared `where` fragment for the match query: always PUBLIC, plus
+ * optional category / area restrictions. Empty or absent arrays contribute
+ * nothing, preserving the default unfiltered behaviour.
+ */
+const buildRecipeMatchWhere = (input: {
+  categoryIds?: string[];
+  areaIds?: string[];
+}) => ({
+  status: 'PUBLIC' as const,
+  ...(input.categoryIds?.length
+    ? { categoryId: { in: input.categoryIds } }
+    : {}),
+  ...(input.areaIds?.length ? { areaId: { in: input.areaIds } } : {}),
 });
 
 const FeedInputSchema = z.object({
@@ -188,11 +211,13 @@ export const recipes = router({
           select: { ingredientCatalogId: true, quantity: true, unit: true },
         });
         const pantryMap = buildPantryMap(pantryRows);
+        const where = buildRecipeMatchWhere(input);
 
         if (input.level === 'All') {
           return await fetchAllRecipesPage({
             prisma: ctx.prisma,
             pantryMap,
+            where,
             input: { cursor: input.cursor, limit: input.limit },
           });
         }
@@ -201,6 +226,7 @@ export const recipes = router({
           prisma: ctx.prisma,
           pantryMap,
           userId,
+          where,
           input: {
             level: input.level,
             cursor: input.cursor,

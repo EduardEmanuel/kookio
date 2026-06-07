@@ -18,11 +18,16 @@ export interface RecipesFeedInput {
 /**
  * Input shape for `recipes.match`. Mirrors the server contract: level is
  * required, cursor + limit follow the same pagination convention as feed.
+ * `categoryIds` / `areaIds` are optional preference filters (sourced from the
+ * user's onboarding choices) — when non-empty they restrict the match; omitted
+ * leaves the result unfiltered.
  */
 export interface RecipesMatchInput {
   level: RecipeMatchLevel;
   cursor?: string;
   limit?: number;
+  categoryIds?: string[];
+  areaIds?: string[];
 }
 
 /** Minimal tRPC surface required by the recipes UI. */

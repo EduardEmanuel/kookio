@@ -320,3 +320,60 @@ describe('fetchAllRecipesPage', () => {
     });
   });
 });
+
+describe('preference filters (where)', () => {
+  it('defaults the where clause to { status: PUBLIC } when none is passed', async () => {
+    const prisma = makePrisma();
+
+    await scanForMatches({
+      prisma: asPrisma(prisma),
+      pantryMap: buildPantryMap([]),
+      userId,
+      input: baseInput({ level: 'Alright' }),
+    });
+
+    expect(prisma.recipe.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { status: 'PUBLIC' } }),
+    );
+  });
+
+  it('threads a category/area preference where into scanForMatches findMany', async () => {
+    const prisma = makePrisma();
+    const where = {
+      status: 'PUBLIC' as const,
+      categoryId: { in: ['cat-1', 'cat-2'] },
+      areaId: { in: ['area-1'] },
+    };
+
+    await scanForMatches({
+      prisma: asPrisma(prisma),
+      pantryMap: buildPantryMap([]),
+      userId,
+      where,
+      input: baseInput({ level: 'Alright' }),
+    });
+
+    expect(prisma.recipe.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where }),
+    );
+  });
+
+  it('threads the where into fetchAllRecipesPage findMany', async () => {
+    const prisma = makePrisma();
+    const where = {
+      status: 'PUBLIC' as const,
+      categoryId: { in: ['cat-9'] },
+    };
+
+    await fetchAllRecipesPage({
+      prisma: asPrisma(prisma),
+      pantryMap: buildPantryMap([]),
+      where,
+      input: { limit: 5 },
+    });
+
+    expect(prisma.recipe.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where }),
+    );
+  });
+});
