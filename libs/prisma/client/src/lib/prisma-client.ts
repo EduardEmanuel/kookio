@@ -65,26 +65,6 @@ type ExtendedPrismaClient = ReturnType<typeof createPrismaClient>;
 const g = globalThis as unknown as { prisma?: ExtendedPrismaClient };
 export const prisma: ExtendedPrismaClient = (g.prisma ??= createPrismaClient());
 
-export const withTxRetry = async <T>(
-  client: PrismaClient,
-  fn: (client: Prisma.TransactionClient) => Promise<T>,
-  retries = 3,
-): Promise<T> => {
-  let last: unknown;
-  for (let i = 0; i <= retries; i++) {
-    try {
-      return await client.$transaction(async (tx: Prisma.TransactionClient) =>
-        fn(tx),
-      );
-    } catch (e) {
-      last = e;
-      if (!isRetryableTxError(e) || i === retries) throw e;
-      await new Promise((r) => setTimeout(r, 50 * (i + 1)));
-    }
-  }
-  throw last as never;
-};
-
 export const paginate = <T>(items: T[]) => ({
   data: items,
   pagination: {
