@@ -16,11 +16,7 @@
     </button>
   </div>
 } @else {
-  <cdk-virtual-scroll-viewport
-    class="recipes-feed__viewport"
-    [itemSize]="itemSize"
-    (scrolledIndexChange)="onScrolledIndexChange()"
-  >
+  <cdk-virtual-scroll-viewport autosize class="recipes-feed__viewport">
     <div
       *cdkVirtualFor="
         let recipe of items();

@@ -189,7 +189,7 @@ describe('RecipesFeedComponent', () => {
       const c = component as unknown as {
         items: () => RecipeFeedItem[];
         hasMore: () => boolean;
-        onScrolledIndexChange: () => void;
+        maybePrefetch: () => void;
       };
 
       expect(c.items().length).toBe(20);
@@ -201,7 +201,7 @@ describe('RecipesFeedComponent', () => {
         component as unknown as RecipesFeedComponent<RecipeFeedItem>,
         16,
       );
-      c.onScrolledIndexChange();
+      c.maybePrefetch();
       await flush();
 
       expect(trpc.recipes.feed.query).toHaveBeenCalledTimes(2);
@@ -224,7 +224,7 @@ describe('RecipesFeedComponent', () => {
 
       const c = component as unknown as {
         items: () => RecipeFeedItem[];
-        onScrolledIndexChange: () => void;
+        maybePrefetch: () => void;
       };
 
       // No spurious prefetch from initial render.
@@ -236,7 +236,7 @@ describe('RecipesFeedComponent', () => {
         component as unknown as RecipesFeedComponent<RecipeFeedItem>,
         2,
       );
-      c.onScrolledIndexChange();
+      c.maybePrefetch();
       await flush();
 
       // Still only the first call.
@@ -252,7 +252,7 @@ describe('RecipesFeedComponent', () => {
       });
       const { component } = await setup(trpc);
       const c = component as unknown as {
-        onScrolledIndexChange: () => void;
+        maybePrefetch: () => void;
       };
 
       // Even rendered to the very last item, `hasMore() === false` blocks
@@ -261,7 +261,7 @@ describe('RecipesFeedComponent', () => {
         component as unknown as RecipesFeedComponent<RecipeFeedItem>,
         20,
       );
-      c.onScrolledIndexChange();
+      c.maybePrefetch();
       await flush();
 
       expect(trpc.recipes.feed.query).toHaveBeenCalledTimes(1);
@@ -303,7 +303,7 @@ describe('RecipesFeedComponent', () => {
       await flush();
       fixture.detectChanges();
       const c = fixture.componentInstance as unknown as {
-        onScrolledIndexChange: () => void;
+        maybePrefetch: () => void;
       };
 
       // Simulate three rapid scroll events near the loaded tail while
@@ -312,9 +312,9 @@ describe('RecipesFeedComponent', () => {
         fixture.componentInstance as unknown as RecipesFeedComponent<RecipeFeedItem>,
         17,
       );
-      c.onScrolledIndexChange();
-      c.onScrolledIndexChange();
-      c.onScrolledIndexChange();
+      c.maybePrefetch();
+      c.maybePrefetch();
+      c.maybePrefetch();
       await Promise.resolve();
 
       // Initial load + one prefetch — never three concurrent fetches.

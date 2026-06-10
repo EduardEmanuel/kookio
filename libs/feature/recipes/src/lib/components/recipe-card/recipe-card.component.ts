@@ -11,11 +11,20 @@ import { MatChipsModule } from '@angular/material/chips';
 import { SaveToggleComponent } from '@kookio/feature-saved';
 import type { RecipeFeedItem, SavedRecipeRow } from '@kookio/prisma-client';
 import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
-import { URLS } from '@kookio/shared-utility';
+import {
+  optimizedImageSrcSet,
+  optimizedImageUrl,
+  URLS,
+} from '@kookio/shared-utility';
 import {
   DIFFICULTY_EMOJI,
   DIFFICULTY_LABEL,
 } from '@kookio/shared-utility/difficulty';
+
+/** Candidate widths (px) requested from Vercel Image Optimization for the
+ * feed-card `srcset`. Subset of `images.sizes` in `vercel.json`; covers the
+ * card from a ~320px mobile column up to a ~640px desktop column at 1.5× DPR. */
+const RECIPE_IMAGE_WIDTHS = [320, 480, 640, 960] as const;
 
 @Component({
   selector: 'kookio-recipe-card',
@@ -35,6 +44,16 @@ export class RecipeCardComponent {
   readonly recipe = input.required<RecipeFeedItem>();
 
   protected readonly recipeUrl = computed(() => URLS.RECIPE(this.recipe().id));
+
+  /** Single `src` at the desktop display width; `srcset` lets the browser pick
+   * a smaller candidate on narrower viewports / lower DPR. Widths must stay a
+   * subset of `images.sizes` in `vercel.json`. */
+  protected readonly optimizedSrc = computed(() =>
+    optimizedImageUrl(this.recipe().imageUrl, 640),
+  );
+  protected readonly optimizedSrcSet = computed(() =>
+    optimizedImageSrcSet(this.recipe().imageUrl, RECIPE_IMAGE_WIDTHS),
+  );
 
   protected readonly totalMinutes = computed(() => {
     const r = this.recipe();
