@@ -14,6 +14,7 @@ import {
   CdkVirtualScrollViewport,
   ScrollingModule,
 } from '@angular/cdk/scrolling';
+import { ScrollingModule as ExperimentalScrollingModule } from '@angular/cdk-experimental/scrolling';
 import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -41,11 +42,6 @@ const PAGE_SIZE = 20;
  * typical broadband; small enough that we don't pre-fetch many pages the
  * user never reaches. */
 const PREFETCH_THRESHOLD = 5;
-/** Approximate fixed item height (px) for CDK Virtual Scroll. Trades a small
- * amount of layout drift on tall titles for the better performance of
- * `itemSize` over `autosize`. Adjust if cards visibly overlap or leave
- * large gaps in DevTools mobile preview. */
-const ITEM_SIZE_PX = 380;
 
 export type FeedPage<TItem> = { items: TItem[]; nextCursor: string | null };
 export type FeedSource<TItem> = (
@@ -59,6 +55,7 @@ export type FeedSource<TItem> = (
   imports: [
     NgTemplateOutlet,
     ScrollingModule,
+    ExperimentalScrollingModule,
     MatProgressSpinnerModule,
     KookioIconComponent,
     RecipeCardComponent,
@@ -101,8 +98,6 @@ export class RecipesFeedComponent<
    * constant so the feed renders once on init when the input is left unset.
    */
   readonly resetKey = input<unknown>(undefined);
-
-  protected readonly itemSize = ITEM_SIZE_PX;
 
   protected readonly items = signal<TItem[]>([]);
   protected readonly nextCursor = signal<string | null>(null);
@@ -186,6 +181,20 @@ export class RecipesFeedComponent<
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
+
+    // The autosize scroll strategy does not emit `scrolledIndexChange`, so
+    // tail-prefetch is driven off the rendered-range stream instead — autosize
+    // updates it on every scroll. `onCleanup` drops the subscription when the
+    // viewport is torn down (the feed swapping to the empty/error state) or the
+    // component is destroyed.
+    effect((onCleanup) => {
+      const viewport = this.viewport();
+      if (!viewport) return;
+      const sub = viewport.renderedRangeStream.subscribe(() =>
+        this.maybePrefetch(),
+      );
+      onCleanup(() => sub.unsubscribe());
+    });
   }
 
   private readonly runFetch = (
@@ -207,15 +216,20 @@ export class RecipesFeedComponent<
   /**
    * Reference to the inline `cdk-virtual-scroll-viewport`. We read
    * `getRenderedRange().end` — the index just past the *last* rendered
-   * item — to measure proximity to the loaded tail. Comparing against
-   * `scrolledIndexChange`'s emitted index (the *first* visible item)
-   * tops out at `total - visibleCount`, so a tight threshold never
-   * fires when many of the loaded items are visible simultaneously
-   * (true on consumers with small item sizes like the plan sidebar).
+   * item — to measure proximity to the loaded tail. (The autosize strategy
+   * does not emit `scrolledIndexChange`, and that event's index is the
+   * *first* visible item anyway, which tops out at `total - visibleCount`
+   * and never fires a tight threshold when many items are visible at once.)
    */
   private readonly viewport = viewChild(CdkVirtualScrollViewport);
 
-  protected readonly onScrolledIndexChange = (): void => {
+  /**
+   * Fetch the next page when the rendered window comes within
+   * `PREFETCH_THRESHOLD` of the loaded tail. Driven by the viewport's
+   * `renderedRangeStream` (wired in the constructor) and called directly
+   * from pagination tests.
+   */
+  protected readonly maybePrefetch = (): void => {
     const viewport = this.viewport();
     if (!viewport) return;
     const total = this.items().length;

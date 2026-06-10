@@ -53,6 +53,7 @@
     "@analogjs/router": "2.5.2",
     "@analogjs/trpc": "~0.5.0",
     "@angular/cdk": "21.2.13",
+    "@angular/cdk-experimental": "21.2.13",
     "@angular/common": "21.2.15",
     "@angular/compiler": "21.2.15",
     "@angular/core": "21.2.15",
