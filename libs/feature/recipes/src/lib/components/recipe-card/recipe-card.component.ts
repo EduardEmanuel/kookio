@@ -10,7 +10,11 @@ import { MatChipsModule } from '@angular/material/chips';
 
 import { SaveToggleComponent } from '@kookio/feature-saved';
 import type { RecipeFeedItem, SavedRecipeRow } from '@kookio/prisma-client';
-import { KookioEmojiComponent, KookioIconComponent } from '@kookio/shared-ui';
+import {
+  FadeInImageDirective,
+  KookioEmojiComponent,
+  KookioIconComponent,
+} from '@kookio/shared-ui';
 import {
   optimizedImageSrcSet,
   optimizedImageUrl,
@@ -36,6 +40,7 @@ const RECIPE_IMAGE_WIDTHS = [320, 480, 640, 960] as const;
     SaveToggleComponent,
     KookioEmojiComponent,
     KookioIconComponent,
+    FadeInImageDirective,
   ],
   templateUrl: './recipe-card.component.html',
   styleUrl: './recipe-card.component.scss',

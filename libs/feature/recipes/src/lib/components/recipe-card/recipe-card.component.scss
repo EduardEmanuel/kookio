@@ -43,16 +43,44 @@
     }
   }
 
-  &__image {
-    width: 100%;
+  &__media {
     // Fixed height (not aspect-ratio) so every feed image is the same height
     // regardless of the card's width. With `aspect-ratio: 16/9` the height was
     // derived from the card width, which varies per card, producing
     // inconsistent image heights that CDK autosize then measured — the cards
     // appeared to "grow" chaotically. Anchored to the small-container token at
-    // a 16:9 ratio (24rem * 9 / 16 = 13.5rem); `object-fit: cover` crops to
-    // fill, so no distortion.
+    // a 16:9 ratio (24rem * 9 / 16 = 13.5rem).
     height: calc(var(--container-sm, 24rem) * 9 / 16);
+    width: 100%;
+    // position: relative is the containing block for the absolutely-filled
+    // `<img>`; overflow: hidden clips it to the card's rounded top corners.
+    position: relative;
+    overflow: hidden;
+    // Skeleton shimmer shown in the reserved slot while the image's bitmap
+    // loads (notably during a fast-scroll batch fetch). The fading `<img>`
+    // covers it once decoded; if it never loads, a calm placeholder remains.
+    background: var(--mat-sys-surface-container-high, #e7e0d8);
+    background-image: linear-gradient(
+      100deg,
+      transparent 30%,
+      var(--mat-sys-surface-container-highest, #f0e9e1) 50%,
+      transparent 70%
+    );
+    background-size: 200% 100%;
+    animation: recipe-card-shimmer 1.4s ease-in-out infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+
+  &__image {
+    // Fills the media slot; `object-fit: cover` crops to fill without
+    // distortion. opacity/transition are driven by `kookioFadeInImage`.
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     display: block;
   }
@@ -112,5 +140,16 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-xs, 0.25rem);
+  }
+}
+
+// Skeleton sweep for `.recipe-card__media` while its image loads. Uniquely
+// named to avoid colliding with any other `shimmer` keyframes in the app.
+@keyframes recipe-card-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
