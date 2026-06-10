@@ -62,6 +62,15 @@ export type FeedSource<TItem> = (
   ],
   templateUrl: './recipes-feed.component.html',
   styleUrl: './recipes-feed.component.scss',
+  // Labeled landmark so the feed is reachable as a semantic locator
+  // (getByRole('region', { name })) and exposed to screen readers as a named
+  // region. `region` rather than `feed` because `feed` requires `article`
+  // children to be valid ARIA, which the empty / loading / error states have
+  // none of.
+  host: {
+    role: 'region',
+    '[attr.aria-label]': 'ariaLabel()',
+  },
 })
 export class RecipesFeedComponent<
   TItem extends { id: string } = RecipeFeedItem,
@@ -98,6 +107,9 @@ export class RecipesFeedComponent<
    * constant so the feed renders once on init when the input is left unset.
    */
   readonly resetKey = input<unknown>(undefined);
+
+  /** Accessible name for the feed's landmark region. */
+  readonly ariaLabel = input('Recipes');
 
   protected readonly items = signal<TItem[]>([]);
   protected readonly nextCursor = signal<string | null>(null);
