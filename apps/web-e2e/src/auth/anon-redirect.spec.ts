@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 
+import { AccountPage, PantryPage } from '../pages';
+
 test.describe('Anon redirect', () => {
   test('redirect /pantry → /login?returnUrl=%2Fpantry', async ({ page }) => {
-    await page.goto('/pantry', { waitUntil: 'commit' });
+    await new PantryPage(page).goto();
 
     await page.waitForURL((url) => url.pathname === '/login');
 
@@ -12,7 +14,7 @@ test.describe('Anon redirect', () => {
   });
 
   test('redirect /account → /login?returnUrl=%2Faccount', async ({ page }) => {
-    await page.goto('/account', { waitUntil: 'commit' });
+    await new AccountPage(page).goto();
 
     await page.waitForURL((url) => url.pathname === '/login');
 

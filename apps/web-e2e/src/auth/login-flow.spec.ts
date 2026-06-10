@@ -1,5 +1,6 @@
 import { prisma } from '@kookio/prisma-client/server';
 
+import { LoginPage, PantryPage } from '../pages';
 import { test, expect } from '../fixtures/auth.fixture';
 
 test.describe('Login flow + returnUrl', () => {
@@ -7,18 +8,17 @@ test.describe('Login flow + returnUrl', () => {
     page,
     testUser,
   }) => {
+    const loginPage = new LoginPage(page);
+
     // 1. Access protected route as anon → redirected to login with returnUrl
-    await page.goto('/pantry', { waitUntil: 'commit' });
+    await new PantryPage(page).goto();
     await page.waitForURL((url) => url.pathname === '/login');
 
     const returnUrl = new URL(page.url()).searchParams.get('returnUrl');
     expect(returnUrl).toBe('/pantry');
 
-    // 2. Fill login form (wait for @defer to resolve)
-    await page.locator('form').waitFor({ state: 'visible' });
-    await page.fill('[name="email"]', testUser.email);
-    await page.fill('[name="password"]', testUser.password);
-    await page.click('[type="submit"]');
+    // 2. Log in (waits for the @defer'd form internally).
+    await loginPage.submit(testUser.email, testUser.password);
 
     // 3. Login navigates to returnUrl (/pantry), but onboardingGuard
     //    redirects to /onboarding because the fresh user has not completed it.
@@ -30,6 +30,8 @@ test.describe('Login flow + returnUrl', () => {
     page,
     testUser,
   }) => {
+    const loginPage = new LoginPage(page);
+
     // testUser.localId is the Firebase UID, which auth.register stores as User.id.
     // Create the UserProfile directly with onboardingDone=true so the
     // onboardingGuard lets the user through to /pantry after login.
@@ -37,13 +39,10 @@ test.describe('Login flow + returnUrl', () => {
       data: { userId: testUser.localId, onboardingDone: true },
     });
 
-    await page.goto('/pantry', { waitUntil: 'commit' });
+    await new PantryPage(page).goto();
     await page.waitForURL((url) => url.pathname === '/login');
 
-    await page.locator('form').waitFor({ state: 'visible' });
-    await page.fill('[name="email"]', testUser.email);
-    await page.fill('[name="password"]', testUser.password);
-    await page.click('[type="submit"]');
+    await loginPage.submit(testUser.email, testUser.password);
 
     await page.waitForURL((url) => url.pathname === '/pantry');
     expect(new URL(page.url()).pathname).toBe('/pantry');

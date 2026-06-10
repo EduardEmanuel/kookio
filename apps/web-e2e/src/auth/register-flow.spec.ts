@@ -5,6 +5,7 @@ import { prisma } from '@kookio/prisma-client/server';
 import { TRPC_PATH, TRPC_TRANSFORMER } from '@kookio/server-trpc/configs';
 import type { AppRouter } from '@kookio/server-trpc/types';
 
+import { RegisterPage } from '../pages';
 import {
   uniqueEmail,
   TEST_PASSWORD,
@@ -18,24 +19,19 @@ test.describe('Register flow', () => {
   test('new user registers, is provisioned in DB and redirected home', async ({
     page,
   }) => {
+    const registerPage = new RegisterPage(page);
     const email = uniqueEmail();
 
-    // 1. Navigate to register
-    await page.goto('/register', { waitUntil: 'commit' });
-    await page.locator('form').waitFor({ state: 'visible' });
+    // 1. Register (navigates to /register and waits for the @defer'd form).
+    await registerPage.goto();
+    await registerPage.submit(email, TEST_PASSWORD);
 
-    // 2. Fill register form
-    await page.fill('[name="email"]', email);
-    await page.fill('[name="password"]', TEST_PASSWORD);
-    await page.fill('[name="confirm"]', TEST_PASSWORD);
-    await page.click('[type="submit"]');
-
-    // 3. Verify redirect to home (URLS.HOME = '/'), which now renders the
+    // 2. Verify redirect to home (URLS.HOME = '/'), which now renders the
     //    recipes feed directly instead of redirecting to /recipes.
     await page.waitForURL((url) => url.pathname === '/');
     expect(new URL(page.url()).pathname).toBe('/');
 
-    // 4. Verify user exists in DB via tRPC auth.me
+    // 3. Verify user exists in DB via tRPC auth.me
     const { idToken } = await firebaseSignIn(email, TEST_PASSWORD);
     const url = new URL(TRPC_PATH, BASE_URL).toString();
     const trpc = createTRPCProxyClient<AppRouter>({
@@ -50,7 +46,7 @@ test.describe('Register flow', () => {
     const session = await trpc.auth.me.query();
     expect(session.email).toBe(email);
 
-    // 5. Cleanup
+    // 4. Cleanup
     await prisma.user.deleteMany({ where: { email } });
     await firebaseDeleteUser(idToken);
   });

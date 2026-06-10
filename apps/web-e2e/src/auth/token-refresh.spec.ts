@@ -1,3 +1,4 @@
+import { LoginPage } from '../pages';
 import { test, expect } from '../fixtures/auth.fixture';
 
 const TRPC_URL = '/api/trpc';
@@ -11,11 +12,9 @@ const submitLoginForm = async (
   email: string,
   password: string,
 ): Promise<void> => {
-  await page.goto('/login');
-  await page.locator('form').waitFor({ state: 'visible' });
-  await page.fill('[name="email"]', email);
-  await page.fill('[name="password"]', password);
-  await page.click('[type="submit"]');
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.submit(email, password);
 };
 
 /** Submit the login form and wait for the redirect to land on /. */
