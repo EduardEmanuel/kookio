@@ -53,8 +53,13 @@ test.describe('tRPC Authorization header', () => {
   // ─── Bearer token present after login ──────────────────────────────────────
   // page.on('request') is non-blocking — does not interfere with the redirect.
   // We await the auth.me response to guarantee the token was already sent.
-
-  test('is present with Bearer token after login', async ({
+  //
+  // @no-firefox: same firefox-on-dev-local slowness as the 401-retry describe
+  // below — login + the first /auth.me consistently lands past the 30s
+  // waitForResponse window on firefox (its sibling "is absent when not logged
+  // in" needs no auth and stays untagged). Chromium + WebKit cover the
+  // Bearer-token assertion.
+  test('is present with Bearer token after login @no-firefox', async ({
     page,
     testUser,
   }) => {
