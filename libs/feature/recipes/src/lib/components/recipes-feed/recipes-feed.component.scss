@@ -14,13 +14,13 @@
 
   &__item {
     box-sizing: border-box;
-    display: flex;
-    // `width: 100%` + `max-width: var(--container-2xl)` lets the card
-    // fill narrow viewports (the previous `width: 42rem` would have
-    // overflowed a 375px mobile by ~300px and clipped). Horizontal
-    // auto margins center the item under 42rem viewports —
-    // `justify-self: center` doesn't apply here because the CDK
-    // virtual-scroll wrapper isn't a grid container.
+    // Plain block wrapper — one card per row, so there is no sibling to
+    // equalize and no need for flex. (`display: flex` here previously made the
+    // card a flex item whose width was content-resolved rather than a clean
+    // 100%, which fed the image's old width-derived height and made image
+    // sizes wobble between cards.) `width: 100%` + `max-width` lets the card
+    // fill narrow viewports (a fixed `width: 42rem` would overflow a 375px
+    // mobile by ~300px and clip); `margin: 0 auto` centers it under 42rem.
     width: 100%;
     max-width: var(--container-2xl, 42rem);
     margin: 0 auto;

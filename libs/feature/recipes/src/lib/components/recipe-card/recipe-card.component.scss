@@ -45,7 +45,14 @@
 
   &__image {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    // Fixed height (not aspect-ratio) so every feed image is the same height
+    // regardless of the card's width. With `aspect-ratio: 16/9` the height was
+    // derived from the card width, which varies per card, producing
+    // inconsistent image heights that CDK autosize then measured — the cards
+    // appeared to "grow" chaotically. Anchored to the small-container token at
+    // a 16:9 ratio (24rem * 9 / 16 = 13.5rem); `object-fit: cover` crops to
+    // fill, so no distortion.
+    height: calc(var(--container-sm, 24rem) * 9 / 16);
     object-fit: cover;
     display: block;
   }
