@@ -4,6 +4,7 @@
 // which is fine for the handful of routes that actually need pantry / recipe
 // quantity labels but a real cold-start tax for the rest. Callers reach for
 // it via `@kookio/shared-utility/measure-units` so only those routes pay.
+export * from './lib/images';
 export * from './lib/labeling/ingredient-labelers';
 export * from './lib/labeling/user-labelers';
 export * from './lib/material-symbols-icons';

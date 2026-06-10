@@ -4,13 +4,18 @@
   [attr.aria-label]="'View recipe ' + recipe().title"
 >
   <mat-card class="recipe-card__card" appearance="outlined">
-    @if (recipe().imageUrl; as img) {
+    @if (recipe().imageUrl) {
       <img
         mat-card-image
         class="recipe-card__image"
-        [src]="img"
+        [src]="optimizedSrc()"
+        [srcset]="optimizedSrcSet()"
+        sizes="(max-width: 768px) 100vw, 40rem"
         [alt]="recipe().title"
+        width="640"
+        height="360"
         loading="lazy"
+        decoding="async"
       />
     }
 
