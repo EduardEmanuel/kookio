@@ -5,7 +5,8 @@
     "domains": ["www.themealdb.com"],
     "sizes": [320, 480, 640, 960],
     "formats": ["image/avif", "image/webp"],
-    "qualities": [75]
+    "qualities": [75],
+    "minimumCacheTTL": 31536000
   },
   "devCommand": "nx serve web",
   "buildCommand": "NODE_OPTIONS=--max-old-space-size=6144 nx build web",
