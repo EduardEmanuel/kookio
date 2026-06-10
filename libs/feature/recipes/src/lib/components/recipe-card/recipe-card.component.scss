@@ -59,11 +59,13 @@
     // Skeleton shimmer shown in the reserved slot while the image's bitmap
     // loads (notably during a fast-scroll batch fetch). The fading `<img>`
     // covers it once decoded; if it never loads, a calm placeholder remains.
-    background: var(--mat-sys-surface-container-high, #e7e0d8);
+    // Raw --mat-sys-* tokens carry no fallback by project rule (a light-theme
+    // hex would paint wrong in dark mode if the token failed to resolve).
+    background: var(--mat-sys-surface-container-high);
     background-image: linear-gradient(
       100deg,
       transparent 30%,
-      var(--mat-sys-surface-container-highest, #f0e9e1) 50%,
+      var(--mat-sys-surface-container-highest) 50%,
       transparent 70%
     );
     background-size: 200% 100%;
