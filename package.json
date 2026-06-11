@@ -9,6 +9,9 @@
   "type": "module",
   "scripts": {
     "bench:preview": "tsx scripts/with-vercel-env.ts --env=preview -- tsx ./scripts/bench-preview.ts",
+    "bench:coverage": "tsx ./scripts/bench-coverage.ts",
+    "bench:lighthouse": "tsx ./scripts/bench-lighthouse.ts",
+    "bench:images": "tsx ./scripts/bench-images.ts",
     "db:bootstrap": "npm run with:env -- --env=development -- tsx scripts/bootstrap-cockroach.ts",
     "setup:ai": "tsx scripts/setup-ai-symlinks.ts --targets=AGENTS.md,CLAUDE.md,GEMINI.md,.github/copilot-instructions.md",
     "ping:redis": "npm run with:env -- --env=development -- tsx scripts/ping-redis.ts",
