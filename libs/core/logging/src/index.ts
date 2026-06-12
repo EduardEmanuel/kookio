@@ -45,17 +45,4 @@ export type AuditLogger = {
   event(ev: AuditEvent): void;
 };
 
-export const noopAudit: AuditLogger = {
-  event: () => {
-    /* empty */
-  },
-};
-
 export type LogNamespace = 'audit' | 'http' | 'trpc' | 'prisma';
-
-export const LOG_NS = {
-  audit: 'audit',
-  http: 'http',
-  trpc: 'trpc',
-  prisma: 'prisma',
-} as const;
