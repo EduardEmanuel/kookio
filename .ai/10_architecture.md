@@ -47,9 +47,10 @@ libs/
 │   ├── logger/       Pino server logger
 │   └── trpc/         tRPC routers, context, procedure builders
 └── shared/    ← stateless reusable pieces; no feature DI, no router dependency
-    ├── mock/         test / mock fixtures
-    ├── ui/           presentational components (KookioIcon, KookioEmoji, …)
-    └── utility/      pure functions, labelers, URL helpers, icon manifest
+    ├── mock/           test / mock fixtures
+    ├── observability/  reportError → Sentry (handled client-error reporting)
+    ├── ui/             presentational components (KookioIcon, KookioEmoji, …)
+    └── utility/        pure functions, labelers, URL helpers, icon manifest
 ```
 
 **Where does a new lib go?**
@@ -65,7 +66,8 @@ libs/
 > an organizational convention; the _enforced_ dependency boundary keys on the
 > `scope:*` tag in each `project.json`, and the two do **not** line up
 > one-to-one. `shared/{mock,utility}` is tagged `scope:shared`
-> (browser-safe); `shared/ui` is `scope:frontend` (it pulls in Angular);
+> (browser-safe); `shared/{ui,observability}` is `scope:frontend` (`ui` pulls in
+> Angular, `observability` the Sentry Angular SDK);
 > `feature/*` is `scope:frontend`; `server/*` is `scope:server`;
 > `prisma/client` is `scope:prisma`. The full tag matrix and the rules it
 > enforces live in `23_nx.md`.

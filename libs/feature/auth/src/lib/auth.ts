@@ -39,6 +39,7 @@ import {
 } from 'firebase/auth';
 
 import type { AuthSession } from '@kookio/prisma-client';
+import { reportError } from '@kookio/shared-observability';
 
 export const FIREBASE_OPTIONS = new InjectionToken<FirebaseOptions>(
   'FIREBASE_OPTIONS',
@@ -214,7 +215,8 @@ export const AuthStore = signalStore(
               patchState(store, { session });
               if (session.onboardingDone) loadCounts();
             }),
-            catchError(() => {
+            catchError((err: unknown) => {
+              reportError(err, 'auth.fetchSession');
               return EMPTY;
             }),
           );
@@ -291,6 +293,7 @@ export const AuthStore = signalStore(
             return from(trpc.auth.register.mutate(input)).pipe(
               tap((session) => patchState(store, { session })),
               catchError((err: { message?: string }) => {
+                reportError(err, 'auth.provisionUser');
                 const msg = err.message ?? String(err);
                 patchState(store, { registerError: msg });
                 return EMPTY;
@@ -314,6 +317,7 @@ export const AuthStore = signalStore(
             return from(signInWithEmailAndPassword(auth, email, password)).pipe(
               tap(() => patchState(store, { loading: false })),
               catchError((err: { message?: string }) => {
+                reportError(err, 'auth.login');
                 patchState(store, {
                   loading: false,
                   loginError: err.message ?? String(err),
@@ -341,6 +345,7 @@ export const AuthStore = signalStore(
             ).pipe(
               tap(() => patchState(store, { loading: false })),
               catchError((err: { message?: string }) => {
+                reportError(err, 'auth.register');
                 patchState(store, {
                   loading: false,
                   registerError: err.message ?? String(err),
@@ -367,6 +372,7 @@ export const AuthStore = signalStore(
                 }),
               ),
               catchError((err: { message?: string }) => {
+                reportError(err, 'auth.logout');
                 patchState(store, {
                   loading: false,
                   logoutError: err.message ?? String(err),
@@ -389,7 +395,8 @@ export const AuthStore = signalStore(
             }
             return from(user.getIdToken()).pipe(
               tap((token) => patchState(store, { idToken: token })),
-              catchError(() => {
+              catchError((err: unknown) => {
+                reportError(err, 'auth.refreshToken');
                 patchState(store, { idToken: null });
                 return EMPTY;
               }),

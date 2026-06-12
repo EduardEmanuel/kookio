@@ -22,6 +22,7 @@ import type {
   OnboardingCurrent,
   UtensilRow,
 } from '@kookio/prisma-client';
+import { reportError } from '@kookio/shared-observability';
 import { URLS } from '@kookio/shared-utility';
 
 // Re-exported so existing consumers (the feature-onboarding barrel and step
@@ -299,7 +300,8 @@ export const OnboardingStore = signalStore(
                   maxStepReached: LAST_STEP,
                 }),
               ),
-              catchError(() => {
+              catchError((err: unknown) => {
+                reportError(err, 'onboarding.loadCurrent');
                 return EMPTY;
               }),
             ),
@@ -342,6 +344,7 @@ export const OnboardingStore = signalStore(
                 void router.navigateByUrl(URLS.DASHBOARD);
               }),
               catchError((err: { message?: string }) => {
+                reportError(err, 'onboarding.submit');
                 const message = err?.message ?? 'Onboarding submit failed';
                 patchState(store, {
                   isSubmitting: false,
