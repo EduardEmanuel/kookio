@@ -37,9 +37,7 @@ NX `ui / data-access / util / types` taxonomy. There is no `data-access` lib
 ```text
 libs/
 ├── core/      ← cross-cutting infrastructure; framework-light, no domain knowledge
-│   ├── config/       app + environment configuration
-│   ├── logging/      client-safe logging surface
-│   └── security/     cross-cutting security primitives
+│   └── logging/      client-safe logging surface
 ├── feature/   ← smart libs: a domain's Signal Stores + UI + routing surface together
 │   ├── auth/         AuthStore, route guards, Firebase client glue
 │   ├── shell/        app shell — nav, layout, route map, breakpoint service
@@ -58,13 +56,13 @@ libs/
 
 **Where does a new lib go?**
 
-| It is…                                                                   | Group              |
-| ------------------------------------------------------------------------ | ------------------ |
-| A domain's stores + UI + routes (the "data-access + ui" of one domain)   | `feature/<domain>` |
-| Cross-cutting infra with no domain knowledge (config, logging, security) | `core/<name>`      |
-| Persistence (Prisma client, schemas, derived types)                      | `prisma/<name>`    |
-| Server-only (Nitro/h3, admin SDK, tRPC) — must never reach the browser   | `server/<name>`    |
-| Stateless, reusable, no feature DI (pure UI, pure utils, mocks)          | `shared/<name>`    |
+| It is…                                                                 | Group              |
+| ---------------------------------------------------------------------- | ------------------ |
+| A domain's stores + UI + routes (the "data-access + ui" of one domain) | `feature/<domain>` |
+| Cross-cutting infra with no domain knowledge (e.g. logging)            | `core/<name>`      |
+| Persistence (Prisma client, schemas, derived types)                    | `prisma/<name>`    |
+| Server-only (Nitro/h3, admin SDK, tRPC) — must never reach the browser | `server/<name>`    |
+| Stateless, reusable, no feature DI (pure UI, pure utils, mocks)        | `shared/<name>`    |
 
 > **Heads-up — directory group ≠ NX scope tag.** The five directory groups are
 > an organizational convention; the _enforced_ dependency boundary keys on the
