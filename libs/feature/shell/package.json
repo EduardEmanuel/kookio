@@ -12,7 +12,6 @@
     "@angular/router": "~21.2.9",
     "@angular/material": "~21.2.9",
     "rxjs": "~7.8.2",
-    "@kookio/core-security": "0.0.1",
     "@kookio/feature-auth": "0.0.1",
     "@kookio/shared-ui": "0.0.1",
     "@kookio/shared-utility": "0.0.1"
