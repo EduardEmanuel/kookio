@@ -13,7 +13,6 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 import { AuthStore } from '@kookio/feature-auth';
-import { noopLogger } from '@kookio/core-logging';
 import type { IngredientCategory } from '@kookio/prisma-client';
 
 import { GROCERIES_TRPC, type GroceryItem } from '../groceries-trpc';
@@ -25,8 +24,6 @@ import { GROCERIES_TRPC, type GroceryItem } from '../groceries-trpc';
 export interface GroceriesToggleInput {
   ingredientCatalogId: string;
 }
-
-const log = noopLogger;
 
 /**
  * localStorage key prefix for the bought-state cache; the per-user
@@ -274,7 +271,6 @@ export const GroceriesStore = signalStore(
                 patchState(store, { items, isLoading: false });
               }),
               catchError((err: unknown) => {
-                log.warn({ err }, 'groceries.list failed');
                 patchState(store, {
                   isLoading: false,
                   error: errorMessage('load', err),
@@ -352,7 +348,6 @@ export const GroceriesStore = signalStore(
                 }
               }),
               catchError((err: unknown) => {
-                log.warn({ err }, 'groceries.toggleBought failed');
                 // Real failure (network down, derivation crash, etc.) — roll
                 // back the optimistic flip in BOTH the in-memory state and
                 // localStorage.
@@ -405,7 +400,6 @@ export const GroceriesStore = signalStore(
                 writeCacheFromItems(nextItems);
               }),
               catchError((err: unknown) => {
-                log.warn({ err }, 'groceries.addBoughtToPantry failed');
                 patchState(store, {
                   isMutating: false,
                   error: errorMessage('move to pantry', err),

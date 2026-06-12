@@ -12,7 +12,6 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 import { AuthStore } from '@kookio/feature-auth';
-import { noopLogger } from '@kookio/core-logging';
 import type { PantryItemWithIngredient } from '@kookio/prisma-client';
 
 import {
@@ -22,8 +21,6 @@ import {
   type PantryUpdateInput,
 } from '../pantry-trpc';
 import { isPastExpiry } from '../utils/expiration';
-
-const log = noopLogger;
 
 interface PantryState {
   items: PantryItemWithIngredient[];
@@ -99,7 +96,6 @@ export const PantryStore = signalStore(
             from(trpc.pantry.list.query()).pipe(
               tap((items) => patchState(store, { items, isLoading: false })),
               catchError((err: unknown) => {
-                log.warn({ err }, 'pantry.list failed');
                 patchState(store, {
                   isLoading: false,
                   error: errorMessage('load', err),
@@ -124,7 +120,6 @@ export const PantryStore = signalStore(
                 authStore.loadCounts();
               }),
               catchError((err: unknown) => {
-                log.warn({ err }, 'pantry.add failed');
                 patchState(store, {
                   isMutating: false,
                   error: errorMessage('add', err),
@@ -150,7 +145,6 @@ export const PantryStore = signalStore(
                 }),
               ),
               catchError((err: unknown) => {
-                log.warn({ err }, 'pantry.update failed');
                 patchState(store, {
                   isMutating: false,
                   error: errorMessage('update', err),
@@ -175,7 +169,6 @@ export const PantryStore = signalStore(
                 authStore.loadCounts();
               }),
               catchError((err: unknown) => {
-                log.warn({ err }, 'pantry.remove failed');
                 patchState(store, {
                   isMutating: false,
                   error: errorMessage('remove', err),

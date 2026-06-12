@@ -1,6 +1,6 @@
 # Architecture Guidelines
 
-> **Status: Active** — AnalogJS file-based routing under `apps/web/src/app/pages/` with `*.page.ts` is in use; tRPC handler at `apps/web/src/server/routes/api/trpc/[trpc].ts` and h3 routes (`health.get.ts`, `internal/bench-db.get.ts`) are live. The "Project Structure" section below documents the real **scope-first** lib tree `libs/{core,feature,prisma,server,shared}` — there is deliberately **no** `data-access` or `types` lib type (stores/services live with their feature, types live with the code that owns them). Server-side data fetching via `injectLoad()` / `*.server.ts` is **future direction** (no `*.server.ts` page loaders exist yet).
+> **Status: Active** — AnalogJS file-based routing under `apps/web/src/app/pages/` with `*.page.ts` is in use; tRPC handler at `apps/web/src/server/routes/api/trpc/[trpc].ts` and h3 routes (`health.get.ts`, `internal/bench-db.get.ts`) are live. The "Project Structure" section below documents the real **scope-first** lib tree `libs/{feature,prisma,server,shared}` — there is deliberately **no** `data-access` or `types` lib type (stores/services live with their feature, types live with the code that owns them). Server-side data fetching via `injectLoad()` / `*.server.ts` is **future direction** (no `*.server.ts` page loaders exist yet).
 
 ## Stack
 
@@ -26,7 +26,7 @@ apps/
         └── trpc-client.ts     ← authAwareFetch tRPC client
 ```
 
-### Lib layout — scope-first, five groups
+### Lib layout — scope-first, four groups
 
 The lib tree is organized **by scope, then by domain** — NOT by the classic
 NX `ui / data-access / util / types` taxonomy. There is no `data-access` lib
@@ -36,8 +36,6 @@ NX `ui / data-access / util / types` taxonomy. There is no `data-access` lib
 
 ```text
 libs/
-├── core/      ← cross-cutting infrastructure; framework-light, no domain knowledge
-│   └── logging/      client-safe logging surface
 ├── feature/   ← smart libs: a domain's Signal Stores + UI + routing surface together
 │   ├── auth/         AuthStore, route guards, Firebase client glue
 │   ├── shell/        app shell — nav, layout, route map, breakpoint service
@@ -59,15 +57,14 @@ libs/
 | It is…                                                                 | Group              |
 | ---------------------------------------------------------------------- | ------------------ |
 | A domain's stores + UI + routes (the "data-access + ui" of one domain) | `feature/<domain>` |
-| Cross-cutting infra with no domain knowledge (e.g. logging)            | `core/<name>`      |
 | Persistence (Prisma client, schemas, derived types)                    | `prisma/<name>`    |
 | Server-only (Nitro/h3, admin SDK, tRPC) — must never reach the browser | `server/<name>`    |
 | Stateless, reusable, no feature DI (pure UI, pure utils, mocks)        | `shared/<name>`    |
 
-> **Heads-up — directory group ≠ NX scope tag.** The five directory groups are
+> **Heads-up — directory group ≠ NX scope tag.** The four directory groups are
 > an organizational convention; the _enforced_ dependency boundary keys on the
 > `scope:*` tag in each `project.json`, and the two do **not** line up
-> one-to-one. `core/*` and `shared/{mock,utility}` are tagged `scope:shared`
+> one-to-one. `shared/{mock,utility}` is tagged `scope:shared`
 > (browser-safe); `shared/ui` is `scope:frontend` (it pulls in Angular);
 > `feature/*` is `scope:frontend`; `server/*` is `scope:server`;
 > `prisma/client` is `scope:prisma`. The full tag matrix and the rules it

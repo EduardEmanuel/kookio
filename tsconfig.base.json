@@ -16,7 +16,6 @@
     "baseUrl": ".",
     "paths": {
       "@app/*": ["apps/web/src/app/*"],
-      "@kookio/core-logging": ["libs/core/logging/src/index.ts"],
       "@kookio/feature-auth": ["libs/feature/auth/src/index.ts"],
       "@kookio/feature-auth/testing": ["libs/feature/auth/src/testing.ts"],
       "@kookio/feature-dashboard": ["libs/feature/dashboard/src/index.ts"],

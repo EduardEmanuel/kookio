@@ -1,11 +1,22 @@
 import { pino, Logger } from 'pino';
 
-import type {
-  AppLogger,
-  AuditLogger,
-  LogNamespace,
-} from '@kookio/core-logging';
 import type { AuditEvent } from '@kookio/prisma-client';
+
+export type LogNamespace = 'audit' | 'http' | 'trpc' | 'prisma';
+
+export type AppLogger = {
+  child(bindings: Record<string, unknown>): AppLogger;
+  debug(obj: unknown, msg?: string): void;
+  error(obj: unknown, msg?: string): void;
+  fatal(obj: unknown, msg?: string): void;
+  info(obj: unknown, msg?: string): void;
+  trace(obj: unknown, msg?: string): void;
+  warn(obj: unknown, msg?: string): void;
+};
+
+export type AuditLogger = {
+  event(ev: AuditEvent): void;
+};
 
 const isProd =
   process.env['VERCEL'] === '1' || process.env['NODE_ENV'] === 'production';
