@@ -38,10 +38,7 @@ import {
   type User,
 } from 'firebase/auth';
 
-import { noopLogger } from '@kookio/core-logging';
 import type { AuthSession } from '@kookio/prisma-client';
-
-const log = noopLogger;
 
 export const FIREBASE_OPTIONS = new InjectionToken<FirebaseOptions>(
   'FIREBASE_OPTIONS',
@@ -129,10 +126,6 @@ export { REFRESH_INTERVAL_MS, buildRefreshTimer$ } from './auth-timer';
 
 const resolveAuth = (options: FirebaseOptions): Auth | null => {
   if (!options.apiKey) {
-    log.warn(
-      { options },
-      'Firebase options missing apiKey — check FIREBASE_* env vars. Run: vercel env pull .env.local',
-    );
     return null;
   }
   const app = getApps().length > 0 ? getApp() : initializeApp(options);
@@ -189,7 +182,7 @@ export const AuthStore = signalStore(
 
     /**
      * Fetches aggregate profile counts and patches them into state.
-     * Errors are swallowed (warning logged) — counters degrade gracefully
+     * Errors are swallowed silently — counters degrade gracefully
      * to whatever was already there, and the next trigger may succeed.
      */
     const loadCounts = rxMethod<void>(
@@ -198,8 +191,7 @@ export const AuthStore = signalStore(
           if (!trpc) return EMPTY;
           return from(trpc.profile.counts.query()).pipe(
             tap((counts) => patchState(store, counts)),
-            catchError((err) => {
-              log.warn({ err }, 'profile.counts failed');
+            catchError(() => {
               return EMPTY;
             }),
           );
@@ -222,8 +214,7 @@ export const AuthStore = signalStore(
               patchState(store, { session });
               if (session.onboardingDone) loadCounts();
             }),
-            catchError((err) => {
-              log.warn({ err }, 'auth.me failed');
+            catchError(() => {
               return EMPTY;
             }),
           );
@@ -301,7 +292,6 @@ export const AuthStore = signalStore(
               tap((session) => patchState(store, { session })),
               catchError((err: { message?: string }) => {
                 const msg = err.message ?? String(err);
-                log.warn({ err }, 'auth.register provision failed');
                 patchState(store, { registerError: msg });
                 return EMPTY;
               }),
@@ -328,7 +318,6 @@ export const AuthStore = signalStore(
                   loading: false,
                   loginError: err.message ?? String(err),
                 });
-                log.warn({ err }, 'Login failed');
                 return EMPTY;
               }),
             );
@@ -356,7 +345,6 @@ export const AuthStore = signalStore(
                   loading: false,
                   registerError: err.message ?? String(err),
                 });
-                log.warn({ err }, 'Register failed');
                 return EMPTY;
               }),
             );
@@ -383,7 +371,6 @@ export const AuthStore = signalStore(
                   loading: false,
                   logoutError: err.message ?? String(err),
                 });
-                log.warn({ err }, 'Logout failed');
                 return EMPTY;
               }),
             );
@@ -402,8 +389,7 @@ export const AuthStore = signalStore(
             }
             return from(user.getIdToken()).pipe(
               tap((token) => patchState(store, { idToken: token })),
-              catchError((err) => {
-                log.warn({ err }, 'getIdToken failed');
+              catchError(() => {
                 patchState(store, { idToken: null });
                 return EMPTY;
               }),
@@ -428,7 +414,6 @@ export const AuthStore = signalStore(
       buildRefreshTimer$(toObservable(store.idToken))
         .pipe(takeUntilDestroyed(destroyRef))
         .subscribe(() => {
-          log.info({}, 'Proactive token refresh triggered');
           store.refreshToken();
         });
     }
@@ -451,7 +436,7 @@ export const AuthStore = signalStore(
           : null;
 
         from(setPersistence(auth, browserLocalPersistence)).subscribe({
-          error: (err) => log.warn({ err }, 'Failed to set auth persistence'),
+          error: () => undefined,
         });
 
         onAuthStateChanged(
@@ -460,7 +445,7 @@ export const AuthStore = signalStore(
             if (readyTimer !== null) clearTimeout(readyTimer);
             patchState(store, { currentUser: user, authReady: true });
           },
-          (err) => log.warn({ err }, 'onAuthStateChanged error'),
+          () => undefined,
         );
       },
     };

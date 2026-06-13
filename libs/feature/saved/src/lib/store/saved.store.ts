@@ -13,12 +13,9 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 import { AuthStore } from '@kookio/feature-auth';
-import { noopLogger } from '@kookio/core-logging';
 import type { SavedRecipeRow } from '@kookio/prisma-client';
 
 import { SAVED_TRPC } from '../saved-trpc';
-
-const log = noopLogger;
 
 export type SavedView = 'FLAT' | 'CUISINES' | 'CATEGORIES';
 
@@ -196,8 +193,7 @@ export const SavedStore = signalStore(
           switchMap(() =>
             from(trpc.recipeCollection.getSavedIds.query()).pipe(
               tap((ids) => patchState(store, { ids: new Set(ids) })),
-              catchError((err: unknown) => {
-                log.warn({ err }, 'recipeCollection.getSavedIds failed');
+              catchError(() => {
                 return EMPTY;
               }),
             ),
@@ -219,7 +215,6 @@ export const SavedStore = signalStore(
                 }),
               ),
               catchError((err: unknown) => {
-                log.warn({ err }, 'recipeCollection.getSaved failed');
                 patchState(store, {
                   isLoading: false,
                   error: errorMessage('load saved recipes', err),
@@ -288,10 +283,6 @@ export const SavedStore = signalStore(
                 patchState(store, { ids, items, pendingIds });
               }),
               catchError((err: unknown) => {
-                log.warn(
-                  { err, recipeId },
-                  'recipeCollection.toggleSave failed',
-                );
                 // Rollback optimistic flip.
                 const ids = new Set(store.ids());
                 let items = store.items();

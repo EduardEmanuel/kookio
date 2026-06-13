@@ -332,7 +332,7 @@ from importing it.
 
 Rules for any code that ships to the browser (pages, components, stores,
 guards — anything in `apps/web/src/app/**`, `libs/feature/**`,
-`libs/shared/ui/**`, `libs/core/security/**`):
+`libs/shared/ui/**`):
 
 - Use `import type { ... }` for type-only imports — types erase at compile
   time, runtime imports don't. A bare `import { X }` for a name that happens

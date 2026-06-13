@@ -142,7 +142,6 @@ export default [
       'apps/web/src/app/**/*.{ts,tsx}',
       'libs/feature/**/*.{ts,tsx}',
       'libs/shared/ui/**/*.{ts,tsx}',
-      'libs/core/security/**/*.{ts,tsx}',
     ],
     ignores: ['libs/shared/ui/src/lib/components/icon/icon.component.ts'],
     rules: {

@@ -13,7 +13,6 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 import { AuthStore } from '@kookio/feature-auth';
-import { noopLogger } from '@kookio/core-logging';
 import type {
   MealPlanSetInput,
   MealSlotType,
@@ -27,8 +26,6 @@ import {
   type MealPlanDraftSlot,
   type MealPlanTrpcClient,
 } from '../meal-plan-trpc';
-
-const log = noopLogger;
 
 /** localStorage key prefix; the per-user namespace is appended on read/write. */
 const DRAFT_KEY_PREFIX = 'kookio:plan-draft:';
@@ -269,17 +266,13 @@ export const PlanStore = signalStore(
       // still has the in-memory state and localStorage still holds the
       // draft, so the user's session continues unaffected.
       firstValueFrom(from(trpc.mealPlan.setDraft.mutate(payload))).catch(
-        (err: unknown) => {
-          log.warn({ err }, 'mealPlan.setDraft failed (non-blocking)');
-        },
+        () => undefined,
       );
     };
 
     const clearRemoteDraft = (): void => {
       firstValueFrom(from(trpc.mealPlan.clearDraft.mutate())).catch(
-        (err: unknown) => {
-          log.warn({ err }, 'mealPlan.clearDraft failed (non-blocking)');
-        },
+        () => undefined,
       );
     };
 
@@ -324,11 +317,7 @@ export const PlanStore = signalStore(
               // back to localStorage-only reconciliation if Redis is
               // down.
               remoteDraft: from(trpc.mealPlan.getDraft.query()).pipe(
-                catchError((err: unknown) => {
-                  log.warn(
-                    { err },
-                    'mealPlan.getDraft failed (falling back to localStorage)',
-                  );
+                catchError(() => {
                   return of(null as MealPlanDraftPayload | null);
                 }),
               ),
@@ -367,7 +356,6 @@ export const PlanStore = signalStore(
                 });
               }),
               catchError((err: unknown) => {
-                log.warn({ err }, 'mealPlan.getCurrent failed');
                 patchState(store, {
                   isLoading: false,
                   error: errorMessage('load', err),
@@ -463,7 +451,6 @@ export const PlanStore = signalStore(
                 });
               }),
               catchError((err: unknown) => {
-                log.warn({ err }, 'mealPlan.setMealPlan failed');
                 patchState(store, {
                   isSubmitting: false,
                   error: errorMessage('save', err),

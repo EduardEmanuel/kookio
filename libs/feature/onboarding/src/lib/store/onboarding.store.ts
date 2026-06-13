@@ -14,7 +14,6 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 import { AuthStore } from '@kookio/feature-auth';
 import type { PantryItemView } from '@kookio/feature-pantry';
-import { noopLogger } from '@kookio/core-logging';
 import type {
   DietaryRestrictionRow,
   MealAreaRow,
@@ -31,8 +30,6 @@ import { URLS } from '@kookio/shared-utility';
 // generated `<Model>ModelSchema` via `.pick()` — see the pure-schemas rule
 // in CLAUDE.md / pinned memory.
 export type { DietaryRestrictionRow, MealAreaRow, MealCategoryRow, UtensilRow };
-
-const log = noopLogger;
 
 export const TOTAL_STEPS = 6;
 const LAST_STEP = TOTAL_STEPS - 1;
@@ -281,7 +278,7 @@ export const OnboardingStore = signalStore(
       /**
        * Pre-populates state from server selections. Used when a previously
        * onboarded user returns to `/onboarding` after a profile reset.
-       * Failures are logged and swallowed — the user can proceed with defaults.
+       * Failures are swallowed — the user can proceed with defaults.
        */
       loadCurrent: rxMethod<void>(
         pipe(
@@ -302,8 +299,7 @@ export const OnboardingStore = signalStore(
                   maxStepReached: LAST_STEP,
                 }),
               ),
-              catchError((err) => {
-                log.warn({ err }, 'onboarding.current failed');
+              catchError(() => {
                 return EMPTY;
               }),
             ),
@@ -347,7 +343,6 @@ export const OnboardingStore = signalStore(
               }),
               catchError((err: { message?: string }) => {
                 const message = err?.message ?? 'Onboarding submit failed';
-                log.warn({ err }, 'onboarding.commit failed');
                 patchState(store, {
                   isSubmitting: false,
                   submitError: message,

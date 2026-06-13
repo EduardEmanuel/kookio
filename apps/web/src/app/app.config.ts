@@ -28,7 +28,6 @@ import { MEAL_PLAN_TRPC } from '@kookio/feature-plan/trpc';
 import { RECIPES_TRPC } from '@kookio/feature-recipes';
 import { COOKING_SESSION_TRPC } from '@kookio/feature-recipes/cooking-trpc';
 import { SAVED_TRPC } from '@kookio/feature-saved/trpc';
-import { APP_TRPC } from '@kookio/feature-shell';
 
 import { provideTrpcClient, TrpcClientApp } from '../trpc-client';
 
@@ -56,7 +55,6 @@ export const appConfig: ApplicationConfig = {
         'material-symbols-outlined',
       );
     }),
-    { provide: APP_TRPC, useExisting: TrpcClientApp },
     { provide: AUTH_TRPC, useExisting: TrpcClientApp },
     { provide: ONBOARDING_TRPC, useExisting: TrpcClientApp },
     { provide: PANTRY_TRPC, useExisting: TrpcClientApp },
