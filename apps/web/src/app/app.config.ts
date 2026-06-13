@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  ErrorHandler,
   inject,
   provideAppInitializer,
   provideZonelessChangeDetection,
@@ -18,6 +19,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MatIconRegistry } from '@angular/material/icon';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 
+import * as Sentry from '@sentry/angular';
 import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
 
 import { AUTH_TRPC, FIREBASE_OPTIONS } from '@kookio/feature-auth';
@@ -34,6 +36,10 @@ import { provideTrpcClient, TrpcClientApp } from '../trpc-client';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    // Sentry global error handler — captures every unhandled error (including
+    // the bootstrap failure) and still console.errors it (logErrors default),
+    // so dev visibility is unchanged. Capture is a no-op until the DSN is set.
+    { provide: ErrorHandler, useValue: Sentry.createErrorHandler() },
     provideZonelessChangeDetection(),
     // Material 20's outlined `mat-form-field` measures its label to compute
     // the notch width; without an animations provider that measurement runs

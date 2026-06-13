@@ -14,6 +14,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 import { AuthStore } from '@kookio/feature-auth';
 import type { IngredientCategory } from '@kookio/prisma-client';
+import { reportError } from '@kookio/shared-observability';
 
 import { GROCERIES_TRPC, type GroceryItem } from '../groceries-trpc';
 
@@ -271,6 +272,7 @@ export const GroceriesStore = signalStore(
                 patchState(store, { items, isLoading: false });
               }),
               catchError((err: unknown) => {
+                reportError(err, 'groceries.load');
                 patchState(store, {
                   isLoading: false,
                   error: errorMessage('load', err),
@@ -348,6 +350,7 @@ export const GroceriesStore = signalStore(
                 }
               }),
               catchError((err: unknown) => {
+                reportError(err, 'groceries.toggleBought');
                 // Real failure (network down, derivation crash, etc.) — roll
                 // back the optimistic flip in BOTH the in-memory state and
                 // localStorage.
@@ -400,6 +403,7 @@ export const GroceriesStore = signalStore(
                 writeCacheFromItems(nextItems);
               }),
               catchError((err: unknown) => {
+                reportError(err, 'groceries.addBoughtToPantry');
                 patchState(store, {
                   isMutating: false,
                   error: errorMessage('move to pantry', err),

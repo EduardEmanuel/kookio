@@ -87,7 +87,10 @@
       "@kookio/shared-utility/recipe-match-level": [
         "libs/shared/utility/src/lib/labeling/recipe-match-level.ts"
       ],
-      "@server/*": ["apps/web/src/server/*"]
+      "@server/*": ["apps/web/src/server/*"],
+      "@kookio/shared-observability": [
+        "./libs/shared/observability/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

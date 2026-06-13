@@ -1,4 +1,5 @@
 import { pino, Logger } from 'pino';
+import { captureException } from '@sentry/node';
 
 import type { AuditEvent } from '@kookio/prisma-client';
 
@@ -43,11 +44,29 @@ const base = pino(
       },
 );
 
+// Bridge handled server errors to Sentry. Every `log.error`/`log.fatal` call
+// in the server passes its error as the `err` field of the first argument (the
+// project-wide `{ err, ... }` logging convention), so this is the single
+// server-side capture chokepoint — the back-end mirror of the client's
+// `reportError` helper. No-op until Sentry is initialised by the `sentry` Nitro
+// plugin, so scripts and tests that import the logger stay silent.
+const captureFromLog = (obj: unknown, msg?: string): void => {
+  if (!obj || typeof obj !== 'object' || !('err' in obj)) return;
+  const { err, ...context } = obj as { err: unknown } & Record<string, unknown>;
+  captureException(err, { extra: { ...context, msg } });
+};
+
 const wrap = (p: Logger): AppLogger => {
   return {
     child: (b) => wrap(p.child(b)),
-    fatal: (o, m) => p.fatal(o, m),
-    error: (o, m) => p.error(o, m),
+    fatal: (o, m) => {
+      captureFromLog(o, m);
+      p.fatal(o, m);
+    },
+    error: (o, m) => {
+      captureFromLog(o, m);
+      p.error(o, m);
+    },
     warn: (o, m) => p.warn(o, m),
     info: (o, m) => p.info(o, m),
     debug: (o, m) => p.debug(o, m),

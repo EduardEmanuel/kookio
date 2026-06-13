@@ -425,6 +425,31 @@ export async function createContext(event: H3Event) {
 - ❌ Credit card or payment information
 - ❌ Personal data beyond what's needed for debugging (email, name)
 
+### Sentry bridge — `error` / `fatal` forward to Sentry
+
+`@kookio/server-logger`'s `wrap()` is the **single server-side error
+chokepoint**: `logger.error(...)` and `logger.fatal(...)` forward the `err`
+field of their first argument to `Sentry.captureException` (with the remaining
+log bindings as `extra`) before delegating to Pino. Every `log.error({ err, … },
+'…')` across the tRPC routers and `server-auth` therefore reports to Sentry
+automatically — the back-end mirror of the client's `reportError` helper
+(`@kookio/shared-observability`).
+
+- The capture is a **no-op until Sentry is initialised**, which happens only in
+  the Nitro plugin `apps/web/src/server/plugins/sentry.ts` (guarded by the
+  server-only `SENTRY_DSN`, the Vercel integration's var — not exposed to the
+  browser). Scripts, seeds, and tests that import the logger never init Sentry,
+  so they stay silent.
+- Keep the `{ err }` convention. The bridge only fires when the first argument
+  is an object with an `err` key; a bare `logger.error('msg')` is logged but
+  **not** sent to Sentry. Deliberate — only real errors become Sentry events.
+- `@sentry/node` is **externalized** in the Nitro build (`vite.config.ts` →
+  `nitro.externals.external`) because it pulls a large OpenTelemetry graph; it
+  resolves at runtime from the traced `node_modules`, like `firebase`.
+- Unhandled server faults (SSR render crashes, uncaught route throws) are
+  captured separately by the same plugin's `error` hook, filtered to 5xx so the
+  asset-404 middleware doesn't spam Sentry.
+
 ### General Pino Rules
 
 - Never use `console.log` on the server — always use `logger`

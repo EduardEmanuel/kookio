@@ -19,6 +19,7 @@ import type {
   MealSlotWithRecipe,
   RecipeFeedItem,
 } from '@kookio/prisma-client';
+import { reportError } from '@kookio/shared-observability';
 
 import {
   MEAL_PLAN_TRPC,
@@ -356,6 +357,7 @@ export const PlanStore = signalStore(
                 });
               }),
               catchError((err: unknown) => {
+                reportError(err, 'plan.load');
                 patchState(store, {
                   isLoading: false,
                   error: errorMessage('load', err),
@@ -451,6 +453,7 @@ export const PlanStore = signalStore(
                 });
               }),
               catchError((err: unknown) => {
+                reportError(err, 'plan.submit');
                 patchState(store, {
                   isSubmitting: false,
                   error: errorMessage('save', err),

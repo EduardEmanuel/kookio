@@ -13,6 +13,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 import { AuthStore } from '@kookio/feature-auth';
 import type { PantryItemWithIngredient } from '@kookio/prisma-client';
+import { reportError } from '@kookio/shared-observability';
 
 import {
   PANTRY_TRPC,
@@ -96,6 +97,7 @@ export const PantryStore = signalStore(
             from(trpc.pantry.list.query()).pipe(
               tap((items) => patchState(store, { items, isLoading: false })),
               catchError((err: unknown) => {
+                reportError(err, 'pantry.load');
                 patchState(store, {
                   isLoading: false,
                   error: errorMessage('load', err),
@@ -120,6 +122,7 @@ export const PantryStore = signalStore(
                 authStore.loadCounts();
               }),
               catchError((err: unknown) => {
+                reportError(err, 'pantry.add');
                 patchState(store, {
                   isMutating: false,
                   error: errorMessage('add', err),
@@ -145,6 +148,7 @@ export const PantryStore = signalStore(
                 }),
               ),
               catchError((err: unknown) => {
+                reportError(err, 'pantry.update');
                 patchState(store, {
                   isMutating: false,
                   error: errorMessage('update', err),
@@ -169,6 +173,7 @@ export const PantryStore = signalStore(
                 authStore.loadCounts();
               }),
               catchError((err: unknown) => {
+                reportError(err, 'pantry.remove');
                 patchState(store, {
                   isMutating: false,
                   error: errorMessage('remove', err),

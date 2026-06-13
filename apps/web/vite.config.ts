@@ -70,6 +70,10 @@ export default defineConfig(({ mode }) => {
               /^rxjs/,
               /^firebase/,
               /@firebase\//,
+              // @sentry/node pulls a large OpenTelemetry graph; keep it out of
+              // Nitro's Rollup AST and resolve it at runtime (Vercel traces it
+              // into the function), same as firebase above.
+              /^@sentry\/node/,
             ],
           },
           ignore: ['**/*.spec.ts'],
