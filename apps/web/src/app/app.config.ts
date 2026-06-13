@@ -6,6 +6,7 @@ import {
   provideZonelessChangeDetection,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
+import { IMAGE_CONFIG, IMAGE_LOADER } from '@angular/common';
 import {
   provideHttpClient,
   withFetch,
@@ -30,6 +31,7 @@ import { MEAL_PLAN_TRPC } from '@kookio/feature-plan/trpc';
 import { RECIPES_TRPC } from '@kookio/feature-recipes';
 import { COOKING_SESSION_TRPC } from '@kookio/feature-recipes/cooking-trpc';
 import { SAVED_TRPC } from '@kookio/feature-saved/trpc';
+import { kookioImageLoader } from '@kookio/shared-utility/image';
 
 import { provideTrpcClient, TrpcClientApp } from '../trpc-client';
 
@@ -56,6 +58,18 @@ export const appConfig: ApplicationConfig = {
     ),
     provideTrpcClient(),
     provideNgxSkeletonLoader(),
+    // NgOptimizedImage wiring: the loader maps each `ngSrc` + requested width
+    // to the Vercel optimizer (`/_vercel/image`) in prod or the local sharp
+    // route (`/api/img`) in dev; `breakpoints` are the widths the optimizer is
+    // allowed to emit (mirrors `images.sizes` in vercel.json) so the responsive
+    // `srcset` only requests sizes that resolve.
+    { provide: IMAGE_LOADER, useValue: kookioImageLoader },
+    {
+      provide: IMAGE_CONFIG,
+      useValue: {
+        breakpoints: [48, 64, 96, 128, 256, 320, 480, 640, 960],
+      },
+    },
     provideAppInitializer(() => {
       inject(MatIconRegistry).setDefaultFontSetClass(
         'material-symbols-outlined',

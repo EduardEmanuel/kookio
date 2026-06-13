@@ -75,6 +75,7 @@
       "@kookio/shared-mock": ["libs/shared/mock/src/index.ts"],
       "@kookio/shared-ui": ["libs/shared/ui/src/index.ts"],
       "@kookio/shared-utility": ["libs/shared/utility/src/index.ts"],
+      "@kookio/shared-utility/image": ["libs/shared/utility/src/lib/images.ts"],
       "@kookio/shared-utility/difficulty": [
         "libs/shared/utility/src/lib/labeling/difficulty-labels.ts"
       ],

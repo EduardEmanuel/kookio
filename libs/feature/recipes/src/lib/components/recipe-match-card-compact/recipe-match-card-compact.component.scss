@@ -30,7 +30,6 @@
     flex: 0 0 3rem; // no token at 3rem (scale jumps 2.5rem → 4rem); rem literal
     width: 3rem;
     height: 3rem;
-    position: relative; // NgOptimizedImage with explicit width/height anchors here
     display: inline-flex;
     align-items: center;
     justify-content: center;

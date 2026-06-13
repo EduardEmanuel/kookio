@@ -74,6 +74,10 @@ export default defineConfig(({ mode }) => {
               // Nitro's Rollup AST and resolve it at runtime (Vercel traces it
               // into the function), same as firebase above.
               /^@sentry\/node/,
+              // sharp ships a native binding; Rollup cannot bundle the `.node`
+              // file, so it must resolve at runtime. Consumed only by the local
+              // `/api/img` optimizer route (off-Vercel) — see images.ts.
+              /^sharp$/,
             ],
           },
           ignore: ['**/*.spec.ts'],

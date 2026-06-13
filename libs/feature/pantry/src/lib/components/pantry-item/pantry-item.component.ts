@@ -5,6 +5,7 @@ import {
   input,
   output,
 } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 
 import type { MeasureUnit } from '@kookio/prisma-client';
@@ -38,7 +39,7 @@ export interface PantryItemView {
 @Component({
   selector: 'kookio-pantry-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, KookioIconComponent],
+  imports: [NgOptimizedImage, MatButtonModule, KookioIconComponent],
   templateUrl: './pantry-item.component.html',
   styleUrl: './pantry-item.component.scss',
 })

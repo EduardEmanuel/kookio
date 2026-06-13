@@ -8,9 +8,11 @@
       <img
         mat-card-image
         class="match-card__image"
-        [src]="img"
+        [ngSrc]="img"
+        sizes="(max-width: 768px) 100vw, 40rem"
         [alt]="item().title"
-        loading="lazy"
+        width="640"
+        height="360"
       />
     }
 

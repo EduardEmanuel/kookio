@@ -3,7 +3,7 @@
   "crons": [],
   "images": {
     "domains": ["www.themealdb.com"],
-    "sizes": [320, 480, 640, 960],
+    "sizes": [48, 64, 96, 128, 256, 320, 480, 640, 960],
     "formats": ["image/avif", "image/webp"],
     "qualities": [75],
     "minimumCacheTTL": 31536000

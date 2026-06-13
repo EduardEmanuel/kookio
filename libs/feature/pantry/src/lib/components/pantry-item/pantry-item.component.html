@@ -4,8 +4,10 @@
   @if (item().ingredient.imageUrl; as imageUrl) {
     <img
       class="pantry-item__image"
-      [src]="imageUrl"
+      [ngSrc]="imageUrl"
       [alt]="item().ingredient.name"
+      width="64"
+      height="64"
     />
   } @else {
     <div class="pantry-item__placeholder" aria-hidden="true">
