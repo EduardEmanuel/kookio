@@ -6,13 +6,7 @@
 >
   <span class="match-card-compact__thumb">
     @if (item().imageUrl; as img) {
-      <img
-        [ngSrc]="img"
-        [alt]="item().title"
-        width="48"
-        height="48"
-        loading="lazy"
-      />
+      <img [ngSrc]="img" [alt]="item().title" width="48" height="48" />
     } @else {
       <kookio-icon name="restaurant" />
     }

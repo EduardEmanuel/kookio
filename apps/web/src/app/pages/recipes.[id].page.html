@@ -1,13 +1,15 @@
 @if (recipe(); as r) {
 <article class="recipe-detail">
   <header class="recipe-detail__header">
-    @if (r.imageUrl) {
+    @if (r.imageUrl; as img) {
     <img
       class="recipe-detail__hero"
-      [src]="r.imageUrl"
+      [ngSrc]="img"
+      sizes="(max-width: 768px) 100vw, 56rem"
       [alt]="r.title"
-      loading="eager"
-      decoding="async"
+      width="960"
+      height="540"
+      priority
     />
     }
 

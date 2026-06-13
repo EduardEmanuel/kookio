@@ -4,22 +4,21 @@
   [attr.aria-label]="'View recipe ' + recipe().title"
 >
   <mat-card class="recipe-card__card" appearance="outlined">
-    @if (recipe().imageUrl) {
+    @if (recipe().imageUrl; as img) {
       <!-- The media wrapper carries `mat-card-image` (Material's top-bleed
            image slot) and the skeleton shimmer; the `<img>` fades in over it
-           via `kookioFadeInImage` once its bitmap decodes. -->
+           via `kookioFadeInImage` once its bitmap decodes. `ngSrc` routes the
+           image through the IMAGE_LOADER (optimizer); the responsive `srcset`
+           is generated from IMAGE_CONFIG breakpoints. -->
       <div mat-card-image class="recipe-card__media">
         <img
           kookioFadeInImage
           class="recipe-card__image"
-          [src]="optimizedSrc()"
-          [srcset]="optimizedSrcSet()"
+          [ngSrc]="img"
           sizes="(max-width: 768px) 100vw, 40rem"
           [alt]="recipe().title"
           width="640"
           height="360"
-          loading="lazy"
-          decoding="async"
         />
       </div>
     }

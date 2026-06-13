@@ -6,6 +6,7 @@ import {
   inject,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { NgOptimizedImage } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,6 +37,7 @@ export const routeMeta: RouteMeta = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'kookio-recipe-detail-page',
   imports: [
+    NgOptimizedImage,
     RouterLink,
     MatButtonModule,
     MatChipsModule,

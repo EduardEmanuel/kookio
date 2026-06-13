@@ -5,6 +5,7 @@ import {
   inject,
   input,
 } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -35,6 +36,7 @@ const ALMOST_MAX_MISSING = 3;
     SaveToggleComponent,
     KookioEmojiComponent,
     KookioIconComponent,
+    NgOptimizedImage,
   ],
   templateUrl: './recipe-match-card.component.html',
   styleUrl: './recipe-match-card.component.scss',

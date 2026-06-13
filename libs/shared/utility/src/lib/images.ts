@@ -1,6 +1,23 @@
 /// <reference types="vite/client" />
 
 /**
+ * Widths (px) the image optimizer is allowed to emit. MUST stay in sync with
+ * `images.sizes` in `vercel.json` (the production Vercel optimizer) and
+ * `ALLOWED_WIDTHS` in `apps/web/src/server/routes/api/img.get.ts` (the local
+ * dev optimizer) — a width outside this set is rejected with a 400 by both.
+ * Covers small fixed thumbnails (48/64/96/128) through responsive card and
+ * hero widths (320–960).
+ */
+const OPTIMIZED_WIDTHS = [48, 64, 96, 128, 256, 320, 480, 640, 960] as const;
+
+/** Round a requested width up to the nearest allowlisted optimizer width
+ * (capped at the largest). Lets `NgOptimizedImage` request any displayed-size
+ * width without ever tripping the optimizer's 400. */
+const snapWidth = (width: number): number =>
+  OPTIMIZED_WIDTHS.find((w) => w >= width) ??
+  OPTIMIZED_WIDTHS[OPTIMIZED_WIDTHS.length - 1];
+
+/**
  * Build an Image Optimization URL for a remote image. The query shape
  * (`?url=&w=&q=`) is identical across environments; only the endpoint differs:
  *
@@ -29,21 +46,23 @@ export const optimizedImageUrl = (
 };
 
 /**
- * Build a `srcset` string for a responsive image from a list of widths, so the
- * browser picks the smallest candidate that covers its rendered size × DPR.
+ * Angular `IMAGE_LOADER` for `NgOptimizedImage`, registered in
+ * `apps/web/src/app/app.config.ts`. Maps the directive's requested width to an
+ * optimizer URL via {@link optimizedImageUrl}, snapping the width into the
+ * allowlist first so the optimizer never 400s. `config.src` is the raw
+ * upstream URL bound to `ngSrc`; `config.width` is set for each `srcset`
+ * candidate (and omitted for the base `src`, where the largest width is used).
  *
- * The widths MUST be a subset of `images.sizes` in `vercel.json` — both the
- * Vercel optimizer and the local `/api/img` route reject (400) any width they
- * have not been configured to emit, so a stray width fails the same way in dev
- * and prod. Returns `null` when there is no `src`.
+ * Typed structurally rather than against `@angular/common`'s
+ * `ImageLoaderConfig` so this browser-safe utility lib takes no Angular
+ * dependency; the shape is a subset of `ImageLoaderConfig` and assignable to
+ * the `IMAGE_LOADER` token.
  */
-export const optimizedImageSrcSet = (
-  src: string | null | undefined,
-  widths: readonly number[],
-  quality = 75,
-): string | null => {
-  if (!src) return null;
-  return widths
-    .map((width) => `${optimizedImageUrl(src, width, quality)} ${width}w`)
-    .join(', ');
-};
+export const kookioImageLoader = (config: {
+  src: string;
+  width?: number;
+}): string =>
+  optimizedImageUrl(
+    config.src,
+    snapWidth(config.width ?? OPTIMIZED_WIDTHS[OPTIMIZED_WIDTHS.length - 1]),
+  ) ?? config.src;

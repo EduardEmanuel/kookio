@@ -20,7 +20,9 @@ import sharp from 'sharp';
  * so mismatches surface locally instead of after deploy.
  */
 const ALLOWED_HOSTS = new Set(['www.themealdb.com']);
-const ALLOWED_WIDTHS = new Set([320, 480, 640, 960]);
+// Keep in sync with `images.sizes` in `vercel.json` and `OPTIMIZED_WIDTHS` in
+// `libs/shared/utility/src/lib/images.ts` (the IMAGE_LOADER snaps to this set).
+const ALLOWED_WIDTHS = new Set([48, 64, 96, 128, 256, 320, 480, 640, 960]);
 const DEFAULT_QUALITY = 75;
 
 export default defineEventHandler(async (event) => {

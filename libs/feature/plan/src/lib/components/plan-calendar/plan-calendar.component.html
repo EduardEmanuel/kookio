@@ -228,11 +228,12 @@
                     day.ariaLabel
                   "
                 >
-                  @if (recipe.imageUrl) {
+                  @if (recipe.imageUrl; as img) {
                     <img
                       class="plan__cell-image"
-                      [ngSrc]="recipe.imageUrl"
+                      [ngSrc]="img"
                       [alt]="recipe.title"
+                      sizes="120px"
                       fill
                     />
                   } @else {
