@@ -11,10 +11,10 @@ describe('optimizedImageUrl', () => {
     expect(optimizedImageUrl('', 640)).toBeNull();
   });
 
-  it('passes the raw url through in dev (loader not wired into nx serve)', () => {
+  it('routes through the local /api/img optimizer in dev', () => {
     vi.stubEnv('PROD', false);
-    expect(optimizedImageUrl('https://x.test/a.jpg', 640)).toBe(
-      'https://x.test/a.jpg',
+    expect(optimizedImageUrl('https://x.test/a b.jpg', 640)).toBe(
+      '/api/img?url=https%3A%2F%2Fx.test%2Fa%20b.jpg&w=640&q=75',
     );
   });
 
