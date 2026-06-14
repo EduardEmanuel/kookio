@@ -313,4 +313,35 @@ describe('AuthStore — counters and hasProfileSignals', () => {
       expect(store.session()).toBeNull();
     });
   });
+
+  describe('sessionSettled and isReady (cold-load readiness)', () => {
+    it('isReady is true once auth resolves with no signed-in user', () => {
+      // onAuthStateChanged fires cb(null) on init → authReady true, no user.
+      const { store } = setup();
+      expect(store.isReady()).toBe(true);
+    });
+
+    it('flips sessionSettled true after the session fetch resolves', async () => {
+      const { store } = setup({ me: () => Promise.resolve(makeSession()) });
+      expect(store.sessionSettled()).toBe(false);
+
+      store.fetchSession();
+      await flush();
+
+      expect(store.sessionSettled()).toBe(true);
+    });
+
+    it('flips sessionSettled true even when the session fetch errors (never hangs readiness)', async () => {
+      const { store } = setup({
+        me: () => Promise.reject(new Error('auth.me 401')),
+      });
+
+      store.fetchSession();
+      await flush();
+
+      // The whole point of the fix: a failed auth.me must still settle, so a
+      // guard waiting on readiness proceeds instead of redirecting forever.
+      expect(store.sessionSettled()).toBe(true);
+    });
+  });
 });

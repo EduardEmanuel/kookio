@@ -1,6 +1,7 @@
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import { Router, type CanActivateFn, type UrlTree } from '@angular/router';
-import { map } from 'rxjs';
+import { map, of } from 'rxjs';
 import type { Observable } from 'rxjs';
 
 import { AuthStore } from './auth';
@@ -16,6 +17,13 @@ export const authGuard: CanActivateFn = (
 ): Observable<boolean | UrlTree> => {
   const router = inject(Router);
   const authStore = inject(AuthStore);
+
+  // Firebase client auth doesn't exist during SSR, so the server can't know
+  // whether the user is signed in. Render gated pages optimistically on the
+  // server and let this guard re-run on the client after hydration — otherwise
+  // a hard reload of any gated route redirects before the browser can resolve
+  // auth (the server has no session, so it bounces every cold load).
+  if (isPlatformServer(inject(PLATFORM_ID))) return of(true);
 
   return authStore
     .ready$()
@@ -58,6 +66,10 @@ export const onboardingGuard: CanActivateFn = (): Observable<
 > => {
   const router = inject(Router);
   const authStore = inject(AuthStore);
+
+  // See authGuard: never redirect during SSR (no Firebase client → no session
+  // → a cold load would always bounce to /onboarding). Enforce on the client.
+  if (isPlatformServer(inject(PLATFORM_ID))) return of(true);
 
   return authStore
     .ready$()

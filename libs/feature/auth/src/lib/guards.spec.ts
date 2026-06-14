@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, UrlTree, provideRouter } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -77,6 +78,29 @@ describe('authGuard', () => {
     );
     const url = router.serializeUrl(result as UrlTree);
     expect(url).toContain(encodeURIComponent('/pantry/details'));
+  });
+
+  describe('during SSR (server platform)', () => {
+    it('renders optimistically (returns true) even when unauthenticated, deferring the redirect to the client', async () => {
+      TestBed.configureTestingModule({
+        providers: [
+          provideRouter([]),
+          { provide: PLATFORM_ID, useValue: 'server' },
+          {
+            provide: AuthStore,
+            useValue: createMockAuthStore({ isAuthenticated: false }),
+          },
+        ],
+      });
+      const result = await TestBed.runInInjectionContext(() =>
+        firstValueFrom(
+          authGuard(fakeRoute, fakeState('/pantry')) as ReturnType<
+            typeof firstValueFrom
+          >,
+        ),
+      );
+      expect(result).toBe(true);
+    });
   });
 });
 

@@ -9,7 +9,17 @@ import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 import { EMPTY, Observable, from, of } from 'rxjs';
-import { catchError, pipe, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  filter,
+  map,
+  pipe,
+  shareReplay,
+  switchMap,
+  take,
+  tap,
+  timeout,
+} from 'rxjs';
 import { buildRefreshTimer$ } from './auth-timer';
 import {
   patchState,
@@ -82,6 +92,12 @@ type AuthState = {
   logoutError: string | null;
   loading: boolean;
   authReady: boolean;
+  // True once the post-auth session fetch (`auth.me`) has settled — resolved
+  // OR errored. Distinct from `authReady` (Firebase identity known): a guard
+  // must wait for THIS before reading `onboardingDone`, otherwise a cold load
+  // redirects an already-onboarded user to /onboarding before the session
+  // arrives. Gated through the `isReady` computed.
+  sessionSettled: boolean;
 
   // Aggregate counts populated after login (when onboardingDone) and after
   // any mutation that affects pantry/utensils/dietary/preferences. Drives
@@ -102,6 +118,7 @@ const initialState: AuthState = {
   logoutError: null,
   loading: false,
   authReady: false,
+  sessionSettled: false,
 
   pantryCount: 0,
   utensilCount: 0,
@@ -149,6 +166,8 @@ export const AuthStore = signalStore(
     ({
       currentUser,
       session,
+      authReady,
+      sessionSettled,
       pantryCount,
       utensilCount,
       dietaryCount,
@@ -157,6 +176,17 @@ export const AuthStore = signalStore(
     }) => ({
       isAuthenticated: computed(() => !!currentUser()),
       onboardingDone: computed(() => session()?.onboardingDone ?? false),
+
+      /**
+       * Auth is "ready" for routing decisions when Firebase identity is known
+       * AND — if a user is signed in — their server session has settled. A
+       * guard reading `onboardingDone` / `isAuthenticated` before this is true
+       * sees stale defaults and wrongly redirects on a cold load. `ready$()`
+       * gates on this.
+       */
+      isReady: computed(
+        () => authReady() && (!currentUser() || sessionSettled()),
+      ),
 
       /**
        * True when the user has any profile-shaped data — pantry items,
@@ -209,14 +239,18 @@ export const AuthStore = signalStore(
     const fetchSession = rxMethod<void>(
       pipe(
         switchMap(() => {
-          if (!trpc) return EMPTY;
+          if (!trpc) {
+            patchState(store, { sessionSettled: true });
+            return EMPTY;
+          }
           return from(trpc.auth.me.query()).pipe(
             tap((session) => {
-              patchState(store, { session });
+              patchState(store, { session, sessionSettled: true });
               if (session.onboardingDone) loadCounts();
             }),
             catchError((err: unknown) => {
               reportError(err, 'auth.fetchSession');
+              patchState(store, { sessionSettled: true });
               return EMPTY;
             }),
           );
@@ -224,17 +258,25 @@ export const AuthStore = signalStore(
       ),
     );
 
+    /**
+     * Emits once when auth is ready for routing (see `isReady`), then
+     * completes. Built once and shared so repeated guard calls reuse one
+     * underlying signal subscription. `timeout` is a backstop: if the session
+     * fetch somehow never settles (a stalled network with no error), readiness
+     * still resolves after 8s rather than hanging the guard on an infinite
+     * skeleton. On the server there is no Firebase client, so resolve at once
+     * and let the SSR-safe guard render optimistically.
+     */
+    const ready$Shared: Observable<void> = toObservable(store.isReady).pipe(
+      filter((ready) => ready),
+      take(1),
+      map(() => undefined),
+      timeout({ first: 8_000, with: () => of(undefined) }),
+      shareReplay(1),
+    );
+
     return {
-      ready$: (): Observable<void> => {
-        if (!auth) return of(undefined);
-        return new Observable<void>((sub) => {
-          const unsub = onAuthStateChanged(auth, () => {
-            sub.next();
-            sub.complete();
-          });
-          return unsub;
-        });
-      },
+      ready$: (): Observable<void> => (auth ? ready$Shared : of(undefined)),
 
       fetchSession,
       loadCounts,
@@ -291,7 +333,9 @@ export const AuthStore = signalStore(
           switchMap((input) => {
             if (!trpc) return EMPTY;
             return from(trpc.auth.register.mutate(input)).pipe(
-              tap((session) => patchState(store, { session })),
+              tap((session) =>
+                patchState(store, { session, sessionSettled: true }),
+              ),
               catchError((err: { message?: string }) => {
                 reportError(err, 'auth.provisionUser');
                 const msg = err.message ?? String(err);
@@ -397,7 +441,9 @@ export const AuthStore = signalStore(
               tap((token) => patchState(store, { idToken: token })),
               catchError((err: unknown) => {
                 reportError(err, 'auth.refreshToken');
-                patchState(store, { idToken: null });
+                // Token refresh failed → AppComponent won't fire fetchSession,
+                // so settle readiness here rather than waiting for the timeout.
+                patchState(store, { idToken: null, sessionSettled: true });
                 return EMPTY;
               }),
             );

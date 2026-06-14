@@ -151,10 +151,12 @@ export default class RegisterPage {
       }
     });
 
-    // Step 3: DB user provisioned → redirect home.
+    // Step 3: DB user provisioned → a freshly registered user is never
+    // onboarded, so send them into the onboarding wizard rather than the
+    // home feed (the onboardingGuard would bounce them there anyway).
     effect(() => {
       if (this.authStore.session()) {
-        void this.router.navigateByUrl(URLS.HOME);
+        void this.router.navigateByUrl(URLS.ONBOARDING);
       }
     });
   }

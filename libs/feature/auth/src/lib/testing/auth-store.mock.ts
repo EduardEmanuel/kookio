@@ -11,11 +11,13 @@ export interface MockAuthStoreOptions {
   idToken?: string | null;
   loading?: boolean;
   authReady?: boolean;
+  sessionSettled?: boolean;
   loginError?: string | null;
   registerError?: string | null;
   logoutError?: string | null;
   isAuthenticated?: boolean;
   onboardingDone?: boolean;
+  isReady?: boolean;
 
   pantryCount?: number;
   utensilCount?: number;
@@ -31,11 +33,13 @@ export interface MockAuthStore {
   idToken: WritableSignal<string | null>;
   loading: WritableSignal<boolean>;
   authReady: WritableSignal<boolean>;
+  sessionSettled: WritableSignal<boolean>;
   loginError: WritableSignal<string | null>;
   registerError: WritableSignal<string | null>;
   logoutError: WritableSignal<string | null>;
   isAuthenticated: WritableSignal<boolean>;
   onboardingDone: WritableSignal<boolean>;
+  isReady: WritableSignal<boolean>;
 
   pantryCount: WritableSignal<number>;
   utensilCount: WritableSignal<number>;
@@ -79,6 +83,7 @@ export const createMockAuthStore = (
     idToken: signal<string | null>(opts.idToken ?? null),
     loading: signal(opts.loading ?? false),
     authReady: signal(opts.authReady ?? true),
+    sessionSettled: signal(opts.sessionSettled ?? true),
     loginError: signal<string | null>(opts.loginError ?? null),
     registerError: signal<string | null>(opts.registerError ?? null),
     logoutError: signal<string | null>(opts.logoutError ?? null),
@@ -86,6 +91,7 @@ export const createMockAuthStore = (
     onboardingDone: signal(
       opts.onboardingDone ?? opts.session?.onboardingDone ?? false,
     ),
+    isReady: signal(opts.isReady ?? true),
 
     pantryCount,
     utensilCount,
