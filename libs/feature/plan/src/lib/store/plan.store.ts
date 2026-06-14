@@ -20,6 +20,7 @@ import type {
   RecipeFeedItem,
 } from '@kookio/prisma-client';
 import { reportError } from '@kookio/shared-observability';
+import { messageFromError } from '@kookio/shared-utility';
 
 import {
   MEAL_PLAN_TRPC,
@@ -107,14 +108,8 @@ export const utcMidnightIsoToLocalDate = (iso: string): Date => {
 export const todayUtcMidnightIso = (): string =>
   localDateToUtcMidnightIso(new Date());
 
-const errorMessage = (action: string, err: unknown): string => {
-  const fallback = `Could not ${action} meal plan`;
-  if (typeof err === 'object' && err !== null && 'message' in err) {
-    const msg = (err as { message?: unknown }).message;
-    return typeof msg === 'string' && msg.length > 0 ? msg : fallback;
-  }
-  return fallback;
-};
+const errorMessage = (action: string, err: unknown): string =>
+  messageFromError(err, `Could not ${action} meal plan`);
 
 const toIso = (d: Date): string => d.toISOString();
 

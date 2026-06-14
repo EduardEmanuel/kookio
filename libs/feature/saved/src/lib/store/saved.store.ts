@@ -15,6 +15,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { AuthStore } from '@kookio/feature-auth';
 import type { SavedRecipeRow } from '@kookio/prisma-client';
 import { reportError } from '@kookio/shared-observability';
+import { messageFromError } from '@kookio/shared-utility';
 
 import { SAVED_TRPC } from '../saved-trpc';
 
@@ -57,14 +58,8 @@ const initialState: SavedState = {
   view: 'FLAT',
 };
 
-const errorMessage = (action: string, err: unknown): string => {
-  const fallback = `Could not ${action}`;
-  if (typeof err === 'object' && err !== null && 'message' in err) {
-    const msg = (err as { message?: unknown }).message;
-    return typeof msg === 'string' && msg.length > 0 ? msg : fallback;
-  }
-  return fallback;
-};
+const errorMessage = (action: string, err: unknown): string =>
+  messageFromError(err, `Could not ${action}`);
 
 const UNCATEGORIZED_KEY = '__uncategorized__';
 

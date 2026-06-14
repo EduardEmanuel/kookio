@@ -15,6 +15,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { AuthStore } from '@kookio/feature-auth';
 import type { IngredientCategory } from '@kookio/prisma-client';
 import { reportError } from '@kookio/shared-observability';
+import { messageFromError } from '@kookio/shared-utility';
 
 import { GROCERIES_TRPC, type GroceryItem } from '../groceries-trpc';
 
@@ -64,14 +65,8 @@ const initialState: GroceriesState = {
   addBoughtResult: null,
 };
 
-const errorMessage = (action: string, err: unknown): string => {
-  const fallback = `Could not ${action} groceries`;
-  if (typeof err === 'object' && err !== null && 'message' in err) {
-    const msg = (err as { message?: unknown }).message;
-    return typeof msg === 'string' && msg.length > 0 ? msg : fallback;
-  }
-  return fallback;
-};
+const errorMessage = (action: string, err: unknown): string =>
+  messageFromError(err, `Could not ${action} groceries`);
 
 export type GroceryGroup = {
   category: IngredientCategory | null;
