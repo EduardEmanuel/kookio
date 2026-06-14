@@ -56,6 +56,16 @@ const createPrismaClient = () => {
     connectionString:
       process.env['DATABASE_URL'] ??
       'postgresql://placeholder:placeholder@localhost:26257/kookio',
+    // A single statement must not pin a serverless function for the whole 60s
+    // Vercel ceiling — CockroachDB enforces this as the Postgres
+    // `statement_timeout`. Generous enough for app queries and batched seeds.
+    statement_timeout: 20_000,
+    // Fail fast if the pool can't hand out a connection instead of hanging.
+    connectionTimeoutMillis: 10_000,
+    // Cap the per-instance pg pool. Vercel runs many concurrent function
+    // instances, so a large pool per instance multiplies into CockroachDB
+    // connection-limit exhaustion under load; one request needs only a few.
+    max: 5,
   });
   return new PrismaClient({ adapter }).$extends(retryExtension);
 };
