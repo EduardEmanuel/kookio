@@ -2,6 +2,7 @@
 
 import analog from '@analogjs/platform';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 // @ts-expect-error @tailwindcss/vite currently uses mts. TypeScript is complaining this, but it works as expected.
 import tailwindcss from '@tailwindcss/vite';
 
@@ -20,7 +21,11 @@ export default defineConfig(({ mode }) => {
       outDir: '../../dist/./apps/web/client',
       reportCompressedSize: true,
       target: ['es2020'],
-      sourcemap: mode !== 'production',
+      // Generate source maps in production too, but `hidden` (no
+      // sourceMappingURL comment) so browsers never fetch them — @sentry/vite-
+      // plugin uploads them to Sentry for readable stack traces, then deletes
+      // the .map files from the bundle (see filesToDeleteAfterUpload below).
+      sourcemap: mode === 'production' ? 'hidden' : true,
     },
     css: {
       preprocessorOptions: {
@@ -105,6 +110,24 @@ export default defineConfig(({ mode }) => {
       }),
 
       nxViteTsPaths(),
+
+      // Upload source maps to Sentry and tag a release (the git SHA), so
+      // production stack traces are readable and errors point at the deploy
+      // that introduced them. A no-op without SENTRY_AUTH_TOKEN, so local and
+      // PR builds stay green and never attempt an upload. Must come last.
+      sentryVitePlugin({
+        org: process.env['SENTRY_ORG'],
+        project: process.env['SENTRY_PROJECT'],
+        authToken: process.env['SENTRY_AUTH_TOKEN'],
+        disable: !process.env['SENTRY_AUTH_TOKEN'],
+        telemetry: false,
+        release: { name: process.env['VERCEL_GIT_COMMIT_SHA'] },
+        sourcemaps: {
+          // Delete the .map files after upload so they're never served. Glob is
+          // resolved from the working directory (the repo root under nx).
+          filesToDeleteAfterUpload: ['./dist/apps/web/**/*.map'],
+        },
+      }),
     ],
     test: {
       globals: true,
