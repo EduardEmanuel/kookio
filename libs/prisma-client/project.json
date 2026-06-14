@@ -1,7 +1,7 @@
 {
   "name": "prisma-client",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/prisma/client/src",
+  "sourceRoot": "libs/prisma-client/src",
   "projectType": "library",
   "tags": ["scope:prisma", "type:client"],
   "targets": {
@@ -15,10 +15,10 @@
         }
       ],
       "options": {
-        "outputPath": "dist/libs/prisma/client",
-        "main": "libs/prisma/client/src/index.ts",
-        "tsConfig": "libs/prisma/client/tsconfig.lib.json",
-        "assets": ["libs/prisma/client/*.md"]
+        "outputPath": "dist/libs/prisma-client",
+        "main": "libs/prisma-client/src/index.ts",
+        "tsConfig": "libs/prisma-client/tsconfig.lib.json",
+        "assets": ["libs/prisma-client/*.md"]
       }
     },
     "generate": {
@@ -27,7 +27,7 @@
         "cwd": ".",
         "commands": [
           {
-            "command": "npx prisma generate --schema=libs/prisma/client/schema.prisma"
+            "command": "npx prisma generate --schema=libs/prisma-client/schema.prisma"
           }
         ]
       }
@@ -50,7 +50,7 @@
         "cwd": ".",
         "commands": [
           {
-            "command": "npx prisma migrate deploy --schema=libs/prisma/client/schema.prisma"
+            "command": "npx prisma migrate deploy --schema=libs/prisma-client/schema.prisma"
           }
         ]
       }
@@ -73,7 +73,7 @@
         "cwd": ".",
         "commands": [
           {
-            "command": "npx prisma migrate dev --schema=libs/prisma/client/schema.prisma"
+            "command": "npx prisma migrate dev --schema=libs/prisma-client/schema.prisma"
           }
         ]
       }
@@ -92,7 +92,7 @@
         "cwd": ".",
         "commands": [
           {
-            "command": "npx prisma migrate dev --create-only --schema=libs/prisma/client/schema.prisma"
+            "command": "npx prisma migrate dev --create-only --schema=libs/prisma-client/schema.prisma"
           }
         ],
         "forwardAllArgs": true
@@ -117,7 +117,7 @@
         "cwd": ".",
         "commands": [
           {
-            "command": "npx prisma migrate reset --force --schema=libs/prisma/client/schema.prisma"
+            "command": "npx prisma migrate reset --force --schema=libs/prisma-client/schema.prisma"
           }
         ]
       }
@@ -178,7 +178,7 @@
         "cwd": ".",
         "commands": [
           {
-            "command": "npx prisma studio --schema=libs/prisma/client/schema.prisma"
+            "command": "npx prisma studio --schema=libs/prisma-client/schema.prisma"
           }
         ]
       }
@@ -192,7 +192,7 @@
         }
       ],
       "options": {
-        "config": "libs/prisma/client/vite.config.ts",
+        "config": "libs/prisma-client/vite.config.ts",
         "passWithNoTests": true
       }
     }

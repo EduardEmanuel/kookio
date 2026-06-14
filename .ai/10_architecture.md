@@ -31,7 +31,7 @@ apps/
 The lib tree is organized **by scope, then by domain** — NOT by the classic
 NX `ui / data-access / util / types` taxonomy. There is no `data-access` lib
 (a domain's stores and services live with its feature) and no `types` lib
-(types live with the code that owns them — `libs/prisma/client/src/lib/types/`,
+(types live with the code that owns them — `libs/prisma-client/src/lib/types/`,
 `libs/feature/shell/src/lib/models/`, …).
 
 ```text
@@ -40,8 +40,8 @@ libs/
 │   ├── auth/         AuthStore, route guards, Firebase client glue
 │   ├── shell/        app shell — nav, layout, route map, breakpoint service
 │   └── dashboard/ groceries/ onboarding/ pantry/ plan/ recipes/ saved/
-├── prisma/    ← persistence layer
-│   └── client/       extended Prisma client + generated Zod schemas + per-model types
+├── prisma-client/   ← persistence layer (flat, single lib): extended Prisma
+│                       client + generated Zod schemas + per-model types
 ├── server/    ← server-only code; never imported from browser code
 │   ├── auth/         Firebase Admin SDK, token verification
 │   ├── logger/       Pino server logger
@@ -69,7 +69,7 @@ libs/
 > (browser-safe); `shared/{ui,observability}` is `scope:frontend` (`ui` pulls in
 > Angular, `observability` the Sentry Angular SDK);
 > `feature/*` is `scope:frontend`; `server/*` is `scope:server`;
-> `prisma/client` is `scope:prisma`. The full tag matrix and the rules it
+> `prisma-client` is `scope:prisma`. The full tag matrix and the rules it
 > enforces live in `23_nx.md`.
 
 ## Filesystem-based Routing (AnalogJS)

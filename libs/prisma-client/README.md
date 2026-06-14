@@ -17,7 +17,7 @@ Prisma schema and **server-only data-access layer** for the monorepo. This packa
 ## Layout
 
 ```
-libs/prisma/client/
+libs/prisma-client/
 ├── schema.prisma           # CockroachDB schema + generator options
 ├── migrations/             # Prisma migration history
 ├── SQLs/bootstrap...sql    # Handy SQL script for creating dev/test/prod DBs & roles
@@ -39,9 +39,9 @@ libs/prisma/client/
 ```json
 {
   "paths": {
-    "@kookio/prisma-client": ["libs/prisma/client/src/index.ts"],
-    "@kookio/prisma-client/dtos": ["libs/prisma/client/src/dtos/index.ts"],
-    "@kookio/prisma-client/prisma-zod-generator": ["libs/prisma/client/src/prisma-zod-generator/index.ts"]
+    "@kookio/prisma-client": ["libs/prisma-client/src/index.ts"],
+    "@kookio/prisma-client/dtos": ["libs/prisma-client/src/dtos/index.ts"],
+    "@kookio/prisma-client/prisma-zod-generator": ["libs/prisma-client/src/prisma-zod-generator/index.ts"]
   }
 }
 ```

@@ -11,7 +11,7 @@ Consumers:
 
 - `apps/web` uses the data to render pantry examples on the landing flow.
 - `apps/web/src/app/services/ingredient/ingredient.service.spec.ts` relies on the list when validating service logic.
-- `libs/prisma/client/src/scripts/seed.ts` seeds CockroachDB with the same sample rows when running `nx seed prisma-client`.
+- `libs/prisma-client/src/scripts/seed.ts` seeds CockroachDB with the same sample rows when running `nx seed prisma-client`.
 
 ## Usage
 
