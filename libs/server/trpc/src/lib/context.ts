@@ -69,9 +69,7 @@ export type Context = {
 // Adapter hook (set from a real adapter later). Returns both the decoded,
 // trusted Firebase identity and the provisioned session — `auth.register` needs
 // the former to bind a User row to the verified uid, not a client-supplied one.
-export type SessionAdapter = (
-  token?: string,
-) => Promise<{
+export type SessionAdapter = (token?: string) => Promise<{
   firebaseUser: FirebaseUser | null;
   session: AuthSession | null;
 }>;
