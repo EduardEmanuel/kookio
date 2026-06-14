@@ -123,5 +123,6 @@
       "tags": ["type:e2e", "scope:web"],
       "dependsOn": ["shared-mock", "prisma-client"]
     }
-  }
+  },
+  "analytics": false
 }
