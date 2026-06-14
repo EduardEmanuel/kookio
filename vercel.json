@@ -1,6 +1,6 @@
 {
   "regions": ["fra1"],
-  "crons": [],
+  "crons": [{ "path": "/api/cron/redis-keepalive", "schedule": "0 6 * * 1" }],
   "images": {
     "domains": ["www.themealdb.com"],
     "sizes": [48, 64, 96, 128, 256, 320, 480, 640, 960],
