@@ -68,7 +68,7 @@ Connection URLs are stored as secrets in:
 - **GitHub** → Settings → Environments (`development` / `testing` / `production`)
 
 For the full database architecture, roles, and migration flow, see
-[`libs/prisma/client/README.md`](./libs/prisma/client/README.md).
+[`libs/prisma-client/README.md`](./libs/prisma-client/README.md).
 
 ## 🗂 Workspace map
 
@@ -85,7 +85,7 @@ libs/
     auth/       -> Firebase auth guards, interceptors, AuthStore
     shell/      -> App shell layout components
   prisma/
-    client/     -> Prisma schema, migrations, generated Zod schemas, seed (libs/prisma/client/README.md)
+    client/     -> Prisma schema, migrations, generated Zod schemas, seed (libs/prisma-client/README.md)
   server/
     auth/       -> Firebase Admin SDK token verification
     logger/     -> Shared Pino wrapper for backend + scripts (libs/server/logger/README.md)
@@ -104,7 +104,7 @@ Each project README is the source of truth for its targets, environment needs, a
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Analog app architecture, routes, icons                      | `apps/web/README.md`                                                                                                                                |
 | Playwright/E2E strategy                                     | `apps/web-e2e/README.md`                                                                                                                            |
-| Prisma schema, migrations, seeding, Cockroach SQL bootstrap | `libs/prisma/client/README.md`                                                                                                                      |
+| Prisma schema, migrations, seeding, Cockroach SQL bootstrap | `libs/prisma-client/README.md`                                                                                                                      |
 | ER diagram (interactive, click-through relationships)       | [dbdocs.io/dinea.eduard/kookio-db](https://dbdocs.io/dinea.eduard/kookio-db?schema=public&view=relationships) — password protected (ask maintainer) |
 | ER diagram (offline PDF)                                    | [`Kookio_DB_Diagram.pdf`](./Kookio_DB_Diagram.pdf)                                                                                                  |
 | tRPC server/router + configs                                | `libs/server/trpc/README.md`                                                                                                                        |
@@ -116,7 +116,7 @@ For the full list of Nx targets run `npx nx graph` or inspect each `project.json
 
 - **Nx orchestration:** `package.json` scripts forward to Nx targets. Use `nx graph` or `nx show project <name>` to inspect configs.
 - **Environment parity:** `scripts/with-vercel-env.mjs` pulls Vercel env vars into `tmp/kookio.env` and runs Nx commands with those variables injected. All scripts prefixed with `npm run with:env -- --env=<stage>` rely on it.
-- **Prisma/DB:** CockroachDB connection lives in `libs/prisma/client/schema.prisma` (`provider = "cockroachdb"`, `DATABASE_URL`). Run `npm run migrate-dev:prisma-client` to generate + migrate locally, `npm run migrate-deploy:prisma-client` for production/test deploys, and `npm run seed:prisma-client` (requires `SEED_USER_ID`) for fixtures.
+- **Prisma/DB:** CockroachDB connection lives in `libs/prisma-client/schema.prisma` (`provider = "cockroachdb"`, `DATABASE_URL`). Run `npm run migrate-dev:prisma-client` to generate + migrate locally, `npm run migrate-deploy:prisma-client` for production/test deploys, and `npm run seed:prisma-client` (requires `SEED_USER_ID`) for fixtures.
 - **Monitoring helpers:** `npm run bench:preview` exercises a few queries against the preview DB to measure latency (implemented in `scripts/bench-preview.mjs`). See `scripts/README.md` for script details.
 
 ## ✅ Testing & quality

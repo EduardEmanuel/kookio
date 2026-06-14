@@ -14,7 +14,7 @@ logger.info({ route: 'ingredient.create' }, 'ℹ️ Ingredient created');
 - Auto-detects production via `process.env.VERCEL === '1'` or `NODE_ENV === 'production'`.
 - In non-prod, enables the `pino-pretty` transport with colorized output, timestamp translation, and hidden `pid/hostname` for friendlier local debugging.
 
-Consumers include `libs/server/trpc`, `libs/prisma/client/src/scripts/seed.ts`, `apps/web` Nitro routes, E2E helpers, and build scripts (`apps/web/scripts/*`).
+Consumers include `libs/server/trpc`, `libs/prisma-client/src/scripts/seed.ts`, `apps/web` Nitro routes, E2E helpers, and build scripts (`apps/web/scripts/*`).
 
 ## Nx targets
 

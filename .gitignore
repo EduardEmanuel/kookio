@@ -57,8 +57,8 @@ vitest.config.*.timestamp*
 .env*.local
 
 # Prisma generated output (regenerated via `nx run prisma-client:generate`)
-libs/prisma/client/src/prisma-zod-generator/
-libs/prisma/client/src/generated/
+libs/prisma-client/src/prisma-zod-generator/
+libs/prisma-client/src/generated/
 
 # BEGIN: AI Setup (auto-generated — do not edit manually)
 .ai/guidelines.md

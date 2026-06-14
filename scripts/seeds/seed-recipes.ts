@@ -343,11 +343,11 @@ const logReport = async (): Promise<void> => {
 export const runSeedRecipes = async (): Promise<void> => {
   const INPUT_PATH = path.resolve(
     __dirname,
-    '../../libs/prisma/client/seed-data/recipes.json',
+    '../../libs/prisma-client/seed-data/recipes.json',
   );
   const MERGE_CANDIDATES_PATH = path.resolve(
     __dirname,
-    '../../libs/prisma/client/seed-data/merge-candidates.json',
+    '../../libs/prisma-client/seed-data/merge-candidates.json',
   );
 
   if (!fs.existsSync(INPUT_PATH)) {

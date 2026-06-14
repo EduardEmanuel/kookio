@@ -16,9 +16,9 @@ import { defineConfig } from 'prisma/config';
 // now run over `url` through the driver adapter, so DIRECT_DATABASE_URL is no
 // longer consumed here.
 export default defineConfig({
-  schema: 'libs/prisma/client/schema.prisma',
+  schema: 'libs/prisma-client/schema.prisma',
   migrations: {
-    path: 'libs/prisma/client/migrations',
+    path: 'libs/prisma-client/migrations',
   },
   datasource: {
     url:

@@ -1,8 +1,8 @@
 # Prisma + Zod Guidelines
 
-> **Status: Active.** Prisma v6 + CockroachDB schema lives at `libs/prisma/client/schema.prisma`, migrations at `libs/prisma/client/migrations/`, seed scripts at `scripts/seeds/`, seed data at `libs/prisma/client/seed-data/`. `prisma-zod-generator` is wired up; per-model zod overrides live in `libs/prisma/client/src/lib/prisma-zod-overrides/`. Per-model derived types (e.g. `*SeedRow` shapes) live in `libs/prisma/client/src/lib/types/{model}.ts`, derived from generated schemas via `.pick()` / `.omit()` / `.extend()` and `z.output<typeof X>` — **never hand-written interfaces that duplicate the Prisma shape**. Shared ID schemas (`SemanticIdSchema`, `UuidIdSchema`) live in `libs/prisma/client/src/lib/types/ids.ts`. The Prisma client instance + retry / pagination helpers are isolated behind the `@kookio/prisma-client/server` sub-path; the root barrel is browser-safe (types + zod schemas only) and ESLint blocks `/server` imports from front-end globs. tRPC routers consume `ctx.prisma.*` directly; retry-on-conflict for CockroachDB is implemented once as a Prisma client extension in [prisma-client.ts](../libs/prisma/client/src/lib/prisma-client.ts) and applied globally to every mutation.
+> **Status: Active.** Prisma v6 + CockroachDB schema lives at `libs/prisma-client/schema.prisma`, migrations at `libs/prisma-client/migrations/`, seed scripts at `scripts/seeds/`, seed data at `libs/prisma-client/seed-data/`. `prisma-zod-generator` is wired up; per-model zod overrides live in `libs/prisma-client/src/lib/prisma-zod-overrides/`. Per-model derived types (e.g. `*SeedRow` shapes) live in `libs/prisma-client/src/lib/types/{model}.ts`, derived from generated schemas via `.pick()` / `.omit()` / `.extend()` and `z.output<typeof X>` — **never hand-written interfaces that duplicate the Prisma shape**. Shared ID schemas (`SemanticIdSchema`, `UuidIdSchema`) live in `libs/prisma-client/src/lib/types/ids.ts`. The Prisma client instance + retry / pagination helpers are isolated behind the `@kookio/prisma-client/server` sub-path; the root barrel is browser-safe (types + zod schemas only) and ESLint blocks `/server` imports from front-end globs. tRPC routers consume `ctx.prisma.*` directly; retry-on-conflict for CockroachDB is implemented once as a Prisma client extension in [prisma-client.ts](../libs/prisma-client/src/lib/prisma-client.ts) and applied globally to every mutation.
 >
-> **Deliberately rejected — do not reintroduce.** A repository layer (`libs/prisma/client/src/lib/repositories/{model}/`), a `src/dtos/` folder mirroring CRUD operations (`CreateOneXDTO`, `FindManyXResultDTO`, etc.), and a `scripts/generate-prisma-zod-repositories.mjs` scaffold generator have all been considered and rejected. **Rationale baked in here so future readers don't have to dig:** Prisma Client is already a type-safe DB abstraction; tRPC is already the business-logic / transport layer. A repository class wrapping `prisma.<model>.<op>()` adds boilerplate without isolation benefit, mirrors a Java/Spring-style architecture that doesn't fit AnalogJS + tRPC + Prisma, and would force every consumer (routers, seeds, scripts) through a redundant indirection. If you find yourself wanting one, the right move is almost always: (a) put the logic in a tRPC procedure with `ctx.prisma`, (b) put a multi-step write inside an interactive transaction (`ctx.prisma.$transaction(async tx => ...)`) — not a separate class.
+> **Deliberately rejected — do not reintroduce.** A repository layer (`libs/prisma-client/src/lib/repositories/{model}/`), a `src/dtos/` folder mirroring CRUD operations (`CreateOneXDTO`, `FindManyXResultDTO`, etc.), and a `scripts/generate-prisma-zod-repositories.mjs` scaffold generator have all been considered and rejected. **Rationale baked in here so future readers don't have to dig:** Prisma Client is already a type-safe DB abstraction; tRPC is already the business-logic / transport layer. A repository class wrapping `prisma.<model>.<op>()` adds boilerplate without isolation benefit, mirrors a Java/Spring-style architecture that doesn't fit AnalogJS + tRPC + Prisma, and would force every consumer (routers, seeds, scripts) through a redundant indirection. If you find yourself wanting one, the right move is almost always: (a) put the logic in a tRPC procedure with `ctx.prisma`, (b) put a multi-step write inside an interactive transaction (`ctx.prisma.$transaction(async tx => ...)`) — not a separate class.
 
 ## Stack
 
@@ -21,7 +21,7 @@ scripts/
     ├── seed-catalog.ts
     └── ...
 
-libs/prisma/client/
+libs/prisma-client/
 ├── schema.prisma                 ← single source of truth for the data model
 ├── migrations/                   ← prisma-managed, do not edit by hand
 ├── seed-data/                    ← static seed datasets (JSON / TS)
@@ -102,7 +102,7 @@ There is intentionally **no** `repositories/` folder, **no** `src/dtos/` folder,
 ### Singleton
 
 - Always use the singleton instance exported from
-  `libs/prisma/client/src/lib/prisma-client.ts` — never call `new PrismaClient()`
+  `libs/prisma-client/src/lib/prisma-client.ts` — never call `new PrismaClient()`
   directly in app code or scripts.
 - The singleton applies a retry extension that wraps every mutation
   (`create`, `createMany`, `update`, `updateMany`, `delete`, `deleteMany`,
@@ -283,7 +283,7 @@ if (process.env['NODE_ENV'] === 'production') {
 
 ### Setup
 
-- The generator is already configured in [schema.prisma](../libs/prisma/client/schema.prisma):
+- The generator is already configured in [schema.prisma](../libs/prisma-client/schema.prisma):
 
 ```prisma
   generator zod {
@@ -432,7 +432,7 @@ grep-able dev/E2E logs. Every other catalog gets Prisma's runtime
 `@default(uuid())`. Onboarding's commit input therefore picks per field:
 
 ```typescript
-// libs/prisma/client/src/lib/types/onboarding.ts
+// libs/prisma-client/src/lib/types/onboarding.ts
 import { SemanticIdSchema, UuidIdSchema } from './ids';
 
 export const OnboardingCommitInputSchema = z.object({
@@ -444,7 +444,7 @@ export const OnboardingCommitInputSchema = z.object({
 });
 ```
 
-Use the named schemas from `libs/prisma/client/src/lib/types/ids.ts`
+Use the named schemas from `libs/prisma-client/src/lib/types/ids.ts`
 instead of inline `z.string().uuid()` / `z.string().min(1)`. The named
 import documents intent — a reader of the router can tell at a glance
 whether an endpoint will reject a non-UUID payload, without having to
@@ -457,7 +457,7 @@ use `UuidIdSchema`. When in doubt, look at the seed for that table.
 
 ## Type derivation
 
-Per-model derived types live in `libs/prisma/client/src/lib/types/{model}.ts`.
+Per-model derived types live in `libs/prisma-client/src/lib/types/{model}.ts`.
 They derive from the generated Zod schemas via `.pick()`, `.omit()`, `.extend()`
 and `z.output<typeof X>`. **Never write a local TypeScript interface that
 duplicates a Prisma model shape** — a schema change must propagate to every
@@ -465,7 +465,7 @@ consumer through one regenerate-and-rebuild cycle, and a hand-written interface
 silently breaks that contract.
 
 ```typescript
-// libs/prisma/client/src/lib/types/recipe.ts
+// libs/prisma-client/src/lib/types/recipe.ts
 import z from 'zod';
 import { RecipeInputSchema } from '../../prisma-zod-generator/schemas/index';
 import { RecipeIngredientSeedRowSchema } from './recipe-ingredient';
@@ -516,10 +516,10 @@ already encode the compound shape.
 
 `prisma-zod-generator` produces `FindManyResultSchema` with `pageSize: min(1)` and
 `totalPages: min(0)`. Both are wrong for an empty result page (0 items, 1 total page).
-Every affected model has an override under `libs/prisma/client/src/lib/prisma-zod-overrides/{model}.ts`:
+Every affected model has an override under `libs/prisma-client/src/lib/prisma-zod-overrides/{model}.ts`:
 
 ```typescript
-// libs/prisma/client/src/lib/prisma-zod-overrides/recipe.ts
+// libs/prisma-client/src/lib/prisma-zod-overrides/recipe.ts
 import { z } from 'zod';
 import { RecipeFindManyResultSchema as Base } from '../../prisma-zod-generator/schemas/index';
 
@@ -547,11 +547,11 @@ generator — the project doesn't have one and won't get one. The minimum steps:
    SQL, then `migrate-deploy`). For CockroachDB enum gotchas, see the
    "spurious DROP TYPE" note in the Migrations section.
 3. If the model needs derived types (seed rows, subset shapes), add a file at
-   `libs/prisma/client/src/lib/types/{model}.ts` and re-export it from
+   `libs/prisma-client/src/lib/types/{model}.ts` and re-export it from
    `src/lib/types/index.ts` and the public barrel `src/index.ts` (alphabetical
    order in both).
 4. If the generated schemas need overrides (e.g. pagination floors), add a
-   file at `libs/prisma/client/src/lib/prisma-zod-overrides/{model}.ts` and
+   file at `libs/prisma-client/src/lib/prisma-zod-overrides/{model}.ts` and
    re-export it from the public barrel **after** the generator output.
 5. Use the new model directly via `ctx.prisma.<model>.<op>()` in the relevant
    tRPC router. Wrap multi-step writes in `ctx.prisma.$transaction(async tx =>

@@ -160,7 +160,7 @@ const logReport = async (): Promise<void> => {
 export const runSeedCatalog = async (): Promise<void> => {
   const INPUT_PATH = path.resolve(
     __dirname,
-    '../../libs/prisma/client/seed-data/catalog.json',
+    '../../libs/prisma-client/seed-data/catalog.json',
   );
 
   if (!fs.existsSync(INPUT_PATH)) {

@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import { logger } from '@kookio/server-logger';
 
-const ROOT = 'libs/prisma/client/migrations';
+const ROOT = 'libs/prisma-client/migrations';
 const NEEDLE = 'crdb_internal_region';
 
 let found = false;

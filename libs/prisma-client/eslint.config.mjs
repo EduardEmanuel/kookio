@@ -1,9 +1,9 @@
-import baseConfig from '../../../eslint.config.mjs';
+import baseConfig from '../../eslint.config.mjs';
 
 export default [
   ...baseConfig,
   {
-    ignores: ['src/prisma-zod-generator/**'],
+    ignores: ['src/prisma-zod-generator/**', 'src/generated/**'],
   },
   {
     files: ['**/*.json'],
@@ -13,6 +13,7 @@ export default [
         {
           ignoredFiles: [
             '{projectRoot}/src/scripts/**',
+            '{projectRoot}/src/generated/**',
             '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
             '{projectRoot}/vite.config.{js,ts,mjs,mts}',
           ],

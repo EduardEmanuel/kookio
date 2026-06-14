@@ -12,7 +12,7 @@ production stack. Keep this short and practical — link out for depth.
 
 Related references:
 
-- [`libs/prisma/client/README.md`](libs/prisma/client/README.md) — database
+- [`libs/prisma-client/README.md`](libs/prisma-client/README.md) — database
   architecture, migration flow, schema change patterns
 - [`.ai/12_prisma-zod.md`](.ai/12_prisma-zod.md) — Prisma + CockroachDB gotchas
 - [ER diagram (interactive)](https://dbdocs.io/dinea.eduard/kookio-db?schema=public&view=relationships)
@@ -79,15 +79,15 @@ Related references:
 ```bash
 # Mark the failed migration as rolled back
 npx prisma migrate resolve --rolled-back <migration_name> \
-  --schema=libs/prisma/client/schema.prisma
+  --schema=libs/prisma-client/schema.prisma
 
 # Drop any partially-created enum (confirm name from error log)
-npx prisma db execute --stdin --schema=libs/prisma/client/schema.prisma <<SQL
+npx prisma db execute --stdin --schema=libs/prisma-client/schema.prisma <<SQL
 DROP TYPE IF EXISTS "YourEnum";
 SQL
 
 # Delete local migration dir, regenerate without the bad DROP, redeploy
-rm -rf libs/prisma/client/migrations/<migration_name>
+rm -rf libs/prisma-client/migrations/<migration_name>
 npm run migrate-dev-create-only:prisma-client
 # Manually remove the `DROP TYPE "public"."crdb_internal_region";` line
 npm run migrate-deploy:prisma-client
@@ -100,7 +100,7 @@ auto-scale to zero; first request may cold-start.
 **For P3009**: inspect `_prisma_migrations` table:
 
 ```bash
-npx prisma db execute --stdin --schema=libs/prisma/client/schema.prisma <<SQL
+npx prisma db execute --stdin --schema=libs/prisma-client/schema.prisma <<SQL
 SELECT migration_name, finished_at, rolled_back_at, applied_steps_count, logs
 FROM _prisma_migrations
 ORDER BY started_at DESC

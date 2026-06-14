@@ -1,7 +1,7 @@
 ---------------------------
 -- Kookio Databases & Roles
 -- !! Run this script file in the SQL shell from CockroachDB before you delete defaultdb !!
--- (Also see: libs/prisma/client/README.md)
+-- (Also see: libs/prisma-client/README.md)
 ---------------------------
 
 -- Databases (3 storage tiers)

@@ -26,7 +26,7 @@ const CONCURRENCY = 16;
 
 const catalog = JSON.parse(
   readFileSync(
-    path.join(ROOT, 'libs/prisma/client/seed-data/recipes.json'),
+    path.join(ROOT, 'libs/prisma-client/seed-data/recipes.json'),
     'utf8',
   ),
 ) as { recipes: Array<{ imageUrl?: string }> };
