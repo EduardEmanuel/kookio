@@ -94,12 +94,25 @@ export const h3ApplyRateLimit = async (
     };
   }
 
-  const result = await rateLimitFixedWindow(
-    bucket,
-    identifier,
-    max,
-    windowSeconds,
-  );
+  let result: RateLimitResult;
+  try {
+    result = await rateLimitFixedWindow(bucket, identifier, max, windowSeconds);
+  } catch {
+    // Fail OPEN: the rate-limit backend (Redis) is unavailable. A best-effort
+    // limiter must never 500 the endpoint it protects — redis.ts already logs
+    // the connection failure (deduped), so we simply allow the request through.
+    setHeader(event, 'X-RateLimit-Limit', String(max));
+    setHeader(event, 'X-RateLimit-Remaining', String(max));
+    return {
+      allowed: true,
+      count: 0,
+      remaining: max,
+      resetAtMs: Date.now() + windowSeconds * 1000,
+      windowSeconds,
+      key: redisKey('rl', bucket, identifier),
+      identifier,
+    };
+  }
 
   setHeader(event, 'X-RateLimit-Limit', String(max));
   setHeader(event, 'X-RateLimit-Remaining', String(result.remaining));

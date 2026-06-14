@@ -55,17 +55,30 @@ export type MealPlanDraftStore = {
   clear(userId: string): Promise<void>;
 };
 
+export type FirebaseUser = { uid: string; email: string };
+
 export type Context = {
   token?: string;
+  firebaseUser: FirebaseUser | null;
   session: AuthSession | null;
   prisma: typeof prisma;
   groceriesBought: GroceriesBoughtStore;
   mealPlanDraft: MealPlanDraftStore;
 };
 
-// Adapter hook (set from a real adapter later)
-export type SessionAdapter = (token?: string) => Promise<AuthSession | null>;
-let resolveSession: SessionAdapter = async () => null;
+// Adapter hook (set from a real adapter later). Returns both the decoded,
+// trusted Firebase identity and the provisioned session — `auth.register` needs
+// the former to bind a User row to the verified uid, not a client-supplied one.
+export type SessionAdapter = (
+  token?: string,
+) => Promise<{
+  firebaseUser: FirebaseUser | null;
+  session: AuthSession | null;
+}>;
+let resolveSession: SessionAdapter = async () => ({
+  firebaseUser: null,
+  session: null,
+});
 export const setSessionResolver = (fn: SessionAdapter) => {
   resolveSession = fn;
 };
@@ -135,10 +148,11 @@ export const createContext = async (opts: ContextOptions): Promise<Context> => {
   const headers = opts.node?.req?.headers ?? opts?.req?.headers;
   const tokenHeader = getHeaderValue(headers, 'authorization');
   const token = tokenHeader?.replace(/^Bearer\s+/i, '');
-  const session = await resolveSession(token);
+  const { firebaseUser, session } = await resolveSession(token);
 
   return {
     token,
+    firebaseUser,
     session,
     prisma,
     groceriesBought: groceriesBoughtStore,
