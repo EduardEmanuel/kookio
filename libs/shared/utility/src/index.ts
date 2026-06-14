@@ -8,6 +8,7 @@
 // `IMAGE_LOADER` provider in `app.config.ts`, which is on every route's SSR
 // critical path; importing it via the barrel would drag the whole barrel's
 // graph along. Reach for it via `@kookio/shared-utility/image`.
+export * from './lib/error-message';
 export * from './lib/labeling/ingredient-labelers';
 export * from './lib/labeling/user-labelers';
 export * from './lib/material-symbols-icons';

@@ -27,6 +27,28 @@ export const getAdminApp = () => {
 
 export const getAdminAuth = () => getAuth(getAdminApp());
 
+/**
+ * Race a promise against a timeout so a hung dependency (e.g. Firebase's
+ * public-key refresh fetch) can't pin a serverless function. On timeout the
+ * promise rejects, which the caller treats as a verification failure (deny).
+ */
+const withTimeout = <T>(
+  p: Promise<T>,
+  ms: number,
+  label: string,
+): Promise<T> => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`${label} timed out after ${ms}ms`)),
+      ms,
+    );
+  });
+  return Promise.race([p, timeout]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
+};
+
 export type FirebaseUser = { uid: string; email: string };
 
 export type AuthResolution = {
@@ -53,7 +75,11 @@ export const resolveAuth = async (
   let email: string | undefined;
 
   try {
-    const decoded = await getAdminAuth().verifyIdToken(idToken);
+    const decoded = await withTimeout(
+      getAdminAuth().verifyIdToken(idToken),
+      8000,
+      'verifyIdToken',
+    );
     uid = decoded.uid;
     email = decoded.email;
   } catch (err) {

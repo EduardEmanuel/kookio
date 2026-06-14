@@ -14,6 +14,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { AuthStore } from '@kookio/feature-auth';
 import type { PantryItemWithIngredient } from '@kookio/prisma-client';
 import { reportError } from '@kookio/shared-observability';
+import { messageFromError } from '@kookio/shared-utility';
 
 import {
   PANTRY_TRPC,
@@ -48,14 +49,8 @@ const initialState: PantryState = {
   error: null,
 };
 
-const errorMessage = (action: string, err: unknown): string => {
-  const fallback = `Could not ${action} pantry item`;
-  if (typeof err === 'object' && err !== null && 'message' in err) {
-    const msg = (err as { message?: unknown }).message;
-    return typeof msg === 'string' && msg.length > 0 ? msg : fallback;
-  }
-  return fallback;
-};
+const errorMessage = (action: string, err: unknown): string =>
+  messageFromError(err, `Could not ${action} pantry item`);
 
 /**
  * Pantry CRUD state.
