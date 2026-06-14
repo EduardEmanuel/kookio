@@ -31,7 +31,22 @@ export const auth = router({
     .input(RegisterInputSchema)
     .output(SessionSchema)
     .mutation(async ({ input, ctx }) => {
-      const { email, firebaseUid } = input;
+      // SECURITY: trust only the verified Firebase token, never the client's
+      // claimed identity. Reject if the token is absent/invalid or its uid/email
+      // doesn't match the input — otherwise a client could provision a User row
+      // under a uid/email it doesn't own.
+      if (
+        !ctx.firebaseUser ||
+        ctx.firebaseUser.uid !== input.firebaseUid ||
+        ctx.firebaseUser.email.toLowerCase() !== input.email.toLowerCase()
+      ) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Registration identity does not match the verified token',
+        });
+      }
+      const email = ctx.firebaseUser.email;
+      const firebaseUid = ctx.firebaseUser.uid;
 
       try {
         const existing = await ctx.prisma.user.findUnique({

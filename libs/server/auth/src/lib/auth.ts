@@ -27,17 +27,27 @@ export const getAdminApp = () => {
 
 export const getAdminAuth = () => getAuth(getAdminApp());
 
+export type FirebaseUser = { uid: string; email: string };
+
+export type AuthResolution = {
+  firebaseUser: FirebaseUser | null;
+  session: AuthSession | null;
+};
+
 /**
- * Resolve a Firebase ID token to an AuthSession.
- * Returns null (never throws) when:
- *   - token is absent or invalid
- *   - decoded token has no email claim
- *   - user not yet provisioned in DB
+ * Verify a Firebase ID token and resolve both the trusted identity and the
+ * provisioned session. Never throws.
+ *
+ *   - `firebaseUser` (uid + email) is set as soon as the token verifies and
+ *     carries an email claim — even before a DB user exists. `auth.register`
+ *     binds the new User row to THIS uid, never to a client-supplied one.
+ *   - `session` is the provisioned AuthSession, or null during the registration
+ *     window (token valid, DB user not created yet) or if the lookup fails.
  */
-export const toSession = async (
+export const resolveAuth = async (
   idToken?: string,
-): Promise<AuthSession | null> => {
-  if (!idToken) return null;
+): Promise<AuthResolution> => {
+  if (!idToken) return { firebaseUser: null, session: null };
 
   let uid: string;
   let email: string | undefined;
@@ -49,13 +59,15 @@ export const toSession = async (
   } catch (err) {
     log.warn({ err }, 'Firebase token verification failed');
     audit.event({ type: 'login_fail', reason: String(err) });
-    return null;
+    return { firebaseUser: null, session: null };
   }
 
   if (!email) {
-    log.warn({ uid }, 'Token missing email claim — cannot resolve session');
-    return null;
+    log.warn({ uid }, 'Token missing email claim — cannot resolve identity');
+    return { firebaseUser: null, session: null };
   }
+
+  const firebaseUser: FirebaseUser = { uid, email };
 
   const findUserWithProfile = () =>
     prisma.user.findUnique({
@@ -75,19 +87,30 @@ export const toSession = async (
     user = await findUserWithProfile();
   } catch (err) {
     log.error({ err, email }, 'DB lookup failed during session resolution');
-    return null;
+    return { firebaseUser, session: null };
   }
 
   if (!user) {
     log.warn({ email }, 'Authenticated user not provisioned in DB');
-    return null;
+    return { firebaseUser, session: null };
   }
 
   return {
-    uid: user.id,
-    email: user.email,
-    name: user.name ?? null,
-    amr: user.amr,
-    onboardingDone: user.profile?.onboardingDone ?? false,
+    firebaseUser,
+    session: {
+      uid: user.id,
+      email: user.email,
+      name: user.name ?? null,
+      amr: user.amr,
+      onboardingDone: user.profile?.onboardingDone ?? false,
+    },
   };
 };
+
+/**
+ * Backward-compatible adapter resolving only the session. Kept for any consumer
+ * that doesn't need the decoded identity (and for its existing spec).
+ */
+export const toSession = async (
+  idToken?: string,
+): Promise<AuthSession | null> => (await resolveAuth(idToken)).session;
