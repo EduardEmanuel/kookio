@@ -19,8 +19,11 @@ export default defineNitroPlugin((nitroApp) => {
     dsn,
     environment:
       process.env['VERCEL_ENV'] ?? process.env['NODE_ENV'] ?? 'development',
-    // Error monitoring only for now — tracing/replay stay off (see `main.ts`).
-    tracesSampleRate: 0,
+    // Tie events to the deploy so a regression points at the commit that
+    // introduced it (matches the client release @sentry/vite-plugin injects).
+    release: process.env['VERCEL_GIT_COMMIT_SHA'],
+    // Performance tracing on the server (tRPC / SSR latency). 10% sample.
+    tracesSampleRate: 0.1,
   });
 
   nitroApp.hooks.hook('error', (error) => {

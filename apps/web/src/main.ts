@@ -13,9 +13,12 @@ if (dsn) {
   Sentry.init({
     dsn,
     environment: import.meta.env.MODE,
-    // Error monitoring only for now; tracing/replay can be enabled later
-    // (free-tier budgets allow 5M traces and 50 replays).
-    tracesSampleRate: 0,
+    // Performance tracing: browserTracingIntegration captures page-load and
+    // navigation transactions (Web Vitals, route timings). A 10% sample stays
+    // well within the free-tier trace budget. (release is injected at build
+    // time by @sentry/vite-plugin.)
+    integrations: [Sentry.browserTracingIntegration()],
+    tracesSampleRate: 0.1,
   });
 }
 
