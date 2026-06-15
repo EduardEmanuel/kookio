@@ -150,7 +150,10 @@ The script that creates the three databases + roles from scratch lives in
 **Regenerate & publish the diagram:**
 
 1. `npm run gen:dbml` — refresh `dbml/kookio.dbml` from the schema, then commit it.
-2. `npm run publish:dbml` — push it to dbdocs.io. Authentication is non-interactive: the `DBDOCS_TOKEN` Vercel env var (Development) is pulled in by `with:env`, so no `dbdocs login` prompt. Obtain the token once locally (`npx dbdocs login`, then `npx dbdocs token --generate`) and store that value in Vercel (Development) as `DBDOCS_TOKEN`. It is long-lived — no expiry; regenerate only if it ever stops authenticating (`--generate` supersedes the old one, `--revoke` invalidates it).
+2. **On merge to `main`**, the [`publish-dbml`](../../../.github/workflows/publish-dbml.yml) workflow republishes to dbdocs.io automatically whenever `kookio.dbml` changed, using the `DBDOCS_TOKEN` **repo secret** — so normally you don't publish by hand.
+3. To publish manually (e.g. preview before merge): `npm run publish:dbml`. Auth is non-interactive — the `DBDOCS_TOKEN` **Vercel env var** (Development) is pulled in by `with:env`, so no `dbdocs login` prompt.
+
+**Obtaining `DBDOCS_TOKEN`**: once locally, run `npx dbdocs login` then `npx dbdocs token --generate`, and store that value in **both** the GitHub repo secret (for CI auto-publish) and the Vercel Development env (for the manual `publish:dbml`). It is long-lived — no expiry; regenerate only if it ever stops authenticating (`--generate` supersedes the old one, `--revoke` invalidates it).
 
 The schema contains **20 models** grouped into five functional domains:
 
