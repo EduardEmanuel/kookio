@@ -33,6 +33,20 @@ jobs:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
           event_type: ci_failed
 
+  # 1c) Coverage floor — full-workspace library coverage, parallel to ci.
+  # Runs outside Nx (the Nx executor swallows --coverage.* args), so it can't
+  # be an affected step; it gates the whole libs/ aggregate via bench-coverage.
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-npm
+        with:
+          node_version: ${{ vars.NODE_VERSION }}
+      - name: Enforce library coverage floor (80% lines)
+        run: COVERAGE_MIN=80 npm run bench:coverage
+
   # 2) Migrate DEV
   migrate-dev:
     if: ${{ github.ref == 'refs/heads/dev' }}

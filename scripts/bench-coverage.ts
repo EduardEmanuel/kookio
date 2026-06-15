@@ -139,3 +139,25 @@ for (const k of ['lines', 'statements', 'functions', 'branches'] as const) {
   );
 }
 logger.info(`\n  files measured: ${map.files().length}`);
+
+// CI gate (opt-in): when COVERAGE_MIN is set, fail the run if aggregate line
+// coverage falls below it. Left unset, this stays a pure measurement tool, so
+// a local `npm run bench:coverage` never exits non-zero.
+const floorRaw = process.env['COVERAGE_MIN'];
+if (floorRaw !== undefined && floorRaw.trim() !== '') {
+  const min = Number(floorRaw);
+  if (Number.isNaN(min)) {
+    logger.error(`\n✖ COVERAGE_MIN is not a number: "${floorRaw}"`);
+    process.exit(2);
+  }
+  const linePct = t.lines.total ? (100 * t.lines.covered) / t.lines.total : 0;
+  if (linePct < min) {
+    logger.error(
+      `\n✖ Line coverage ${linePct.toFixed(2)}% is below the required floor of ${min}%.`,
+    );
+    process.exit(1);
+  }
+  logger.info(
+    `\n✓ Line coverage ${linePct.toFixed(2)}% meets the floor of ${min}% (libs, all-source).`,
+  );
+}
