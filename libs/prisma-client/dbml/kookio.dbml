@@ -3,62 +3,39 @@
 //// ------------------------------------------------------
 
 Table User {
-  id String [pk, note: 'Primary key (UUID v4).']
-  email String [unique, not null, note: 'Unique email address (natural identifier).']
-  name String [note: 'Optional display name.']
-  roles Role[] [not null, note: 'Assigned roles (from Role enum).']
-  amr String[] [not null, note: 'Authentication Methods References — OIDC AMR claim (RFC 8176).
-Stored as a String array (e.g. ["password", "webauthn"]) following the
+  id String [pk, note: '''Primary key (UUID v4).''']
+  email String [unique, not null, note: '''Unique email address (natural identifier).''']
+  firebaseUid String [unique, note: '''Unique ID for firebase auth.''']
+  name String [note: '''Optional display name.''']
+  amr String[] [not null, note: '''Authentication Methods References — OIDC AMR claim (RFC 8176).
+Stored as a String array (e.g. ["password"]) following the
 OIDC specification, which defines AMR as a JSON array of strings.
 Deliberate denormalization: extracting into a junction table would add
 join overhead with no query benefit, as AMR values are always read and
-written together as a set bound to a single authentication event.']
-  isDisabled Boolean [not null, default: false, note: 'Soft-disable flag (revokes access without deletion).']
-  deletedAt DateTime [note: 'Soft-delete timestamp; null means active.']
-  createdAt DateTime [default: `now()`, not null, note: 'Creation timestamp (server-side).']
-  updatedAt DateTime [not null, note: 'Last update timestamp (server-side).']
-  credentials WebAuthnCredential [not null, note: 'Linked WebAuthn credentials.']
-  profile UserProfile [note: 'User profile & onboarding preferences.']
-  pantryItems PantryItem [not null, note: 'Pantry items (ingredients in stock).']
-  recipes Recipe [not null, note: 'Recipes authored by this user.']
-  collections RecipeCollection [not null, note: 'Recipe collections (replaces SavedRecipe).']
-  mealPlans MealPlan [not null, note: 'Meal plans created by this user.']
-  cookingSessions CookingSession [not null, note: 'Cooking sessions recorded by this user.']
+written together as a set bound to a single authentication event.''']
+  isDisabled Boolean [not null, default: false, note: '''Soft-disable flag (revokes access without deletion).''']
+  deletedAt DateTime [note: '''Soft-delete timestamp; null means active.''']
+  createdAt DateTime [default: `now()`, not null, note: '''Creation timestamp (server-side).''']
+  updatedAt DateTime [not null, note: '''Last update timestamp (server-side).''']
+  profile UserProfile [note: '''User profile & onboarding preferences.''']
+  pantryItems PantryItem [not null, note: '''Pantry items (ingredients in stock).''']
+  recipes Recipe [not null, note: '''Recipes authored by this user.''']
+  collections RecipeCollection [not null, note: '''Recipe collections (replaces SavedRecipe).''']
+  mealSlots MealSlot [not null, note: '''Planned meals on the user's timeline. There is no parent "MealPlan"
+row — slots stand alone, one per (date, slotType) pair, and the UI
+navigates the timeline freely with no enforced range.''']
+  cookingSessions CookingSession [not null, note: '''Cooking sessions recorded by this user.''']
+  preferredCategories user_preferred_categories [not null, note: '''Onboarding meal-category preferences ("Categories" subtab on the fridge step).''']
+  preferredAreas user_preferred_areas [not null, note: '''Onboarding meal-area preferences ("Cuisines" subtab on the fridge step).''']
 
-  Note: 'User identity & authorization state.
+  Note: '''User identity & authorization state.
 Field names align with OIDC where relevant (e.g., AMR).
 Intentionally separate from UserProfile: this model owns authentication
 and authorization concerns only. Application-level preferences (household
 size, dietary restrictions, utensils, onboarding state) live in UserProfile,
 following the Single Responsibility Principle and keeping auth concerns
 isolated from product concerns. UserProfile is optional/null until the
-onboarding flow is completed.'
-}
-
-Table WebAuthnCredential {
-  id String [pk, note: 'Primary key (UUID v4).']
-  userId String [not null, note: 'FK to User.']
-  credentialId Bytes [not null, note: 'Raw credential ID (binary). Base64url <-> bytes at I/O boundaries.']
-  publicKey Bytes [not null, note: 'Public key in COSE/DER bytes.']
-  counter Int [not null, default: 0, note: 'Signature counter from authenticator (aka signCount).']
-  transports String[] [not null, note: 'Authenticator transports ("internal","usb","ble","nfc").']
-  aaguid String [note: 'Authenticator Attestation GUID (model-level), if available.']
-  attestationFmt String [note: 'Attestation format ("packed","fido-u2f","apple","tpm","none",...).']
-  backupEligible Boolean [not null, default: false, note: 'Eligible for backup per FIDO spec.']
-  backupState Boolean [not null, default: false, note: 'Currently backed up (multi-device capable).']
-  deviceType String [note: 'Optional friendly device type ("singleDevice" | "multiDevice").']
-  lastUsedAt DateTime [note: 'Last successful authentication timestamp for this credential.']
-  meta Json [note: 'Vendor/UA quirks or future flags.']
-  createdAt DateTime [default: `now()`, not null, note: 'Creation timestamp (server-side).']
-  updatedAt DateTime [not null, note: 'Last update timestamp (server-side).']
-  user User [not null, note: 'Relation to owning user.']
-
-  indexes {
-    (userId, credentialId) [unique]
-  }
-
-  Note: 'FIDO/WebAuthn credential bound to a user.
-Names intentionally mirror WebAuthn/server libraries to minimize glue-code.'
+onboarding flow is completed.'''
 }
 
 Table UserProfile {
@@ -66,30 +43,30 @@ Table UserProfile {
   userId String [unique, not null]
   adultsCount Int [not null, default: 1]
   childrenCount Int [not null, default: 0]
-  onboardingDone Boolean [not null, default: false, note: 'Whether the user has completed the onboarding flow.']
+  onboardingDone Boolean [not null, default: false, note: '''Whether the user has completed the onboarding flow.''']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   user User [not null]
   dietaryRestrictions UserDietaryRestriction [not null]
   utensils UserUtensil [not null]
 
-  Note: 'Application-level preferences and onboarding state for a user.
+  Note: '''Application-level preferences and onboarding state for a user.
 Intentionally separate from User, which owns identity and authentication.
 This model is optional/null until the onboarding flow is completed,
 allowing the system to distinguish between a registered-but-not-onboarded
-user and a fully configured one without nullable columns on User itself.'
+user and a fully configured one without nullable columns on User itself.'''
 }
 
 Table DietaryRestriction {
   id String [pk]
-  slug String [unique, not null, note: 'Machine-readable identifier e.g. "gluten-free", "vegan".']
-  label String [not null, note: 'Human-readable label.']
-  emoji String [note: 'Emoji for UI display.']
+  slug String [unique, not null, note: '''Machine-readable identifier e.g. "gluten-free", "vegan".''']
+  label String [not null, note: '''Human-readable label.''']
+  emoji String [note: '''Emoji for UI display.''']
   description String
   users UserDietaryRestriction [not null]
 
-  Note: 'Controlled list of dietary restrictions.
-Seeded by Kookio — not user-defined.'
+  Note: '''Controlled list of dietary restrictions.
+Seeded by Kookio — not user-defined.'''
 }
 
 Table UserDietaryRestriction {
@@ -108,12 +85,12 @@ Table Utensil {
   slug String [unique, not null]
   name String [not null]
   emoji String
-  category String [note: 'e.g. "cutting", "cooking", "baking", "measuring"']
+  category String [note: '''e.g. "cutting", "cooking", "baking", "measuring"''']
   users UserUtensil [not null]
 
-  Note: 'Controlled list of kitchen utensils.
+  Note: '''Controlled list of kitchen utensils.
 Seeded by Kookio — not user-defined.
-TheMealDB does not provide utensil data.'
+TheMealDB does not provide utensil data.'''
 }
 
 Table UserUtensil {
@@ -129,56 +106,94 @@ Table UserUtensil {
 
 Table MealCategory {
   id String [pk]
-  externalId String [unique, not null, note: 'TheMealDB strCategory slug — unique identifier from external source.']
+  externalId String [unique, not null, note: '''TheMealDB strCategory slug — unique identifier from external source.''']
   name String [not null]
+  emoji String
   imageUrl String
   description String
   createdAt DateTime [default: `now()`, not null]
   recipes Recipe [not null]
+  preferredByUsers user_preferred_categories [not null]
 
-  Note: 'Meal categories sourced from TheMealDB (e.g. Beef, Dessert, Seafood).'
+  Note: '''Meal categories sourced from TheMealDB (e.g. Beef, Dessert, Seafood).'''
+}
+
+Table user_preferred_categories {
+  userId String [not null]
+  mealCategoryId String [not null]
+  user User [not null]
+  mealCategory MealCategory [not null]
+  createdAt DateTime [default: `now()`, not null]
+
+  indexes {
+    (userId, mealCategoryId) [pk]
+  }
+
+  Note: '''Junction table — meal categories a user picked during onboarding.
+Owned directly by User (not UserProfile) so preferences survive profile resets.'''
 }
 
 Table MealArea {
   id String [pk]
-  externalId String [unique, not null, note: 'TheMealDB strArea slug — unique identifier from external source.']
+  externalId String [unique, not null, note: '''TheMealDB strArea slug — unique identifier from external source.''']
   name String [not null]
   flag String
   createdAt DateTime [default: `now()`, not null]
   recipes Recipe [not null]
+  preferredByUsers user_preferred_areas [not null]
 
-  Note: 'Geographic areas sourced from TheMealDB (e.g. Italian, Japanese).'
+  Note: '''Geographic areas sourced from TheMealDB (e.g. Italian, Japanese).'''
+}
+
+Table user_preferred_areas {
+  userId String [not null]
+  mealAreaId String [not null]
+  user User [not null]
+  mealArea MealArea [not null]
+  createdAt DateTime [default: `now()`, not null]
+
+  indexes {
+    (userId, mealAreaId) [pk]
+  }
+
+  Note: '''Junction table — meal areas (cuisines) a user picked during onboarding.
+Owned directly by User (not UserProfile) so preferences survive profile resets.'''
 }
 
 Table IngredientCatalog {
   id String [pk]
-  externalId String [unique, note: 'TheMealDB ingredient ID, if sourced externally.']
+  externalId String [unique, note: '''TheMealDB ingredient ID, if sourced externally.''']
   name String [not null]
   normalizedName String [unique, not null]
   description String
   imageUrl String
   category IngredientCategory
+  pieceGrams Float [note: '''Mass of one "piece" in grams, for ingredients counted in piece-class
+units (PIECE / SLICE / CLOVE / BUNCH / OTHER). Null when not meaningful
+— bulk solids and liquids (flour, water, oil) don't have a piece mass.
+Runtime falls back to DEFAULT_PIECE_GRAMS (100) for unknowns; see
+`@kookio/shared-utility/measure-units` and thesis Phase 2b.''']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   recipeIngredients RecipeIngredient [not null]
   pantryItems PantryItem [not null]
 
-  Note: 'Master ingredient catalog, seeded from TheMealDB and normalized.'
+  Note: '''Master ingredient catalog, seeded from TheMealDB and normalized.'''
 }
 
 Table Recipe {
   id String [pk]
-  externalId String [unique, note: 'TheMealDB idMeal — null for user-authored recipes.']
+  externalId String [unique, note: '''TheMealDB idMeal — null for user-authored recipes.''']
   slug String [unique, not null]
   title String [not null]
   description String
   imageUrl String
-  youtubeUrl String
+  videoUrl String
   sourceUrl String
-  instructions String [not null]
   status RecipeStatus [not null, default: 'PUBLIC']
-  servings Int [not null, default: 4]
-  prepTimeMinutes Int [note: 'TheMealDB does not provide these — populated manually or via AI post-licență.']
+  servings Int [not null]
+  difficulty Difficulty
+  prepTimeMinutes Int [note: '''TheMealDB does not provide these — populated manually or via AI post-licență.''']
   cookTimeMinutes Int
   categoryId String
   areaId String
@@ -190,9 +205,27 @@ Table Recipe {
   author User
   ingredients RecipeIngredient [not null]
   tags RecipeTag [not null]
+  steps RecipeStep [not null]
   collectionEntries RecipeCollectionEntry [not null]
-  mealPlanSlots MealPlanSlot [not null]
+  mealSlots MealSlot [not null]
   cookingSessions CookingSession [not null]
+}
+
+Table RecipeStep {
+  id String [pk]
+  recipeId String [not null]
+  order Int [not null]
+  title String
+  content String [not null]
+  recipe Recipe [not null]
+
+  indexes {
+    (recipeId, order) [unique]
+  }
+
+  Note: '''One instructional step of a recipe. Replaces the flat `instructions`
+string on Recipe so the UI can render numbered, titled steps.
+`title` is nullable because not every step has a meaningful heading.'''
 }
 
 Table RecipeIngredient {
@@ -201,9 +234,9 @@ Table RecipeIngredient {
   ingredientCatalogId String [not null]
   quantity Float
   unit MeasureUnit
-  notes String [note: 'Describes the ingredient *in the context of this recipe*, not the ingredient itself.
+  notes String [note: '''Describes the ingredient *in the context of this recipe*, not the ingredient itself.
 Correctly placed here (not on IngredientCatalog) as it depends on the
-(recipe, ingredient) pair — e.g. "chopped", "heaped", "to taste".']
+(recipe, ingredient) pair — e.g. "chopped", "heaped", "to taste".''']
   recipe Recipe [not null]
   ingredient IngredientCatalog [not null]
 
@@ -211,8 +244,8 @@ Correctly placed here (not on IngredientCatalog) as it depends on the
     (recipeId, ingredientCatalogId) [unique]
   }
 
-  Note: 'Junction table between Recipe and IngredientCatalog.
-Units are normalized during seed — no raw strings stored.'
+  Note: '''Junction table between Recipe and IngredientCatalog.
+Units are normalized during seed — no raw strings stored.'''
 }
 
 Table RecipeTag {
@@ -225,9 +258,9 @@ Table RecipeTag {
     (recipeId, tag) [unique]
   }
 
-  Note: 'Normalized tags for a recipe.
+  Note: '''Normalized tags for a recipe.
 Extracted from TheMealDB strTags during seed.
-Replaces the denormalized `tags String[]` field to satisfy 1NF.'
+Replaces the denormalized `tags String[]` field to satisfy 1NF.'''
 }
 
 Table PantryItem {
@@ -246,7 +279,7 @@ Table PantryItem {
     (userId, ingredientCatalogId) [unique]
   }
 
-  Note: 'A user\'s current stock of a specific ingredient.'
+  Note: '''A user's current stock of a specific ingredient.'''
 }
 
 Table RecipeCollection {
@@ -263,8 +296,8 @@ Table RecipeCollection {
     (userId, name) [unique]
   }
 
-  Note: 'A named collection of recipes owned by a user.
-Two default collections are created at onboarding: "Favorite" and "De încercat".'
+  Note: '''A named collection of recipes owned by a user.
+Two default collections are created at onboarding: "Favorite" and "De încercat".'''
 }
 
 Table RecipeCollectionEntry {
@@ -279,35 +312,27 @@ Table RecipeCollectionEntry {
   }
 }
 
-Table MealPlan {
+Table MealSlot {
   id String [pk]
   userId String [not null]
-  name String
-  startDate DateTime [not null]
-  endDate DateTime [not null]
-  createdAt DateTime [default: `now()`, not null]
-  updatedAt DateTime [not null]
-  user User [not null]
-  slots MealPlanSlot [not null]
-
-  Note: 'A meal plan for a user, spanning up to 7 days with 3 meals/day.'
-}
-
-Table MealPlanSlot {
-  id String [pk]
-  mealPlanId String [not null]
   recipeId String
   date DateTime [not null]
   slotType MealSlotType [not null]
   servings Int [not null, default: 1]
-  mealPlan MealPlan [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  user User [not null]
   recipe Recipe
 
   indexes {
-    (mealPlanId, date, slotType) [unique]
+    (userId, date, slotType) [unique]
   }
 
-  Note: 'A single meal slot within a meal plan.'
+  Note: '''A single planned meal on the user's timeline. There is no parent
+"plan" row — `MealSlot` is the entire data model for the planner.
+One row per (userId, date, slotType) triple; empty cells are absent
+rather than represented as `recipeId = null`. The UI navigates the
+timeline freely with no enforced range, so the schema imposes none.'''
 }
 
 Table CookingSession {
@@ -315,19 +340,14 @@ Table CookingSession {
   userId String [not null]
   recipeId String [not null]
   servings Int [not null]
-  completedAt DateTime [note: 'Null = session started but not finished — pantry is NOT deducted.']
+  completedAt DateTime [note: '''Null = session started but not finished — pantry is NOT deducted.''']
   createdAt DateTime [default: `now()`, not null]
   user User [not null]
   recipe Recipe [not null]
 
-  Note: 'Records a user cooking a recipe.
+  Note: '''Records a user cooking a recipe.
 completedAt being non-null triggers pantry deduction.
-Enables "how many times have you cooked X" queries.'
-}
-
-Enum Role {
-  USER
-  ADMIN
+Enables "how many times have you cooked X" queries.'''
 }
 
 Enum RecipeStatus {
@@ -375,10 +395,15 @@ Enum IngredientCategory {
   HERBS
   NUTS
   BEVERAGES
+  SWEETS
   OTHER
 }
 
-Ref: WebAuthnCredential.userId > User.id [delete: Cascade]
+Enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
 
 Ref: UserProfile.userId - User.id [delete: Cascade]
 
@@ -390,11 +415,21 @@ Ref: UserUtensil.userId > UserProfile.id [delete: Cascade]
 
 Ref: UserUtensil.utensilId > Utensil.id
 
+Ref: user_preferred_categories.userId > User.id [delete: Cascade]
+
+Ref: user_preferred_categories.mealCategoryId > MealCategory.id [delete: Cascade]
+
+Ref: user_preferred_areas.userId > User.id [delete: Cascade]
+
+Ref: user_preferred_areas.mealAreaId > MealArea.id [delete: Cascade]
+
 Ref: Recipe.categoryId > MealCategory.id
 
 Ref: Recipe.areaId > MealArea.id
 
 Ref: Recipe.authorId > User.id [delete: Set Null]
+
+Ref: RecipeStep.recipeId > Recipe.id [delete: Cascade]
 
 Ref: RecipeIngredient.recipeId > Recipe.id [delete: Cascade]
 
@@ -412,11 +447,9 @@ Ref: RecipeCollectionEntry.collectionId > RecipeCollection.id [delete: Cascade]
 
 Ref: RecipeCollectionEntry.recipeId > Recipe.id [delete: Cascade]
 
-Ref: MealPlan.userId > User.id [delete: Cascade]
+Ref: MealSlot.userId > User.id [delete: Cascade]
 
-Ref: MealPlanSlot.mealPlanId > MealPlan.id [delete: Cascade]
-
-Ref: MealPlanSlot.recipeId > Recipe.id [delete: Set Null]
+Ref: MealSlot.recipeId > Recipe.id [delete: Set Null]
 
 Ref: CookingSession.userId > User.id [delete: Cascade]
 

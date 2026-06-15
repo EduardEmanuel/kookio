@@ -1,0 +1,39 @@
+name: Publish DBML
+
+# Auto-publishes the ER diagram to dbdocs.io when the committed dbml changes on
+# main. Deliberately OUTSIDE the build pipeline: a docs publish must never be
+# able to break a build, and it only fires when the published artifact actually
+# changed (not on every push). Auth is the DBDOCS_TOKEN repo secret (long-lived,
+# no expiry); the publish step skips silently until that secret is set, so this
+# workflow never goes red before it exists.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'libs/prisma-client/dbml/kookio.dbml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-dbml
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      # Node only — no `npm ci`; the job needs just the checked-out dbml file
+      # plus the dbdocs CLI (fetched by npx), not the full workspace install.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+      - name: Publish ER diagram to dbdocs.io
+        if: ${{ env.DBDOCS_TOKEN != '' }}
+        run: npx -y dbdocs build libs/prisma-client/dbml/kookio.dbml --project kookio-db
