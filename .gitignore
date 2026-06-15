@@ -60,6 +60,10 @@ vitest.config.*.timestamp*
 libs/prisma-client/src/prisma-zod-generator/
 libs/prisma-client/src/generated/
 
+# Throwaway schema written by `npm run gen:dbml` (normally cleaned up after the
+# run; ignored in case a crash leaves it behind).
+libs/prisma-client/.dbml-schema.prisma
+
 # BEGIN: AI Setup (auto-generated — do not edit manually)
 .ai/guidelines.md
 AGENTS.md

@@ -32,7 +32,7 @@
     "build:twemoji": "tsx scripts/build-twemoji.ts",
     "build:twemoji:check": "tsx scripts/build-twemoji.ts --check",
     "build:pwa-icons": "tsx scripts/build-pwa-icons.ts",
-    "gen:dbml": "npx prisma generate --schema=libs/prisma-client/schema.prisma --generator dbml",
+    "gen:dbml": "tsx scripts/gen-dbml.ts",
     "publish:dbml": "npm run with:env -- --env=development -- npx dbdocs build libs/prisma-client/dbml/kookio.dbml --project kookio-db",
     "eslint:fix": "eslint . --fix",
     "lint:all:fix": "nx run-many -t lint --fix",

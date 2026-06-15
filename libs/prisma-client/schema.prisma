@@ -16,15 +16,6 @@ generator zod {
   useDecimal       = true // use `z.instanceof(Decimal)` for Decimal fields instead of `z.number()`
 }
 
-// ER-diagram source for dbdocs.io; the committed `dbml/kookio.dbml` is the
-// published diagram's input. Refreshed by any `prisma generate`, or on its
-// own with `npm run gen:dbml`. Pulls `///` field doc-comments into DBML notes.
-generator dbml {
-  provider   = "prisma-dbml-generator"
-  output     = "./dbml"
-  outputName = "kookio.dbml"
-}
-
 datasource db {
   provider = "cockroachdb"
 }
