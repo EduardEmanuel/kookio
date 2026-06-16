@@ -92,6 +92,12 @@
       color: var(--mat-sys-on-surface-variant);
       font-weight: 400;
       font-style: italic;
+      // Italic glyphs slant past their advance box, so the trailing letter
+      // overhangs the right edge. Combined with the `overflow: hidden` on
+      // `.mpt__recipe` above, that overhang gets clipped ("Not planne|d").
+      // Reserve a sliver of inline-end space for the slant — em-based so it
+      // tracks the font size. Drop this and italic truncated text clips again.
+      padding-inline-end: 0.15em;
     }
   }
 }
