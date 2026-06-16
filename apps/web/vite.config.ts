@@ -51,12 +51,11 @@ export default defineConfig(({ mode }) => {
 
       analog({
         ssr: true,
-        prerender: {
-          routes: ['/about'],
-          sitemap: {
-            host: 'https://kookio.app',
-          },
-        },
+        // All routes render through Nitro (no prerendered/SSG routes) so the
+        // per-request CSP nonce from the csp.ts plugin applies uniformly — a
+        // prerendered static file would not get a per-request nonce. The auto
+        // sitemap (which only listed /about) is dropped with prerender; restore
+        // it when a content surface that benefits from SSG lands.
         nitro: {
           preset: nitroPreset,
           esbuild: {

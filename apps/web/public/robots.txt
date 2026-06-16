@@ -1,4 +1,2 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://kookio.app/sitemap.xml
