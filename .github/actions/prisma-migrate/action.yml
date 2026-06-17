@@ -3,29 +3,22 @@ description: Run 'prisma migrate deploy' via NX with retries, and optionally see
 inputs:
   nx_target:
     required: true
-    type: string
     default: 'migrate-deploy prisma-client'
   database_url:
     required: true
-    type: string
   direct_database_url:
     required: true
-    type: string
   attempts:
     required: false
-    type: string
     default: '3'
   seed_admin_email:
     required: false
-    type: string
     default: ''
   seed_admin_password:
     required: false
-    type: string
     default: ''
   firebase_service_account_json_b64:
     required: false
-    type: string
     default: ''
 runs:
   using: composite

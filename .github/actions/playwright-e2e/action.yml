@@ -3,10 +3,8 @@ description: Run Playwright E2E tests against a given base_url (in the Playwrigh
 inputs:
   base_url:
     required: true
-    type: string
   node_version:
     required: false
-    type: string
     default: '24'
 runs:
   using: composite

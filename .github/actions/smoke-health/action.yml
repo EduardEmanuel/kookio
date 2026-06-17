@@ -5,11 +5,9 @@ inputs:
     required: true
   attempts:
     required: false
-    type: string
     default: '20'
   sleep_sec:
     required: false
-    type: string
     default: '10'
 runs:
   using: composite
