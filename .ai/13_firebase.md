@@ -23,12 +23,14 @@ Prisma / Business Logic
 ## File Structure
 
 libs/
-└── firebase/
-├── src/
-│ ├── client.ts ← Firebase client app singleton
-│ ├── admin.ts ← Firebase Admin app singleton
-│ ├── auth.ts ← client-side auth helpers
-│ └── auth.server.ts ← server-side token verification
+├── feature/
+│ └── auth/src/lib/
+│ ├── auth.ts ← AuthStore (Signal Store) + Firebase client app/auth glue
+│ ├── guards.ts ← authGuard / onboardingGuard
+│ └── auth-timer.ts ← proactive ID-token refresh timer
+└── server/
+└── auth/src/lib/
+└── auth.ts ← Firebase Admin SDK singleton + server-side token verification
 
 ## Client SDK
 
@@ -37,7 +39,7 @@ libs/
 - Always use a singleton Firebase app instance — never initialize per component:
 
 ```typescript
-// libs/firebase/src/client.ts
+// libs/feature/auth/src/lib/auth.ts (Firebase client glue)
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 
 const firebaseConfig = {
@@ -59,7 +61,7 @@ export const firebaseApp: FirebaseApp = getApps().length === 0 ? initializeApp(f
 - Define reusable auth helpers in `auth.ts`:
 
 ```typescript
-// libs/firebase/src/auth.ts
+// libs/feature/auth/src/lib/auth.ts
 import { getAuth, signInWithPopup, signInWithEmailAndPassword, signOut, GoogleAuthProvider, onAuthStateChanged, User } from 'firebase/auth';
 import { firebaseApp } from './client';
 
@@ -88,11 +90,11 @@ export function getIdToken(): Promise<string | null> {
 - Use a singleton `AuthStore` (NgRx Signal Store) to manage auth state globally:
 
 ```typescript
-// libs/data-access/src/auth.store.ts
+// libs/feature/auth/src/lib/auth.ts
 import { signalStore, withState, withMethods, withHooks } from '@ngrx/signals';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { auth, signInWithGoogle, signOutUser } from '@kookio/firebase';
+import { auth, signInWithGoogle, signOutUser } from '@kookio/feature-auth';
 import { onAuthStateChanged, User } from 'firebase/auth';
 
 interface AuthState {
@@ -186,7 +188,7 @@ onInit() {
 - Always attach the Firebase ID token as a Bearer token on authenticated requests:
 
 ```typescript
-// libs/firebase/src/auth.ts
+// libs/feature/auth/src/lib/auth.ts
 export async function getAuthHeaders(): Promise<Record<string, string>> {
   const token = await getIdToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
@@ -214,7 +216,7 @@ export const authInterceptor: HttpInterceptorFn = async (req, next) => {
 - Always use a singleton Admin app — never initialize per request:
 
 ```typescript
-// libs/firebase/src/admin.ts
+// libs/server/auth/src/lib/auth.ts
 import { initializeApp, getApps, cert, App } from 'firebase-admin/app';
 
 function createAdminApp(): App {
@@ -238,7 +240,7 @@ export const adminApp: App = getApps().length === 0 ? createAdminApp() : getApps
 - Verify ID tokens in tRPC context or h3 middleware — never in individual procedures:
 
 ```typescript
-// libs/firebase/src/auth.server.ts
+// libs/server/auth/src/lib/auth.ts
 import { getAuth } from 'firebase-admin/auth';
 import { adminApp } from './admin';
 
@@ -258,7 +260,7 @@ export async function verifyIdToken(token: string) {
 ```typescript
 // src/server/trpc/context.ts
 import { H3Event, getHeader } from 'h3';
-import { verifyIdToken } from '@kookio/firebase/server';
+import { verifyIdToken } from '@kookio/server-auth';
 
 export async function createContext(event: H3Event) {
   const authHeader = getHeader(event, 'authorization');
