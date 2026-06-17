@@ -16,12 +16,16 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-latest
+    # Official Playwright image ships browsers + OS deps preinstalled, so the
+    # action skips `playwright install --with-deps` (apt + browser download).
+    # Pin the tag to the @playwright/test version in package-lock.json — a
+    # drift between the two causes a silent browser/driver mismatch at runtime.
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-jammy
     timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Run Playwright E2E
         if: ${{ inputs.base_url != '' }}
