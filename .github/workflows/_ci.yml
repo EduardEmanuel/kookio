@@ -46,3 +46,6 @@ jobs:
         env:
           NODE_OPTIONS: '--max-old-space-size=6144'
         run: npx nx affected -t lint test build --base=${{ steps.nx.outputs.base }} --head=${{ steps.nx.outputs.head }} --output-style=stream
+
+      - run: npx nx fix-ci
+        if: always()
