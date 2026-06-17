@@ -49,7 +49,24 @@ import {
 } from 'firebase/auth';
 
 import type { AuthSession } from '@kookio/prisma-client';
-import { reportError } from '@kookio/shared-observability';
+import { reportError, reportMetric } from '@kookio/shared-observability';
+
+/**
+ * Safety-net window for `authReady`: if `onAuthStateChanged` never fires
+ * (Firebase configured but stalled or silently failing), unblock the UI after
+ * this so auth-guarded pages don't hang on an infinite skeleton.
+ */
+const AUTH_READY_TIMEOUT_MS = 5_000;
+
+/**
+ * Report-threshold for the first `onAuthStateChanged` callback latency. The
+ * happy path (resolved from `browserLocalPersistence`, no network) lands in
+ * tens-to-low-hundreds of ms, so anything past this is a slow tail worth
+ * surfacing in Sentry. Reporting only the tail (and the timeout firing) keeps
+ * this to a handful of events instead of one per page load — enough signal to
+ * decide whether `AUTH_READY_TIMEOUT_MS` is right without flooding the quota.
+ */
+const SLOW_AUTH_READY_MS = 2_000;
 
 export const FIREBASE_OPTIONS = new InjectionToken<FirebaseOptions>(
   'FIREBASE_OPTIONS',
@@ -483,9 +500,21 @@ export const AuthStore = signalStore(
         }
 
         // Safety net: if onAuthStateChanged never fires (Firebase hangs or
-        // fails silently), unblock the UI after 5 s so forms remain usable.
+        // fails silently), unblock the UI after AUTH_READY_TIMEOUT_MS so forms
+        // remain usable. `startedAt` anchors the latency telemetry below.
+        const startedAt = performance.now();
         const readyTimer = isPlatformBrowser(platformId)
-          ? setTimeout(() => patchState(store, { authReady: true }), 5_000)
+          ? setTimeout(() => {
+              patchState(store, { authReady: true });
+              // The timer winning means the callback never arrived in time —
+              // the exact failure this net exists for. Always report it.
+              reportMetric(
+                'auth.authReady safety timer fired (onAuthStateChanged never resolved)',
+                'auth.authReady.timeout',
+                { timeoutMs: AUTH_READY_TIMEOUT_MS },
+                'warning',
+              );
+            }, AUTH_READY_TIMEOUT_MS)
           : null;
 
         from(setPersistence(auth, browserLocalPersistence)).subscribe({
@@ -496,6 +525,18 @@ export const AuthStore = signalStore(
           auth,
           (user) => {
             if (readyTimer !== null) clearTimeout(readyTimer);
+            // Surface only the slow tail — see SLOW_AUTH_READY_MS. A cluster of
+            // these near AUTH_READY_TIMEOUT_MS says the timer is too low; their
+            // absence over time says it is a dormant net and could be lowered.
+            const latencyMs = Math.round(performance.now() - startedAt);
+            if (latencyMs > SLOW_AUTH_READY_MS) {
+              reportMetric(
+                'auth.onAuthStateChanged resolved slowly',
+                'auth.authReady.slow',
+                { latencyMs },
+                'info',
+              );
+            }
             patchState(store, { currentUser: user, authReady: true });
           },
           () => undefined,
