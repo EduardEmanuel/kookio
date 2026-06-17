@@ -18,12 +18,8 @@
       "dependsOn": ["^build", "prisma-client:generate"],
       "inputs": ["production", "^production"]
     },
-    "typecheck": {
-      "dependsOn": ["prisma-client:generate"]
-    },
-    "serve": {
-      "dependsOn": ["^build", "prisma-client:generate"]
-    },
+    "typecheck": { "dependsOn": ["prisma-client:generate"] },
+    "serve": { "dependsOn": ["^build", "prisma-client:generate"] },
     "@angular/build:application": {
       "cache": true,
       "dependsOn": ["^build"],
@@ -67,18 +63,8 @@
     }
   },
   "plugins": [
-    {
-      "plugin": "@nx/playwright/plugin",
-      "options": {
-        "targetName": "e2e"
-      }
-    },
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "lint"
-      }
-    },
+    { "plugin": "@nx/playwright/plugin", "options": { "targetName": "e2e" } },
+    { "plugin": "@nx/eslint/plugin", "options": { "targetName": "lint" } },
     {
       "plugin": "@nx/vite/plugin",
       "options": {
@@ -92,12 +78,7 @@
         "watchDepsTargetName": "watch-deps"
       }
     },
-    {
-      "plugin": "@nx/vitest",
-      "options": {
-        "testTargetName": "vite:test"
-      }
-    }
+    { "plugin": "@nx/vitest", "options": { "testTargetName": "vite:test" } }
   ],
   "generators": {
     "@nx/angular:application": {
@@ -110,9 +91,7 @@
       "linter": "eslint",
       "unitTestRunner": "vitest-analog"
     },
-    "@nx/angular:component": {
-      "style": "scss"
-    }
+    "@nx/angular:component": { "style": "scss" }
   },
   "projects": {
     "web": {
@@ -124,5 +103,6 @@
       "dependsOn": ["shared-mock", "prisma-client"]
     }
   },
-  "analytics": false
+  "analytics": false,
+  "nxCloudId": "6a32e68efacb939ade0fe737"
 }
