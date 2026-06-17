@@ -4,16 +4,12 @@ description: Resolve the Vercel deployment URL for the current branch or from pr
 inputs:
   vercel_app_url:
     required: false
-    type: string
   vercel_token:
     required: false
-    type: string
   vercel_project_id:
     required: false
-    type: string
   vercel_org_id:
     required: false
-    type: string
 
 outputs:
   base_url:
