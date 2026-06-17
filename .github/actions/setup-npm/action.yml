@@ -15,4 +15,4 @@ runs:
 
     - name: Install
       shell: bash
-      run: npm ci
+      run: npm ci --prefer-offline
