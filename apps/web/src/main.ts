@@ -19,6 +19,44 @@ if (dsn) {
     // time by @sentry/vite-plugin.)
     integrations: [Sentry.browserTracingIntegration()],
     tracesSampleRate: 0.1,
+    // Drop expected user-facing / transient errors. These are surfaced to the
+    // user in the form or retried by the client — they are not bugs, and
+    // reporting them buries real issues under auth-typo and network noise.
+    beforeSend: (event, hint) => {
+      const ex = hint?.originalException as
+        | {
+            name?: string;
+            code?: string;
+            message?: string;
+            data?: { code?: string };
+          }
+        | undefined;
+      const message =
+        (typeof ex?.message === 'string' && ex.message) ||
+        event.exception?.values?.[0]?.value ||
+        '';
+
+      // Firebase auth user-errors (wrong password, email taken, …): shown in
+      // the login/register form, never actionable as a bug.
+      if (typeof ex?.code === 'string' && ex.code.startsWith('auth/')) {
+        return null;
+      }
+      if (/Firebase: Error \(auth\//.test(message)) return null;
+
+      // Expired/absent token → UNAUTHORIZED. The client already force-refreshes
+      // and retries once; a leftover UNAUTHORIZED is an expected logged-out
+      // state, not a fault.
+      if (ex?.name === 'TRPCClientError' && ex.data?.code === 'UNAUTHORIZED') {
+        return null;
+      }
+
+      // Network blips — not actionable from the app's side.
+      if (/Failed to fetch|NetworkError|Load failed/i.test(message)) {
+        return null;
+      }
+
+      return event;
+    },
   });
 }
 

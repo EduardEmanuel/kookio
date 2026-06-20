@@ -45,6 +45,33 @@ const retryExtension = Prisma.defineExtension({
   },
 });
 
+// When DATABASE_URL is absent the adapter silently falls back to the localhost
+// placeholder, so every query fails with a cryptic
+// `P1001: Can't reach database server at 127.0.0.1:26257` — once per request.
+// This guard turns that into a single, clearly-labelled error so a
+// misconfigured runtime (e.g. a Vercel preview deploy missing the variable) is
+// immediately obvious instead of an 8x cryptic-connection-error pile-up.
+// Module construction stays offline-safe: build / prerender / unit tests import
+// the client but never issue a query, so the guard never fires for them.
+const databaseUrlConfigured = Boolean(process.env['DATABASE_URL']);
+
+const databaseUrlGuard = Prisma.defineExtension({
+  query: {
+    $allModels: {
+      $allOperations: ({ model, operation, args, query }) => {
+        if (!databaseUrlConfigured) {
+          throw new Error(
+            `DATABASE_URL is not configured — refusing to run ${model}.${operation} ` +
+              'against the localhost placeholder. Set DATABASE_URL for this ' +
+              'environment before serving requests.',
+          );
+        }
+        return query(args);
+      },
+    },
+  },
+});
+
 const createPrismaClient = () => {
   // Prisma 7 is Rust-free: the connection runs through a JS driver adapter
   // (`@prisma/adapter-pg` — CockroachDB speaks the Postgres wire protocol).
@@ -67,7 +94,11 @@ const createPrismaClient = () => {
     // connection-limit exhaustion under load; one request needs only a few.
     max: 5,
   });
-  return new PrismaClient({ adapter }).$extends(retryExtension);
+  // Guard chained last so it runs outermost — a missing-URL failure surfaces
+  // before the retry layer ever engages (it is not a retryable tx conflict).
+  return new PrismaClient({ adapter })
+    .$extends(retryExtension)
+    .$extends(databaseUrlGuard);
 };
 
 type ExtendedPrismaClient = ReturnType<typeof createPrismaClient>;
