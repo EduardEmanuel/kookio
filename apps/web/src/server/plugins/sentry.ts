@@ -24,6 +24,24 @@ export default defineNitroPlugin((nitroApp) => {
     release: process.env['VERCEL_GIT_COMMIT_SHA'],
     // Performance tracing on the server (tRPC / SSR latency). 10% sample.
     tracesSampleRate: 0.1,
+    // Noise control. This runs for *every* captured event — both the unhandled
+    // faults from the `error` hook below and the handled `log.error({ err })`
+    // events bridged from `@kookio/server-logger`.
+    beforeSend: (event, hint) => {
+      // Only production faults are actionable. Preview / dev / E2E noise — e.g.
+      // a preview deploy without DATABASE_URL spamming connection errors on
+      // every Playwright hit — is dropped wholesale.
+      if (event.environment !== 'production') return null;
+
+      // Transient Prisma connection errors are infra blips, not code bugs.
+      // (A sustained production DB outage is better caught by uptime/Vercel
+      // monitoring than by a flood of these — flip this off if you want them.)
+      const code = (hint?.originalException as { code?: unknown } | undefined)
+        ?.code;
+      if (code === 'P1001' || code === 'P1017') return null;
+
+      return event;
+    },
   });
 
   nitroApp.hooks.hook('error', (error) => {
