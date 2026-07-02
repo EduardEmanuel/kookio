@@ -20,7 +20,7 @@
     "start:web": "npm run with:env -- --env=development -- nx serve web",
     "build:web": "npm run with:env -- --env=production -- nx build web",
     "e2e:web": "npm run with:env -- --env=development -- nx e2e web-e2e",
-    "e2e:web-report": "npm run with:env -- --env=preview -- nx e2e-report web-e2e",
+    "e2e:web-report": "npm run with:env -- --env=development -- nx e2e-report web-e2e",
     "migrate-deploy:prisma-client": "npm run with:env -- --env=development -- nx migrate-deploy prisma-client",
     "migrate-dev:prisma-client": "npm run with:env -- --env=development -- nx migrate-dev prisma-client",
     "migrate-dev-create-only:prisma-client": "npm run with:env -- --env=development -- nx migrate-dev-create-only prisma-client",
