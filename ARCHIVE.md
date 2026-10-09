@@ -22,7 +22,7 @@
 | **Stack**                    | Angular 21 + AnalogJS 2.5 (SSR on Nitro) · tRPC 10 + Zod 4 · Prisma 7 → CockroachDB · Firebase Auth · Redis · Nx 22 monorepo · Vercel                                                                                                                                                      |
 | **Final code**               | `main`, tagged `v1.0.0`; this repository is archived (read-only)                                                                                                                                                                                                                           |
 | **Production**               | <https://kookio.app> (branch `main`), plus `test.kookio.app` and `dev.kookio.app` — Vercel project `kookio`, region `fra1`. **Paused on 9 October 2026**; no deployment answers.                                                                                                           |
-| **Domain**                   | `kookio.app`, registered at Name.com, paid until **2 December 2026**; renew it there if you want the address back                                                                                                                                                                          |
+| **Domain**                   | `kookio.app`, bought through Vercel Domains, paid until **2 December 2026**; renewal and auto-renew are managed in Vercel's Domains settings                                                                                                                                               |
 | **Thesis and data pipeline** | Private repository [`EduardEmanuel/kookio-thesis`](https://github.com/EduardEmanuel/kookio-thesis): the LaTeX sources and the TheMealDB pipeline that produced this repository's seed data                                                                                                 |
 
 ## Contents
@@ -763,7 +763,9 @@ Verified on 9 October 2026:
   `migrate-prod` job seeds whenever the `SEED_ADMIN_*` secrets are set, and they are, in the
   Production environment. `seed.ts` has no production guard, so each run upserts the mock
   users and `usr_dev_user`'s debug data into production and resets the seeded admin's
-  Firebase password to the secret's value.
+  Firebase password to the secret's value. Each seed run takes about half an hour (33–34
+  minutes in October 2026), because every row is a separate upsert, and the same seed runs
+  against the test database for every pull request.
 - **No GitHub environment has protection rules**, although `RUNBOOK.md` says production
   migrations need manual approval.
 - **The CI end-to-end job does not test the preview deployment.** The composite action
@@ -831,10 +833,9 @@ Verified on 9 October 2026:
 | GitHub                      | code and CI (`kookio` and `kookio-thesis`, both private)                                       | yes                                                                   |
 | CockroachDB Cloud           | database (`kookio_dev`, `kookio_test`, `kookio_prod`; `eu-central-1`)                          | yes — or a local single node in Docker (README)                       |
 | Firebase                    | authentication (email and password)                                                            | yes                                                                   |
-| Vercel                      | hosting, env store, image optimisation, cron                                                   | no, but every `npm run` wrapper pulls env vars through the Vercel CLI |
+| Vercel                      | hosting, env store, image optimisation, cron; the `kookio.app` domain (Vercel Domains)         | no, but every `npm run` wrapper pulls env vars through the Vercel CLI |
 | Redis (Vercel Marketplace)  | rate limits, bought ticks, plan drafts                                                         | no — degrades gracefully                                              |
 | Sentry                      | error reporting                                                                                | no                                                                    |
-| Name.com                    | the `kookio.app` domain                                                                        | no                                                                    |
 | dbdocs.io, Nx Cloud         | ER diagram; remote cache (`nxCloudId` in `nx.json`, set `NX_NO_CLOUD=true` to work without it) | no                                                                    |
 | Discord webhook, Gmail SMTP | CI failure alerts                                                                              | no                                                                    |
 | TheMealDB                   | only to regenerate the dataset (premium key)                                                   | no                                                                    |
@@ -928,16 +929,16 @@ why a lockfile must be rebuilt with a full `npm install`, never with `--package-
 
 ## 11. Where everything lives
 
-| What                           | Where                                                                                                            |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| Code                           | <https://github.com/EduardEmanuel/kookio> (private, archived); final state tagged `v1.0.0`                       |
-| Thesis and data pipeline       | <https://github.com/EduardEmanuel/kookio-thesis> (private) — `ro/` LaTeX sources, `research/the-meal-db/`        |
-| Hosting                        | Vercel project `kookio` (personal account, paused since 9 Oct 2026); `kookio.app`, `test.` and `dev.` subdomains |
-| Domain registrar               | Name.com — `kookio.app`, registered 2 Dec 2025, expires 2 Dec 2026, DNS on Vercel                                |
-| Database                       | CockroachDB Cloud — databases `kookio_dev`, `kookio_test`, `kookio_prod`; roles `kookio_app`, `kookio_migrate`   |
-| Redis                          | Vercel Marketplace integration, free tier, Frankfurt                                                             |
-| Errors                         | Sentry (organisation and project in `SENTRY_ORG` / `SENTRY_PROJECT`)                                             |
-| ER diagram                     | <https://dbdocs.io/dinea.eduard/kookio-db> (password-protected)                                                  |
-| CI alerts                      | Discord channel `#kookio-alerts` and email                                                                       |
-| Engineering guidelines         | `.ai/NN_*.md` (25 chapters); per-library READMEs; `scripts/README.md`; `RUNBOOK.md`                              |
-| Measurements behind the thesis | `npm run bench:preview`, `bench:coverage`, `bench:lighthouse`, `bench:images`                                    |
+| What                           | Where                                                                                                                                                                                                             |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Code                           | <https://github.com/EduardEmanuel/kookio> (private, archived); final state tagged `v1.0.0`                                                                                                                        |
+| Thesis and data pipeline       | <https://github.com/EduardEmanuel/kookio-thesis> (private) — `ro/` LaTeX sources, `research/the-meal-db/`                                                                                                         |
+| Hosting                        | Vercel project `kookio` in the personal scope `dinea-eduard-emanuels-projects` (paused since 9 Oct 2026); `kookio.app`, `test.` and `dev.` subdomains. CLI and API calls must target that scope.                  |
+| Domain                         | `kookio.app`, bought through Vercel Domains on 2 Dec 2025 (the public registry lists Name.com, Vercel's registrar), paid until 2 Dec 2026, DNS on Vercel. The auto-renew setting was not checked at archive time. |
+| Database                       | CockroachDB Cloud — databases `kookio_dev`, `kookio_test`, `kookio_prod`; roles `kookio_app`, `kookio_migrate`                                                                                                    |
+| Redis                          | Vercel Marketplace integration, free tier, Frankfurt                                                                                                                                                              |
+| Errors                         | Sentry (organisation and project in `SENTRY_ORG` / `SENTRY_PROJECT`)                                                                                                                                              |
+| ER diagram                     | <https://dbdocs.io/dinea.eduard/kookio-db> (password-protected)                                                                                                                                                   |
+| CI alerts                      | Discord channel `#kookio-alerts` and email                                                                                                                                                                        |
+| Engineering guidelines         | `.ai/NN_*.md` (25 chapters); per-library READMEs; `scripts/README.md`; `RUNBOOK.md`                                                                                                                               |
+| Measurements behind the thesis | `npm run bench:preview`, `bench:coverage`, `bench:lighthouse`, `bench:images`                                                                                                                                     |
