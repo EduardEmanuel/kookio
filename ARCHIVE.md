@@ -4,7 +4,9 @@
 > project had served its purpose as the case study of a bachelor thesis. This file is the
 > entry point for anyone coming back to it cold — most likely its author, years later. It
 > records where the project came from, what it set out to solve, how every part of it
-> worked, what was left unfinished, and what it takes to bring it back to life.
+> worked, what was left unfinished, and what it takes to bring it back to life. How the
+> product evolved — the plans, the decisions that shaped it and the ideas never built — is
+> told in its companion, [`PRODUCT-HISTORY.md`](PRODUCT-HISTORY.md).
 >
 > Everything below was checked against the code, the git history and the live services on
 > 9 October 2026, the day the project was archived: the deployment was paused and this
@@ -18,7 +20,7 @@
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **What it is**               | A pantry-first cooking companion. You record what is in your kitchen; Kookio shows which of ~600 recipes you can cook right now, lets you plan meals on a calendar, derives the shopping list from the plan minus the pantry, and walks you through cooking while deducting what you used. |
 | **Why it was built**         | As the vehicle for the bachelor thesis _Arhitectura PAN (Prisma–Analog–Nx)_ (Computer Science, University of Bucharest, defended July 2026), set in a real domain: household food waste caused by buying without a plan.                                                                   |
-| **Lifetime**                 | 14 Sep 2025 → 2 Jul 2026, archived 9 Oct 2026 · one author · about 400 commits · 28 merged pull requests                                                                                                                                                                                   |
+| **Lifetime**                 | 14 Sep 2025 → 2 Jul 2026, archived 9 Oct 2026 · one author · about 400 commits · about 30 merged pull requests                                                                                                                                                                             |
 | **Stack**                    | Angular 21 + AnalogJS 2.5 (SSR on Nitro) · tRPC 10 + Zod 4 · Prisma 7 → CockroachDB · Firebase Auth · Redis · Nx 22 monorepo · Vercel                                                                                                                                                      |
 | **Final code**               | `main`, tagged `v1.0.0`; this repository is archived (read-only)                                                                                                                                                                                                                           |
 | **Production**               | <https://kookio.app> (branch `main`), plus `test.kookio.app` and `dev.kookio.app` — Vercel project `kookio`, region `fra1`. **Paused on 9 October 2026**; no deployment answers.                                                                                                           |
@@ -52,14 +54,15 @@ interactive, real-time exploration"_ — and the label that later became the the
 
 Autumn and winter 2025 built plumbing rather than product: Prisma with generated Zod schemas
 around a single `Ingredient` table, a move from Postgres to CockroachDB (25 October), CI on
-GitHub Actions, continuous deployment to Vercel (14 December), three environments with a
-database each, and the `apps/` + `libs/` layout. February and March 2026 have no commits.
+GitHub Actions, deployment to Vercel (the first successful production deployment was on
+21 December), three environments with a database each, and the `apps/` + `libs/` layout.
+February and March 2026 have no commits.
 
 The product itself was written between **19 April and 20 June 2026** — about 340 of the
 ~400 commits. It opened with one large commit (`de7545b`, 19 April) that brought in the real
 domain model: 19 Prisma models, Firebase authentication and a seed of ~595 recipes derived
 from TheMealDB. The thesis was finalised on 16 June 2026 and defended in July; the last
-commit is from 2 July.
+development commit is from 2 July.
 
 How the early ambitions turned out:
 
@@ -469,7 +472,7 @@ The other security headers (HSTS, `X-Frame-Options`, `nosniff`, `Referrer-Policy
      `main`);
   3. `migrate-dev`, `migrate-test`, `migrate-prod` — `prisma migrate deploy` with retries,
      **followed by the seed** whenever the `SEED_ADMIN_*` secrets exist (see section 9.3);
-  4. smoke tests that poll `/api/health`;
+  4. smoke tests that poll `/api/health` — in practice they skip (section 9.3);
   5. `e2e-test` on the `test` branch — Playwright in the official container;
   6. Discord and email alerts on failure.
 - **Local hooks** (husky): pre-commit formats and lints the changed files; pre-push runs
@@ -668,6 +671,10 @@ with 2 servings — there is no servings control.
 
 ## 7. Decisions, reversals and lessons
 
+The decisions below are the ones that matter when working on the code.
+[`PRODUCT-HISTORY.md`](PRODUCT-HISTORY.md) has the full register — more than a hundred
+decisions, with dates and what became of each — and the plans they came from.
+
 ### 7.1 Decision log
 
 | Decision                                   | What and why                                                                                                                                                                                                                                       | Reference                                                     |
@@ -697,9 +704,9 @@ with 2 servings — there is no servings control.
 - **A green pipeline is not a working app.** The CSP broke inline scripts in production
   without failing a single test, and the incomplete seed catalog (5.3) passes every check.
 - **Free tiers have teeth.** The first Redis instance was deleted for inactivity, and in June
-  2026 the Actions minutes ran out, so two pull requests were merged without CI.
+  2026 the Actions minutes ran out, so six pull requests were merged without CI.
 - **Keep data and its provenance together.** The pipeline lives in another repository, and
-  the trimmed catalog went unnoticed for five months, until the archive review.
+  the trimmed catalog went unnoticed for five and a half months, until the archive review.
 - **When a metric does not move, you are pulling the wrong lever** (`.ai/25_debugging.md`).
 
 ## 8. Timeline
@@ -707,7 +714,7 @@ with 2 servings — there is no servings control.
 | When                | Phase                       | Highlights                                                                                                                                                                                                                         |
 | ------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Sep–Oct 2025        | Bootstrap                   | Nx + AnalogJS + Playwright; Prisma with Zod; Apache-2.0 licence and the "PAN stack" name (`c3a4886`); move to CockroachDB (`4bd9654`)                                                                                              |
-| Nov 2025 – Jan 2026 | Plumbing                    | Deployment to Vercel (`eea5821`, 14 Dec); dev/test/prod pipelines (`dfa256d`); modular workflows (`a7338b6`); Redis; feature flags (`5bfc566`)                                                                                     |
+| Nov 2025 – Jan 2026 | Plumbing                    | Vercel build output (`eea5821`, 14 Dec); dev/test/prod pipelines and the first successful production deployment (`dfa256d`, 21 Dec); modular workflows (`a7338b6`); Redis; feature flags (`5bfc566`)                               |
 | Feb–Mar 2026        | Pause                       | No commits                                                                                                                                                                                                                         |
 | 19–27 Apr 2026      | Domain model and shell      | Schema, Firebase auth and seed (`de7545b`); repositories removed (`408940a`); responsive shell; the build-memory saga                                                                                                              |
 | 26 Apr – 9 May      | Design system, onboarding   | Material Symbols font, Twemoji, Material 3 tokens, template lint rules; the six-step onboarding                                                                                                                                    |
@@ -718,7 +725,7 @@ with 2 servings — there is no servings control.
 | 7–13 Jun            | Performance and measurement | Preference filters, image optimisation, Playwright page objects, reproducible benchmarks (`9da01f8`)                                                                                                                               |
 | 12–20 Jun           | Hardening                   | Dead code removed (#17), Sentry, rate limiting and security headers, resilience, the reload fix (#27), 80 % coverage floor (#28), dbdocs, self-hosted fonts, CSP nonce (#31), Nx Cloud, CI cost cuts. Thesis finalised on 16 June. |
 | 17 Jun – 2 Jul      | Coda                        | Three commits on `dev` only; pull request #38                                                                                                                                                                                      |
-| 9 Oct 2026          | Archive                     | These notes; the full ingredient catalog restored; the `dev`-only commits and #38 merged; `v1.0.0` tagged; deployment paused; repository archived                                                                                  |
+| 9 Oct 2026          | Archive                     | These notes and the product history; the full ingredient catalog restored; the `dev`-only commits and #38 merged; `v1.0.0` tagged; deployment paused; repository archived                                                          |
 
 The busiest month was May 2026 (179 commits); the busiest day, 9 May 2026 (22 commits).
 
@@ -770,13 +777,21 @@ Verified on 9 October 2026:
   migrations need manual approval.
 - **The CI end-to-end job does not test the preview deployment.** The composite action
   exports `PLAYWRIGHT_BASE_URL`, but the Playwright config reads `BASE_URL`, so the suite
-  falls back to a local dev server inside the container.
-- **The smoke tests only prove that the function starts**: `/api/health` returns HTTP 200
-  even when the database is down.
+  falls back to a local dev server inside the container. It last ran on 16 June: the push
+  to `test` on 17 June was blocked by billing (see below), and since 17 June the job runs
+  only on pushes to `test`, which has not moved since.
+- **The smoke tests skip instead of testing.** `smoke-prod` reads `vars.VERCEL_APP_URL`,
+  which is defined only on the three GitHub environments, and the job declares no
+  `environment:`, so it logs "No BASE_URL, skipping." and still posts "Production deployed
+  successfully" to Discord. On 9 October the preview smoke test skipped too, because no
+  ready preview deployment was found. How long this has been so is unknown: run logs expire
+  after 90 days. Even when the smoke tests run, `/api/health` returns HTTP 200 with the
+  database down.
 - **CI was blocked by billing from 17 to 20 June 2026.** Those red runs never executed a
   step ("recent account payments have failed or your spending limit needs to be
-  increased"), so pull requests #36 and #37 were merged without CI. GitHub Actions minutes
-  for private repositories are limited; the next run, on 2 July, passed.
+  increased"), so six pull requests, #32 to #37 (#34 into `dev`, the rest into `main`),
+  were merged without CI. GitHub Actions minutes for private repositories are limited; the
+  next run, on 2 July, passed.
 - **List pages are server-rendered without their data**; feeds load after hydration.
 - **Rate limiting fails open** and runs in production only.
 - **Sentry drops Prisma connection errors (`P1001`, `P1017`) in production too**, a deliberate
@@ -784,19 +799,21 @@ Verified on 9 October 2026:
 
 ### 9.4 Where the docs disagree with the code
 
-| Document                      | What it says                                                                                                                         | Reality                                                                              |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| `.ai/01_intro.md` stack table | Angular 20, AnalogJS 1.21, Prisma 6, Zod 3.25, Nx 21, Vitest 3.2                                                                     | Angular 21, AnalogJS 2.5, Prisma 7, Zod 4, Nx 22, Vitest 4 (section 10.5)            |
-| `.ai/04_scss.md`              | 8 token files                                                                                                                        | 7                                                                                    |
-| `.ai/12_prisma-zod.md`        | no interactive `$transaction`s in the routers                                                                                        | four (section 4.7)                                                                   |
-| `.ai/13_firebase.md`          | three `FIREBASE_*` server variables                                                                                                  | one, `FIREBASE_SERVICE_ACCOUNT_JSON_B64`                                             |
-| `.ai/15_redis-pino.md`        | the keep-alive cron was deferred                                                                                                     | shipped in `d495101`                                                                 |
-| `.ai/18_vercel.md`            | migrations run in the Vercel build                                                                                                   | they run in GitHub Actions                                                           |
-| `.ai/` and earlier notes      | CI runs `npm run build:twemoji:check`                                                                                                | it never has; only the icon check runs                                               |
-| `RUNBOOK.md`                  | Discord `#kookio-alerts`, repository calls, `cacheGetOrSet()`, `app.routes.server.ts`, `DIRECT_DATABASE_URL`, approval on production | the Discord alerts exist; the rest does not (see the note at the top of the runbook) |
-| `apps/web/README.md`          | CI deploys to Vercel                                                                                                                 | Vercel's Git integration deploys; CI only migrates and tests                         |
-| `schema.prisma` comment       | onboarding creates two default collections                                                                                           | one, `favorites`                                                                     |
-| The thesis                    | a manual "running low" mark exists in the pantry                                                                                     | no low-stock code exists                                                             |
+| Document                                 | What it says                                                                                                                         | Reality                                                                              |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `.ai/01_intro.md` stack table            | Angular 20, AnalogJS 1.21, Prisma 6, Zod 3.25, Nx 21, Vitest 3.2                                                                     | Angular 21, AnalogJS 2.5, Prisma 7, Zod 4, Nx 22, Vitest 4 (section 10.5)            |
+| `.ai/04_scss.md`                         | 8 token files                                                                                                                        | 7                                                                                    |
+| `.ai/10_architecture.md`                 | no `*.server.ts` page loaders exist yet                                                                                              | two: `cook.[recipeId].server.ts` and `recipes.[id].server.ts`                        |
+| `.ai/10_architecture.md`, `.ai/23_nx.md` | persistence libraries under `prisma/<name>`                                                                                          | one flat library, `libs/prisma-client`                                               |
+| `.ai/12_prisma-zod.md`                   | no interactive `$transaction`s in the routers                                                                                        | four (section 4.7)                                                                   |
+| `.ai/13_firebase.md`                     | three `FIREBASE_*` server variables                                                                                                  | one, `FIREBASE_SERVICE_ACCOUNT_JSON_B64`                                             |
+| `.ai/15_redis-pino.md`                   | the keep-alive cron was deferred                                                                                                     | shipped in `d495101`                                                                 |
+| `.ai/18_vercel.md`                       | migrations run in the Vercel build                                                                                                   | they run in GitHub Actions                                                           |
+| `.ai/` and earlier notes                 | CI runs `npm run build:twemoji:check`                                                                                                | it never has; only the icon check runs                                               |
+| `RUNBOOK.md`                             | Discord `#kookio-alerts`, repository calls, `cacheGetOrSet()`, `app.routes.server.ts`, `DIRECT_DATABASE_URL`, approval on production | the Discord alerts exist; the rest does not (see the note at the top of the runbook) |
+| `apps/web/README.md`                     | CI deploys to Vercel                                                                                                                 | Vercel's Git integration deploys; CI only migrates and tests                         |
+| `schema.prisma` comment                  | onboarding creates two default collections                                                                                           | one, `favorites`                                                                     |
+| The thesis                               | a manual "running low" mark exists in the pantry                                                                                     | no low-stock code exists                                                             |
 
 ### 9.5 Suspected, not verified
 
@@ -809,7 +826,8 @@ Verified on 9 October 2026:
   session as settled too early; logout also leaves the pantry, plan and groceries stores
   holding the previous user's data until they reload.
 - A CockroachDB serialization abort inside one of the four interactive transactions would
-  reach the client as a 500.
+  reach the client as a 500. A transaction-level retry helper, `withTxRetry`, existed until
+  8 June 2026 (`7894c73`); it was deleted on the belief that no such transactions existed.
 
 ## 10. Bringing it back to life
 
@@ -921,8 +939,12 @@ why a lockfile must be rebuilt with a full `npm install`, never with `--package-
 - Wire the end-to-end job to the preview: `BASE_URL`, not `PLAYWRIGHT_BASE_URL`.
 - Decide whether production should be seeded automatically at all; at minimum, add a guard
   to `scripts/seeds/seed.ts`.
+- Give `smoke-prod` `environment: production`, or define `VERCEL_APP_URL` at repository
+  level, so the production smoke test gets a URL; today it skips and reports success.
 - Make `/api/health` return a non-200 status when a dependency is down, or let the smoke
   test read the body.
+- Reset `dev` and `test` to `main` before pushing to them: both are behind `main` (`test` by
+  24 commits, `dev` by 20) and would run the June version of the pipeline.
 - Add protection rules to the Production environment if migrations should wait for approval.
 - Keep an eye on the Actions budget: a blocked run shows "recent account payments have
   failed", not a test failure.
@@ -932,6 +954,7 @@ why a lockfile must be rebuilt with a full `npm install`, never with `--package-
 | What                           | Where                                                                                                                                                                                                             |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Code                           | <https://github.com/EduardEmanuel/kookio> (private, archived); final state tagged `v1.0.0`                                                                                                                        |
+| Product history                | [`PRODUCT-HISTORY.md`](PRODUCT-HISTORY.md): how the product evolved, every recorded decision, and the plans never built                                                                                           |
 | Thesis and data pipeline       | <https://github.com/EduardEmanuel/kookio-thesis> (private) — `ro/` LaTeX sources, `research/the-meal-db/`                                                                                                         |
 | Hosting                        | Vercel project `kookio` in the personal scope `dinea-eduard-emanuels-projects` (paused since 9 Oct 2026); `kookio.app`, `test.` and `dev.` subdomains. CLI and API calls must target that scope.                  |
 | Domain                         | `kookio.app`, bought through Vercel Domains on 2 Dec 2025 (the public registry lists Name.com, Vercel's registrar), paid until 2 Dec 2026, DNS on Vercel. The auto-renew setting was not checked at archive time. |
