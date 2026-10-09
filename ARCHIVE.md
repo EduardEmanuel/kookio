@@ -304,7 +304,7 @@ sequenceDiagram
     participant DB as CockroachDB
     B->>N: GET /pantry
     N-->>B: SSR HTML: app shell, no user data
-    Note over B: hydration; AuthStore restores the Firebase session
+    Note over B: hydration, then AuthStore restores the Firebase session
     B->>F: get ID token
     B->>N: tRPC auth.me (Bearer token)
     N->>F: verifyIdToken (8 s timeout)
