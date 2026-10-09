@@ -1,8 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { signOutMock } = vi.hoisted(() => ({
-  signOutMock: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-}));
+const { signOutMock, reportMetricMock, onAuthStateChangedMock } = vi.hoisted(
+  () => ({
+    signOutMock: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    reportMetricMock: vi.fn(),
+    // Default: resolve synchronously with no signed-in user (the happy path).
+    // A test can `mockImplementationOnce` this to never call back, exercising
+    // the authReady safety-timer path.
+    onAuthStateChangedMock: vi.fn((_auth: unknown, cb: (u: null) => void) => {
+      cb(null);
+      return vi.fn();
+    }),
+  }),
+);
 
 vi.mock('firebase/app', () => ({
   getApps: vi.fn(() => []),
@@ -14,13 +24,15 @@ vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({ currentUser: null })),
   browserLocalPersistence: 'local',
   createUserWithEmailAndPassword: vi.fn(),
-  onAuthStateChanged: vi.fn((_auth: unknown, cb: (u: null) => void) => {
-    cb(null);
-    return vi.fn();
-  }),
+  onAuthStateChanged: onAuthStateChangedMock,
   setPersistence: vi.fn(() => Promise.resolve()),
   signInWithEmailAndPassword: vi.fn(),
   signOut: signOutMock,
+}));
+
+vi.mock('@kookio/shared-observability', () => ({
+  reportError: vi.fn(),
+  reportMetric: reportMetricMock,
 }));
 
 import { TestBed } from '@angular/core/testing';
@@ -342,6 +354,37 @@ describe('AuthStore — counters and hasProfileSignals', () => {
       // The whole point of the fix: a failed auth.me must still settle, so a
       // guard waiting on readiness proceeds instead of redirecting forever.
       expect(store.sessionSettled()).toBe(true);
+    });
+  });
+
+  describe('authReady telemetry', () => {
+    it('reports nothing when onAuthStateChanged resolves fast (no per-load noise)', () => {
+      setup();
+      // Default mock resolves synchronously → latency under the slow threshold
+      // and the timer is cleared, so neither metric fires.
+      expect(reportMetricMock).not.toHaveBeenCalled();
+    });
+
+    it('reports a warning when the authReady safety timer fires', () => {
+      vi.useFakeTimers();
+      // onAuthStateChanged never calls back → only the timer can resolve readiness.
+      onAuthStateChangedMock.mockImplementationOnce(() => vi.fn());
+      try {
+        const { store } = setup();
+        expect(store.authReady()).toBe(false);
+
+        vi.advanceTimersByTime(5_000);
+
+        expect(store.authReady()).toBe(true);
+        expect(reportMetricMock).toHaveBeenCalledWith(
+          expect.any(String),
+          'auth.authReady.timeout',
+          { timeoutMs: 5_000 },
+          'warning',
+        );
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });
