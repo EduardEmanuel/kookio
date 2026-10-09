@@ -3,6 +3,7 @@
 > **Archived — October 2026.** Kookio is no longer developed, and its deployment is paused. Start with
 > [`ARCHIVE.md`](./ARCHIVE.md): where the project came from, what it set out to solve, how it
 > worked, what was left unfinished and how to bring it back to life.
+> [`PRODUCT-HISTORY.md`](./PRODUCT-HISTORY.md) tells how the product evolved and why.
 
 Let's Kookio it! is an open-source pantry companion built with the PAN stack—Prisma, Analog, and Nx. The repo hosts both the Analog SSR app and the supporting libraries that make end-to-end type safety possible.
 
