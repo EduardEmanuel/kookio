@@ -16,7 +16,7 @@ import {
 const BASE_URL = process.env['BASE_URL'] ?? 'http://localhost:4200';
 
 test.describe('Register flow', () => {
-  test('new user registers, is provisioned in DB and redirected home', async ({
+  test('new user registers, is provisioned in DB and redirected to onboarding', async ({
     page,
   }) => {
     const registerPage = new RegisterPage(page);
@@ -26,10 +26,11 @@ test.describe('Register flow', () => {
     await registerPage.goto();
     await registerPage.submit(email, TEST_PASSWORD);
 
-    // 2. Verify redirect to home (URLS.HOME = '/'), which now renders the
-    //    recipes feed directly instead of redirecting to /recipes.
-    await page.waitForURL((url) => url.pathname === '/');
-    expect(new URL(page.url()).pathname).toBe('/');
+    // 2. A freshly registered user is never onboarded, so register.page sends
+    //    them into the onboarding wizard (the onboardingGuard would bounce them
+    //    there anyway).
+    await page.waitForURL((url) => url.pathname === '/onboarding');
+    expect(new URL(page.url()).pathname).toBe('/onboarding');
 
     // 3. Verify user exists in DB via tRPC auth.me
     const { idToken } = await firebaseSignIn(email, TEST_PASSWORD);

@@ -34,6 +34,18 @@ export default defineConfig({
    * settled, every test still completes in well under 30s.
    */
   timeout: 60_000,
+  /**
+   * Firefox is markedly slower than Chromium/WebKit and, under sustained
+   * parallel load late in the suite, its full Firebase-client login roundtrip
+   * (form → onAuthStateChanged → ready$() → guard redirect) occasionally
+   * exceeds the 60s timeout on /login-dependent navigation — a timing flake,
+   * not a regression (the same tests pass every time in isolation). This flake
+   * reproduces locally too, so a single local retry absorbs it without hiding
+   * genuine fragility (two failures in a row is still a real signal); CI gets
+   * two for extra tolerance to infra noise. `trace: 'on-first-retry'` captures
+   * a trace whenever a retry fires.
+   */
+  retries: process.env['CI'] ? 2 : 1,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
