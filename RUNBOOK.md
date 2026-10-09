@@ -1,5 +1,11 @@
 # Runbook
 
+> **Archived project (October 2026).** This runbook was written in April 2026 for the live
+> system and is kept for reference; parts of it never matched the code. The GitHub
+> `production` environment has no manual-approval rule; the repository layer,
+> `cacheGetOrSet()` and `app.routes.server.ts` never shipped; `DIRECT_DATABASE_URL` is unused
+> since Prisma 7. See [`ARCHIVE.md`](ARCHIVE.md), sections 9.3 and 9.4.
+
 Quick reference for diagnosing and resolving common incidents in the Kookio
 production stack. Keep this short and practical — link out for depth.
 
