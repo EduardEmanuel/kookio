@@ -9,9 +9,9 @@
 > told in its companion, [`PRODUCT-HISTORY.md`](PRODUCT-HISTORY.md).
 >
 > Everything below was checked against the code, the git history and the live services on
-> 9 October 2026, the day the project was archived: the deployment was paused and this
-> repository was made read-only. Where other documents in this repository disagree with the
-> code, trust the code; the known disagreements are listed in
+> 9 October 2026, the day the project was archived: this repository was made read-only, and
+> the Vercel project was deleted shortly after. Where other documents in this repository
+> disagree with the code, trust the code; the known disagreements are listed in
 > [section 9.4](#94-where-the-docs-disagree-with-the-code).
 
 ## At a glance
@@ -23,7 +23,7 @@
 | **Lifetime**                 | 14 Sep 2025 → 2 Jul 2026, archived 9 Oct 2026 · one author · about 400 commits · about 30 merged pull requests                                                                                                                                                                             |
 | **Stack**                    | Angular 21 + AnalogJS 2.5 (SSR on Nitro) · tRPC 10 + Zod 4 · Prisma 7 → CockroachDB · Firebase Auth · Redis · Nx 22 monorepo · Vercel                                                                                                                                                      |
 | **Final code**               | `main`, tagged `v1.0.0`; this repository is archived (read-only)                                                                                                                                                                                                                           |
-| **Production**               | <https://kookio.app> (branch `main`), plus `test.kookio.app` and `dev.kookio.app` — Vercel project `kookio`, region `fra1`. **Paused on 9 October 2026**; no deployment answers.                                                                                                           |
+| **Production**               | <https://kookio.app> (branch `main`), plus `test.kookio.app` and `dev.kookio.app` — Vercel project `kookio`, region `fra1`. **Deleted in October 2026**, after the archive; section 10.4 rebuilds it.                                                                                      |
 | **Domain**                   | `kookio.app`, bought through Vercel Domains, paid until **2 December 2026**; renewal and auto-renew are managed in Vercel's Domains settings                                                                                                                                               |
 | **Thesis and data pipeline** | Private repository [`EduardEmanuel/kookio-thesis`](https://github.com/EduardEmanuel/kookio-thesis): the LaTeX sources and the TheMealDB pipeline that produced this repository's seed data                                                                                                 |
 
@@ -725,7 +725,7 @@ decisions, with dates and what became of each — and the plans they came from.
 | 7–13 Jun            | Performance and measurement | Preference filters, image optimisation, Playwright page objects, reproducible benchmarks (`9da01f8`)                                                                                                                               |
 | 12–20 Jun           | Hardening                   | Dead code removed (#17), Sentry, rate limiting and security headers, resilience, the reload fix (#27), 80 % coverage floor (#28), dbdocs, self-hosted fonts, CSP nonce (#31), Nx Cloud, CI cost cuts. Thesis finalised on 16 June. |
 | 17 Jun – 2 Jul      | Coda                        | Three commits on `dev` only; pull request #38                                                                                                                                                                                      |
-| 9 Oct 2026          | Archive                     | These notes and the product history; the full ingredient catalog restored; the `dev`-only commits and #38 merged; `v1.0.0` tagged; deployment paused; repository archived                                                          |
+| 9 Oct 2026          | Archive                     | These notes and the product history; the full ingredient catalog restored; the `dev`-only commits and #38 merged; `v1.0.0` tagged; repository archived; Vercel project deleted shortly after                                       |
 
 The busiest month was May 2026 (179 commits); the busiest day, 9 May 2026 (22 commits).
 
@@ -741,8 +741,9 @@ How everything was left on 9 October 2026:
 - `main` holds all finished work — including the three commits that had only been on `dev`
   — and is tagged `v1.0.0`. The GitHub repository is archived (read-only); unarchive it in
   its settings before pushing again.
-- The Vercel project is paused, so no deployment answers. The weekly Redis keep-alive cron
-  stopped with it.
+- The Vercel project was deleted shortly after the archive, to free the account for other
+  work. Its deployments, its environment variables and the weekly Redis keep-alive cron went
+  with it; section 10.3 lists every variable it held and where each value comes from.
 - The CockroachDB databases, the Firebase project and Sentry were left in place, untouched.
 - `kookio.app` stays registered until 2 December 2026.
 
@@ -840,58 +841,114 @@ Verified on 9 October 2026:
   expect the deploy targets (Vercel runtimes, GitHub-hosted runners, the pinned Playwright
   container) to drift first.
 - **Services**: the free Redis instance is deleted once nothing pings it, and the keep-alive
-  cron stopped when the deployment was paused — expect to provision a new one. The
-  CockroachDB cluster or its credentials may be gone; Vercel CLI logins expire; the domain
-  lapses unless renewed.
+  cron went with the Vercel project — expect to provision a new one. The CockroachDB cluster
+  or its credentials may be gone; Vercel CLI logins expire; the domain lapses unless renewed.
 
 ### 10.2 Accounts and services
 
-| Service                     | Role                                                                                           | Needed to run locally?                                                |
-| --------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| GitHub                      | code and CI (`kookio` and `kookio-thesis`, both private)                                       | yes                                                                   |
-| CockroachDB Cloud           | database (`kookio_dev`, `kookio_test`, `kookio_prod`; `eu-central-1`)                          | yes — or a local single node in Docker (README)                       |
-| Firebase                    | authentication (email and password)                                                            | yes                                                                   |
-| Vercel                      | hosting, env store, image optimisation, cron; the `kookio.app` domain (Vercel Domains)         | no, but every `npm run` wrapper pulls env vars through the Vercel CLI |
-| Redis (Vercel Marketplace)  | rate limits, bought ticks, plan drafts                                                         | no — degrades gracefully                                              |
-| Sentry                      | error reporting                                                                                | no                                                                    |
-| dbdocs.io, Nx Cloud         | ER diagram; remote cache (`nxCloudId` in `nx.json`, set `NX_NO_CLOUD=true` to work without it) | no                                                                    |
-| Discord webhook, Gmail SMTP | CI failure alerts                                                                              | no                                                                    |
-| TheMealDB                   | only to regenerate the dataset (premium key)                                                   | no                                                                    |
+| Service                     | Role                                                                                                                                     | Needed to run locally?                                                |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| GitHub                      | code and CI (`kookio` and `kookio-thesis`, both private)                                                                                 | yes                                                                   |
+| CockroachDB Cloud           | database (`kookio_dev`, `kookio_test`, `kookio_prod`; `eu-central-1`)                                                                    | yes — or a local single node in Docker (README)                       |
+| Firebase                    | authentication (email and password)                                                                                                      | yes                                                                   |
+| Vercel                      | hosting, env store, image optimisation, cron; the `kookio.app` domain (Vercel Domains). The project was deleted after the archive (10.4) | no, but every `npm run` wrapper pulls env vars through the Vercel CLI |
+| Redis (Vercel Marketplace)  | rate limits, bought ticks, plan drafts                                                                                                   | no — degrades gracefully                                              |
+| Sentry                      | error reporting                                                                                                                          | no                                                                    |
+| dbdocs.io, Nx Cloud         | ER diagram; remote cache (`nxCloudId` in `nx.json`, set `NX_NO_CLOUD=true` to work without it)                                           | no                                                                    |
+| Discord webhook, Gmail SMTP | CI failure alerts                                                                                                                        | no                                                                    |
+| TheMealDB                   | only to regenerate the dataset (premium key)                                                                                             | no                                                                    |
 
 ### 10.3 Configuration
 
-Application variables (stored in Vercel per environment and pulled locally by
-`scripts/with-vercel-env.ts`):
+The application reads its configuration from environment variables. The deleted Vercel
+project held them per environment: Production for `main`; Preview, with branch-specific
+values for `test` and `dev` so that each branch reached its own database; and Development,
+which `scripts/with-vercel-env.ts` pulls into `tmp/kookio.env` for the local `npm run`
+commands. "Per env" marks values that differed between environments. No value is stored in
+this repository; the last column says where to get each one again.
 
-| Variable                                                                                                         | Required  | Purpose                                                                                      |
-| ---------------------------------------------------------------------------------------------------------------- | --------- | -------------------------------------------------------------------------------------------- |
-| `DATABASE_URL`                                                                                                   | yes       | CockroachDB connection string (app role)                                                     |
-| `FIREBASE_SERVICE_ACCOUNT_JSON_B64`                                                                              | yes       | base64 of a Firebase service-account JSON: verifies ID tokens, seeds the admin               |
-| `NG_APP_FIREBASE_API_KEY`, `NG_APP_FIREBASE_AUTH_DOMAIN`, `NG_APP_FIREBASE_PROJECT_ID`, `NG_APP_FIREBASE_APP_ID` | yes       | Firebase web config, inlined into the browser bundle                                         |
-| `NITRO_PRESET`                                                                                                   | on Vercel | the code defaults to `node-server`; Vercel builds expect `vercel` — confirm in the dashboard |
-| `REDIS_URL`, `REDIS_PREFIX`                                                                                      | no        | Redis connection; key prefix (default `kookio:<VERCEL_ENV>`)                                 |
-| `SENTRY_DSN`, `NG_APP_SENTRY_DSN`                                                                                | no        | server and browser error reporting                                                           |
-| `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`                                                              | no        | source-map upload during the build                                                           |
-| `CRON_SECRET`                                                                                                    | no        | protects the keep-alive route (open when unset)                                              |
-| `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`                                                                        | no        | seed an admin user                                                                           |
-| `LOG_LEVEL`, `ALLOW_BENCH`, `BENCH_KEY`                                                                          | no        | log level; enable the benchmark route                                                        |
+#### Database
+
+| Variable                                                         | Required           | What it does                                                                                                                           | Value from                                          |
+| ---------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `DATABASE_URL`                                                   | yes, per env       | Prisma's connection string, as the `kookio_app` role, to `kookio_prod`, `kookio_test` or `kookio_dev`; without it, queries fail loudly | CockroachDB Cloud → the cluster → Connect           |
+| `DB_USER_KOOKIO_APP`, `DB_USER_KOOKIO_MIGRATE`                   | no                 | role names for `npm run db:bootstrap` (defaults `kookio_app` and `kookio_migrate`)                                                     | your choice                                         |
+| `DB_USER_KOOKIO_APP_PASSWORD`, `DB_USER_KOOKIO_MIGRATE_PASSWORD` | for `db:bootstrap` | the passwords `db:bootstrap` gives those roles                                                                                         | your choice; they must match the connection strings |
+| `DIRECT_DATABASE_URL`                                            | not read           | left over from Prisma 6; since the Prisma 7 upgrade (30 May 2026) migrations run over `DATABASE_URL`                                   | do not recreate                                     |
+
+#### Firebase
+
+| Variable                                                                                                         | Required    | What it does                                                                                              | Value from                                                                                                                |
+| ---------------------------------------------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `FIREBASE_SERVICE_ACCOUNT_JSON_B64`                                                                              | yes         | the Admin SDK's credentials: the server verifies ID tokens with them, and the seed creates the admin user | Firebase console → Project settings → Service accounts → Generate new private key, then `base64 < key.json \| tr -d '\n'` |
+| `NG_APP_FIREBASE_API_KEY`, `NG_APP_FIREBASE_AUTH_DOMAIN`, `NG_APP_FIREBASE_PROJECT_ID`, `NG_APP_FIREBASE_APP_ID` | yes         | the web app's Firebase config, inlined into the browser bundle (public by design)                         | Firebase console → Project settings → General → Your apps                                                                 |
+| `NG_APP_FIREBASE_STORAGE_BUCKET`, `NG_APP_FIREBASE_MESSAGING_SENDER_ID`, `NG_APP_FIREBASE_MEASUREMENT_ID`        | not read    | the rest of Firebase's config snippet; the app uses no Storage, Messaging or Analytics                    | do not recreate                                                                                                           |
+| `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`                                                                        | no, per env | the admin user the seed creates or updates; every seed run resets its password to this value              | your choice                                                                                                               |
+
+#### Runtime
+
+| Variable                                                  | Required       | What it does                                                                                                                                                                   | Value from                        |
+| --------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| `NITRO_PRESET`                                            | on Vercel      | must be `vercel` there; the code defaults to `node-server` for local builds                                                                                                    | the literal `vercel`              |
+| `LOG_LEVEL`                                               | no             | Pino's level; defaults to `info` in production and `debug` elsewhere                                                                                                           | it was `debug` outside production |
+| `RECIPE_MATCH_BATCH_SIZE`, `RECIPE_MATCH_EXAMINED_BUDGET` | no             | `recipes.match` tuning: recipes fetched per database read while scanning (default 50), and the most recipes one call examines before it returns a partial page (default 1,500) | optional                          |
+| `CRON_SECRET`                                             | no, but set it | when set, the keep-alive route accepts only `Authorization: Bearer <secret>`, which Vercel's cron sends; the deleted project never set it, so the route was open               | any random string                 |
+
+#### Redis and Sentry
+
+| Variable                                                                     | Required    | What it does                                                                                                           | Value from                                            |
+| ---------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `REDIS_URL`                                                                  | no          | rate limits, bought ticks and plan drafts; without it, rate limiting fails open and the rest falls back to the browser | the Redis integration (free plan, Frankfurt, no HA)   |
+| `REDIS_PREFIX`                                                               | no, per env | key prefix; defaults to `kookio:<VERCEL_ENV>`                                                                          | optional; the default already differs per environment |
+| `SENTRY_DSN`                                                                 | no          | server-side error reporting; off when unset                                                                            | the Sentry integration                                |
+| `NG_APP_SENTRY_DSN`                                                          | no          | browser error reporting                                                                                                | a copy of `SENTRY_DSN`, added by hand                 |
+| `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`                          | no          | source-map upload during the build; skipped without the token                                                          | the Sentry integration                                |
+| `SENTRY_PUBLIC_KEY`, `SENTRY_VERCEL_LOG_DRAIN_URL`, `SENTRY_OTLP_TRACES_URL` | not read    | set by the integration for its log drain and traces                                                                    | the Sentry integration                                |
+
+#### Benchmarks and tools
+
+| Variable           | Required                    | What it does                                                                                        | Value from            |
+| ------------------ | --------------------------- | --------------------------------------------------------------------------------------------------- | --------------------- |
+| `ALLOW_BENCH`      | no                          | `true` turns on `/api/internal/bench-db`, which answers 404 otherwise; it was `false` in production | —                     |
+| `BENCH_KEY`        | with `ALLOW_BENCH`, per env | the key that route expects in the `x-bench-key` header; `npm run bench:preview` sends it            | any random string     |
+| `BENCH_ITERATIONS` | no                          | default iterations per benchmark call (100, capped at 1,000; `?ops=` overrides it)                  | optional              |
+| `DBDOCS_TOKEN`     | no                          | lets `npm run publish:dbml` publish the ER diagram from your machine; CI has its own copy           | `npx dbdocs token -g` |
 
 Do **not** set `NODE_ENV=production` in Vercel's Development environment: Vite derives
 `import.meta.env.PROD` from it, and local images then route to `/_vercel/image`, which only
 exists on Vercel.
 
 CI configuration (GitHub): the repository variables `NODE_VERSION` (24), `SMTP_SERVER` and
-`SMTP_PORT`; per environment (Development, Testing, Production) the secrets
-`KOOKIO_MIGRATE_CONNECTION`, `KOOKIO_APP_CONNECTION`, `SEED_ADMIN_EMAIL` and
+`SMTP_PORT`; per environment (Development, Testing, Production) the variable `VERCEL_APP_URL`
+and the secrets `KOOKIO_MIGRATE_CONNECTION`, `KOOKIO_APP_CONNECTION`, `SEED_ADMIN_EMAIL` and
 `SEED_ADMIN_PASSWORD`; at repository level `FIREBASE_SERVICE_ACCOUNT_JSON_B64`, `VERCEL_TOKEN`,
 `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `DISCORD_WEBHOOK`, `DISCORD_MENTION_USER_ID`,
 `SMTP_USERNAME`, `SMTP_PASSWORD`, `ALERT_EMAIL_TO`, `ALERT_EMAIL_FROM`, `DBDOCS_TOKEN`,
-`USER_KOOKIO_APP` and `USER_KOOKIO_MIGRATE`.
+`USER_KOOKIO_APP` and `USER_KOOKIO_MIGRATE`. A fourth environment, `Preview`, is empty; Vercel's
+deployment statuses created it. The connection strings come from CockroachDB Cloud (one per
+role and database), `SMTP_PASSWORD` is a Gmail app password, and `DISCORD_WEBHOOK` comes from
+the channel's Integrations settings. Treat every credential in these secrets as revoked, and
+generate new ones from their sources.
 
 ### 10.4 First boot
 
-First unarchive the GitHub repository (Settings → General → Danger Zone) and resume the
-paused Vercel project from its dashboard. Then:
+First unarchive the GitHub repository (Settings → General → Danger Zone). The Vercel project
+was deleted after the archive, so rebuild it:
+
+1. In Vercel, add a project from the GitHub repository. `vercel.json` already sets the build
+   command (with the 6 GB heap), the `fra1` region, the weekly cron, the image settings and
+   the security headers; use Node.js 24, as before.
+2. Install the Redis and Sentry integrations from the Vercel Marketplace and connect them to
+   the project. They create `REDIS_URL` and the `SENTRY_*` variables.
+3. Add the other variables from 10.3 for Production, Preview (branch-specific values for
+   `test` and `dev`) and Development. Copy `SENTRY_DSN` into `NG_APP_SENTRY_DSN`, and set
+   `CRON_SECRET` this time.
+4. If you still own `kookio.app`, assign it to production, and `test.kookio.app` and
+   `dev.kookio.app` to the `test` and `dev` branches.
+5. In GitHub, give `VERCEL_PROJECT_ID` and `VERCEL_TOKEN` new values, and `VERCEL_APP_URL`
+   too if the URLs changed. Then read 10.6 before trusting CI.
+
+Then, on your machine:
 
 ```bash
 nvm install && nvm use                  # Node 24, from .nvmrc
@@ -951,17 +1008,17 @@ why a lockfile must be rebuilt with a full `npm install`, never with `--package-
 
 ## 11. Where everything lives
 
-| What                           | Where                                                                                                                                                                                                             |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Code                           | <https://github.com/EduardEmanuel/kookio> (private, archived); final state tagged `v1.0.0`                                                                                                                        |
-| Product history                | [`PRODUCT-HISTORY.md`](PRODUCT-HISTORY.md): how the product evolved, every recorded decision, and the plans never built                                                                                           |
-| Thesis and data pipeline       | <https://github.com/EduardEmanuel/kookio-thesis> (private) — `ro/` LaTeX sources, `research/the-meal-db/`                                                                                                         |
-| Hosting                        | Vercel project `kookio` in the personal scope `dinea-eduard-emanuels-projects` (paused since 9 Oct 2026); `kookio.app`, `test.` and `dev.` subdomains. CLI and API calls must target that scope.                  |
-| Domain                         | `kookio.app`, bought through Vercel Domains on 2 Dec 2025 (the public registry lists Name.com, Vercel's registrar), paid until 2 Dec 2026, DNS on Vercel. The auto-renew setting was not checked at archive time. |
-| Database                       | CockroachDB Cloud — databases `kookio_dev`, `kookio_test`, `kookio_prod`; roles `kookio_app`, `kookio_migrate`                                                                                                    |
-| Redis                          | Vercel Marketplace integration, free tier, Frankfurt                                                                                                                                                              |
-| Errors                         | Sentry (organisation and project in `SENTRY_ORG` / `SENTRY_PROJECT`)                                                                                                                                              |
-| ER diagram                     | <https://dbdocs.io/dinea.eduard/kookio-db> (password-protected)                                                                                                                                                   |
-| CI alerts                      | Discord channel `#kookio-alerts` and email                                                                                                                                                                        |
-| Engineering guidelines         | `.ai/NN_*.md` (25 chapters); per-library READMEs; `scripts/README.md`; `RUNBOOK.md`                                                                                                                               |
-| Measurements behind the thesis | `npm run bench:preview`, `bench:coverage`, `bench:lighthouse`, `bench:images`                                                                                                                                     |
+| What                           | Where                                                                                                                                                                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Code                           | <https://github.com/EduardEmanuel/kookio> (private, archived); final state tagged `v1.0.0`                                                                                                                                                  |
+| Product history                | [`PRODUCT-HISTORY.md`](PRODUCT-HISTORY.md): how the product evolved, every recorded decision, and the plans never built                                                                                                                     |
+| Thesis and data pipeline       | <https://github.com/EduardEmanuel/kookio-thesis> (private) — `ro/` LaTeX sources, `research/the-meal-db/`                                                                                                                                   |
+| Hosting                        | Vercel, personal scope `dinea-eduard-emanuels-projects`. The project `kookio`, which served `kookio.app` and its `test.` and `dev.` subdomains, was deleted after the archive (10.4 rebuilds it). CLI and API calls must target that scope. |
+| Domain                         | `kookio.app`, bought through Vercel Domains on 2 Dec 2025 (the public registry lists Name.com, Vercel's registrar), paid until 2 Dec 2026, DNS on Vercel. The auto-renew setting was not checked at archive time.                           |
+| Database                       | CockroachDB Cloud — databases `kookio_dev`, `kookio_test`, `kookio_prod`; roles `kookio_app`, `kookio_migrate`                                                                                                                              |
+| Redis                          | Vercel Marketplace integration, free tier, Frankfurt                                                                                                                                                                                        |
+| Errors                         | Sentry (organisation and project in `SENTRY_ORG` / `SENTRY_PROJECT`)                                                                                                                                                                        |
+| ER diagram                     | <https://dbdocs.io/dinea.eduard/kookio-db> (password-protected)                                                                                                                                                                             |
+| CI alerts                      | Discord channel `#kookio-alerts` and email                                                                                                                                                                                                  |
+| Engineering guidelines         | `.ai/NN_*.md` (25 chapters); per-library READMEs; `scripts/README.md`; `RUNBOOK.md`                                                                                                                                                         |
+| Measurements behind the thesis | `npm run bench:preview`, `bench:coverage`, `bench:lighthouse`, `bench:images`                                                                                                                                                               |
